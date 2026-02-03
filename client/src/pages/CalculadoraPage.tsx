@@ -1007,11 +1007,11 @@ export default function CalculadoraPage() {
                                         </>
                                       ) : (
                                         <>
-                                          <TableCell className="text-right text-gray-500 text-sm opacity-0">
-                                            -
+                                          <TableCell className="text-right text-gray-500 text-sm">
+                                            {formatCurrency(item.monthlyRefSemKombo)}
                                           </TableCell>
-                                          <TableCell className="text-right font-semibold opacity-0">
-                                            -
+                                          <TableCell className="text-right font-semibold">
+                                            {formatCurrency(item.priceSemKombo)}
                                           </TableCell>
                                         </>
                                       )}
@@ -1050,11 +1050,11 @@ export default function CalculadoraPage() {
                                         </>
                                       ) : (
                                         <>
-                                          <TableCell className="text-right text-gray-500 text-sm opacity-0">
-                                            -
+                                          <TableCell className="text-right text-gray-500 text-sm">
+                                            {formatCurrency(item.monthlyRefSemKombo)}
                                           </TableCell>
-                                          <TableCell className="text-right font-semibold opacity-0">
-                                            -
+                                          <TableCell className="text-right font-semibold">
+                                            {formatCurrency(item.priceSemKombo)}
                                           </TableCell>
                                         </>
                                       )}
@@ -1143,11 +1143,11 @@ export default function CalculadoraPage() {
                                             </>
                                           ) : (
                                             <>
-                                              <TableCell className="text-right text-gray-500 text-sm opacity-0">
-                                                -
+                                              <TableCell className="text-right text-gray-500 text-sm">
+                                                {item.isIncluded ? 'Incluído' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                               </TableCell>
-                                              <TableCell className="text-right font-semibold opacity-0">
-                                                -
+                                              <TableCell className="text-right font-semibold">
+                                                {item.isIncluded ? 'Incluído' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                               </TableCell>
                                             </>
                                           )}
@@ -1182,11 +1182,11 @@ export default function CalculadoraPage() {
                             </>
                           ) : (
                             <>
-                              <TableCell className="text-right text-gray-500 text-sm py-4 opacity-0">
-                                -
+                              <TableCell className="text-right text-gray-500 text-sm py-4">
+                                {formatCurrency(calculateMonthlyReferenceTotal(false))}
                               </TableCell>
-                              <TableCell className="text-right font-bold text-primary text-xl py-4 opacity-0">
-                                -
+                              <TableCell className="text-right font-bold text-gray-900 text-lg py-4">
+                                {formatCurrency(calculateMonthlyRecurring(false))}
                               </TableCell>
                             </>
                           )}
@@ -1212,11 +1212,11 @@ export default function CalculadoraPage() {
                             </>
                           ) : (
                             <>
-                              <TableCell className="text-right text-gray-500 text-sm opacity-0">
-                                -
+                              <TableCell className="text-right text-gray-500 text-sm">
+                                {formatCurrency(calculateTotalImplementation(false))}
                               </TableCell>
-                              <TableCell className="text-right font-semibold opacity-0">
-                                -
+                              <TableCell className="text-right font-semibold">
+                                {formatCurrency(calculateTotalImplementation(false))}
                               </TableCell>
                             </>
                           )}
@@ -1253,11 +1253,14 @@ export default function CalculadoraPage() {
                             </>
                           ) : (
                             <>
-                              <TableCell className="text-right text-gray-500 text-sm py-4 opacity-0">
-                                -
+                              <TableCell className="text-right text-gray-500 text-sm py-4">
+                                {formatCurrency(
+                                  (calculateMonthlyReferenceTotal(false) * 12) + 
+                                  calculateTotalImplementation(false)
+                                )}
                               </TableCell>
-                              <TableCell className="text-right font-bold text-primary text-lg py-4 opacity-0">
-                                -
+                              <TableCell className="text-right font-bold text-gray-900 text-lg py-4">
+                                {formatCurrency(calculateFirstYearTotal(false))}
                               </TableCell>
                             </>
                           )}
