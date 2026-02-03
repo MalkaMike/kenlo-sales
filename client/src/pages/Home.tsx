@@ -111,18 +111,18 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/calculadora">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
+                <Link href="/calculadora">
                   <Calculator className="w-5 h-5" />
                   Abrir Calculadora
-                </Button>
-              </Link>
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="gap-2" asChild>
+                <Link href="/kombos">
                   Ver Kombos
                   <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -265,12 +265,12 @@ export default function Home() {
                 Quanto mais você digitaliza, menor o custo por unidade.
               </p>
               
-              <Link href="/kombos">
-                <Button size="lg" variant="secondary" className="gap-2">
+              <Button size="lg" variant="secondary" className="gap-2" asChild>
+                <Link href="/kombos">
                   Explorar Kombos
                   <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -288,12 +288,12 @@ export default function Home() {
               Configure produtos, add-ons e veja o investimento em tempo real. 
               Exporte propostas em PDF e compartilhe com clientes.
             </p>
-            <Link href="/calculadora">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
+              <Link href="/calculadora">
                 <Calculator className="w-5 h-5" />
                 Simular Proposta
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
