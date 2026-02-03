@@ -85,6 +85,7 @@
 
 - [x] Corrigir layout da box "Sem Kombo" do lado direito para ocupar apenas as últimas 2 colunas
 - [x] Garantir que a mensagem "Adicione mais add-ons" fique centralizada nas 2 colunas
+- [x] REAL FIX: Mover box "Adicione mais add-ons" para cobrir colunas Mensal+Semestral da seção "Kombo Ativado" (lado direito) em vez de "Sem Kombo" (lado esquerdo)
 
 ## Text Corrections
 
