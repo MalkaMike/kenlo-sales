@@ -98,3 +98,11 @@
 ## Dynamic Savings Badge
 
 - [x] Adicionar badge dinâmico de economia no header "Kombo Ativado" mostrando porcentagem de desconto quando há Kombo ativo
+
+## Navigation Menu Updates
+
+- [x] Remover texto "SALES" do menu de navegação
+- [x] Alinhar "Kombos" com os outros itens do menu (remover margem extra)
+- [x] Remover bandeira "BR" (seletor de idioma)
+- [x] Remover botão "Simular Proposta"
+- [x] Substituir "Calculadora" por "Monte seu plano"

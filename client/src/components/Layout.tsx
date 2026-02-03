@@ -51,7 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Link href="/" className="flex items-center gap-1 group">
             <span className="text-2xl font-bold text-primary">kenlo</span>
             <span className="text-2xl font-bold text-secondary">.</span>
-            <span className="ml-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">Sales</span>
+
           </Link>
 
           {/* Desktop Navigation */}
@@ -151,22 +151,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     )}
                   >
                     <Calculator className="w-4 h-4 mr-2" />
-                    Calculadora
+                    Monte seu plano
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
-          {/* CTA Button + Language */}
-          <div className="hidden lg:flex items-center gap-3">
-            <LanguageSelector />
-            <Button className="bg-primary hover:bg-primary/90" asChild>
-              <Link href="/calculadora">
-                Simular Proposta
-              </Link>
-            </Button>
-          </div>
+          {/* Spacer for alignment */}
+          <div className="hidden lg:flex" />
 
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -216,13 +209,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
                 >
-                  Calculadora
+                  Monte seu plano
                 </Link>
-                <Button className="w-full mt-4 bg-primary hover:bg-primary/90" asChild>
-                  <Link href="/calculadora" onClick={() => setMobileMenuOpen(false)}>
-                    Simular Proposta
-                  </Link>
-                </Button>
               </nav>
             </SheetContent>
           </Sheet>
@@ -268,7 +256,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h4 className="font-semibold mb-4">Ferramentas</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="hover:text-foreground transition-colors">Kombos</Link></li>
-                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Calculadora</Link></li>
+                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Monte seu plano</Link></li>
               </ul>
             </div>
           </div>
