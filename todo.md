@@ -106,3 +106,7 @@
 - [x] Remover bandeira "BR" (seletor de idioma)
 - [x] Remover botão "Simular Proposta"
 - [x] Substituir "Calculadora" por "Monte seu plano"
+
+## Kombos Alignment Fix
+
+- [x] Corrigir alinhamento vertical do item "Kombos" no menu - removido badge "NOVO" que causava desalinhamento
