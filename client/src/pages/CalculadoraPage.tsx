@@ -466,30 +466,30 @@ export default function CalculadoraPage() {
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
-        <div className="container max-w-6xl">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-6 sm:py-12 px-4 sm:px-6">
+        <div className="container max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mb-3">
               <Calculator className="w-6 h-6 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 px-4">
               Calculadora Inteligente Kenlo
             </h1>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
               Configure a solução ideal para sua imobiliária e veja o investimento em tempo real
             </p>
           </div>
 
           {/* Main Calculator Card */}
           <Card className="shadow-xl">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               {/* Step 1: Product Selection */}
-              <div className="mb-4">
-                <h2 className="text-lg font-bold text-gray-900 mb-3">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
                   1. Escolha o Produto
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
                   {[
                     { value: "imob", label: "Imob só", icon: TrendingUp, desc: "CRM + Site para vendas" },
                     { value: "loc", label: "Loc só", icon: Key, desc: "Gestão de locações" },
@@ -498,26 +498,26 @@ export default function CalculadoraPage() {
                     <button
                       key={opt.value}
                       onClick={() => setProduct(opt.value as ProductSelection)}
-                      className={`relative p-3 rounded-lg border-2 transition-all ${
+                      className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
                         product === opt.value
                           ? "border-primary bg-primary/5 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-gray-300 active:border-primary/50"
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
-                        <opt.icon className={`w-5 h-5 ${product === opt.value ? "text-primary" : "text-gray-400"}`} />
-                        <div className="font-semibold text-sm">{opt.label}</div>
+                        <opt.icon className={`w-5 h-5 sm:w-4 sm:h-4 ${product === opt.value ? "text-primary" : "text-gray-400"}`} />
+                        <div className="font-semibold text-sm sm:text-xs">{opt.label}</div>
                       </div>
-                      <div className="text-xs text-gray-500">{opt.desc}</div>
+                      <div className="text-xs sm:text-[11px] text-gray-500">{opt.desc}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Step 2: Add-ons */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-bold text-gray-900">
+              <div className="mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <h2 className="text-base sm:text-lg font-bold text-gray-900">
                     2. Add-ons Opcionais
                   </h2>
                   <div className="flex gap-2">
@@ -532,7 +532,7 @@ export default function CalculadoraPage() {
                           cash: isAddonAvailable("cash"),
                         });
                       }}
-                      className="px-3 py-1.5 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+                      className="px-3 py-2 text-xs sm:text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white active:bg-primary active:text-white transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
                     >
                       Selecionar Todos
                     </button>
@@ -547,17 +547,17 @@ export default function CalculadoraPage() {
                           cash: false,
                         });
                       }}
-                      className="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="px-3 py-2 text-xs sm:text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
                     >
                       Deselecionar Todos
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {/* Row 1: Leads, Inteligência, Assinatura */}
-                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="leads" className="font-semibold text-sm">Leads</Label>
+                  <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
                       <Switch
                         id="leads"
                         checked={addons.leads}
@@ -568,9 +568,9 @@ export default function CalculadoraPage() {
                     <div className="text-xs text-gray-500">Gestão automatizada de leads</div>
                   </div>
 
-                  <div className="p-3 rounded-lg border">
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="inteligencia" className="font-semibold text-sm">Inteligência</Label>
+                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="inteligencia" className="font-semibold text-sm cursor-pointer">Inteligência</Label>
                       <Switch
                         id="inteligencia"
                         checked={addons.inteligencia}
@@ -580,9 +580,9 @@ export default function CalculadoraPage() {
                     <div className="text-xs text-gray-500">BI de KPIs de performance</div>
                   </div>
 
-                  <div className="p-3 rounded-lg border">
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="assinatura" className="font-semibold text-sm">Assinatura</Label>
+                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="assinatura" className="font-semibold text-sm cursor-pointer">Assinatura</Label>
                       <Switch
                         id="assinatura"
                         checked={addons.assinatura}
@@ -594,8 +594,8 @@ export default function CalculadoraPage() {
 
                   {/* Row 2: Pay, Seguros, Cash */}
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="pay" className="font-semibold text-sm">Pay</Label>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
                       <Switch
                         id="pay"
                         checked={addons.pay}
@@ -607,8 +607,8 @@ export default function CalculadoraPage() {
                   </div>
 
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="seguros" className="font-semibold text-sm">Seguros</Label>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
                       <Switch
                         id="seguros"
                         checked={addons.seguros}
@@ -620,8 +620,8 @@ export default function CalculadoraPage() {
                   </div>
 
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <Label htmlFor="cash" className="font-semibold text-sm">Cash</Label>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
                       <Switch
                         id="cash"
                         checked={addons.cash}
@@ -657,7 +657,7 @@ export default function CalculadoraPage() {
                           <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
                           <Input
                             id="imobUsers"
-                            type="number"
+                            type="number" inputMode="numeric"
                             value={metrics.imobUsers}
                             onChange={(e) => setMetrics({ ...metrics, imobUsers: parseInt(e.target.value) || 0 })}
                             disabled={product !== "imob" && product !== "both"}
@@ -668,7 +668,7 @@ export default function CalculadoraPage() {
                           <Label htmlFor="closings" className="text-sm">Fechamentos por mês</Label>
                           <Input
                             id="closings"
-                            type="number"
+                            type="number" inputMode="numeric"
                             value={metrics.closingsPerMonth}
                             onChange={(e) => setMetrics({ ...metrics, closingsPerMonth: parseInt(e.target.value) || 0 })}
                             disabled={product !== "imob" && product !== "both"}
@@ -679,7 +679,7 @@ export default function CalculadoraPage() {
                           <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
                           <Input
                             id="leads"
-                            type="number"
+                            type="number" inputMode="numeric"
                             value={metrics.leadsPerMonth}
                             onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
                             disabled={product !== "imob" && product !== "both"}
@@ -744,7 +744,7 @@ export default function CalculadoraPage() {
                           <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
                           <Input
                             id="contracts"
-                            type="number"
+                            type="number" inputMode="numeric"
                             value={metrics.contractsUnderManagement}
                             onChange={(e) => setMetrics({ ...metrics, contractsUnderManagement: parseInt(e.target.value) || 0 })}
                             disabled={product !== "loc" && product !== "both"}
@@ -755,7 +755,7 @@ export default function CalculadoraPage() {
                           <Label htmlFor="newContracts" className="text-sm">Novos contratos por mês</Label>
                           <Input
                             id="newContracts"
-                            type="number"
+                            type="number" inputMode="numeric"
                             value={metrics.newContractsPerMonth}
                             onChange={(e) => setMetrics({ ...metrics, newContractsPerMonth: parseInt(e.target.value) || 0 })}
                             disabled={product !== "loc" && product !== "both"}
@@ -803,7 +803,7 @@ export default function CalculadoraPage() {
                                 <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
                                 <Input
                                   id="boletoAmount"
-                                  type="number"
+                                  type="number" inputMode="numeric"
                                   value={metrics.boletoChargeAmount}
                                   onChange={(e) => setMetrics({ ...metrics, boletoChargeAmount: parseFloat(e.target.value) || 0 })}
                                   className="mt-1 h-8 text-sm"
@@ -825,7 +825,7 @@ export default function CalculadoraPage() {
                                 <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
                                 <Input
                                   id="splitAmount"
-                                  type="number"
+                                  type="number" inputMode="numeric"
                                   value={metrics.splitChargeAmount}
                                   onChange={(e) => setMetrics({ ...metrics, splitChargeAmount: parseFloat(e.target.value) || 0 })}
                                   className="mt-1 h-8 text-sm"
@@ -878,21 +878,21 @@ export default function CalculadoraPage() {
                 </h2>
                 
                 <Card className="mb-6">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3 sm:p-6">
                     {/* Custom table header with Planos Recomendados as row label */}
                     <div className="mb-4">
                       {/* Frequency buttons row - aligned with columns */}
-                      <div className="flex items-center mb-2">
-                        <div className="w-[30%]"></div>
+                      <div className="flex flex-col sm:flex-row sm:items-center mb-2 gap-2">
+                        <div className="hidden sm:block sm:w-[30%]"></div>
                         <div className="flex-1 flex justify-center gap-2">
                           {(["semestral", "annual", "biennial"] as PaymentFrequency[]).map((freq) => (
                             <button
                               key={freq}
                               onClick={() => setFrequency(freq)}
-                              className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all text-center ${
+                              className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all text-center min-h-[60px] sm:min-h-0 ${
                                 frequency === freq
                                   ? "border-primary bg-primary/5"
-                                  : "border-gray-200 hover:border-gray-300 bg-white"
+                                  : "border-gray-200 hover:border-gray-300 bg-white active:border-primary/50"
                               }`}
                             >
                               <div className={`font-semibold ${frequency === freq ? "text-primary" : "text-gray-900"}`}>
@@ -908,7 +908,7 @@ export default function CalculadoraPage() {
                     </div>
 
                     {/* Wrapper div with relative positioning for absolute overlay */}
-                    <div className="relative">
+                    <div className="relative overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
                       <Table>
                       <TableHeader>
                         {/* Column headers with Planos Recomendados as row label */}
@@ -1967,12 +1967,12 @@ export default function CalculadoraPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 mt-6">
-                  <Button className="flex-1" size="lg" onClick={() => setShowExportDialog(true)}>
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowExportDialog(true)}>
                     <Download className="w-4 h-4 mr-2" />
                     Exportar Proposta (PDF)
                   </Button>
-                  <Button variant="outline" size="lg">
+                  <Button variant="outline" size="lg" className="min-h-[50px] sm:flex-1">
                     Compartilhar com Cliente
                   </Button>
                 </div>

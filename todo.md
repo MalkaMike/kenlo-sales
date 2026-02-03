@@ -16,3 +16,14 @@
 - [x] Implementar geração de PDF com todos os detalhes da proposta
 - [x] Implementar API tRPC para salvar propostas no banco de dados
 - [x] Testar fluxo completo: preencher dados → gerar PDF → salvar no banco
+
+## Mobile Optimization
+
+- [x] Ajustar header e navegação para mobile
+- [x] Otimizar seções de seleção de produtos para telas pequenas
+- [x] Ajustar cards de add-ons para layout responsivo
+- [x] Otimizar inputs e formulários para touch
+- [x] Ajustar tabela de preços para mobile (scroll horizontal)
+- [x] Otimizar seção "The Kenlo Effect" para mobile
+- [x] Ajustar botões de ação para tamanho adequado em touch
+- [x] Testar em viewport mobile (375px, 390px, 428px)
