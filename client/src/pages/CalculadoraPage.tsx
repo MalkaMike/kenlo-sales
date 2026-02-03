@@ -694,14 +694,7 @@ export default function Calculadora() {
                         <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="imobVipSupport" className="text-sm">Suporte Premium</Label>
-                              {imobPlan === "prime" ? (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                              )}
-                            </div>
+                            <Label htmlFor="imobVipSupport" className="text-sm">Suporte Premium</Label>
                             <Switch
                               id="imobVipSupport"
                               checked={metrics.imobVipSupport}
@@ -710,14 +703,7 @@ export default function Calculadora() {
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {imobPlan === "k2" ? (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$199/mês</Badge>
-                              )}
-                            </div>
+                            <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
                             <Switch
                               id="imobDedicatedCS"
                               checked={metrics.imobDedicatedCS}
@@ -828,14 +814,7 @@ export default function Calculadora() {
                         <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="locVipSupport" className="text-sm">Suporte Premium</Label>
-                              {locPlan === "prime" ? (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                              )}
-                            </div>
+                            <Label htmlFor="locVipSupport" className="text-sm">Suporte Premium</Label>
                             <Switch
                               id="locVipSupport"
                               checked={metrics.locVipSupport}
@@ -844,14 +823,7 @@ export default function Calculadora() {
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {locPlan === "k2" ? (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$199/mês</Badge>
-                              )}
-                            </div>
+                            <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
                             <Switch
                               id="locDedicatedCS"
                               checked={metrics.locDedicatedCS}
