@@ -696,7 +696,9 @@ export default function Calculadora() {
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                             <div className="flex items-center gap-2">
                               <Label htmlFor="imobVipSupport" className="text-sm">Suporte Premium</Label>
-                              {imobPlan === "prime" && (
+                              {imobPlan === "prime" ? (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
+                              ) : (
                                 <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
                               )}
                             </div>
@@ -710,8 +712,10 @@ export default function Calculadora() {
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                             <div className="flex items-center gap-2">
                               <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {imobPlan !== "k2" && (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              {imobPlan === "k2" ? (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$199/mês</Badge>
                               )}
                             </div>
                             <Switch
@@ -826,7 +830,9 @@ export default function Calculadora() {
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                             <div className="flex items-center gap-2">
                               <Label htmlFor="locVipSupport" className="text-sm">Suporte Premium</Label>
-                              {locPlan === "prime" && (
+                              {locPlan === "prime" ? (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
+                              ) : (
                                 <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
                               )}
                             </div>
@@ -840,8 +846,10 @@ export default function Calculadora() {
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                             <div className="flex items-center gap-2">
                               <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {locPlan !== "k2" && (
-                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              {locPlan === "k2" ? (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Ofertado</Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$199/mês</Badge>
                               )}
                             </div>
                             <Switch
@@ -1418,9 +1426,9 @@ export default function Calculadora() {
                           if (metrics.imobVipSupport && imobPlan === 'prime') {
                             imobSupportCost += 99;
                           }
-                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          // CS Dedicado: R$199/mês for Prime and K, free for K2
                           if (metrics.imobDedicatedCS && imobPlan !== 'k2') {
-                            imobSupportCost += 99;
+                            imobSupportCost += 199;
                           }
                         }
                         
@@ -1431,9 +1439,9 @@ export default function Calculadora() {
                           if (metrics.locVipSupport && locPlan === 'prime') {
                             locSupportCost += 99;
                           }
-                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          // CS Dedicado: R$199/mês for Prime and K, free for K2
                           if (metrics.locDedicatedCS && locPlan !== 'k2') {
-                            locSupportCost += 99;
+                            locSupportCost += 199;
                           }
                         }
                         
