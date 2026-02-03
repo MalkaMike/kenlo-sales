@@ -69,8 +69,8 @@ const KOMBOS = {
   core_gestao: {
     name: "Kombo Core Gestão",
     description: "IMOB + LOC sem add-ons",
-    discount: 0, // SEM desconto nas mensalidades (desconto apenas na implantação: 50% OFF)
-    implantationDiscount: 0.50, // 50% OFF na implantação (R$ 1.497 ao invés de R$ 2.994)
+    discount: 0, // SEM desconto nas mensalidades
+    implantationDiscount: 0, // Implantação fixa R$ 1.497 (IMOB gratis, apenas LOC)
     requiredProducts: ["both"] as ProductSelection[],
     requiredAddons: [], // No add-ons required
     maxAddons: 0, // Must have ZERO add-ons
@@ -131,15 +131,18 @@ const PAYMENT_FREQUENCY_MULTIPLIERS = {
 };
 
 /**
- * Round price to nearest value ending in 7
- * Example: 495 → 497, 502 → 507, 490 → 487
+ * Round price UP to next value ending in 7
+ * ALWAYS rounds UP, never down
+ * Example: 490 → 497, 495 → 497, 502 → 507, 507 → 507
  */
 const roundToEndIn7 = (price: number): number => {
   const lastDigit = price % 10;
-  if (lastDigit <= 7) {
-    return price - lastDigit + 7;
+  if (lastDigit === 7) {
+    return price; // Already ends in 7
+  } else if (lastDigit < 7) {
+    return price - lastDigit + 7; // Round up to 7 in current decade
   } else {
-    return price - lastDigit + 17;
+    return price - lastDigit + 17; // Round up to 7 in next decade
   }
 };
 
@@ -433,13 +436,7 @@ export default function CalculadoraPage() {
     
     // If any Kombo is active
     if (withKombo && komboInfo) {
-      // Kombo Core Gestão: 50% OFF na implantação (R$ 1.497 ao invés de R$ 2.994)
-      if (activeKombo === "core_gestao") {
-        const items = getLineItems();
-        const fullImplantation = items.reduce((sum, item) => sum + (item.implantation || 0), 0);
-        return Math.round(fullImplantation * (1 - (komboInfo.implantationDiscount || 0)));
-      }
-      // Outros Kombos: implantação fixa R$1.497
+      // TODOS os Kombos (incluindo Core Gestão): implantação fixa R$1.497
       return 1497;
     }
     
@@ -2022,14 +2019,14 @@ export default function CalculadoraPage() {
                   <div className="container py-2 sm:py-3">
                     <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                       {/* Kombo Badge - Highlighted when active */}
-                      {komboInfo ? (
-                        <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
-                          {activeKombo === "core_gestao" ? (
-                            <>✨ {komboInfo.name} (50% OFF Implantação)</>
-                          ) : (
-                            <>✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)</>
-                          )}
-                        </div>
+          {komboInfo ? (
+            <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
+              {activeKombo === "core_gestao" ? (
+                <>✨ {komboInfo.name} (Implantação IMOB Gratis)</>
+              ) : (
+                <>✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)</>
+              )}
+            </div>
                       ) : (
                         <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
                           {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}

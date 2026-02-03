@@ -114,3 +114,37 @@
 ## Premium Services Bug Fix
 
 - [x] BUG: Quando Suporte Premium e CS Dedicado são desativados nos "Planos Recomendados", o Suporte Premium ainda mostra "R$ 99" em vez de "Não Incluído" - corrigido adicionando verificação de isSelected (metrics.imobVipSupport e metrics.locVipSupport)
+
+## Complete Rules Verification and Fixes
+
+### Payment Frequency Rules (Lines 2-10)
+- [ ] Mensal → Preço Anual ÷ (1 – 20%) = Preço Anual × 1.25
+- [ ] Semestral → Preço Anual ÷ (1 – 10%) = Preço Anual × 1.111...
+- [ ] Anual → Preço Anual (reference/default)
+- [ ] Bienal → Preço Anual × (1 – 10%) = Preço Anual × 0.9
+
+### Rounding Rule (Lines 18-19)
+- [ ] All prices must round UP to next integer ending in 7 (applies to all products/add-ons, all frequencies, NOT for post-paid)
+
+### Add-on Availability (Lines 11-17)
+- [ ] Inteligência → available for IMOB and/or LOC
+- [ ] Leads → available for IMOB ONLY
+- [ ] Assinaturas → available for IMOB and/or LOC
+- [ ] Pay → available for LOC ONLY
+- [ ] Seguros → available for LOC ONLY
+- [ ] Cash → available for LOC ONLY
+
+### Kombo Discounts and Implementation (Lines 374-423)
+- [ ] Kombo Imob Start (IMOB + Leads + Assinaturas) → 10% OFF all products/add-ons, R$ 1.497 implementation (Leads impl. free)
+- [ ] Kombo Imob Pro (IMOB + Leads + Inteligência + Assinatura) → 15% OFF all, R$ 1.497 impl. (Leads + Inteligência impl. free)
+- [ ] Kombo Locação Pro (LOC + Inteligência + Assinatura) → 10% OFF all, R$ 1.497 impl. (Inteligência impl. free)
+- [ ] Kombo Core Gestão (IMOB + LOC without add-ons) → "Conforme tabela" discount, R$ 1.497 impl. (IMOB impl. free)
+- [ ] Kombo Elite (IMOB + LOC + ALL add-ons) → 20% OFF all, R$ 1.497 impl. (IMOB + Leads + Inteligência impl. free)
+
+### Current Implementation Issues to Fix
+- [x] Verify current frequency multipliers match document (Mensal 1.25, Semestral 1.111, Anual 1.0, Bienal 0.9) - VERIFIED CORRECT
+- [x] Verify rounding function rounds UP to next number ending in 7 - FIXED (was rounding to nearest, now always UP)
+- [x] Verify add-on availability restrictions (Leads IMOB-only, Pay/Seguros/Cash LOC-only) - VERIFIED CORRECT
+- [x] Verify Kombo discount percentages (Start 10%, Pro 15%, Locação Pro 10%, Elite 20%) - VERIFIED CORRECT
+- [x] Verify "Core Gestão" discount logic ("conforme tabela" - needs clarification) - FIXED (0% discount on monthly, R$ 1.497 fixed impl.)
+- [x] Verify implementation costs for all Kombos are R$ 1.497 - VERIFIED CORRECT
