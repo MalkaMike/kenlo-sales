@@ -87,6 +87,8 @@
 - [x] Garantir que a mensagem "Adicione mais add-ons" fique centralizada nas 2 colunas
 - [x] REAL FIX: Mover box "Adicione mais add-ons" para cobrir colunas Mensal+Semestral da seção "Kombo Ativado" (lado direito) em vez de "Sem Kombo" (lado esquerdo)
 - [x] REAL REAL FIX: Manter 5 colunas sempre, mas quando não há Kombo, as últimas 2 colunas mostram os mesmos preços "Sem Kombo" (visíveis) e a box overlay cobre essas 2 últimas colunas com a mensagem
+- [x] FINAL FIX: Box overlay deve cobrir TODA a área das últimas 2 colunas desde o topo (top-0) incluindo headers "Sem Kombo", "Mensal" e "Anual" até a última linha
+- [x] REAL FINAL FIX: Ajustar condição da box overlay de `activeKombo === 'none'` para `Object.values(addons).every(enabled => !enabled)` porque Core Gestão (IMOB+LOC sem add-ons) é um Kombo válido
 
 ## Text Corrections
 
