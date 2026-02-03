@@ -208,3 +208,15 @@
 - [x] Atualizar descrição do Kombo Elite na página /kombos para mencionar Serviços Premium incluídos
 - [x] Criar testes automatizados para validar Kombo Elite com Serviços Premium incluídos
 - [x] Validar com testes e verificação visual - 42 testes passaram + validação visual completa
+
+## Seção "4 bis. Preço Sem Kombo vs Kombo" - Tabela Comparativa
+
+- [x] Projetar estrutura da tabela comparativa:
+  - [x] Colunas: Sem Kombo, Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite
+  - [x] Linhas: Produtos (IMOB, LOC), Add-ons (Leads, Inteligência, Assinatura, Pay, Seguros, Cash), Serviços Premium (Suporte VIP, CS Dedicado), Total Mensal, Implantação, Anual Equivalente
+  - [x] Toggle Mensal/Anual para alternar visualização
+- [x] Implementar cálculo de preços para todos os Kombos baseado nas escolhas do usuário
+- [x] Implementar lógica de highlight automático do Kombo recomendado
+- [x] Implementar UI da tabela comparativa com design responsivo
+- [x] Validar com testes e verificação visual - 67 testes passaram
+- [ ] Apresentar ao usuário para aprovação (se aprovado, substituir seção 4 atual)

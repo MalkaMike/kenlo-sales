@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ProposalExportDialog } from "@/components/ProposalExportDialog";
+import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -931,6 +932,17 @@ export default function CalculadoraPage() {
                 
                 </div>
               </div>
+
+              {/* Section 4 bis: Kombo Comparison Table */}
+              <KomboComparisonTable
+                product={product}
+                imobPlan={imobPlan}
+                locPlan={locPlan}
+                addons={addons}
+                frequency={frequency}
+                vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
+                dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
+              />
 
               {/* Results Section */}
               <div className="mb-4">
