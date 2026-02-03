@@ -737,55 +737,73 @@ export default function CalculadoraPage() {
                             className="mt-1"
                           />
                         </div>
-                        <div>
-                          <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
-                          <Input
-                            id="leads"
-                            type="number" inputMode="numeric"
-                            value={metrics.leadsPerMonth}
-                            onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
-                            disabled={product !== "imob" && product !== "both"}
-                            className="mt-1"
-                          />
+                      </div>
+
+                      {/* Box: Leads */}
+                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-blue-800">Leads</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
+                            <Input
+                              id="leads"
+                              type="number" inputMode="numeric"
+                              value={metrics.leadsPerMonth}
+                              onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
+                              disabled={product !== "imob" && product !== "both"}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)</Label>
+                            <Switch
+                              id="externalAI"
+                              checked={metrics.usesExternalAI}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                          {!metrics.usesExternalAI && (
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
+                              <Switch
+                                id="whatsapp"
+                                checked={metrics.wantsWhatsApp}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                                disabled={product !== "imob" && product !== "both"}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="externalAI" className="text-sm">Usa IA externa para SDR (ex: Lais)?</Label>
-                        <Switch
-                          id="externalAI"
-                          checked={metrics.usesExternalAI}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
-                      </div>
-                      {!metrics.usesExternalAI && (
-                        <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                          <Label htmlFor="whatsapp" className="text-sm">Quer WhatsApp integrado?</Label>
-                          <Switch
-                            id="whatsapp"
-                            checked={metrics.wantsWhatsApp}
-                            onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                            disabled={product !== "imob" && product !== "both"}
-                          />
+
+                      {/* Box: Serviços Premium */}
+                      <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-purple-800">Serviços Premium</span>
                         </div>
-                      )}
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                        <Switch
-                          id="imobVipSupport"
-                          checked={metrics.imobVipSupport}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                        <Switch
-                          id="imobDedicatedCS"
-                          checked={metrics.imobDedicatedCS}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="imobVipSupport" className="text-sm">Suporte VIP</Label>
+                            <Switch
+                              id="imobVipSupport"
+                              checked={metrics.imobVipSupport}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
+                            <Switch
+                              id="imobDedicatedCS"
+                              checked={metrics.imobDedicatedCS}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -825,26 +843,8 @@ export default function CalculadoraPage() {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                        <Switch
-                          id="locVipSupport"
-                          checked={metrics.locVipSupport}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
-                          disabled={product !== "loc" && product !== "both"}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                        <Switch
-                          id="locDedicatedCS"
-                          checked={metrics.locDedicatedCS}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
-                          disabled={product !== "loc" && product !== "both"}
-                        />
-                      </div>
-                      
-                      {/* Kenlo Pay Billing Questions - Only shown when Pay add-on is enabled */}
+
+                      {/* Box: Kenlo Pay - Only shown when Pay add-on is enabled */}
                       {addons.pay && (
                         <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                           <div className="flex items-center justify-between mb-2">
@@ -899,6 +899,33 @@ export default function CalculadoraPage() {
                           </div>
                         </div>
                       )}
+
+                      {/* Box: Serviços Premium */}
+                      <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-purple-800">Serviços Premium</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="locVipSupport" className="text-sm">Suporte VIP</Label>
+                            <Switch
+                              id="locVipSupport"
+                              checked={metrics.locVipSupport}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
+                              disabled={product !== "loc" && product !== "both"}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
+                            <Switch
+                              id="locDedicatedCS"
+                              checked={metrics.locDedicatedCS}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
+                              disabled={product !== "loc" && product !== "both"}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 
@@ -1067,67 +1094,49 @@ export default function CalculadoraPage() {
                                 </>
                               )}
                               
-                              {/* Serviços Premium Section */}
+                              {/* Serviços Premium Section - Simplified */}
                               {(() => {
                                 const premiumServices = [];
                                 
-                                // Suporte Premium IMOB
-                                if (product === 'imob' || product === 'both') {
-                                  const isIncludedByPlan = imobPlan === 'k' || imobPlan === 'k2';
-                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
-                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
-                                  const isSelected = metrics.imobVipSupport;
+                                // Suporte VIP (consolidated for both IMOB and LOC)
+                                const vipImobSelected = (product === 'imob' || product === 'both') && metrics.imobVipSupport;
+                                const vipLocSelected = (product === 'loc' || product === 'both') && metrics.locVipSupport;
+                                const vipAnySelected = vipImobSelected || vipLocSelected;
+                                
+                                // Check if included by plan
+                                const vipImobIncluded = (product === 'imob' || product === 'both') && (imobPlan === 'k' || imobPlan === 'k2');
+                                const vipLocIncluded = (product === 'loc' || product === 'both') && (locPlan === 'k' || locPlan === 'k2');
+                                const vipIncludedByCoreGestao = product === 'both'; // Core Gestão includes all premium services
+                                const vipIsIncluded = vipImobIncluded || vipLocIncluded || vipIncludedByCoreGestao;
+                                
+                                if (product === 'imob' || product === 'loc' || product === 'both') {
                                   premiumServices.push({
-                                    name: 'Suporte Premium - IMOB',
-                                    isIncluded: isIncluded,
-                                    isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 97 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 73 : null),
+                                    name: 'Suporte VIP',
+                                    isIncluded: vipIsIncluded,
+                                    isSelected: vipAnySelected,
+                                    priceSemKombo: vipIsIncluded ? null : (vipAnySelected ? 97 : null),
+                                    priceComKombo: vipIsIncluded ? null : (vipAnySelected ? 73 : null),
                                   });
                                 }
                                 
-                                // CS Dedicado IMOB
-                                if (product === 'imob' || product === 'both') {
-                                  const isIncludedByPlan = imobPlan === 'k2';
-                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
-                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
-                                  const isSelected = metrics.imobDedicatedCS;
-                                  premiumServices.push({
-                                    name: 'CS Dedicado - IMOB',
-                                    isIncluded: isIncluded,
-                                    isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 197 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 148 : null),
-                                  });
-                                }
+                                // CS Dedicado (consolidated for both IMOB and LOC)
+                                const csImobSelected = (product === 'imob' || product === 'both') && metrics.imobDedicatedCS;
+                                const csLocSelected = (product === 'loc' || product === 'both') && metrics.locDedicatedCS;
+                                const csAnySelected = csImobSelected || csLocSelected;
                                 
-                                // Suporte Premium LOC
-                                if (product === 'loc' || product === 'both') {
-                                  const isIncludedByPlan = locPlan === 'k' || locPlan === 'k2';
-                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
-                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
-                                  const isSelected = metrics.locVipSupport;
-                                  premiumServices.push({
-                                    name: 'Suporte Premium - LOC',
-                                    isIncluded: isIncluded,
-                                    isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 97 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 73 : null),
-                                  });
-                                }
+                                // Check if included by plan
+                                const csImobIncluded = (product === 'imob' || product === 'both') && imobPlan === 'k2';
+                                const csLocIncluded = (product === 'loc' || product === 'both') && locPlan === 'k2';
+                                const csIncludedByCoreGestao = product === 'both'; // Core Gestão includes all premium services
+                                const csIsIncluded = csImobIncluded || csLocIncluded || csIncludedByCoreGestao;
                                 
-                                // CS Dedicado LOC
-                                if (product === 'loc' || product === 'both') {
-                                  const isIncludedByPlan = locPlan === 'k2';
-                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
-                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
-                                  const isSelected = metrics.locDedicatedCS;
+                                if (product === 'imob' || product === 'loc' || product === 'both') {
                                   premiumServices.push({
-                                    name: 'CS Dedicado - LOC',
-                                    isIncluded: isIncluded,
-                                    isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 197 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 148 : null),
+                                    name: 'CS Dedicado',
+                                    isIncluded: csIsIncluded,
+                                    isSelected: csAnySelected,
+                                    priceSemKombo: csIsIncluded ? null : (csAnySelected ? 197 : null),
+                                    priceComKombo: csIsIncluded ? null : (csAnySelected ? 148 : null),
                                   });
                                 }
                                 

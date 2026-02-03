@@ -175,3 +175,28 @@
   - [x] Kombo Core Gestão: Implantação de IMOB ofertada (economia de R$ 1.497)
   - [x] Kombo Elite: Implantação de Imob, Leads e Inteligência ofertadas (economia de R$ 2.491)
 - [x] Validar todos os valores com testes automatizados - 28 testes passaram + validação visual completa
+
+## Reorganização da Seção "Informações do Negócio" e Simplificação de Serviços Premium
+
+### Kenlo IMOB - Criar boxes agrupadas:
+- [x] Box "Leads" contendo:
+  - [x] Leads recebidos por mês
+  - [x] IA SDR Externa (Ex: Lais)
+  - [x] WhatsApp Integrado
+- [x] Box "Serviços Premium" contendo:
+  - [x] Suporte VIP
+  - [x] CS Dedicado
+
+### Kenlo Locação - Criar boxes agrupadas:
+- [x] Box "Kenlo Pay" (já existente, manter como está)
+- [x] Box "Serviços Premium" contendo:
+  - [x] Suporte VIP
+  - [x] CS Dedicado
+
+### Tabela "4. Planos Recomendados":
+- [x] Simplificar seção "Serviços Premium" para ter apenas 2 linhas:
+  - [x] Suporte VIP (sem -IMOB/-LOC)
+  - [x] CS Dedicado (sem -IMOB/-LOC)
+- [x] Atualizar lógica de exibição:
+  - [x] Se cliente tem 1 produto: mostrar preço (R$ 97 ou R$ 197) ou "Incluído" conforme plano
+  - [x] Se cliente tem 2 produtos (IMOB + LOC): mostrar "Incluído" (Kombo Core Gestão)
