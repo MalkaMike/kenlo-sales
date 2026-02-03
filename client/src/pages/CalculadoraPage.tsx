@@ -679,14 +679,7 @@ export default function CalculadoraPage() {
                         </div>
                       )}
                       <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                          {imobPlan === "prime" ? (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          )}
-                        </div>
+                        <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
                         <Switch
                           id="imobVipSupport"
                           checked={metrics.imobVipSupport}
@@ -695,14 +688,7 @@ export default function CalculadoraPage() {
                         />
                       </div>
                       <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                          {imobPlan === "k2" ? (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          )}
-                        </div>
+                        <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
                         <Switch
                           id="imobDedicatedCS"
                           checked={metrics.imobDedicatedCS}
@@ -749,14 +735,7 @@ export default function CalculadoraPage() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                          {locPlan === "prime" ? (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          )}
-                        </div>
+                        <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
                         <Switch
                           id="locVipSupport"
                           checked={metrics.locVipSupport}
@@ -765,14 +744,7 @@ export default function CalculadoraPage() {
                         />
                       </div>
                       <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                          {locPlan === "k2" ? (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          )}
-                        </div>
+                        <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
                         <Switch
                           id="locDedicatedCS"
                           checked={metrics.locDedicatedCS}
