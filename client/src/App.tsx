@@ -21,35 +21,40 @@ import CalculadoraPage from "./pages/CalculadoraPage";
 
 function Router() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        {/* Products */}
-        <Route path="/produtos/imob" component={ImobPage} />
-        <Route path="/produtos/locacao" component={LocacaoPage} />
-        {/* Add-ons */}
-        <Route path="/addons/leads" component={LeadsPage} />
-        <Route path="/addons/inteligencia" component={InteligenciaPage} />
-        <Route path="/addons/assinatura" component={AssinaturaPage} />
-        <Route path="/addons/pay" component={PayPage} />
-        <Route path="/addons/seguros" component={SegurosPage} />
-        <Route path="/addons/cash" component={CashPage} />
-        {/* Kombos */}
-        <Route path="/kombos" component={KombosPage} />
-        {/* Calculator */}
-        <Route path="/calculadora" component={CalculadoraPage} />
-        {/* Fallback */}
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <Switch>
+      {/* Calculator - standalone without Layout for its own light background */}
+      <Route path="/calculadora" component={CalculadoraPage} />
+      {/* All other pages with Layout */}
+      <Route>
+        <Layout>
+          <Switch>
+            <Route path="/" component={Home} />
+            {/* Products */}
+            <Route path="/produtos/imob" component={ImobPage} />
+            <Route path="/produtos/locacao" component={LocacaoPage} />
+            {/* Add-ons */}
+            <Route path="/addons/leads" component={LeadsPage} />
+            <Route path="/addons/inteligencia" component={InteligenciaPage} />
+            <Route path="/addons/assinatura" component={AssinaturaPage} />
+            <Route path="/addons/pay" component={PayPage} />
+            <Route path="/addons/seguros" component={SegurosPage} />
+            <Route path="/addons/cash" component={CashPage} />
+            {/* Kombos */}
+            <Route path="/kombos" component={KombosPage} />
+            {/* Fallback */}
+            <Route path="/404" component={NotFound} />
+            <Route component={NotFound} />
+          </Switch>
+        </Layout>
+      </Route>
+    </Switch>
   );
 }
 
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

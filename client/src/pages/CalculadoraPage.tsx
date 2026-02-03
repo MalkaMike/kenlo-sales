@@ -439,7 +439,7 @@ export default function Calculadora() {
 
   return (
     <>
-      <div className="min-h-screen bg-background py-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
         <div className="container max-w-6xl">
           {/* Header */}
           <div className="text-center mb-6">
