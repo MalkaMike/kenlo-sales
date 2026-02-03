@@ -843,34 +843,6 @@ export default function CalculadoraPage() {
                 </div>
               </div>
 
-              {/* Horizontal Sticky Summary Bar - Kenlo Brand Colors */}
-              <div className="sticky top-16 z-20 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg mb-6">
-                <div className="container py-4">
-                  <div className="flex flex-wrap items-center gap-3 text-sm">
-                    {/* Products Badge - Primary (Kenlo Red) */}
-                    <div className="bg-primary text-white px-5 py-2.5 rounded-full font-semibold shadow-md hover:shadow-lg transition-shadow">
-                      Produtos: {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
-                      {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
-                      {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
-                    </div>
-
-                    {/* IMOB Metrics Badge - Secondary */}
-                    {(product === "imob" || product === "both") && (
-                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
-                        IMOB: {metrics.imobUsers} usuários, {metrics.closingsPerMonth} fechamentos/mês
-                      </div>
-                    )}
-
-                    {/* LOC Metrics Badge - Secondary */}
-                    {(product === "loc" || product === "both") && (
-                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
-                        LOC: {metrics.contractsUnderManagement} contratos, {metrics.newContractsPerMonth} novos/mês
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
               {/* Results Section */}
               <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
@@ -1964,6 +1936,32 @@ export default function CalculadoraPage() {
                       })()}
                     </CardContent>
                   </Card>
+                </div>
+
+                {/* Footer Summary Bar - Kenlo Brand Colors */}
+                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg rounded-lg p-4 mt-6">
+                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                    {/* Products Badge - Primary (Kenlo Red) */}
+                    <div className="bg-primary text-white px-5 py-2.5 rounded-full font-semibold shadow-md">
+                      Produtos: {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                      {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                      {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
+                    </div>
+
+                    {/* IMOB Metrics Badge - Secondary */}
+                    {(product === "imob" || product === "both") && (
+                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
+                        IMOB: {metrics.imobUsers} usuários, {metrics.closingsPerMonth} fechamentos/mês
+                      </div>
+                    )}
+
+                    {/* LOC Metrics Badge - Secondary */}
+                    {(product === "loc" || product === "both") && (
+                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
+                        LOC: {metrics.contractsUnderManagement} contratos, {metrics.newContractsPerMonth} novos/mês
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Actions */}

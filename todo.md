@@ -27,3 +27,7 @@
 - [x] Otimizar seção "The Kenlo Effect" para mobile
 - [x] Ajustar botões de ação para tamanho adequado em touch
 - [x] Testar em viewport mobile (375px, 390px, 428px)
+
+## UI Improvements
+
+- [x] Mover barra de resumo de produtos (sticky bar) do topo para o rodapé da calculadora
