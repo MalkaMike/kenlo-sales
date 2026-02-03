@@ -1296,7 +1296,7 @@ export default function CalculadoraPage() {
                       
                       {/* Overlay message when no add-ons are selected */}
                       {Object.values(addons).every(enabled => !enabled) && (
-                        <div className="absolute top-0 right-0 w-[40%] bottom-0 flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300 z-10">
+                        <div className="absolute top-0 right-0 w-[35%] bottom-0 flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300 z-10">
                           <div className="text-center px-6">
                             <p className="text-gray-600 text-lg font-medium italic">
                               Adicione mais add-ons

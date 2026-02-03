@@ -89,6 +89,7 @@
 - [x] REAL REAL FIX: Manter 5 colunas sempre, mas quando não há Kombo, as últimas 2 colunas mostram os mesmos preços "Sem Kombo" (visíveis) e a box overlay cobre essas 2 últimas colunas com a mensagem
 - [x] FINAL FIX: Box overlay deve cobrir TODA a área das últimas 2 colunas desde o topo (top-0) incluindo headers "Sem Kombo", "Mensal" e "Anual" até a última linha
 - [x] REAL FINAL FIX: Ajustar condição da box overlay de `activeKombo === 'none'` para `Object.values(addons).every(enabled => !enabled)` porque Core Gestão (IMOB+LOC sem add-ons) é um Kombo válido
+- [x] CRITICAL FIX: Box overlay está cobrindo a 2ª coluna "Sem Kombo" (frequência escolhida). Deve cobrir APENAS as últimas 2 colunas (Kombo Ativado), deixando AMBAS colunas Sem Kombo visíveis (Mensal + Frequência) - Ajustado de w-[40%] para w-[35%]
 
 ## Text Corrections
 
