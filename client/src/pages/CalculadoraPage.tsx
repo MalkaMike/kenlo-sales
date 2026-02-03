@@ -953,7 +953,14 @@ export default function CalculadoraPage() {
                           <TableHead className="w-[30%] font-bold text-gray-900"></TableHead>
                           <TableHead colSpan={2} className="text-center border-r-2 bg-gray-50">Sem Kombo</TableHead>
                           <TableHead colSpan={2} className={`text-center ${activeKombo !== 'none' ? 'bg-green-50' : 'bg-gray-100'}`}>
-                            {activeKombo !== 'none' ? 'Kombo Ativado' : 'Sem Kombo'}
+                            <div className="flex items-center justify-center gap-2">
+                              <span>{activeKombo !== 'none' ? 'Kombo Ativado' : 'Sem Kombo'}</span>
+                              {activeKombo !== 'none' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-600 text-white">
+                                  -25%
+                                </span>
+                              )}
+                            </div>
                           </TableHead>
                         </TableRow>
                         <TableRow>

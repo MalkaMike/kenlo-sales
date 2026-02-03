@@ -94,3 +94,7 @@
 ## Text Corrections
 
 - [x] Remover "- Cobrança" do título "Kenlo Pay - Cobrança", deixando apenas "Kenlo Pay"
+
+## Dynamic Savings Badge
+
+- [x] Adicionar badge dinâmico de economia no header "Kombo Ativado" mostrando porcentagem de desconto quando há Kombo ativo
