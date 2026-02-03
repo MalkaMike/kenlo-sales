@@ -1,895 +1,1891 @@
-import { useState, useMemo } from "react";
+/**
+ * Kenlo Intelligent Pricing Calculator - Single Page Version
+ * Streamlined tool for sales team with smart filters and dynamic questions
+ */
+
+import { useState, useEffect } from "react";
+import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { 
-  Calculator, 
-  Building2, 
-  Home, 
-  Users, 
-  Brain, 
-  FileSignature, 
-  CreditCard, 
-  Shield, 
-  Banknote,
-  Download,
-  Share2,
-  TrendingUp,
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Check,
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  MessageSquare,
-  Headphones,
-  UserCog
+  X,
+  Calculator,
+  Download,
+
+  TrendingUp,
+  Key,
+  Zap,
 } from "lucide-react";
 
-// Pricing data - prices ending in 7 as per requirements
-const imobPlans = {
-  prime: { name: "Prime", price: 247, users: 2, implantacao: 1497 },
-  k: { name: "K", price: 497, users: 5, implantacao: 1497 },
-  k2: { name: "K2", price: 1247, users: 12, implantacao: 2997 },
+// Types
+type ProductSelection = "imob" | "loc" | "both";
+type PlanTier = "prime" | "k" | "k2";
+type PaymentFrequency = "semestral" | "annual" | "biennial";
+
+/**
+ * CRITICAL: All base prices are ANNUAL prices (when paying annually)
+ * These are the "Licença mensal (plano anual)" prices from the pricing document
+ */
+const PLAN_ANNUAL_PRICES = {
+  prime: 247,  // R$247/month when paying annually
+  k: 497,      // R$497/month when paying annually
+  k2: 997,     // R$997/month when paying annually
 };
 
-const locacaoPlans = {
-  prime: { name: "Prime", price: 247, contracts: 100, implantacao: 1497 },
-  k: { name: "K", price: 497, contracts: 250, implantacao: 1497 },
-  k2: { name: "K2", price: 1247, contracts: 500, implantacao: 2997 },
+const ADDON_ANNUAL_PRICES = {
+  leads: 497,        // R$497/month when paying annually
+  inteligencia: 297, // R$297/month when paying annually (BI/Analytics) - CORRECTED from 247
+  assinatura: 37,    // R$37/month when paying annually (Digital signature) - CORRECTED from 197
+  pay: 0,            // Pós-pago (postpaid), usage-based - shown separately
+  seguros: 0,        // Pós-pago (postpaid), percentage of premium - shown separately
+  cash: 0,           // FREE add-on - no cost
 };
 
-const addonsData = {
-  leads: { 
-    name: "Leads", 
-    price: 627, 
-    perUnit: 2.50, 
-    included: 150, 
-    unit: "mensagem", 
-    forImob: true, 
-    forLoc: false,
-    icon: Users,
-    description: "Gestão automatizada de leads"
-  },
-  inteligencia: { 
-    name: "Inteligência", 
-    price: 377, 
-    perUnit: 0, 
-    included: 0, 
-    unit: "", 
-    forImob: true, 
-    forLoc: true,
-    icon: Brain,
-    description: "BI de KPIs de performance"
-  },
-  assinatura: { 
-    name: "Assinatura", 
-    price: 47, 
-    perUnit: 4.90, 
-    included: 20, 
-    unit: "assinatura", 
-    forImob: true, 
-    forLoc: true,
-    icon: FileSignature,
-    description: "Assinatura digital embutida"
-  },
-  pay: { 
-    name: "Pay", 
-    price: 0, 
-    perUnit: 3.00, 
-    included: 0, 
-    unit: "boleto", 
-    forImob: false, 
-    forLoc: true,
-    icon: CreditCard,
-    description: "Boleto e Split digital"
-  },
-  seguros: { 
-    name: "Seguros", 
-    price: 0, 
-    perUnit: 0, 
-    revenue: 10, 
-    unit: "contrato", 
-    forImob: false, 
-    forLoc: true,
-    icon: Shield,
-    description: "Ganhe R$10/contrato/mês"
-  },
-  cash: { 
-    name: "Cash", 
-    price: 0, 
-    perUnit: 0, 
-    included: 0, 
-    unit: "", 
-    forImob: false, 
-    forLoc: true,
-    icon: Banknote,
-    description: "Financie proprietários até 24 meses"
-  },
+// Product-specific implementation costs (one-time fees)
+const IMPLEMENTATION_COSTS = {
+  imob: 1497,
+  loc: 1497,
+  leads: 497,
+  inteligencia: 497,  // BI/Analytics add-on
+  assinatura: 0,      // Digital signature add-on - CORRECTED from 297 to 0 (sem custo)
+  cash: 0,            // Cash management add-on - FREE (no implementation cost)
+  combo: 1497,        // ANY combo has fixed implementation cost
 };
 
-const paymentPlans = {
-  mensal: { name: "Mensal", multiplier: 1.20, discount: 0 },
-  semestral: { name: "Semestral", multiplier: 1.10, discount: 0.10 },
-  anual: { name: "Anual", multiplier: 1.00, discount: 0.20 },
-  bienal: { name: "Bienal", multiplier: 0.90, discount: 0.25 },
+/**
+ * Payment frequency multipliers
+ * Base price is ANNUAL. Other frequencies are calculated from annual:
+ * - Monthly (mês a mês): Annual ÷ (1 - 20%) = Annual ÷ 0.80 = Annual × 1.25 (25% MORE expensive)
+ * - Semestral: Annual ÷ (1 - 10%) = Annual ÷ 0.90 ≈ Annual × 1.111 (11% more expensive)
+ * - Annual: Base price (reference, no change)
+ * - Biennial: Annual × (1 - 10%) = Annual × 0.90 (10% discount)
+ */
+const PAYMENT_FREQUENCY_MULTIPLIERS = {
+  monthly: 1.25,      // 25% MORE expensive than annual
+  semestral: 1.1111,  // ~11% more expensive than annual (1 ÷ 0.90)
+  annual: 1.0,        // Base price (reference)
+  biennial: 0.90,     // 10% discount from annual
 };
 
-type ProductType = "imob" | "locacao" | "both";
-type ImobPlan = "prime" | "k" | "k2";
-type LocacaoPlan = "prime" | "k" | "k2";
-type PaymentPlan = "mensal" | "semestral" | "anual" | "bienal";
+/**
+ * Round price to nearest value ending in 7
+ * Example: 495 → 497, 502 → 507, 490 → 487
+ */
+const roundToEndIn7 = (price: number): number => {
+  const lastDigit = price % 10;
+  if (lastDigit <= 7) {
+    return price - lastDigit + 7;
+  } else {
+    return price - lastDigit + 17;
+  }
+};
 
-export default function CalculadoraPage() {
-  // Product selection
-  const [productType, setProductType] = useState<ProductType>("both");
-  const [imobPlan, setImobPlan] = useState<ImobPlan>("k");
-  const [locacaoPlan, setLocacaoPlan] = useState<LocacaoPlan>("k");
+export default function Calculadora() {
+  // Step 1: Product selection
+  const [product, setProduct] = useState<ProductSelection>("both");
   
-  // Business info - IMOB
-  const [numUsers, setNumUsers] = useState(5);
-  const [monthlyClosings, setMonthlyClosings] = useState(3);
-  const [monthlyLeads, setMonthlyLeads] = useState(100);
-  const [wantsWhatsApp, setWantsWhatsApp] = useState(true);
-  const [wantsSuporteVip, setWantsSuporteVip] = useState(false);
-  const [wantsCsDedicado, setWantsCsDedicado] = useState(false);
-  
-  // Business info - Locação
-  const [numContracts, setNumContracts] = useState(250);
-  const [newContractsPerMonth, setNewContractsPerMonth] = useState(10);
-  const [wantsSuporteVipLoc, setWantsSuporteVipLoc] = useState(false);
-  const [wantsCsDedicadoLoc, setWantsCsDedicadoLoc] = useState(false);
-  
-  // Pay charges
-  const [chargeBoletoInquilino, setChargeBoletoInquilino] = useState(5);
-  const [chargeSplitProprietario, setChargeSplitProprietario] = useState(5);
-  
-  // Add-ons
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({
+  // Step 2: Add-ons (all 6 add-ons) - All enabled by default
+  const [addons, setAddons] = useState({
     leads: true,
-    inteligencia: true,
-    assinatura: true,
+    inteligencia: true, // BI/Analytics
+    assinatura: true, // Digital signature
     pay: true,
     seguros: true,
-    cash: false,
+    cash: true,
   });
-  
-  // Payment
-  const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("anual");
-  const [isKombo, setIsKombo] = useState(true);
-  
-  // UI state
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Calculate Kombo discount - 25% for combos as per requirements
-  const komboDiscount = useMemo(() => {
-    if (!isKombo) return 0;
-    const activeAddons = Object.values(selectedAddons).filter(Boolean).length;
-    if (productType === "both" && activeAddons >= 1) return 0.25;
-    if (activeAddons >= 3) return 0.20;
-    if (activeAddons >= 2) return 0.15;
-    if (activeAddons >= 1) return 0.10;
-    return 0;
-  }, [productType, selectedAddons, isKombo]);
+  // Step 3: Metrics (conditional based on product) - Updated defaults per user request
+  const [metrics, setMetrics] = useState({
+    // Imob metrics - defaults: 18 users, 300 leads, 3 closings, WhatsApp enabled
+    imobUsers: 18,
+    closingsPerMonth: 3,
+    leadsPerMonth: 300,  // Number of leads received per month for WhatsApp calculation
+    usesExternalAI: false,
+    wantsWhatsApp: true,  // WhatsApp enabled by default
+    imobVipSupport: false,  // VIP Support for IMOB
+    imobDedicatedCS: false, // Dedicated CS for IMOB
+    
+    // Loc metrics - defaults: 550 contracts, 15 new contracts
+    contractsUnderManagement: 550,
+    newContractsPerMonth: 15,
+    locVipSupport: false,   // VIP Support for LOC
+    locDedicatedCS: false,  // Dedicated CS for LOC
+    
+    // Kenlo Pay billing - defaults: R$5 boleto, R$5 split, both enabled
+    chargesBoletoToTenant: true,
+    boletoChargeAmount: 5,  // Amount charged to tenant for boleto
+    chargesSplitToOwner: true,
+    splitChargeAmount: 5,   // Amount charged to owner for split
+  });
 
-  // Calculate prices
-  const calculations = useMemo(() => {
-    const hasImob = productType === "imob" || productType === "both";
-    const hasLoc = productType === "locacao" || productType === "both";
-    
-    // Base products
-    let productTotal = 0;
-    let implantacaoTotal = 0;
-    
-    if (hasImob) {
-      const plan = imobPlans[imobPlan];
-      productTotal += plan.price;
-      implantacaoTotal += plan.implantacao;
-    }
-    
-    if (hasLoc) {
-      const plan = locacaoPlans[locacaoPlan];
-      productTotal += plan.price;
-      implantacaoTotal += plan.implantacao;
-    }
-    
-    // Add-ons
-    let addonsTotal = 0;
-    const addonDetails: { name: string; price: number }[] = [];
-    
-    Object.entries(selectedAddons).forEach(([key, isSelected]) => {
-      if (!isSelected) return;
-      const addon = addonsData[key as keyof typeof addonsData];
+  // Step 4: Payment frequency (default: annual)
+  const [frequency, setFrequency] = useState<PaymentFrequency>("annual");
+
+  // Recommended plans
+  const [imobPlan, setImobPlan] = useState<PlanTier>("k");
+  const [locPlan, setLocPlan] = useState<PlanTier>("k");
+
+  // Auto-recommend plans based on metrics
+  // VIP Support requires minimum K plan, VIP Support + Dedicated CS requires minimum K2 plan
+  useEffect(() => {
+    if (product === "imob" || product === "both") {
+      let recommendedPlan: PlanTier = "prime";
       
-      // Check if addon is applicable
-      const isApplicable = 
-        (addon.forImob && hasImob) ||
-        (addon.forLoc && hasLoc);
-      
-      if (isApplicable && addon.price > 0) {
-        addonsTotal += addon.price;
-        addonDetails.push({ name: addon.name, price: addon.price });
+      // Base recommendation from volume
+      if (metrics.imobUsers <= 3 && metrics.closingsPerMonth <= 10) {
+        recommendedPlan = "prime";
+      } else if (metrics.imobUsers <= 10 && metrics.closingsPerMonth <= 30) {
+        recommendedPlan = "k";
+      } else {
+        recommendedPlan = "k2";
       }
-    });
-    
-    // Extras (Suporte VIP, CS Dedicado)
-    let extrasTotal = 0;
-    if (hasImob) {
-      if (wantsSuporteVip) extrasTotal += 197;
-      if (wantsCsDedicado) extrasTotal += 497;
+      
+      // Note: VIP Support and CS Dedicado are now optional paid services
+      // Prime: Both are paid @ R$99/mês each
+      // K: VIP Support is free, CS Dedicado is paid @ R$99/mês
+      // K2: Both are free (included)
+      // No longer force plan upgrade - user can pay for services on lower plans
+      
+      setImobPlan(recommendedPlan);
     }
-    if (hasLoc) {
-      if (wantsSuporteVipLoc) extrasTotal += 197;
-      if (wantsCsDedicadoLoc) extrasTotal += 497;
-    }
-    
-    // Subtotal before discounts
-    const subtotal = productTotal + addonsTotal + extrasTotal;
-    
-    // Apply Kombo discount
-    const komboDiscountAmount = subtotal * komboDiscount;
-    const afterKombo = subtotal - komboDiscountAmount;
-    
-    // Apply payment plan
-    const paymentMultiplier = paymentPlans[paymentPlan].multiplier;
-    const monthlyTotal = afterKombo * paymentMultiplier;
-    
-    // Implantação - R$1497 for any combo as per requirements
-    const implantacaoFinal = isKombo ? 1497 : implantacaoTotal;
-    
-    // Variable costs (pós-pago)
-    let variableCosts = 0;
-    
-    // Extra users (R$47/user)
-    if (hasImob) {
-      const includedUsers = imobPlans[imobPlan].users;
-      const extraUsers = Math.max(0, numUsers - includedUsers);
-      variableCosts += extraUsers * 47;
-    }
-    
-    // Extra contracts (R$3/contract)
-    if (hasLoc) {
-      const includedContracts = locacaoPlans[locacaoPlan].contracts;
-      const extraContracts = Math.max(0, numContracts - includedContracts);
-      variableCosts += extraContracts * 3;
-    }
-    
-    // WhatsApp messages (Leads add-on)
-    if (selectedAddons.leads && hasImob) {
-      const extraMessages = Math.max(0, monthlyLeads - 150);
-      variableCosts += extraMessages * 2.50;
-    }
-    
-    // Pay costs (R$3/boleto + R$3/split)
-    if (selectedAddons.pay && hasLoc) {
-      variableCosts += numContracts * 3; // Boletos
-      variableCosts += numContracts * 3; // Splits
-    }
-    
-    // Revenue from Pay and Seguros
-    let revenue = 0;
-    if (selectedAddons.pay && hasLoc) {
-      revenue += numContracts * chargeBoletoInquilino; // Cobrar do inquilino
-      revenue += numContracts * chargeSplitProprietario; // Cobrar do proprietário
-    }
-    if (selectedAddons.seguros && hasLoc) {
-      revenue += numContracts * 10; // R$10 por contrato
-    }
-    
-    // Net result
-    const totalInvestment = monthlyTotal + variableCosts;
-    const netMonthly = revenue - totalInvestment;
-    
-    return {
-      productTotal,
-      addonsTotal,
-      extrasTotal,
-      addonDetails,
-      subtotal,
-      komboDiscountAmount,
-      afterKombo,
-      monthlyTotal,
-      implantacaoTotal,
-      implantacaoFinal,
-      variableCosts,
-      revenue,
-      totalInvestment,
-      netMonthly,
-      annualTotal: (monthlyTotal * 12) + implantacaoFinal,
-      hasImob,
-      hasLoc,
-    };
-  }, [productType, imobPlan, locacaoPlan, selectedAddons, paymentPlan, isKombo, komboDiscount, 
-      numUsers, numContracts, monthlyLeads, wantsSuporteVip, wantsCsDedicado, 
-      wantsSuporteVipLoc, wantsCsDedicadoLoc, chargeBoletoInquilino, chargeSplitProprietario]);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+    if (product === "loc" || product === "both") {
+      let recommendedPlan: PlanTier = "prime";
+      
+      // Base recommendation from volume
+      if (metrics.contractsUnderManagement <= 100) {
+        recommendedPlan = "prime";
+      } else if (metrics.contractsUnderManagement <= 500) {
+        recommendedPlan = "k";
+      } else {
+        recommendedPlan = "k2";
+      }
+      
+      // Note: VIP Support and CS Dedicado are now optional paid services
+      // Prime: Both are paid @ R$99/mês each
+      // K: VIP Support is free, CS Dedicado is paid @ R$99/mês
+      // K2: Both are free (included)
+      // No longer force plan upgrade - user can pay for services on lower plans
+      
+      setLocPlan(recommendedPlan);
+    }
+  }, [metrics, product]);
+
+  // Check if add-on is available based on product selection
+  const isAddonAvailable = (addon: keyof typeof addons) => {
+    if (addon === "leads") return product === "imob" || product === "both";
+    if (addon === "inteligencia") return true; // Available for both
+    if (addon === "assinatura") return true; // Available for both
+    if (addon === "pay") return product === "loc" || product === "both";
+    if (addon === "seguros") return product === "loc" || product === "both";
+    if (addon === "cash") return product === "loc" || product === "both";
+    return false;
+  };
+
+  /**
+   * Calculate monthly reference price (month-to-month payment)
+   * Monthly is 25% MORE expensive than annual: Annual × 1.25
+   * This is shown in the "Mensal" column as the most expensive option
+   */
+  const calculateMonthlyReference = (annualPrice: number): number => {
+    const monthlyPrice = annualPrice * PAYMENT_FREQUENCY_MULTIPLIERS.monthly;
+    return roundToEndIn7(Math.round(monthlyPrice));
+  };
+
+  /**
+   * Calculate price based on payment frequency
+   * @param annualPrice - The base annual price (when paying annually)
+   * @param freq - Payment frequency (semestral, annual, biennial)
+   * @returns Monthly equivalent price for the selected frequency
+   */
+  const calculatePrice = (annualPrice: number, freq: PaymentFrequency): number => {
+    const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[freq];
+    const price = annualPrice * multiplier;
+    return roundToEndIn7(Math.round(price));
+  };
+
+  // Get line items for pricing table
+  const getLineItems = () => {
+    const kombo = detectKombo();
+    const komboDiscount = kombo ? (1 - kombo.discount) : 1;
+    const items: Array<{ 
+      name: string; 
+      monthlyRefSemKombo: number; 
+      monthlyRefComKombo: number;
+      priceSemKombo: number;
+      priceComKombo: number;
+      implantation?: number 
+    }> = [];
+
+    if (product === "imob" || product === "both") {
+      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[imobPlan]);
+      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
+      items.push({
+        name: `Imob - ${imobPlan.toUpperCase()}`,
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.imob,
+      });
+    }
+
+    if (product === "loc" || product === "both") {
+      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[locPlan]);
+      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
+      items.push({
+        name: `Loc - ${locPlan.toUpperCase()}`,
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.loc,
+      });
+    }
+
+    // Add-ons
+    if (addons.leads && isAddonAvailable("leads")) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.leads);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.leads, frequency);
+      items.push({
+        name: "Leads",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.leads,
+      });
+    }
+
+    if (addons.inteligencia) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.inteligencia);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
+      items.push({
+        name: "Inteligência",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.inteligencia,
+      });
+    }
+
+    if (addons.assinatura) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.assinatura);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
+      items.push({
+        name: "Assinatura",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.assinatura,
+      });
+    }
+
+    // Pay and Seguros are NOT included in pré-pago line items
+    // Pay is shown in Section 2 (Pós-pago)
+    // Seguros is shown in Section 3 (Receitas Potenciais)
+
+    // Cash is FREE - not included in pricing table
+
+    return items;
+  };
+
+  // Detect which Kombo is active and return discount percentage
+  const detectKombo = (): { type: string; discount: number; name: string } | null => {
+    const hasImob = product === "imob" || product === "both";
+    const hasLoc = product === "loc" || product === "both";
+    const hasLeads = addons.leads;
+    const hasInteligencia = addons.inteligencia;
+    const hasAssinatura = addons.assinatura;
+    
+    // Combo COMPLETO: Imob + Loc + All Add-ons (Leads, Inteligência, Assinatura)
+    if (hasImob && hasLoc && hasLeads && hasInteligencia && hasAssinatura) {
+      return { type: "completo", discount: 0.20, name: "Combo COMPLETO" };
+    }
+    
+    // Combo IMOB Full: Imob + Leads + Inteligência + Assinatura
+    if (hasImob && !hasLoc && hasLeads && hasInteligencia && hasAssinatura) {
+      return { type: "imob_full", discount: 0.15, name: "Combo IMOB (Completo)" };
+    }
+    
+    // Combo IMOB: Imob + Leads + Assinatura
+    if (hasImob && !hasLoc && hasLeads && hasAssinatura) {
+      return { type: "imob", discount: 0.10, name: "Combo IMOB" };
+    }
+    
+    // Combo LOCAÇÃO: Loc + Inteligência + Assinatura
+    if (hasLoc && !hasImob && hasInteligencia && hasAssinatura) {
+      return { type: "locacao", discount: 0.10, name: "Combo LOCAÇÃO" };
+    }
+    
+    // Combo IMOB + LOCAÇÃO (sem add-ons): Only products, no add-ons
+    if (hasImob && hasLoc && !hasLeads && !hasInteligencia && !hasAssinatura) {
+      return { type: "imob_loc", discount: 0, name: "Combo IMOB + LOCAÇÃO" };
+    }
+    
+    return null;
+  };
+
+  // Calculate total implementation cost
+  const calculateTotalImplementation = (withKombo: boolean = false) => {
+    const kombo = detectKombo();
+    
+    // If any Kombo is active, implementation is fixed R$1.497
+    if (withKombo && kombo) {
+      return 1497;
+    }
+    
+    // Without Kombo, sum individual implementation costs
+    const items = getLineItems();
+    return items.reduce((sum, item) => sum + (item.implantation || 0), 0);
+  };
+
+  // Calculate kombo discount on monthly recurring
+  const calculateKomboDiscount = () => {
+    const kombo = detectKombo();
+    if (!kombo) return 0;
+    
+    // Apply discount percentage to ALL products and add-ons
+    const lineItems = getLineItems();
+    const subtotal = lineItems.reduce((sum, item) => sum + item.priceSemKombo, 0);
+    return Math.round(subtotal * kombo.discount);
+  };
+
+  /**
+   * Calculate monthly reference total (no frequency discount)
+   * This is the sum of all monthly reference prices
+   */
+  const calculateMonthlyReferenceTotal = (withKombo: boolean = false): number => {
+    const lineItems = getLineItems();
+    return lineItems.reduce((sum, item) => 
+      sum + (withKombo ? item.monthlyRefComKombo : item.monthlyRefSemKombo), 0
+    );
+  };
+
+  /**
+   * Calculate monthly recurring total with frequency discount applied
+   * This is the actual monthly cost based on selected payment frequency
+   */
+  const calculateMonthlyRecurring = (withKombo: boolean = false): number => {
+    const lineItems = getLineItems();
+    const subtotal = lineItems.reduce((sum, item) => sum + (withKombo ? item.priceComKombo : item.priceSemKombo), 0);
+    return subtotal;
+  };
+
+  // Calculate first year total (recurring * 12 + implementation)
+  const calculateFirstYearTotal = (withKombo: boolean = false) => {
+    const monthlyRecurring = calculateMonthlyRecurring(withKombo);
+    const implementation = calculateTotalImplementation(withKombo);
+    return (monthlyRecurring * 12) + implementation;
+  };
+
+  // Calculate post-pago for Pay
+  const calculatePayPostPago = () => {
+    if (!addons.pay || !(product === "loc" || product === "both")) return 0;
+    const avgRent = 2000;
+    const monthlyVolume = metrics.contractsUnderManagement * avgRent;
+    return Math.round(monthlyVolume * 0.015); // 1.5%
+  };
+
+  // Helper: Highlight plan names (K, K2, Prima) in red
+  const highlightPlanName = (name: string) => {
+    // Match pattern like "Imob - K" or "Loc - PRIME"
+    const parts = name.split(' - ');
+    if (parts.length === 2) {
+      return (
+        <>
+          {parts[0]} - <span className="text-primary font-bold">{parts[1]}</span>
+        </>
+      );
+    }
+    return name;
+  };
+
+  const formatCurrency = (value: number, decimals: number = 0) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
     }).format(value);
   };
 
-  const toggleAddon = (key: string) => {
-    setSelectedAddons(prev => ({ ...prev, [key]: !prev[key] }));
+  const frequencyLabels = {
+    semestral: "Semestral",
+    annual: "Anual",
+    biennial: "Bienal",
+  };
+
+  const frequencyBadges = {
+    semestral: "-15%",
+    annual: "-20%",
+    biennial: "-25%",
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <section className="py-6 border-b border-border/40 bg-card/30">
-        <div className="container">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-primary/10">
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
+        <div className="container max-w-6xl">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mb-2">
               <Calculator className="w-6 h-6 text-primary" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">Calculadora Inteligente</h1>
-              <p className="text-sm text-muted-foreground">
-                Configure a solução ideal e veja o investimento em tempo real
-              </p>
-            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Calculadora Inteligente Kenlo
+            </h1>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              Configure a solução ideal para sua imobiliária e veja o investimento em tempo real
+            </p>
           </div>
-        </div>
-      </section>
 
-      <div className="container py-6 flex-1">
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Configuration Panel */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Step 1: Product Selection */}
-            <Card className="kenlo-card">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">1</span>
-                  Escolha o Produto
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={() => setProductType("imob")}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      productType === "imob" 
-                        ? "border-primary bg-primary/10" 
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <Building2 className={`w-8 h-8 mx-auto mb-2 ${productType === "imob" ? "text-primary" : "text-muted-foreground"}`} />
-                    <p className="font-semibold text-sm">Imob só</p>
-                    <p className="text-xs text-muted-foreground mt-1">CRM + Site</p>
-                  </button>
-                  <button
-                    onClick={() => setProductType("locacao")}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      productType === "locacao" 
-                        ? "border-secondary bg-secondary/10" 
-                        : "border-border hover:border-secondary/50"
-                    }`}
-                  >
-                    <Home className={`w-8 h-8 mx-auto mb-2 ${productType === "locacao" ? "text-secondary" : "text-muted-foreground"}`} />
-                    <p className="font-semibold text-sm">Loc só</p>
-                    <p className="text-xs text-muted-foreground mt-1">Gestão de locações</p>
-                  </button>
-                  <button
-                    onClick={() => setProductType("both")}
-                    className={`p-4 rounded-xl border-2 transition-all relative ${
-                      productType === "both" 
-                        ? "border-kenlo-yellow bg-kenlo-yellow/10" 
-                        : "border-border hover:border-kenlo-yellow/50"
-                    }`}
-                  >
-                    {productType === "both" && (
-                      <Badge className="absolute -top-2 -right-2 bg-kenlo-yellow text-black text-[10px]">
-                        -25%
-                      </Badge>
-                    )}
-                    <div className="flex justify-center gap-1 mb-2">
-                      <Building2 className={`w-6 h-6 ${productType === "both" ? "text-primary" : "text-muted-foreground"}`} />
-                      <span className={`${productType === "both" ? "text-kenlo-yellow" : "text-muted-foreground"}`}>+</span>
-                      <Home className={`w-6 h-6 ${productType === "both" ? "text-secondary" : "text-muted-foreground"}`} />
-                    </div>
-                    <p className="font-semibold text-sm">Imob + Loc</p>
-                    <p className="text-xs text-muted-foreground mt-1">Solução completa</p>
-                  </button>
-                </div>
-                
-                {/* Plan Selection */}
-                <div className="mt-6 grid md:grid-cols-2 gap-6">
-                  {(productType === "imob" || productType === "both") && (
-                    <div>
-                      <Label className="mb-3 block text-sm font-medium">Plano Imob</Label>
-                      <div className="flex gap-2">
-                        {(["prime", "k", "k2"] as ImobPlan[]).map((plan) => (
-                          <button
-                            key={plan}
-                            onClick={() => setImobPlan(plan)}
-                            className={`flex-1 py-2.5 px-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                              imobPlan === plan
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-border hover:border-primary/50"
-                            }`}
-                          >
-                            <div>{imobPlans[plan].name}</div>
-                            <div className="text-[10px] opacity-80">{imobPlans[plan].users} usuários</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {(productType === "locacao" || productType === "both") && (
-                    <div>
-                      <Label className="mb-3 block text-sm font-medium">Plano Locação</Label>
-                      <div className="flex gap-2">
-                        {(["prime", "k", "k2"] as LocacaoPlan[]).map((plan) => (
-                          <button
-                            key={plan}
-                            onClick={() => setLocacaoPlan(plan)}
-                            className={`flex-1 py-2.5 px-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                              locacaoPlan === plan
-                                ? "border-secondary bg-secondary text-secondary-foreground"
-                                : "border-border hover:border-secondary/50"
-                            }`}
-                          >
-                            <div>{locacaoPlans[plan].name}</div>
-                            <div className="text-[10px] opacity-80">{locacaoPlans[plan].contracts} contratos</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Step 2: Add-ons */}
-            <Card className="kenlo-card">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">2</span>
-                  Add-ons Opcionais
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  Selecione os add-ons para potencializar sua operação
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {Object.entries(addonsData).map(([key, addon]) => {
-                    const isApplicable = 
-                      (addon.forImob && (productType === "imob" || productType === "both")) ||
-                      (addon.forLoc && (productType === "locacao" || productType === "both"));
-                    
-                    if (!isApplicable) return null;
-                    
-                    const Icon = addon.icon;
-                    
-                    return (
-                      <div
-                        key={key}
-                        onClick={() => toggleAddon(key)}
-                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          selectedAddons[key]
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/30"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className={`p-2 rounded-lg ${selectedAddons[key] ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <Switch checked={selectedAddons[key]} />
-                        </div>
-                        <p className="font-semibold text-sm">{addon.name}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{addon.description}</p>
-                        <p className="text-xs font-medium mt-2 text-primary">
-                          {addon.price > 0 ? `R$ ${addon.price}/mês` : "Sem mensalidade"}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Step 3: Business Info */}
-            <Card className="kenlo-card">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">3</span>
-                  Informações do Negócio
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* IMOB Info */}
-                {(productType === "imob" || productType === "both") && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-                      <Building2 className="w-4 h-4" />
-                      Kenlo IMOB
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <Label className="text-sm">Número de usuários</Label>
-                        <span className="text-sm font-medium">{numUsers}</span>
-                      </div>
-                      <Slider
-                        value={[numUsers]}
-                        onValueChange={([v]) => setNumUsers(v)}
-                        min={1}
-                        max={50}
-                        step={1}
-                        className="w-full"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Incluídos no plano: {imobPlans[imobPlan].users} | Adicional: R$ 47/usuário
-                      </p>
-                    </div>
-                    
-                    {selectedAddons.leads && (
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <Label className="text-sm">Leads recebidos/mês</Label>
-                          <span className="text-sm font-medium">{monthlyLeads}</span>
-                        </div>
-                        <Slider
-                          value={[monthlyLeads]}
-                          onValueChange={([v]) => setMonthlyLeads(v)}
-                          min={50}
-                          max={1000}
-                          step={50}
-                          className="w-full"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Incluídas: 150 mensagens | Adicional: R$ 2,50/mensagem
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Locação Info */}
-                {(productType === "locacao" || productType === "both") && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-secondary">
-                      <Home className="w-4 h-4" />
-                      Kenlo Locação
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <Label className="text-sm">Contratos sob gestão</Label>
-                        <span className="text-sm font-medium">{numContracts}</span>
-                      </div>
-                      <Slider
-                        value={[numContracts]}
-                        onValueChange={([v]) => setNumContracts(v)}
-                        min={50}
-                        max={2000}
-                        step={50}
-                        className="w-full"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Incluídos no plano: {locacaoPlans[locacaoPlan].contracts} | Adicional: R$ 3/contrato
-                      </p>
-                    </div>
-                    
-                    {selectedAddons.pay && (
-                      <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Cobra do inquilino (R$)</Label>
-                          <Input
-                            type="number"
-                            value={chargeBoletoInquilino}
-                            onChange={(e) => setChargeBoletoInquilino(Number(e.target.value))}
-                            className="mt-1 h-9"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Cobra do proprietário (R$)</Label>
-                          <Input
-                            type="number"
-                            value={chargeSplitProprietario}
-                            onChange={(e) => setChargeSplitProprietario(Number(e.target.value))}
-                            className="mt-1 h-9"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Advanced Options */}
-                <button
-                  onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  Opções avançadas
-                </button>
-                
-                {showAdvanced && (
-                  <div className="space-y-4 pt-4 border-t border-border">
-                    {(productType === "imob" || productType === "both") && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase">IMOB Extras</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Headphones className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">Suporte VIP</span>
-                            <span className="text-xs text-muted-foreground">+R$ 197/mês</span>
-                          </div>
-                          <Switch checked={wantsSuporteVip} onCheckedChange={setWantsSuporteVip} />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <UserCog className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">CS Dedicado</span>
-                            <span className="text-xs text-muted-foreground">+R$ 497/mês</span>
-                          </div>
-                          <Switch checked={wantsCsDedicado} onCheckedChange={setWantsCsDedicado} />
-                        </div>
-                      </div>
-                    )}
-                    
-                    {(productType === "locacao" || productType === "both") && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase">Locação Extras</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Headphones className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">Suporte VIP</span>
-                            <span className="text-xs text-muted-foreground">+R$ 197/mês</span>
-                          </div>
-                          <Switch checked={wantsSuporteVipLoc} onCheckedChange={setWantsSuporteVipLoc} />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <UserCog className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-sm">CS Dedicado</span>
-                            <span className="text-xs text-muted-foreground">+R$ 497/mês</span>
-                          </div>
-                          <Switch checked={wantsCsDedicadoLoc} onCheckedChange={setWantsCsDedicadoLoc} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Step 4: Payment Plan */}
-            <Card className="kenlo-card">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">4</span>
-                  Plano de Pagamento
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-6 p-4 bg-kenlo-yellow/10 rounded-xl border border-kenlo-yellow/30">
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-kenlo-yellow" />
-                    <div>
-                      <p className="font-semibold text-sm">Ativar Kombo</p>
-                      <p className="text-xs text-muted-foreground">Desconto em produtos + add-ons + implantação</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {isKombo && komboDiscount > 0 && (
-                      <Badge className="bg-kenlo-yellow text-black">
-                        -{Math.round(komboDiscount * 100)}%
-                      </Badge>
-                    )}
-                    <Switch checked={isKombo} onCheckedChange={setIsKombo} />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-4 gap-2">
-                  {(Object.entries(paymentPlans) as [PaymentPlan, typeof paymentPlans[PaymentPlan]][]).map(([key, plan]) => (
+          {/* Main Calculator Card */}
+          <Card className="shadow-xl">
+            <CardContent className="p-6">
+              {/* Step 1: Product Selection */}
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-gray-900 mb-3">
+                  1. Escolha o Produto
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl">
+                  {[
+                    { value: "imob", label: "Imob só", icon: TrendingUp, desc: "CRM + Site para vendas" },
+                    { value: "loc", label: "Loc só", icon: Key, desc: "Gestão de locações" },
+                    { value: "both", label: "Imob + Loc", icon: Zap, desc: "Solução completa" },
+                  ].map((opt) => (
                     <button
-                      key={key}
-                      onClick={() => setPaymentPlan(key)}
-                      className={`py-3 px-2 rounded-lg border-2 text-center transition-all ${
-                        paymentPlan === key
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border hover:border-primary/50"
+                      key={opt.value}
+                      onClick={() => setProduct(opt.value as ProductSelection)}
+                      className={`relative p-3 rounded-lg border-2 transition-all ${
+                        product === opt.value
+                          ? "border-primary bg-primary/5 shadow-md"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <p className="font-semibold text-sm">{plan.name}</p>
-                      {plan.discount > 0 && (
-                        <p className="text-[10px] opacity-80">-{Math.round(plan.discount * 100)}%</p>
-                      )}
-                      {plan.multiplier > 1 && (
-                        <p className="text-[10px] opacity-80">+{Math.round((plan.multiplier - 1) * 100)}%</p>
-                      )}
+                      <div className="flex items-center gap-2 mb-1">
+                        <opt.icon className={`w-5 h-5 ${product === opt.value ? "text-primary" : "text-gray-400"}`} />
+                        <div className="font-semibold text-sm">{opt.label}</div>
+                      </div>
+                      <div className="text-xs text-gray-500">{opt.desc}</div>
                     </button>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
 
-          {/* Results Panel */}
-          <div className="space-y-4">
-            <Card className="kenlo-card sticky top-20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Resumo do Investimento</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Products */}
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Produtos</p>
-                  {calculations.hasImob && (
-                    <div className="flex justify-between text-sm">
-                      <span>Imob {imobPlans[imobPlan].name}</span>
-                      <span>{formatCurrency(imobPlans[imobPlan].price)}</span>
-                    </div>
-                  )}
-                  {calculations.hasLoc && (
-                    <div className="flex justify-between text-sm">
-                      <span>Locação {locacaoPlans[locacaoPlan].name}</span>
-                      <span>{formatCurrency(locacaoPlans[locacaoPlan].price)}</span>
-                    </div>
-                  )}
+              {/* Step 2: Add-ons */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bold text-gray-900">
+                    2. Add-ons Opcionais
+                  </h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setAddons({
+                          leads: isAddonAvailable("leads"),
+                          inteligencia: true,
+                          assinatura: true,
+                          pay: isAddonAvailable("pay"),
+                          seguros: isAddonAvailable("seguros"),
+                          cash: isAddonAvailable("cash"),
+                        });
+                      }}
+                      className="px-3 py-1.5 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+                    >
+                      Selecionar Todos
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAddons({
+                          leads: false,
+                          inteligencia: false,
+                          assinatura: false,
+                          pay: false,
+                          seguros: false,
+                          cash: false,
+                        });
+                      }}
+                      className="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      Deselecionar Todos
+                    </button>
+                  </div>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {/* Row 1: Leads, Inteligência, Assinatura */}
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="leads" className="font-semibold text-sm">Leads</Label>
+                      <Switch
+                        id="leads"
+                        checked={addons.leads}
+                        onCheckedChange={(checked) => setAddons({ ...addons, leads: checked })}
+                        disabled={!isAddonAvailable("leads")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Gestão automatizada de leads</div>
+                  </div>
 
-                {/* Add-ons */}
-                {calculations.addonDetails.length > 0 && (
-                  <div className="space-y-2 pt-3 border-t border-border">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Add-ons</p>
-                    {calculations.addonDetails.map((addon) => (
-                      <div key={addon.name} className="flex justify-between text-sm">
-                        <span>{addon.name}</span>
-                        <span>{formatCurrency(addon.price)}</span>
+                  <div className="p-3 rounded-lg border">
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="inteligencia" className="font-semibold text-sm">Inteligência</Label>
+                      <Switch
+                        id="inteligencia"
+                        checked={addons.inteligencia}
+                        onCheckedChange={(checked) => setAddons({ ...addons, inteligencia: checked })}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">BI de KPIs de performance</div>
+                  </div>
+
+                  <div className="p-3 rounded-lg border">
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="assinatura" className="font-semibold text-sm">Assinatura</Label>
+                      <Switch
+                        id="assinatura"
+                        checked={addons.assinatura}
+                        onCheckedChange={(checked) => setAddons({ ...addons, assinatura: checked })}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Assinatura digital embutida na plataforma</div>
+                  </div>
+
+                  {/* Row 2: Pay, Seguros, Cash */}
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="pay" className="font-semibold text-sm">Pay</Label>
+                      <Switch
+                        id="pay"
+                        checked={addons.pay}
+                        onCheckedChange={(checked) => setAddons({ ...addons, pay: checked })}
+                        disabled={!isAddonAvailable("pay")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Boleto e Split digital embutido na plataforma</div>
+                  </div>
+
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="seguros" className="font-semibold text-sm">Seguros</Label>
+                      <Switch
+                        id="seguros"
+                        checked={addons.seguros}
+                        onCheckedChange={(checked) => setAddons({ ...addons, seguros: checked })}
+                        disabled={!isAddonAvailable("seguros")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês</div>
+                  </div>
+
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="cash" className="font-semibold text-sm">Cash</Label>
+                      <Switch
+                        id="cash"
+                        checked={addons.cash}
+                        onCheckedChange={(checked) => setAddons({ ...addons, cash: checked })}
+                        disabled={!isAddonAvailable("cash")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Financie seus proprietários até 24 meses</div>
+                  </div>
+                </div>
+              </div>
+
+                      {/* Step 3: Business Info */}
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-gray-900 mb-3">
+                  3. Informações do Negócio
+                </h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* Imob Questions - Always visible */}
+                  <Card className={`bg-blue-50/30 transition-opacity ${
+                    product === "imob" || product === "both" ? "opacity-100" : "opacity-40"
+                  }`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4" />
+                        Kenlo IMOB
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
+                          <Input
+                            id="imobUsers"
+                            type="number"
+                            value={metrics.imobUsers}
+                            onChange={(e) => setMetrics({ ...metrics, imobUsers: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "imob" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="closings" className="text-sm">Fechamentos por mês</Label>
+                          <Input
+                            id="closings"
+                            type="number"
+                            value={metrics.closingsPerMonth}
+                            onChange={(e) => setMetrics({ ...metrics, closingsPerMonth: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "imob" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
+                          <Input
+                            id="leads"
+                            type="number"
+                            value={metrics.leadsPerMonth}
+                            onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "imob" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <Label htmlFor="externalAI" className="text-sm">Usa IA externa para SDR (ex: Lais)?</Label>
+                        <Switch
+                          id="externalAI"
+                          checked={metrics.usesExternalAI}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
+                      </div>
+                      {!metrics.usesExternalAI && (
+                        <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                          <Label htmlFor="whatsapp" className="text-sm">Quer WhatsApp integrado?</Label>
+                          <Switch
+                            id="whatsapp"
+                            checked={metrics.wantsWhatsApp}
+                            onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                            disabled={product !== "imob" && product !== "both"}
+                          />
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
+                          {imobPlan === "prime" ? (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="imobVipSupport"
+                          checked={metrics.imobVipSupport}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
+                          {imobPlan === "k2" ? (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="imobDedicatedCS"
+                          checked={metrics.imobDedicatedCS}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                {/* Extras */}
-                {calculations.extrasTotal > 0 && (
-                  <div className="space-y-2 pt-3 border-t border-border">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Extras</p>
-                    <div className="flex justify-between text-sm">
-                      <span>Serviços adicionais</span>
-                      <span>{formatCurrency(calculations.extrasTotal)}</span>
+                  {/* Loc Questions - Always visible */}
+                  <Card className={`bg-green-50/30 transition-opacity ${
+                    product === "loc" || product === "both" ? "opacity-100" : "opacity-40"
+                  }`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <Key className="w-4 h-4" />
+                        Kenlo Locação
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
+                          <Input
+                            id="contracts"
+                            type="number"
+                            value={metrics.contractsUnderManagement}
+                            onChange={(e) => setMetrics({ ...metrics, contractsUnderManagement: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "loc" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="newContracts" className="text-sm">Novos contratos por mês</Label>
+                          <Input
+                            id="newContracts"
+                            type="number"
+                            value={metrics.newContractsPerMonth}
+                            onChange={(e) => setMetrics({ ...metrics, newContractsPerMonth: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "loc" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
+                          {locPlan === "prime" ? (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="locVipSupport"
+                          checked={metrics.locVipSupport}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
+                          disabled={product !== "loc" && product !== "both"}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
+                          {locPlan === "k2" ? (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="locDedicatedCS"
+                          checked={metrics.locDedicatedCS}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
+                          disabled={product !== "loc" && product !== "both"}
+                        />
+                      </div>
+                      
+                      {/* Kenlo Pay Billing Questions - Only shown when Pay add-on is enabled */}
+                      {addons.pay && (
+                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay - Cobrança</span>
+                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesBoleto" className="text-sm">Cobra boleto do inquilino?</Label>
+                              <Switch
+                                id="chargesBoleto"
+                                checked={metrics.chargesBoletoToTenant}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
+                              />
+                            </div>
+                            {metrics.chargesBoletoToTenant && (
+                              <div className="pl-2">
+                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
+                                <Input
+                                  id="boletoAmount"
+                                  type="number"
+                                  value={metrics.boletoChargeAmount}
+                                  onChange={(e) => setMetrics({ ...metrics, boletoChargeAmount: parseFloat(e.target.value) || 0 })}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesSplit" className="text-sm">Cobra split do proprietário?</Label>
+                              <Switch
+                                id="chargesSplit"
+                                checked={metrics.chargesSplitToOwner}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
+                              />
+                            </div>
+                            {metrics.chargesSplitToOwner && (
+                              <div className="pl-2">
+                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
+                                <Input
+                                  id="splitAmount"
+                                  type="number"
+                                  value={metrics.splitChargeAmount}
+                                  onChange={(e) => setMetrics({ ...metrics, splitChargeAmount: parseFloat(e.target.value) || 0 })}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                
+                </div>
+              </div>
+
+              {/* Horizontal Sticky Summary Bar - Kenlo Brand Colors */}
+              <div className="sticky top-16 z-20 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg mb-6">
+                <div className="container py-4">
+                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                    {/* Products Badge - Primary (Kenlo Red) */}
+                    <div className="bg-primary text-white px-5 py-2.5 rounded-full font-semibold shadow-md hover:shadow-lg transition-shadow">
+                      Produtos: {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                      {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                      {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
                     </div>
-                  </div>
-                )}
 
-                {/* Discounts */}
-                {isKombo && komboDiscount > 0 && (
-                  <div className="space-y-2 pt-3 border-t border-border">
-                    <div className="flex justify-between text-sm text-secondary">
-                      <span>Desconto Kombo ({Math.round(komboDiscount * 100)}%)</span>
-                      <span>-{formatCurrency(calculations.komboDiscountAmount)}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Monthly Total */}
-                <div className="pt-4 border-t border-border">
-                  <div className="flex justify-between items-baseline">
-                    <span className="font-semibold">Mensalidade</span>
-                    <span className="text-2xl font-bold text-primary">
-                      {formatCurrency(calculations.monthlyTotal)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Implantação: {formatCurrency(calculations.implantacaoFinal)}
-                    {isKombo && calculations.implantacaoTotal > 1497 && (
-                      <span className="text-secondary ml-1">(economia de {formatCurrency(calculations.implantacaoTotal - 1497)})</span>
+                    {/* IMOB Metrics Badge - Secondary */}
+                    {(product === "imob" || product === "both") && (
+                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
+                        IMOB: {metrics.imobUsers} usuários, {metrics.closingsPerMonth} fechamentos/mês
+                      </div>
                     )}
-                  </p>
+
+                    {/* LOC Metrics Badge - Secondary */}
+                    {(product === "loc" || product === "both") && (
+                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
+                        LOC: {metrics.contractsUnderManagement} contratos, {metrics.newContractsPerMonth} novos/mês
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Results Section */}
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-gray-900 mb-3">
+                  4. Planos Recomendados
+                </h2>
+                
+                <Card className="mb-6">
+                  <CardContent className="p-6">
+                    {/* Custom table header with Planos Recomendados as row label */}
+                    <div className="mb-4">
+                      {/* Frequency buttons row - aligned with columns */}
+                      <div className="flex items-center mb-2">
+                        <div className="w-[30%]"></div>
+                        <div className="flex-1 flex justify-center gap-2">
+                          {(["semestral", "annual", "biennial"] as PaymentFrequency[]).map((freq) => (
+                            <button
+                              key={freq}
+                              onClick={() => setFrequency(freq)}
+                              className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all text-center ${
+                                frequency === freq
+                                  ? "border-primary bg-primary/5"
+                                  : "border-gray-200 hover:border-gray-300 bg-white"
+                              }`}
+                            >
+                              <div className={`font-semibold ${frequency === freq ? "text-primary" : "text-gray-900"}`}>
+                                {frequencyLabels[freq]}
+                              </div>
+                              <Badge variant="secondary" className="text-[10px] mt-1">
+                                {frequencyBadges[freq]}
+                              </Badge>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Wrapper div with relative positioning for absolute overlay */}
+                    <div className="relative">
+                      <Table>
+                      <TableHeader>
+                        {/* Column headers with Planos Recomendados as row label */}
+                        <TableRow>
+                          <TableHead className="w-[30%] font-bold text-gray-900"></TableHead>
+                          <TableHead colSpan={2} className="text-center border-r-2 bg-gray-50">Sem Kombo</TableHead>
+                          <TableHead colSpan={2} className={`text-center ${detectKombo() ? 'bg-green-50' : 'bg-gray-100'}`}>
+                            {detectKombo() ? 'Kombo Ativado' : 'Kombo Desativado'}
+                          </TableHead>
+                        </TableRow>
+                        <TableRow>
+                          <TableHead></TableHead>
+                          <TableHead className="text-right text-xs">Mensal</TableHead>
+                          <TableHead className="text-right text-xs border-r-2">{frequencyLabels[frequency]}</TableHead>
+                          <TableHead className="text-right text-xs">Mensal</TableHead>
+                          <TableHead className="text-right text-xs">{frequencyLabels[frequency]}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {/* Category: Produtos */}
+                        {(() => {
+                          const lineItems = getLineItems();
+                          const productItems = lineItems.filter(item => 
+                            item.name.startsWith('Imob') || item.name.startsWith('Loc')
+                          );
+                          const addonItems = lineItems.filter(item => 
+                            !item.name.startsWith('Imob') && !item.name.startsWith('Loc')
+                          );
+                          
+                          return (
+                            <>
+                              {/* Produtos Section */}
+                              {productItems.length > 0 && (
+                                <>
+                                  <TableRow className="bg-slate-100">
+                                    <TableCell colSpan={5} className="font-bold text-sm text-slate-700">
+                                      Produtos
+                                    </TableCell>
+                                  </TableRow>
+                                  {productItems.map((item, index) => (
+                                    <TableRow key={`product-${index}`}>
+                                      <TableCell className="font-medium pl-6">{highlightPlanName(item.name)}</TableCell>
+                                      {/* Sem Kombo */}
+                                      <TableCell className="text-right text-gray-500 text-sm">
+                                        {formatCurrency(item.monthlyRefSemKombo)}
+                                      </TableCell>
+                                      <TableCell className="text-right font-semibold border-r-2">
+                                        {formatCurrency(item.priceSemKombo)}
+                                      </TableCell>
+                                      {/* Com Kombo / Kombo Desativado */}
+                                      {detectKombo() ? (
+                                        <>
+                                          <TableCell className="text-right text-gray-500 text-sm">
+                                            {formatCurrency(item.monthlyRefComKombo)}
+                                          </TableCell>
+                                          <TableCell className="text-right font-semibold">
+                                            {formatCurrency(item.priceComKombo)}
+                                          </TableCell>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <TableCell className="text-right text-gray-500 text-sm opacity-0">
+                                            -
+                                          </TableCell>
+                                          <TableCell className="text-right font-semibold opacity-0">
+                                            -
+                                          </TableCell>
+                                        </>
+                                      )}
+                                    </TableRow>
+                                  ))}
+                                </>
+                              )}
+                              
+                              {/* Add-ons Section */}
+                              {addonItems.length > 0 && (
+                                <>
+                                  <TableRow className="bg-slate-100">
+                                    <TableCell colSpan={5} className="font-bold text-sm text-slate-700">
+                                      Add-ons
+                                    </TableCell>
+                                  </TableRow>
+                                  {addonItems.map((item, index) => (
+                                    <TableRow key={`addon-${index}`}>
+                                      <TableCell className="font-medium pl-6">{item.name}</TableCell>
+                                      {/* Sem Kombo */}
+                                      <TableCell className="text-right text-gray-500 text-sm">
+                                        {formatCurrency(item.monthlyRefSemKombo)}
+                                      </TableCell>
+                                      <TableCell className="text-right font-semibold border-r-2">
+                                        {formatCurrency(item.priceSemKombo)}
+                                      </TableCell>
+                                      {/* Com Kombo / Kombo Desativado */}
+                                      {detectKombo() ? (
+                                        <>
+                                          <TableCell className="text-right text-gray-500 text-sm">
+                                            {formatCurrency(item.monthlyRefComKombo)}
+                                          </TableCell>
+                                          <TableCell className="text-right font-semibold">
+                                            {formatCurrency(item.priceComKombo)}
+                                          </TableCell>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <TableCell className="text-right text-gray-500 text-sm opacity-0">
+                                            -
+                                          </TableCell>
+                                          <TableCell className="text-right font-semibold opacity-0">
+                                            -
+                                          </TableCell>
+                                        </>
+                                      )}
+                                    </TableRow>
+                                  ))}
+                                </>
+                              )}
+                            </>
+                          );
+                        })()}
+                        
+                        {/* Total Monthly Recurring */}
+                        <TableRow className="border-t-2 bg-blue-50">
+                          <TableCell className="font-bold text-lg py-4">Total Mensal</TableCell>
+                          <TableCell className="text-right text-gray-500 text-sm py-4">
+                            {formatCurrency(calculateMonthlyReferenceTotal(false))}
+                          </TableCell>
+                          <TableCell className="text-right font-bold text-gray-900 text-lg border-r-2 py-4">
+                            {formatCurrency(calculateMonthlyRecurring(false))}
+                          </TableCell>
+                          {detectKombo() ? (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm py-4">
+                                {formatCurrency(calculateMonthlyReferenceTotal(true))}
+                              </TableCell>
+                              <TableCell className="text-right font-bold text-primary text-xl py-4">
+                                {formatCurrency(calculateMonthlyRecurring(true))}
+                              </TableCell>
+                            </>
+                          ) : (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm py-4 opacity-0">
+                                -
+                              </TableCell>
+                              <TableCell className="text-right font-bold text-primary text-xl py-4 opacity-0">
+                                -
+                              </TableCell>
+                            </>
+                          )}
+                        </TableRow>
+
+                        {/* Implementation Cost - Gray background like category headers */}
+                        <TableRow className="bg-slate-100 border-t-2 border-b-2 border-slate-300">
+                          <TableCell className="font-medium">Implantação (única vez)</TableCell>
+                          <TableCell className="text-right text-gray-500 text-sm">
+                            {formatCurrency(calculateTotalImplementation(false))}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold border-r-2">
+                            {formatCurrency(calculateTotalImplementation(false))}
+                          </TableCell>
+                          {detectKombo() ? (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm">
+                                {formatCurrency(calculateTotalImplementation(true))}
+                              </TableCell>
+                              <TableCell className="text-right font-semibold">
+                                {formatCurrency(calculateTotalImplementation(true))}
+                              </TableCell>
+                            </>
+                          ) : (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm opacity-0">
+                                -
+                              </TableCell>
+                              <TableCell className="text-right font-semibold opacity-0">
+                                -
+                              </TableCell>
+                            </>
+                          )}
+                        </TableRow>
+
+                        {/* First Year Equivalent */}
+                        <TableRow className="bg-blue-50 border-t">
+                          <TableCell className="font-bold text-base py-4">
+                            Anual Equivalente (1º ano)
+                            <div className="text-xs font-normal text-gray-600 mt-1">
+                              Inclui 12 meses + implantação
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right text-gray-500 text-sm py-4">
+                            {formatCurrency(
+                              (calculateMonthlyReferenceTotal(false) * 12) + 
+                              calculateTotalImplementation(false)
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right font-bold text-gray-900 border-r-2 py-4">
+                            {formatCurrency(calculateFirstYearTotal(false))}
+                          </TableCell>
+                          {detectKombo() ? (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm py-4">
+                                {formatCurrency(
+                                  (calculateMonthlyReferenceTotal(true) * 12) + 
+                                  calculateTotalImplementation(true)
+                                )}
+                              </TableCell>
+                              <TableCell className="text-right font-bold text-primary text-lg py-4">
+                                {formatCurrency(calculateFirstYearTotal(true))}
+                              </TableCell>
+                            </>
+                          ) : (
+                            <>
+                              <TableCell className="text-right text-gray-500 text-sm py-4 opacity-0">
+                                -
+                              </TableCell>
+                              <TableCell className="text-right font-bold text-primary text-lg py-4 opacity-0">
+                                -
+                              </TableCell>
+                            </>
+                          )}
+                        </TableRow>
+
+                        {/* Savings row - Prominent highlight */}
+                        {detectKombo() && (() => {
+                          const lineItems = getLineItems();
+                          // Monthly Sem Kombo (most expensive): monthly reference (+25%) * 12 + implementation without Kombo
+                          const monthlySemKomboTotal = lineItems.reduce((sum, item) => sum + item.monthlyRefSemKombo, 0);
+                          const firstYearMonthlySemKombo = (monthlySemKomboTotal * 12) + calculateTotalImplementation(false);
+                          
+                          // Selected Frequency Com Kombo (best price): frequency price with Kombo * 12 + implementation with Kombo
+                          const firstYearFrequencyComKombo = calculateFirstYearTotal(true);
+                          
+                          const savings = firstYearMonthlySemKombo - firstYearFrequencyComKombo;
+                          
+                          return (
+                            <TableRow className="bg-gradient-to-r from-green-500 to-emerald-600">
+                              <TableCell colSpan={5} className="text-center py-6">
+                                <div className="flex items-center justify-center gap-3">
+                                  <span className="text-4xl">💰</span>
+                                  <span className="text-white font-bold text-2xl">
+                                    Economize até {formatCurrency(savings)} no 1º ano!
+                                  </span>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })()}
+                      </TableBody>
+                      </Table>
+                      
+                      {/* Overlay message when Kombo is not active */}
+                      {!detectKombo() && (
+                        <div className="absolute top-[80px] right-0 w-[40%] bottom-[60px] flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300">
+                          <div className="text-center px-6">
+                            <p className="text-gray-600 text-lg font-medium italic">
+                              Adicione mais add-ons
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                  </CardContent>
+                </Card>
+              </div>
+
+                {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
+                <div className="mt-6 mb-4">
+                  <h2 className="text-lg font-bold text-gray-900 mb-3">
+                    5. Custos Pós-pago (Variáveis)
+                  </h2>
+                  
+                  <Card>
+                    <CardContent className="pt-6">
+                    <div>
+                      {/* IMOB Additional Users */}
+                      {(product === 'imob' || product === 'both') && (() => {
+                        const plan = imobPlan;
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                        const additional = Math.max(0, metrics.imobUsers - included);
+                        const totalCost = (() => {
+                          if (plan === 'prime') return additional * 57;
+                          else if (plan === 'k') {
+                            const tier1 = Math.min(additional, 15);
+                            const tier2 = Math.max(0, additional - 15);
+                            return (tier1 * 47) + (tier2 * 37);
+                          } else {
+                            const tier1 = Math.min(additional, 15);
+                            const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                            const tier3 = Math.max(0, additional - 50);
+                            return (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                          }
+                        })();
+                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Usuários Adicionais (IMOB)</span>
+                              <span className="text-xs text-gray-500 italic">
+                                Incluídos: {included} | Adicionais: {additional}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                              </span>
+                              {additional > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/usuário
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* LOC Additional Contracts */}
+                      {(product === 'loc' || product === 'both') && (() => {
+                        const plan = locPlan;
+                        const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                        const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                        const totalCost = (() => {
+                          if (plan === 'prime') return additional * 3;
+                          else if (plan === 'k') {
+                            const tier1 = Math.min(additional, 250);
+                            const tier2 = Math.max(0, additional - 250);
+                            return (tier1 * 3) + (tier2 * 2.5);
+                          } else {
+                            const tier1 = Math.min(additional, 250);
+                            const tier2 = Math.min(Math.max(0, additional - 250), 250);
+                            const tier3 = Math.max(0, additional - 500);
+                            return (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+                          }
+                        })();
+                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Contratos Adicionais (LOC)</span>
+                              <span className="text-xs text-gray-500 italic">
+                                Incluídos: {included} | Adicionais: {additional}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                              </span>
+                              {additional > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/contrato
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Leads WhatsApp */}
+                      {addons.leads && metrics.wantsWhatsApp && (() => {
+                        const included = 150;
+                        const totalLeads = metrics.leadsPerMonth;
+                        const additional = Math.max(0, totalLeads - included);
+                        const totalCost = (() => {
+                          const tier1 = Math.min(additional, 200);
+                          const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                          const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                          const tier4 = Math.max(0, additional - 1000);
+                          return (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                        })();
+                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Mensagens WhatsApp (Leads)</span>
+                              <span className="text-xs text-gray-500 italic">
+                                Incluídas: {included} | Adicionais: {additional}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                              </span>
+                              {additional > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/mensagem
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Assinaturas */}
+                      {addons.assinatura && (() => {
+                        const included = 20;
+                        let totalSignatures = 0;
+                        if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
+                        else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
+                        else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                        const additional = Math.max(0, totalSignatures - included);
+                        const totalCost = (() => {
+                          const tier1 = Math.min(additional, 20);
+                          const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                          const tier3 = Math.max(0, additional - 40);
+                          return (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                        })();
+                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Assinaturas Digitais</span>
+                              <span className="text-xs text-gray-500 italic">
+                                Incluídas: {included} | Adicionais: {additional}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                              </span>
+                              {additional > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/assinatura
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Custo Boletos (Pay) */}
+                      {addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both') && (() => {
+                        const contracts = metrics.contractsUnderManagement;
+                        const costPerBoleto = 3.00; // Kenlo's cost per boleto
+                        const totalCost = contracts * costPerBoleto;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Custo Boletos (Pay)</span>
+                              <span className="text-xs text-gray-500 italic">
+                                {contracts} boletos × R$ 3,00
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className="text-sm font-semibold text-gray-900">
+                                {formatCurrency(totalCost)}
+                              </span>
+                              <span className="text-xs text-gray-500 italic">
+                                R$ 3,00/boleto
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Custo Split (Pay) */}
+                      {addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both') && (() => {
+                        const contracts = metrics.contractsUnderManagement;
+                        const costPerSplit = 3.00; // Kenlo's cost per split
+                        const totalCost = contracts * costPerSplit;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Custo Split (Pay)</span>
+                              <span className="text-xs text-gray-500 italic">
+                                {contracts} splits × R$ 3,00
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className="text-sm font-semibold text-gray-900">
+                                {formatCurrency(totalCost)}
+                              </span>
+                              <span className="text-xs text-gray-500 italic">
+                                R$ 3,00/split
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Support Services Costs */}
+                      {(() => {
+                        // Calculate support costs for IMOB
+                        let imobSupportCost = 0;
+                        if (product === 'imob' || product === 'both') {
+                          // VIP Support: R$99/mês for Prime, free for K and K2
+                          if (metrics.imobVipSupport && imobPlan === 'prime') {
+                            imobSupportCost += 99;
+                          }
+                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') {
+                            imobSupportCost += 99;
+                          }
+                        }
+                        
+                        // Calculate support costs for LOC
+                        let locSupportCost = 0;
+                        if (product === 'loc' || product === 'both') {
+                          // VIP Support: R$99/mês for Prime, free for K and K2
+                          if (metrics.locVipSupport && locPlan === 'prime') {
+                            locSupportCost += 99;
+                          }
+                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          if (metrics.locDedicatedCS && locPlan !== 'k2') {
+                            locSupportCost += 99;
+                          }
+                        }
+                        
+                        const totalSupportCost = imobSupportCost + locSupportCost;
+                        
+                        if (totalSupportCost === 0) return null;
+                        
+                        const services = [];
+                        if (metrics.imobVipSupport && imobPlan === 'prime') services.push('VIP Imob');
+                        if (metrics.imobDedicatedCS && imobPlan !== 'k2') services.push('CS Imob');
+                        if (metrics.locVipSupport && locPlan === 'prime') services.push('VIP Loc');
+                        if (metrics.locDedicatedCS && locPlan !== 'k2') services.push('CS Loc');
+                        
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Serviços de Atendimento</span>
+                              <span className="text-xs text-gray-500 italic">
+                                {services.join(' + ')} @ R$ 99/mês cada
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className="text-sm font-semibold text-gray-900">
+                                {formatCurrency(totalSupportCost)}
+                              </span>
+                              <span className="text-xs text-gray-500 italic">
+                                R$ 99,00/serviço
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Total Pós-pago */}
+                      {(() => {
+                        let totalPostPaid = 0;
+                        
+                        // Support Services
+                        if (product === 'imob' || product === 'both') {
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
+                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                        }
+                        if (product === 'loc' || product === 'both') {
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
+                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                        }
+                        
+                        // Additional Users (Imob)
+                        if (product === 'imob' || product === 'both') {
+                          const plan = imobPlan;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                          const additional = Math.max(0, metrics.imobUsers - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 15);
+                            const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                            const tier3 = Math.max(0, additional - 50);
+                            totalPostPaid += tier1 * 47 + tier2 * 37 + tier3 * 27;
+                          }
+                        }
+                        
+                        // Additional Contracts (Loc)
+                        if (product === 'loc' || product === 'both') {
+                          const plan = locPlan;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                          const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 250);
+                            const tier2 = Math.min(Math.max(0, additional - 250), 500);
+                            const tier3 = Math.max(0, additional - 750);
+                            totalPostPaid += tier1 * 3 + tier2 * 2.5 + tier3 * 2;
+                          }
+                        }
+                        
+                        // WhatsApp Messages (Leads)
+                        if (addons.leads && metrics.wantsWhatsApp) {
+                          const included = 150;
+                          const additional = Math.max(0, metrics.leadsPerMonth - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 200);
+                            const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                            const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                            const tier4 = Math.max(0, additional - 1000);
+                            totalPostPaid += tier1 * 2.5 + tier2 * 2 + tier3 * 1.5 + tier4 * 1.2;
+                          }
+                        }
+                        
+                        // Digital Signatures
+                        if (addons.assinatura) {
+                          const included = 20;
+                          let totalSignatures = 0;
+                          if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
+                          if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
+                          const additional = Math.max(0, totalSignatures - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 30);
+                            const tier2 = Math.min(Math.max(0, additional - 30), 50);
+                            const tier3 = Math.max(0, additional - 80);
+                            totalPostPaid += tier1 * 1.9 + tier2 * 1.5 + tier3 * 1.2;
+                          }
+                        }
+                        
+                        // Boleto costs (Pay)
+                        if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
+                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                        }
+                        
+                        // Split costs (Pay)
+                        if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
+                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                        }
+                        
+                        return (
+                          <div className="flex justify-between items-center py-4 bg-blue-50 px-4 -mx-4 mt-2 rounded">
+                            <span className="text-gray-900 font-semibold">Total Pós-pago</span>
+                            <span className="text-gray-900 font-semibold">
+                              {totalPostPaid > 0 ? formatCurrency(totalPostPaid) : 'R$ 0'}
+                            </span>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Empty state if no post-paid items */}
+                      {product !== 'imob' && product !== 'loc' && product !== 'both' && !addons.leads && !addons.assinatura && (
+                        <div className="text-center py-8 text-gray-500">
+                          <p>Nenhum custo pós-pago aplicável com a configuração atual</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
                 </div>
 
-                {/* Variable Costs */}
-                {calculations.variableCosts > 0 && (
-                  <div className="pt-3 border-t border-border">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      Custos Variáveis (pós-pago)
-                    </p>
-                    <div className="flex justify-between text-sm">
-                      <span>Estimativa mensal</span>
-                      <span>{formatCurrency(calculations.variableCosts)}</span>
-                    </div>
-                  </div>
-                )}
+                {/* SECTION 6: THE KENLO EFFECT */}
+                <div className="mt-6 mb-4">
+                  <h2 className="text-lg font-bold text-gray-900 mb-3">
+                    6. The Kenlo Effect
+                  </h2>
+                  
+                  <Card>
+                    <CardContent className="pt-6">
+                      {/* Receitas Category Header */}
+                      {((addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both')) || 
+                        (addons.seguros && (product === 'loc' || product === 'both'))) && (
+                        <div className="py-3 bg-slate-50 -mx-6 px-6 mb-2">
+                          <h3 className="text-base font-bold text-gray-900">Receitas</h3>
+                        </div>
+                      )}
 
-                {/* Revenue */}
-                {calculations.revenue > 0 && (
-                  <div className="pt-3 border-t border-border">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      Receitas Geradas
-                    </p>
-                    <div className="flex justify-between text-sm text-secondary">
-                      <span>Receita mensal</span>
-                      <span>+{formatCurrency(calculations.revenue)}</span>
-                    </div>
-                  </div>
-                )}
+                      {/* Boletos & Split */}
+                      {addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both') && (
+                        <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-slate-900">Boletos & Split</span>
+                            <span className="text-xs text-gray-500 italic">
+                              {metrics.chargesBoletoToTenant && metrics.chargesSplitToOwner 
+                                ? `${metrics.contractsUnderManagement} boletos × R$ ${metrics.boletoChargeAmount.toFixed(2)} + ${metrics.contractsUnderManagement} splits × R$ ${metrics.splitChargeAmount.toFixed(2)}`
+                                : metrics.chargesBoletoToTenant 
+                                  ? `${metrics.contractsUnderManagement} boletos × R$ ${metrics.boletoChargeAmount.toFixed(2)}`
+                                  : `${metrics.contractsUnderManagement} splits × R$ ${metrics.splitChargeAmount.toFixed(2)}`
+                              }
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm font-semibold text-green-600">
+                              +{formatCurrency((() => {
+                                let revenue = 0;
+                                if (metrics.chargesBoletoToTenant) {
+                                  revenue += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
+                                }
+                                if (metrics.chargesSplitToOwner) {
+                                  revenue += metrics.contractsUnderManagement * metrics.splitChargeAmount;
+                                }
+                                return revenue;
+                              })())}/mês
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
-                {/* Net Result - The Kenlo Effect */}
-                {(calculations.revenue > 0 || calculations.variableCosts > 0) && (
-                  <div className="pt-4 border-t-2 border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5 -mx-6 px-6 py-4 -mb-6 rounded-b-xl">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="w-4 h-4 text-primary" />
-                      <span className="text-xs font-semibold uppercase tracking-wider">The Kenlo Effect</span>
-                    </div>
-                    <div className="flex justify-between items-baseline">
-                      <span className="font-semibold">Resultado Líquido</span>
-                      <span className={`text-xl font-bold ${calculations.netMonthly >= 0 ? "text-secondary" : "text-destructive"}`}>
-                        {calculations.netMonthly >= 0 ? "+" : ""}{formatCurrency(calculations.netMonthly)}/mês
-                      </span>
-                    </div>
-                    {calculations.netMonthly > 0 && (
-                      <p className="text-xs text-muted-foreground mt-2 italic">
-                        "Kenlo, a única plataforma que te paga enquanto você usa."
-                      </p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      {/* Line 2: Receitas - Seguros */}
+                      {addons.seguros && (product === 'loc' || product === 'both') && (
+                        <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-slate-900">Seguros</span>
+                            <span className="text-xs text-gray-500 italic">R$10 por contrato/mês</span>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm font-semibold text-green-600">
+                              +{formatCurrency(metrics.contractsUnderManagement * 10)}/mês
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
-            {/* Actions */}
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1 gap-2 h-10">
-                <Download className="w-4 h-4" />
-                PDF
-              </Button>
-              <Button variant="outline" className="flex-1 gap-2 h-10">
-                <Share2 className="w-4 h-4" />
-                Compartilhar
-              </Button>
-            </div>
+                      {/* Investimentos Category Header */}
+                      <div className="py-3 bg-slate-50 -mx-6 px-6 mb-2 mt-4">
+                        <h3 className="text-base font-bold text-gray-900">Investimentos</h3>
+                      </div>
 
-            {/* Comparison Table */}
-            <Card className="kenlo-card">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Comparativo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-2"></th>
-                      <th className="text-right py-2">Sem Kombo</th>
-                      <th className="text-right py-2 text-primary">Com Kombo</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-border">
-                      <td className="py-2">Mensal</td>
-                      <td className="text-right py-2">{formatCurrency(calculations.subtotal * paymentPlans[paymentPlan].multiplier)}</td>
-                      <td className="text-right py-2 text-primary font-medium">{formatCurrency(calculations.monthlyTotal)}</td>
-                    </tr>
-                    <tr className="border-b border-border">
-                      <td className="py-2">Implantação</td>
-                      <td className="text-right py-2">{formatCurrency(calculations.implantacaoTotal)}</td>
-                      <td className="text-right py-2 text-primary font-medium">{formatCurrency(calculations.implantacaoFinal)}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 font-semibold">Economia/ano</td>
-                      <td className="text-right py-2">-</td>
-                      <td className="text-right py-2 text-secondary font-bold">
-                        {formatCurrency((calculations.subtotal * paymentPlans[paymentPlan].multiplier - calculations.monthlyTotal) * 12 + (calculations.implantacaoTotal - calculations.implantacaoFinal))}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-          </div>
+                      {/* Mensalidade (pré-pago) */}
+                      <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-900">Mensalidade (pré-pago)</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm font-semibold text-red-600">
+                            -{formatCurrency(calculateMonthlyRecurring(true))}/mês
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Line 4: Variável sob uso (pós-pago) */}
+                      <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-900">Variável sob uso (pós-pago)</span>
+                          <span className="text-xs text-gray-500 italic">Custos variáveis baseados em uso</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm font-semibold text-red-600">-
+                            {formatCurrency((() => {
+                              let totalPostPaid = 0;
+                              if (product === 'imob' || product === 'both') {
+                                const plan = imobPlan;
+                                const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                                const additional = Math.max(0, metrics.imobUsers - included);
+                                if (additional > 0) {
+                                  if (plan === 'prime') totalPostPaid += additional * 57;
+                                  else if (plan === 'k') {
+                                    const tier1 = Math.min(additional, 15);
+                                    const tier2 = Math.max(0, additional - 15);
+                                    totalPostPaid += (tier1 * 47) + (tier2 * 37);
+                                  } else {
+                                    const tier1 = Math.min(additional, 15);
+                                    const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                                    const tier3 = Math.max(0, additional - 50);
+                                    totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                                  }
+                                }
+                              }
+                              if (product === 'loc' || product === 'both') {
+                                const plan = locPlan;
+                                const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                                const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                                if (additional > 0) {
+                                  if (plan === 'prime') totalPostPaid += additional * 3;
+                                  else if (plan === 'k') {
+                                    const tier1 = Math.min(additional, 250);
+                                    const tier2 = Math.max(0, additional - 250);
+                                    totalPostPaid += (tier1 * 3) + (tier2 * 2.5);
+                                  } else {
+                                    const tier1 = Math.min(additional, 250);
+                                    const tier2 = Math.min(Math.max(0, additional - 250), 250);
+                                    const tier3 = Math.max(0, additional - 500);
+                                    totalPostPaid += (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+                                  }
+                              }
+                            }
+                            if (addons.leads && metrics.wantsWhatsApp) {
+                                const included = 150;
+                                const totalLeads = metrics.leadsPerMonth;
+                                const additional = Math.max(0, totalLeads - included);
+                                if (additional > 0) {
+                                  const tier1 = Math.min(additional, 200);
+                                  const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                                  const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                                  const tier4 = Math.max(0, additional - 1000);
+                                  totalPostPaid += (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                                }
+                              }
+                              if (addons.assinatura) {
+                                const included = 20;
+                                let totalSignatures = 0;
+                                if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
+                                else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
+                                else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                                const additional = Math.max(0, totalSignatures - included);
+                                if (additional > 0) {
+                                  const tier1 = Math.min(additional, 20);
+                                  const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                                  const tier3 = Math.max(0, additional - 40);
+                                  totalPostPaid += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                                }
+                              }
+                              if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
+                                totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                              }
+                              if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
+                                totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                              }
+                              // Support Services
+                              if (product === 'imob' || product === 'both') {
+                                if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
+                                if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                              }
+                              if (product === 'loc' || product === 'both') {
+                                if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
+                                if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                              }
+                              return totalPostPaid;
+                            })())}/mês
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Line 5: TOTAL */}
+                      {(() => {
+                        const recurring = calculateMonthlyRecurring(true);
+                        let totalPostPaid = 0;
+                        if (product === 'imob' || product === 'both') {
+                          const plan = imobPlan;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                          const additional = Math.max(0, metrics.imobUsers - included);
+                          if (additional > 0) {
+                            if (plan === 'prime') totalPostPaid += additional * 57;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additional, 15);
+                              const tier2 = Math.max(0, additional - 15);
+                              totalPostPaid += (tier1 * 47) + (tier2 * 37);
+                            } else {
+                              const tier1 = Math.min(additional, 15);
+                              const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                              const tier3 = Math.max(0, additional - 50);
+                              totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                            }
+                          }
+                        }
+                        if (product === 'loc' || product === 'both') {
+                          const plan = locPlan;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                          const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                          if (additional > 0) {
+                            if (plan === 'prime') totalPostPaid += additional * 3;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additional, 250);
+                              const tier2 = Math.max(0, additional - 250);
+                              totalPostPaid += (tier1 * 3) + (tier2 * 2.5);
+                            } else {
+                              const tier1 = Math.min(additional, 250);
+                              const tier2 = Math.min(Math.max(0, additional - 250), 250);
+                              const tier3 = Math.max(0, additional - 500);
+                              totalPostPaid += (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+                            }
+                          }
+                        }
+                        if (addons.pay && (product === 'loc' || product === 'both')) {
+                          const plan = locPlan;
+                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 10 : 20;
+                          const totalBoletos = metrics.contractsUnderManagement;
+                          const additionalBoletos = Math.max(0, totalBoletos - includedBoletos);
+                          if (additionalBoletos > 0) {
+                            if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.max(0, additionalBoletos - 250);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                              const tier3 = Math.max(0, additionalBoletos - 500);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
+                        }
+                        if (addons.leads && metrics.wantsWhatsApp) {
+                          const included = 150;
+                          const totalLeads = metrics.leadsPerMonth;
+                          const additional = Math.max(0, totalLeads - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 200);
+                            const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                            const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                            const tier4 = Math.max(0, additional - 1000);
+                            totalPostPaid += (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                          }
+                        }
+                        if (addons.assinatura) {
+                          const included = 20;
+                          let totalSignatures = 0;
+                          if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
+                          else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
+                          else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                          const additional = Math.max(0, totalSignatures - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 20);
+                            const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                            const tier3 = Math.max(0, additional - 40);
+                            totalPostPaid += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                          }
+                        }
+                        if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
+                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                        }
+                        if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
+                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                        }
+                        // Support Services
+                        if (product === 'imob' || product === 'both') {
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
+                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                        }
+                        if (product === 'loc' || product === 'both') {
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
+                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                        }
+                        let totalRevenue = 0;
+                        if (addons.pay && (product === 'loc' || product === 'both')) {
+                          if (metrics.chargesBoletoToTenant) {
+                            totalRevenue += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
+                          }
+                          if (metrics.chargesSplitToOwner) {
+                            totalRevenue += metrics.contractsUnderManagement * metrics.splitChargeAmount;
+                          }
+                        }
+                        if (addons.seguros && (product === 'loc' || product === 'both')) {
+                          totalRevenue += metrics.contractsUnderManagement * 10;
+                        }
+                        const total = totalRevenue - recurring - totalPostPaid;
+                        const isProfit = total > 0;
+                        
+                        return (
+                          <>
+                            <div className="flex justify-between items-center py-4 mt-2 bg-primary/5 rounded-lg px-4">
+                              <span className="text-base font-bold text-gray-900">{isProfit ? 'Ganho' : 'Investimento'}</span>
+                              <span className={`text-xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(Math.abs(total))}/mês
+                              </span>
+                            </div>
+                            
+                            {/* Killer phrase */}
+                            <div className="mt-4 text-center">
+                              {isProfit ? (
+                                <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">
+                                  Kenlo, a única plataforma que te paga enquanto você usa.
+                                </p>
+                              ) : (
+                                <p className="text-sm font-medium text-primary bg-primary/10 py-3 px-4 rounded-lg">
+                                  Kenlo, a plataforma com menor custo considerando que também te ajuda a ganhar dinheiro sem esforço.
+                                </p>
+                              )}
+                            </div>
+                            
+                            {/* Footnote */}
+                            <div className="mt-4 text-xs text-gray-500 italic">
+                              (1) Não inclui custos de impostos.
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 mt-6">
+                  <Button className="flex-1" size="lg">
+                    <Download className="w-4 h-4 mr-2" />
+                    Exportar Proposta (PDF)
+                  </Button>
+                  <Button variant="outline" size="lg">
+                    Compartilhar com Cliente
+                  </Button>
+                </div>
+
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
