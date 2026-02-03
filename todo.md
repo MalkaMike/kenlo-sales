@@ -31,3 +31,4 @@
 ## UI Improvements
 
 - [x] Mover barra de resumo de produtos (sticky bar) do topo para o rodapé da calculadora
+- [x] Transformar barra em sticky bottom (fixed na parte inferior da tela)

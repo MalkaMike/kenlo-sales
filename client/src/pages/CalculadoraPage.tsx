@@ -1938,9 +1938,10 @@ export default function CalculadoraPage() {
                   </Card>
                 </div>
 
-                {/* Footer Summary Bar - Kenlo Brand Colors */}
-                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg rounded-lg p-4 mt-6">
-                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                {/* Sticky Bottom Summary Bar - Kenlo Brand Colors */}
+                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700">
+                  <div className="container py-3 sm:py-4">
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
                     {/* Products Badge - Primary (Kenlo Red) */}
                     <div className="bg-primary text-white px-5 py-2.5 rounded-full font-semibold shadow-md">
                       Produtos: {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
@@ -1961,11 +1962,12 @@ export default function CalculadoraPage() {
                         LOC: {metrics.contractsUnderManagement} contratos, {metrics.newContractsPerMonth} novos/mês
                       </div>
                     )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 mb-24">
                   <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowExportDialog(true)}>
                     <Download className="w-4 h-4 mr-2" />
                     Exportar Proposta (PDF)
