@@ -18,8 +18,8 @@ import SegurosPage from "./pages/addons/SegurosPage";
 import CashPage from "./pages/addons/CashPage";
 import KombosPage from "./pages/KombosPage";
 import CalculadoraPage from "./pages/CalculadoraPage";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Layout>
       <Switch>
