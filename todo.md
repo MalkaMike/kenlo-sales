@@ -32,3 +32,10 @@
 
 - [x] Mover barra de resumo de produtos (sticky bar) do topo para o rodapé da calculadora
 - [x] Transformar barra em sticky bottom (fixed na parte inferior da tela)
+
+## Sticky Bar Improvements
+
+- [x] Reduzir tamanho da fonte da barra sticky bottom
+- [x] Adicionar add-ons selecionados na barra
+- [x] Adicionar frequência de pagamento escolhida na barra
+- [x] Garantir que todas as escolhas do usuário estejam visíveis

@@ -1940,28 +1940,51 @@ export default function CalculadoraPage() {
 
                 {/* Sticky Bottom Summary Bar - Kenlo Brand Colors */}
                 <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700">
-                  <div className="container py-3 sm:py-4">
-                    <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
-                    {/* Products Badge - Primary (Kenlo Red) */}
-                    <div className="bg-primary text-white px-5 py-2.5 rounded-full font-semibold shadow-md">
-                      Produtos: {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
-                      {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
-                      {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
-                    </div>
-
-                    {/* IMOB Metrics Badge - Secondary */}
-                    {(product === "imob" || product === "both") && (
-                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
-                        IMOB: {metrics.imobUsers} usuários, {metrics.closingsPerMonth} fechamentos/mês
+                  <div className="container py-2 sm:py-3">
+                    <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+                      {/* Products Badge - Primary (Kenlo Red) */}
+                      <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
+                        {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                        {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                        {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
                       </div>
-                    )}
 
-                    {/* LOC Metrics Badge - Secondary */}
-                    {(product === "loc" || product === "both") && (
-                      <div className="bg-gray-700/60 text-gray-100 px-5 py-2.5 rounded-full font-medium border border-gray-600/50">
-                        LOC: {metrics.contractsUnderManagement} contratos, {metrics.newContractsPerMonth} novos/mês
+                      {/* Add-ons Badge */}
+                      {(() => {
+                        const selectedAddons = [];
+                        if (addons.leads) selectedAddons.push('Leads');
+                        if (addons.inteligencia) selectedAddons.push('BI');
+                        if (addons.assinatura) selectedAddons.push('Assinatura');
+                        if (addons.pay) selectedAddons.push('Pay');
+                        if (addons.seguros) selectedAddons.push('Seguros');
+                        if (addons.cash) selectedAddons.push('Cash');
+                        return selectedAddons.length > 0 && (
+                          <div className="bg-secondary/80 text-white px-3 py-1.5 rounded-full font-medium">
+                            Add-ons: {selectedAddons.join(', ')}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Frequency Badge */}
+                      <div className="bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50">
+                        {frequency === 'semestral' && 'Semestral (-15%)'}
+                        {frequency === 'annual' && 'Anual (-20%)'}
+                        {frequency === 'biennial' && 'Bienal (-25%)'}
                       </div>
-                    )}
+
+                      {/* IMOB Metrics Badge */}
+                      {(product === "imob" || product === "both") && (
+                        <div className="bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50">
+                          IMOB: {metrics.imobUsers}u, {metrics.closingsPerMonth}f/m
+                        </div>
+                      )}
+
+                      {/* LOC Metrics Badge */}
+                      {(product === "loc" || product === "both") && (
+                        <div className="bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50">
+                          LOC: {metrics.contractsUnderManagement}c, {metrics.newContractsPerMonth}n/m
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
