@@ -1000,20 +1000,51 @@ export default function CalculadoraPage() {
                               {/* Serviços Premium Section */}
                               {(() => {
                                 const premiumServices = [];
-                                if (metrics.imobVipSupport || metrics.locVipSupport) {
+                                
+                                // Suporte Premium IMOB
+                                if (product === 'imob' || product === 'both') {
+                                  const isIncluded = imobPlan === 'prime';
                                   premiumServices.push({
-                                    name: 'Suporte Premium',
-                                    priceSemKombo: 99,
-                                    priceComKombo: 75,
+                                    name: 'Suporte Premium - IMOB',
+                                    isIncluded: isIncluded,
+                                    priceSemKombo: isIncluded ? null : 99,
+                                    priceComKombo: isIncluded ? null : 75,
                                   });
                                 }
-                                if (metrics.imobDedicatedCS || metrics.locDedicatedCS) {
+                                
+                                // CS Dedicado IMOB
+                                if (product === 'imob' || product === 'both') {
+                                  const isIncluded = imobPlan === 'k2';
                                   premiumServices.push({
-                                    name: 'CS Dedicado',
-                                    priceSemKombo: 199,
-                                    priceComKombo: 149,
+                                    name: 'CS Dedicado - IMOB',
+                                    isIncluded: isIncluded,
+                                    priceSemKombo: isIncluded ? null : 199,
+                                    priceComKombo: isIncluded ? null : 149,
                                   });
                                 }
+                                
+                                // Suporte Premium LOC
+                                if (product === 'loc' || product === 'both') {
+                                  const isIncluded = locPlan === 'prime';
+                                  premiumServices.push({
+                                    name: 'Suporte Premium - LOC',
+                                    isIncluded: isIncluded,
+                                    priceSemKombo: isIncluded ? null : 99,
+                                    priceComKombo: isIncluded ? null : 75,
+                                  });
+                                }
+                                
+                                // CS Dedicado LOC
+                                if (product === 'loc' || product === 'both') {
+                                  const isIncluded = locPlan === 'k2';
+                                  premiumServices.push({
+                                    name: 'CS Dedicado - LOC',
+                                    isIncluded: isIncluded,
+                                    priceSemKombo: isIncluded ? null : 199,
+                                    priceComKombo: isIncluded ? null : 149,
+                                  });
+                                }
+                                
                                 if (premiumServices.length > 0) {
                                   return (
                                     <>
@@ -1026,18 +1057,18 @@ export default function CalculadoraPage() {
                                         <TableRow key={`premium-${index}`}>
                                           <TableCell className="font-medium pl-6">{item.name}</TableCell>
                                           <TableCell className="text-right text-gray-500 text-sm">
-                                            {formatCurrency(item.priceSemKombo)}
+                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : '-')}
                                           </TableCell>
                                           <TableCell className="text-right font-semibold border-r-2">
-                                            {formatCurrency(item.priceSemKombo)}
+                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : '-')}
                                           </TableCell>
                                           {detectKombo() ? (
                                             <>
                                               <TableCell className="text-right text-gray-500 text-sm">
-                                                {formatCurrency(item.priceComKombo)}
+                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : '-')}
                                               </TableCell>
                                               <TableCell className="text-right font-semibold">
-                                                {formatCurrency(item.priceComKombo)}
+                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : '-')}
                                               </TableCell>
                                             </>
                                           ) : (
