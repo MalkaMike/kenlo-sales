@@ -1077,11 +1077,13 @@ export default function CalculadoraPage() {
                                 // Suporte Premium IMOB
                                 if (product === 'imob' || product === 'both') {
                                   const isIncluded = imobPlan === 'k' || imobPlan === 'k2';
+                                  const isSelected = metrics.imobVipSupport;
                                   premiumServices.push({
                                     name: 'Suporte Premium - IMOB',
                                     isIncluded: isIncluded,
-                                    priceSemKombo: isIncluded ? null : 99,
-                                    priceComKombo: isIncluded ? null : 75,
+                                    isSelected: isSelected,
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 99 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 75 : null),
                                   });
                                 }
                                 
@@ -1101,11 +1103,13 @@ export default function CalculadoraPage() {
                                 // Suporte Premium LOC
                                 if (product === 'loc' || product === 'both') {
                                   const isIncluded = locPlan === 'k' || locPlan === 'k2';
+                                  const isSelected = metrics.locVipSupport;
                                   premiumServices.push({
                                     name: 'Suporte Premium - LOC',
                                     isIncluded: isIncluded,
-                                    priceSemKombo: isIncluded ? null : 99,
-                                    priceComKombo: isIncluded ? null : 75,
+                                    isSelected: isSelected,
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 99 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 75 : null),
                                   });
                                 }
                                 
