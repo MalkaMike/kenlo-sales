@@ -458,7 +458,7 @@ export default function Calculadora() {
           <Card className="shadow-xl">
             <CardContent className="p-6">
               {/* Step 1: Product Selection */}
-              <div className="mb-4">
+              <div className="mb-10">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   1. Escolha o Produto
                 </h2>
@@ -488,7 +488,7 @@ export default function Calculadora() {
               </div>
 
               {/* Step 2: Add-ons */}
-              <div className="mb-4">
+              <div className="mb-10">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-bold text-gray-900">
                     2. Add-ons Opcionais
@@ -608,7 +608,7 @@ export default function Calculadora() {
               </div>
 
                       {/* Step 3: Business Info */}
-              <div className="mb-4">
+              <div className="mb-10">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   3. Informações do Negócio
                 </h2>
@@ -625,7 +625,8 @@ export default function Calculadora() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Campos básicos */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <div>
                           <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
                           <Input
@@ -648,69 +649,79 @@ export default function Calculadora() {
                             className="mt-1"
                           />
                         </div>
-                        <div>
-                          <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
-                          <Input
-                            id="leads"
-                            type="number"
-                            value={metrics.leadsPerMonth}
-                            onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
-                            disabled={product !== "imob" && product !== "both"}
-                            className="mt-1"
-                          />
-                        </div>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <Label htmlFor="externalAI" className="text-sm">Usa IA externa para SDR (ex: Lais)?</Label>
-                        <Switch
-                          id="externalAI"
-                          checked={metrics.usesExternalAI}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
-                      </div>
-                      {!metrics.usesExternalAI && (
-                        <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                          <Label htmlFor="whatsapp" className="text-sm">Quer WhatsApp integrado?</Label>
-                          <Switch
-                            id="whatsapp"
-                            checked={metrics.wantsWhatsApp}
-                            onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                            disabled={product !== "imob" && product !== "both"}
-                          />
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                          {imobPlan === "prime" ? (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+
+                      {/* Sub-box: Leads */}
+                      <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                        <div className="text-xs font-semibold text-blue-700 mb-2 uppercase tracking-wide">Leads</div>
+                        <div className="space-y-2">
+                          <div>
+                            <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
+                            <Input
+                              id="leads"
+                              type="number"
+                              value={metrics.leadsPerMonth}
+                              onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
+                              disabled={product !== "imob" && product !== "both"}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)?</Label>
+                            <Switch
+                              id="externalAI"
+                              checked={metrics.usesExternalAI}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                          {!metrics.usesExternalAI && (
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado?</Label>
+                              <Switch
+                                id="whatsapp"
+                                checked={metrics.wantsWhatsApp}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                                disabled={product !== "imob" && product !== "both"}
+                              />
+                            </div>
                           )}
                         </div>
-                        <Switch
-                          id="imobVipSupport"
-                          checked={metrics.imobVipSupport}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                          {imobPlan === "k2" ? (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          )}
+
+                      {/* Sub-box: Serviços Premium */}
+                      <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                        <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="imobVipSupport" className="text-sm">Suporte Premium</Label>
+                              {imobPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              )}
+                            </div>
+                            <Switch
+                              id="imobVipSupport"
+                              checked={metrics.imobVipSupport}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
+                              {imobPlan !== "k2" && (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              )}
+                            </div>
+                            <Switch
+                              id="imobDedicatedCS"
+                              checked={metrics.imobDedicatedCS}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
                         </div>
-                        <Switch
-                          id="imobDedicatedCS"
-                          checked={metrics.imobDedicatedCS}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
-                          disabled={product !== "imob" && product !== "both"}
-                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -726,7 +737,8 @@ export default function Calculadora() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Campos básicos */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <div>
                           <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
                           <Input
@@ -750,44 +762,12 @@ export default function Calculadora() {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
-                          {locPlan === "prime" ? (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          )}
-                        </div>
-                        <Switch
-                          id="locVipSupport"
-                          checked={metrics.locVipSupport}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
-                          disabled={product !== "loc" && product !== "both"}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
-                          {locPlan === "k2" ? (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
-                          )}
-                        </div>
-                        <Switch
-                          id="locDedicatedCS"
-                          checked={metrics.locDedicatedCS}
-                          onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
-                          disabled={product !== "loc" && product !== "both"}
-                        />
-                      </div>
-                      
-                      {/* Kenlo Pay Billing Questions - Only shown when Pay add-on is enabled */}
+
+                      {/* Sub-box: Kenlo Pay */}
                       {addons.pay && (
-                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay - Cobrança</span>
+                            <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Kenlo Pay</div>
                             <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
                           </div>
                           <div className="space-y-2">
@@ -838,6 +818,41 @@ export default function Calculadora() {
                           </div>
                         </div>
                       )}
+
+                      {/* Sub-box: Serviços Premium */}
+                      <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                        <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="locVipSupport" className="text-sm">Suporte Premium</Label>
+                              {locPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              )}
+                            </div>
+                            <Switch
+                              id="locVipSupport"
+                              checked={metrics.locVipSupport}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
+                              disabled={product !== "loc" && product !== "both"}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
+                              {locPlan !== "k2" && (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                              )}
+                            </div>
+                            <Switch
+                              id="locDedicatedCS"
+                              checked={metrics.locDedicatedCS}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
+                              disabled={product !== "loc" && product !== "both"}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 
@@ -873,7 +888,7 @@ export default function Calculadora() {
               </div>
 
               {/* Results Section */}
-              <div className="mb-4">
+              <div className="mb-10">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   4. Planos Recomendados
                 </h2>
