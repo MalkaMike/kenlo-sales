@@ -124,8 +124,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
               {/* Kombos */}
               <NavigationMenuItem>
-                <Link href="/kombos">
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/kombos"
                     className={cn(
                       "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
                       location === "/kombos" && "bg-accent"
@@ -135,14 +136,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-secondary/20 text-secondary">
                       NOVO
                     </span>
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Calculator */}
               <NavigationMenuItem>
-                <Link href="/calculadora">
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/calculadora"
                     className={cn(
                       "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
                       location === "/calculadora" && "bg-accent"
@@ -150,8 +152,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   >
                     <Calculator className="w-4 h-4 mr-2" />
                     Calculadora
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -159,11 +161,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* CTA Button + Language */}
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSelector />
-            <Link href="/calculadora">
-              <Button className="bg-primary hover:bg-primary/90">
+            <Button className="bg-primary hover:bg-primary/90" asChild>
+              <Link href="/calculadora">
                 Simular Proposta
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
           {/* Mobile Menu */}
@@ -216,11 +218,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   Calculadora
                 </Link>
-                <Link href="/calculadora" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 bg-primary hover:bg-primary/90">
+                <Button className="w-full mt-4 bg-primary hover:bg-primary/90" asChild>
+                  <Link href="/calculadora" onClick={() => setMobileMenuOpen(false)}>
                     Simular Proposta
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </nav>
             </SheetContent>
           </Sheet>
