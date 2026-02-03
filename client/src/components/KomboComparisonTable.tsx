@@ -303,36 +303,37 @@ const calculateKomboColumn = (
   const isAvailable = isKomboAvailable(komboId, product);
   const isRecommended = komboId === recommendedKombo;
 
-  if (!isAvailable) {
-    return createUnavailableColumn(komboId, kombo.name, kombo.shortName);
-  }
+  // Always calculate prices, even when Kombo is not available
+  // This allows users to see hypothetical prices for comparison
 
   // Calculate prices with Kombo discount
   const discount = kombo.discount;
   let totalMonthly = 0;
   let implementation = IMPLEMENTATION_COSTS.combo; // All Kombos have fixed R$1.497 implementation
 
-  // Products
+  // Products - always show prices based on Kombo definition, not user selection
+  // This allows comparison even when Kombo is not applicable
   let imobPrice: number | null = null;
   let locPrice: number | null = null;
 
-  if (kombo.products.includes("imob" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
-    if (product === "imob" || product === "both") {
-      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
-      imobPrice = applyDiscount(basePrice, discount);
-      totalMonthly += imobPrice;
-    }
+  // Check if Kombo includes IMOB
+  const komboIncludesImob = kombo.products.includes("imob" as ProductSelection) || kombo.products.includes("both" as ProductSelection);
+  // Check if Kombo includes LOC
+  const komboIncludesLoc = kombo.products.includes("loc" as ProductSelection) || kombo.products.includes("both" as ProductSelection);
+
+  if (komboIncludesImob) {
+    const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
+    imobPrice = applyDiscount(basePrice, discount);
+    totalMonthly += imobPrice;
   }
 
-  if (kombo.products.includes("loc" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
-    if (product === "loc" || product === "both") {
-      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
-      locPrice = applyDiscount(basePrice, discount);
-      totalMonthly += locPrice;
-    }
+  if (komboIncludesLoc) {
+    const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
+    locPrice = applyDiscount(basePrice, discount);
+    totalMonthly += locPrice;
   }
 
-  // Add-ons
+  // Add-ons - always show prices based on Kombo definition
   let leadsPrice: number | null = null;
   let inteligenciaPrice: number | null = null;
   let assinaturaPrice: number | null = null;
@@ -379,20 +380,16 @@ const calculateKomboColumn = (
     vipSupportPrice = "Incluído";
     dedicatedCSPrice = "Incluído";
   } else {
-    // Check if plan includes it, or if user selected it
-    const relevantPlan = product === "loc" ? locPlan : imobPlan;
+    // For Kombos without premium services, show "Incluído" if plan K/K2
+    // Use imobPlan for IMOB-only Kombos, locPlan for LOC-only Kombos
+    const relevantPlan = komboIncludesLoc && !komboIncludesImob ? locPlan : imobPlan;
     if (isPremiumIncludedInPlan(relevantPlan)) {
       vipSupportPrice = "Incluído";
       dedicatedCSPrice = "Incluído";
-    } else if (vipSupport || dedicatedCS) {
-      if (vipSupport) {
-        vipSupportPrice = PREMIUM_SERVICES_PRICES.vipSupport;
-        totalMonthly += PREMIUM_SERVICES_PRICES.vipSupport;
-      }
-      if (dedicatedCS) {
-        dedicatedCSPrice = PREMIUM_SERVICES_PRICES.dedicatedCS;
-        totalMonthly += PREMIUM_SERVICES_PRICES.dedicatedCS;
-      }
+    } else {
+      // Show as optional (not included in total)
+      vipSupportPrice = null;
+      dedicatedCSPrice = null;
     }
   }
 
@@ -605,12 +602,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
   /**
    * Get cell value for a specific row and column
+   * Always shows values even when Kombo is not available (for comparison)
    */
   const getCellValue = (rowKey: string, column: KomboColumnData): React.ReactNode => {
-    if (!column.isAvailable) {
-      return <span className="text-gray-300">—</span>;
-    }
-
     const multiplier = viewMode === "annual" ? 12 : 1;
 
     switch (rowKey) {

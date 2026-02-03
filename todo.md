@@ -220,3 +220,8 @@
 - [x] Implementar UI da tabela comparativa com design responsivo
 - [x] Validar com testes e verificação visual - 67 testes passaram
 - [ ] Apresentar ao usuário para aprovação (se aprovado, substituir seção 4 atual)
+
+## Mostrar valores para todos os Kombos (mesmo não aplicáveis)
+- [x] Remover lógica que esconde valores de Kombos não aplicáveis
+- [x] Mostrar preços de todos os Kombos sempre, permitindo comparação hipotética
+- [x] Manter highlight apenas no Kombo recomendado (Elite com badge "Recomendado" e 20% OFF)
