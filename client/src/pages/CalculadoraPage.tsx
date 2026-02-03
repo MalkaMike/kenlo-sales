@@ -851,7 +851,7 @@ export default function CalculadoraPage() {
                       {addons.pay && (
                         <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay - Cobrança</span>
+                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay</span>
                             <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
                           </div>
                           <div className="space-y-2">

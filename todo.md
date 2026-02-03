@@ -85,3 +85,7 @@
 
 - [x] Corrigir layout da box "Sem Kombo" do lado direito para ocupar apenas as últimas 2 colunas
 - [x] Garantir que a mensagem "Adicione mais add-ons" fique centralizada nas 2 colunas
+
+## Text Corrections
+
+- [x] Remover "- Cobrança" do título "Kenlo Pay - Cobrança", deixando apenas "Kenlo Pay"
