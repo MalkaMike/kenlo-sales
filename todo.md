@@ -148,3 +148,11 @@
 - [x] Verify Kombo discount percentages (Start 10%, Pro 15%, Locação Pro 10%, Elite 20%) - VERIFIED CORRECT
 - [x] Verify "Core Gestão" discount logic ("conforme tabela" - needs clarification) - FIXED (0% discount on monthly, R$ 1.497 fixed impl.)
 - [x] Verify implementation costs for all Kombos are R$ 1.497 - VERIFIED CORRECT
+
+## Kombos Page
+
+- [x] Criar página /kombos com galeria visual comparativa dos 5 Kombos
+- [x] Implementar cards para cada Kombo mostrando: composição (produtos + add-ons), desconto percentual, implantação, casos de uso ideais
+- [x] Adicionar seção hero explicando o conceito de Kombos e benefícios
+- [x] Incluir CTA para "Monte seu plano" redirecionando para calculadora
+- [x] Rota /kombos já existe no App.tsx
