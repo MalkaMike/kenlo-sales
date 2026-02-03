@@ -92,7 +92,7 @@ const KOMBOS = {
 const PLAN_ANNUAL_PRICES = {
   prime: 247,  // R$247/month when paying annually
   k: 497,      // R$497/month when paying annually
-  k2: 997,     // R$997/month when paying annually
+  k2: 1197,    // R$1197/month when paying annually
 };
 
 const ADDON_ANNUAL_PRICES = {

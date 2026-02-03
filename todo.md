@@ -62,3 +62,14 @@
 - [x] Ajustar layout para 4 botões: Mensal, Semestral, Anual, Bienal
 - [x] Atualizar tipo PaymentFrequency para incluir "monthly"
 - [x] Testar seleção de frequência mensal
+
+## Price Review and Corrections
+
+- [x] Corrigir preço do K2: R$ 997 → R$ 1.197 (IMOB e LOC)
+- [x] Revisar regras de frequência de pagamento (Mensal, Semestral, Anual, Bienal)
+- [x] Verificar regra de arredondamento (sempre terminar em 7)
+- [x] Revisar preços de add-ons (Inteligência, Leads, Assinatura)
+- [x] Revisar custos pós-pago (usuários, contratos, WhatsApp, boletos, split)
+- [x] Revisar descontos dos Kombos (10%, 15%, 20%)
+- [x] Revisar implantação dos Kombos (R$ 1.497 fixo)
+- [x] Testar todos os cálculos com K2 atualizado
