@@ -132,7 +132,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     )}
                   >
                     Kombos
-                    <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-kenlo-yellow/20 text-kenlo-yellow">
+                    <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-secondary/20 text-secondary">
                       NOVO
                     </span>
                   </NavigationMenuLink>

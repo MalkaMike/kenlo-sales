@@ -71,7 +71,7 @@ export default function KombosPage() {
         
         <div className="container relative">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-4 bg-kenlo-yellow/20 text-kenlo-yellow hover:bg-kenlo-yellow/30">
+            <Badge className="mb-4 bg-secondary/20 text-secondary hover:bg-secondary/30">
               NOVO
             </Badge>
             
@@ -141,7 +141,7 @@ export default function KombosPage() {
                 
                 <CardHeader className="text-center pb-4">
                   <div className="inline-flex items-center justify-center gap-1 mb-2">
-                    <Badge variant="outline" className="bg-kenlo-yellow/10 text-kenlo-yellow border-kenlo-yellow/30">
+                    <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/30">
                       -{kombo.discount}
                     </Badge>
                   </div>
@@ -224,7 +224,7 @@ export default function KombosPage() {
                       <tr key={index} className="border-b border-border last:border-0">
                         <td className="p-4">{row.combo}</td>
                         <td className="p-4 text-right">
-                          <Badge variant="outline" className="bg-kenlo-yellow/10 text-kenlo-yellow border-kenlo-yellow/30">
+                          <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/30">
                             {row.discount}
                           </Badge>
                         </td>

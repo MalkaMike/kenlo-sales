@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Kenlo Brand Colors */
+/* Kenlo Official Brand Design System */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,89 +42,89 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   
-  /* Kenlo Custom Colors */
-  --color-kenlo-magenta: oklch(0.65 0.25 350);
-  --color-kenlo-teal: oklch(0.75 0.15 175);
-  --color-kenlo-yellow: oklch(0.85 0.15 85);
-  --color-kenlo-dark: oklch(0.15 0.02 260);
-  --color-kenlo-darker: oklch(0.10 0.02 260);
+  /* Kenlo Official Brand Colors */
+  --color-kenlo-red: #F82E52;
+  --color-kenlo-black: #242424;
+  --color-kenlo-green: #4ABD8D;
+  --color-kenlo-gray: #D8D8D8;
+  --color-kenlo-gray-light: #F2F2F2;
   
-  /* Font families */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  /* Font families - Manrope is the official Kenlo font */
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.75rem;
   
-  /* Light theme - rarely used, dark is default */
-  --background: oklch(0.98 0.005 260);
-  --foreground: oklch(0.15 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 260);
-  --primary: oklch(0.65 0.25 350);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.75 0.15 175);
-  --secondary-foreground: oklch(0.15 0.02 260);
-  --muted: oklch(0.95 0.005 260);
-  --muted-foreground: oklch(0.45 0.02 260);
-  --accent: oklch(0.95 0.01 260);
-  --accent-foreground: oklch(0.15 0.02 260);
-  --destructive: oklch(0.55 0.25 30);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.90 0.005 260);
-  --input: oklch(0.90 0.005 260);
-  --ring: oklch(0.65 0.25 350);
-  --chart-1: oklch(0.65 0.25 350);
-  --chart-2: oklch(0.75 0.15 175);
-  --chart-3: oklch(0.85 0.15 85);
-  --chart-4: oklch(0.60 0.20 280);
-  --chart-5: oklch(0.70 0.18 30);
-  --sidebar: oklch(0.98 0.005 260);
-  --sidebar-foreground: oklch(0.15 0.02 260);
-  --sidebar-primary: oklch(0.65 0.25 350);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0.01 260);
-  --sidebar-accent-foreground: oklch(0.15 0.02 260);
-  --sidebar-border: oklch(0.90 0.005 260);
-  --sidebar-ring: oklch(0.65 0.25 350);
+  /* Light theme */
+  --background: #FFFFFF;
+  --foreground: #242424;
+  --card: #FFFFFF;
+  --card-foreground: #242424;
+  --popover: #FFFFFF;
+  --popover-foreground: #242424;
+  --primary: #F82E52;
+  --primary-foreground: #FFFFFF;
+  --secondary: #4ABD8D;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F2F2F2;
+  --muted-foreground: #666666;
+  --accent: #F2F2F2;
+  --accent-foreground: #242424;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #D8D8D8;
+  --input: #D8D8D8;
+  --ring: #F82E52;
+  --chart-1: #F82E52;
+  --chart-2: #4ABD8D;
+  --chart-3: #242424;
+  --chart-4: #D8D8D8;
+  --chart-5: #F2F2F2;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #242424;
+  --sidebar-primary: #F82E52;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F2F2F2;
+  --sidebar-accent-foreground: #242424;
+  --sidebar-border: #D8D8D8;
+  --sidebar-ring: #F82E52;
 }
 
 .dark {
-  --background: oklch(0.12 0.02 260);
-  --foreground: oklch(0.95 0.005 260);
-  --card: oklch(0.16 0.02 260);
-  --card-foreground: oklch(0.95 0.005 260);
-  --popover: oklch(0.16 0.02 260);
-  --popover-foreground: oklch(0.95 0.005 260);
-  --primary: oklch(0.65 0.25 350);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.75 0.15 175);
-  --secondary-foreground: oklch(0.12 0.02 260);
-  --muted: oklch(0.22 0.02 260);
-  --muted-foreground: oklch(0.65 0.02 260);
-  --accent: oklch(0.20 0.02 260);
-  --accent-foreground: oklch(0.95 0.005 260);
-  --destructive: oklch(0.60 0.25 30);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.25 0.02 260);
-  --input: oklch(0.20 0.02 260);
-  --ring: oklch(0.65 0.25 350);
-  --chart-1: oklch(0.65 0.25 350);
-  --chart-2: oklch(0.75 0.15 175);
-  --chart-3: oklch(0.85 0.15 85);
-  --chart-4: oklch(0.60 0.20 280);
-  --chart-5: oklch(0.70 0.18 30);
-  --sidebar: oklch(0.14 0.02 260);
-  --sidebar-foreground: oklch(0.95 0.005 260);
-  --sidebar-primary: oklch(0.65 0.25 350);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.20 0.02 260);
-  --sidebar-accent-foreground: oklch(0.95 0.005 260);
-  --sidebar-border: oklch(0.25 0.02 260);
-  --sidebar-ring: oklch(0.65 0.25 350);
+  --background: #242424;
+  --foreground: #FFFFFF;
+  --card: #2D2D2D;
+  --card-foreground: #FFFFFF;
+  --popover: #2D2D2D;
+  --popover-foreground: #FFFFFF;
+  --primary: #F82E52;
+  --primary-foreground: #FFFFFF;
+  --secondary: #4ABD8D;
+  --secondary-foreground: #FFFFFF;
+  --muted: #3D3D3D;
+  --muted-foreground: #A0A0A0;
+  --accent: #3D3D3D;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #4D4D4D;
+  --input: #3D3D3D;
+  --ring: #F82E52;
+  --chart-1: #F82E52;
+  --chart-2: #4ABD8D;
+  --chart-3: #FFFFFF;
+  --chart-4: #6D6D6D;
+  --chart-5: #4D4D4D;
+  --sidebar: #1D1D1D;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #F82E52;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #3D3D3D;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #4D4D4D;
+  --sidebar-ring: #F82E52;
 }
 
 @layer base {
@@ -137,6 +137,7 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    font-weight: 700;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -180,13 +181,13 @@
     }
   }
 
-  /* Kenlo specific components */
+  /* Kenlo Brand Components */
   .kenlo-gradient {
-    background: linear-gradient(135deg, oklch(0.65 0.25 350) 0%, oklch(0.55 0.22 20) 100%);
+    background: linear-gradient(135deg, #F82E52 0%, #D91E42 100%);
   }
 
   .kenlo-gradient-text {
-    background: linear-gradient(135deg, oklch(0.65 0.25 350) 0%, oklch(0.75 0.15 175) 100%);
+    background: linear-gradient(135deg, #F82E52 0%, #4ABD8D 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -201,7 +202,7 @@
   }
 
   .kenlo-glow {
-    box-shadow: 0 0 40px -10px oklch(0.65 0.25 350 / 0.3);
+    box-shadow: 0 0 40px -10px rgba(248, 46, 82, 0.3);
   }
 
   .kenlo-badge {
@@ -217,11 +218,42 @@
   }
 
   .kenlo-badge-k2 {
-    @apply bg-secondary/20 text-secondary;
+    background-color: rgba(74, 189, 141, 0.2);
+    color: #4ABD8D;
   }
 
   .kenlo-badge-popular {
-    @apply bg-kenlo-yellow/20 text-kenlo-yellow;
+    background-color: rgba(248, 46, 82, 0.1);
+    color: #F82E52;
+  }
+
+  /* Kenlo Button Styles */
+  .kenlo-btn-primary {
+    @apply bg-primary text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  .kenlo-btn-primary:hover {
+    background-color: #D91E42;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(248, 46, 82, 0.3);
+  }
+
+  .kenlo-btn-secondary {
+    @apply bg-secondary text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  .kenlo-btn-secondary:hover {
+    background-color: #3AA77A;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 189, 141, 0.3);
+  }
+
+  .kenlo-btn-outline {
+    @apply border-2 border-primary text-primary font-semibold px-6 py-3 rounded-lg transition-all duration-200 bg-transparent;
+  }
+
+  .kenlo-btn-outline:hover {
+    @apply bg-primary text-white;
   }
 }
 

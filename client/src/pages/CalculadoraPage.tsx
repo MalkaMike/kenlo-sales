@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import Layout from "@/components/Layout";
+// Layout is handled by App.tsx wrapper
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -438,8 +438,8 @@ export default function Calculadora() {
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
+    <>
+      <div className="min-h-screen bg-background py-12">
         <div className="container max-w-6xl">
           {/* Header */}
           <div className="text-center mb-6">
@@ -1886,6 +1886,6 @@ export default function Calculadora() {
           </Card>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
