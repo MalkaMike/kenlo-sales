@@ -1106,8 +1106,10 @@ export default function CalculadoraPage() {
                                 // Check if included by plan
                                 const vipImobIncluded = (product === 'imob' || product === 'both') && (imobPlan === 'k' || imobPlan === 'k2');
                                 const vipLocIncluded = (product === 'loc' || product === 'both') && (locPlan === 'k' || locPlan === 'k2');
-                                const vipIncludedByCoreGestao = product === 'both'; // Core Gestão includes all premium services
-                                const vipIsIncluded = vipImobIncluded || vipLocIncluded || vipIncludedByCoreGestao;
+                                const vipIncludedByCoreGestao = product === 'both'; // Core Gestão and Elite include all premium services
+                                const vipIncludedByElite = activeKombo === 'elite';
+                                const vipIncludedByKombo = vipIncludedByCoreGestao || vipIncludedByElite;
+                                const vipIsIncluded = vipImobIncluded || vipLocIncluded || vipIncludedByKombo;
                                 
                                 if (product === 'imob' || product === 'loc' || product === 'both') {
                                   premiumServices.push({
@@ -1127,8 +1129,10 @@ export default function CalculadoraPage() {
                                 // Check if included by plan
                                 const csImobIncluded = (product === 'imob' || product === 'both') && imobPlan === 'k2';
                                 const csLocIncluded = (product === 'loc' || product === 'both') && locPlan === 'k2';
-                                const csIncludedByCoreGestao = product === 'both'; // Core Gestão includes all premium services
-                                const csIsIncluded = csImobIncluded || csLocIncluded || csIncludedByCoreGestao;
+                                const csIncludedByCoreGestao = product === 'both'; // Core Gestão and Elite include all premium services
+                                const csIncludedByElite = activeKombo === 'elite';
+                                const csIncludedByKombo = csIncludedByCoreGestao || csIncludedByElite;
+                                const csIsIncluded = csImobIncluded || csLocIncluded || csIncludedByKombo;
                                 
                                 if (product === 'imob' || product === 'loc' || product === 'both') {
                                   premiumServices.push({

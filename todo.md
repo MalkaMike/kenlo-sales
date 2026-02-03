@@ -200,3 +200,11 @@
 - [x] Atualizar lógica de exibição:
   - [x] Se cliente tem 1 produto: mostrar preço (R$ 97 ou R$ 197) ou "Incluído" conforme plano
   - [x] Se cliente tem 2 produtos (IMOB + LOC): mostrar "Incluído" (Kombo Core Gestão)
+
+## Kombo Elite - Serviços Premium Incluídos
+
+- [x] Implementar regra: Kombo Elite (IMOB + LOC + todos add-ons) inclui automaticamente Serviços Premium (Suporte VIP + CS Dedicado) sem custo adicional
+- [x] Atualizar lógica da calculadora para marcar Serviços Premium como "Incluído" quando Kombo Elite está ativo
+- [x] Atualizar descrição do Kombo Elite na página /kombos para mencionar Serviços Premium incluídos
+- [x] Criar testes automatizados para validar Kombo Elite com Serviços Premium incluídos
+- [x] Validar com testes e verificação visual - 42 testes passaram + validação visual completa

@@ -183,9 +183,9 @@ export default function KombosPage() {
     },
     {
       name: "Kombo Elite",
-      description: "Solução completa com todos os recursos",
+      description: "Solução completa com todos os recursos + Serviços Premium incluídos",
       discount: 20,
-      implementation: "R$ 1.497 (IMOB + Leads + BI grátis)",
+      implementation: "R$ 1.497 (IMOB + Leads + BI grátis) + Suporte VIP & CS Dedicado",
       products: ["Kenlo Imob (CRM + Site)", "Kenlo Locação (ERP)"],
       addons: ["Kenlo Leads", "Kenlo Inteligência", "Kenlo Assinatura", "Kenlo Pay", "Kenlo Seguros", "Kenlo Cash"],
       idealFor: [
