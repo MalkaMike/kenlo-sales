@@ -124,7 +124,7 @@ export default function KombosPage() {
       name: "Kombo Imob Start",
       description: "Solução completa para iniciar vendas digitais",
       discount: 10,
-      implementation: "R$ 1.497",
+      implementation: "R$ 1.497 (Leads grátis)",
       products: ["Kenlo Imob (CRM + Site)"],
       addons: ["Kenlo Leads", "Kenlo Assinatura"],
       idealFor: [
@@ -139,7 +139,7 @@ export default function KombosPage() {
       name: "Kombo Imob Pro",
       description: "Máxima performance em vendas com inteligência",
       discount: 15,
-      implementation: "R$ 1.497",
+      implementation: "R$ 1.497 (Leads + BI grátis)",
       products: ["Kenlo Imob (CRM + Site)"],
       addons: ["Kenlo Leads", "Kenlo Inteligência", "Kenlo Assinatura"],
       idealFor: [
@@ -155,7 +155,7 @@ export default function KombosPage() {
       name: "Kombo Locação Pro",
       description: "Gestão inteligente de contratos de locação",
       discount: 10,
-      implementation: "R$ 1.497",
+      implementation: "R$ 1.497 (BI grátis)",
       products: ["Kenlo Locação (ERP)"],
       addons: ["Kenlo Inteligência", "Kenlo Assinatura"],
       idealFor: [
@@ -170,7 +170,7 @@ export default function KombosPage() {
       name: "Kombo Core Gestão",
       description: "Gestão completa de vendas e locação com Serviços Premium incluídos",
       discount: 0,
-      implementation: "R$ 1.497",
+      implementation: "R$ 1.497 (IMOB grátis)",
       products: ["Kenlo Imob (CRM + Site)", "Kenlo Locação (ERP)"],
       addons: ["Suporte Premium IMOB + LOC", "CS Dedicado IMOB + LOC"],
       idealFor: [
@@ -185,7 +185,7 @@ export default function KombosPage() {
       name: "Kombo Elite",
       description: "Solução completa com todos os recursos",
       discount: 20,
-      implementation: "R$ 1.497",
+      implementation: "R$ 1.497 (IMOB + Leads + BI grátis)",
       products: ["Kenlo Imob (CRM + Site)", "Kenlo Locação (ERP)"],
       addons: ["Kenlo Leads", "Kenlo Inteligência", "Kenlo Assinatura", "Kenlo Pay", "Kenlo Seguros", "Kenlo Cash"],
       idealFor: [

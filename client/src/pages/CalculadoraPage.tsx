@@ -259,8 +259,8 @@ export default function CalculadoraPage() {
       }
       
       // Note: VIP Support and CS Dedicado are now optional paid services
-      // Prime: Both are paid @ R$99/mês each
-      // K: VIP Support is free, CS Dedicado is paid @ R$99/mês
+      // Prime: VIP Support R$97/mês, CS Dedicado R$197/mês
+      // K: VIP Support is free, CS Dedicado is paid @ R$197/mês
       // K2: Both are free (included)
       // No longer force plan upgrade - user can pay for services on lower plans
       
@@ -280,8 +280,8 @@ export default function CalculadoraPage() {
       }
       
       // Note: VIP Support and CS Dedicado are now optional paid services
-      // Prime: Both are paid @ R$99/mês each
-      // K: VIP Support is free, CS Dedicado is paid @ R$99/mês
+      // Prime: VIP Support R$97/mês, CS Dedicado R$197/mês
+      // K: VIP Support is free, CS Dedicado is paid @ R$197/mês
       // K2: Both are free (included)
       // No longer force plan upgrade - user can pay for services on lower plans
       
@@ -1081,8 +1081,8 @@ export default function CalculadoraPage() {
                                     name: 'Suporte Premium - IMOB',
                                     isIncluded: isIncluded,
                                     isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 99 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 75 : null),
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 97 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 73 : null),
                                   });
                                 }
                                 
@@ -1096,8 +1096,8 @@ export default function CalculadoraPage() {
                                     name: 'CS Dedicado - IMOB',
                                     isIncluded: isIncluded,
                                     isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 199 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 149 : null),
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 197 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 148 : null),
                                   });
                                 }
                                 
@@ -1111,8 +1111,8 @@ export default function CalculadoraPage() {
                                     name: 'Suporte Premium - LOC',
                                     isIncluded: isIncluded,
                                     isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 99 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 75 : null),
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 97 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 73 : null),
                                   });
                                 }
                                 
@@ -1126,8 +1126,8 @@ export default function CalculadoraPage() {
                                     name: 'CS Dedicado - LOC',
                                     isIncluded: isIncluded,
                                     isSelected: isSelected,
-                                    priceSemKombo: isIncluded ? null : (isSelected ? 199 : null),
-                                    priceComKombo: isIncluded ? null : (isSelected ? 149 : null),
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 197 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 148 : null),
                                   });
                                 }
                                 
@@ -1550,26 +1550,26 @@ export default function CalculadoraPage() {
                         // Calculate support costs for IMOB
                         let imobSupportCost = 0;
                         if (product === 'imob' || product === 'both') {
-                          // VIP Support: R$99/mês for Prime, free for K and K2
+                          // VIP Support: R$97/mês for Prime, free for K and K2
                           if (metrics.imobVipSupport && imobPlan === 'prime') {
-                            imobSupportCost += 99;
+                            imobSupportCost += 97;
                           }
-                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          // CS Dedicado: R$197/mês for Prime and K, free for K2
                           if (metrics.imobDedicatedCS && imobPlan !== 'k2') {
-                            imobSupportCost += 99;
+                            imobSupportCost += 197;
                           }
                         }
                         
                         // Calculate support costs for LOC
                         let locSupportCost = 0;
                         if (product === 'loc' || product === 'both') {
-                          // VIP Support: R$99/mês for Prime, free for K and K2
+                          // VIP Support: R$97/mês for Prime, free for K and K2
                           if (metrics.locVipSupport && locPlan === 'prime') {
-                            locSupportCost += 99;
+                            locSupportCost += 97;
                           }
-                          // CS Dedicado: R$99/mês for Prime and K, free for K2
+                          // CS Dedicado: R$197/mês for Prime and K, free for K2
                           if (metrics.locDedicatedCS && locPlan !== 'k2') {
-                            locSupportCost += 99;
+                            locSupportCost += 197;
                           }
                         }
                         
@@ -1588,7 +1588,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Serviços de Atendimento</span>
                               <span className="text-xs text-gray-500 italic">
-                                {services.join(' + ')} @ R$ 99/mês cada
+                                {services.join(' + ')}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
@@ -1596,7 +1596,7 @@ export default function CalculadoraPage() {
                                 {formatCurrency(totalSupportCost)}
                               </span>
                               <span className="text-xs text-gray-500 italic">
-                                R$ 99,00/serviço
+                                VIP R$97 | CS R$197
                               </span>
                             </div>
                           </div>
@@ -1609,12 +1609,12 @@ export default function CalculadoraPage() {
                         
                         // Support Services
                         if (product === 'imob' || product === 'both') {
-                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
-                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
+                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
                         }
                         if (product === 'loc' || product === 'both') {
-                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
-                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
+                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
                         }
                         
                         // Additional Users (Imob)
@@ -1861,12 +1861,12 @@ export default function CalculadoraPage() {
                               }
                               // Support Services
                               if (product === 'imob' || product === 'both') {
-                                if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
-                                if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                                if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
+                                if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
                               }
                               if (product === 'loc' || product === 'both') {
-                                if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
-                                if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                                if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
+                                if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
                               }
                               return totalPostPaid;
                             })())}/mês
@@ -1967,12 +1967,12 @@ export default function CalculadoraPage() {
                         }
                         // Support Services
                         if (product === 'imob' || product === 'both') {
-                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 99;
-                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 99;
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
+                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
                         }
                         if (product === 'loc' || product === 'both') {
-                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 99;
-                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 99;
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
+                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
                         }
                         let totalRevenue = 0;
                         if (addons.pay && (product === 'loc' || product === 'both')) {
@@ -2122,12 +2122,12 @@ export default function CalculadoraPage() {
             
             // Support Services
             if (product === 'imob' || product === 'both') {
-              if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += 99;
-              if (metrics.imobDedicatedCS && imobPlan !== 'k2') postPaidTotal += 99;
+              if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += 97;
+              if (metrics.imobDedicatedCS && imobPlan !== 'k2') postPaidTotal += 197;
             }
             if (product === 'loc' || product === 'both') {
-              if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += 99;
-              if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 99;
+              if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += 97;
+              if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 197;
             }
             
             // Additional Users (Imob)

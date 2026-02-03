@@ -163,3 +163,15 @@
 - [x] Atualizar lógica da calculadora para marcar Serviços Premium como "Incluído" quando Core Gestão está ativo
 - [x] Atualizar descrição do Kombo Core Gestão na página /kombos para mencionar Serviços Premium incluídos
 - [x] Testar cenários: Prime+Prime, K+K, K2+K2, Prime+K, etc. todos devem ter Serviços Premium incluídos - 12 testes passaram
+
+## Correções de Valores dos Serviços Premium e Implantações dos Kombos
+
+- [x] Corrigir valor do Suporte VIP de R$ 99 para R$ 97/mês
+- [x] Corrigir valor do CS Dedicado de R$ 99 para R$ 197/mês
+- [x] Atualizar descrição dos Kombos com informações corretas de implantação:
+  - [x] Kombo Imob Start: Implantação de Leads ofertada (economia de R$ 497)
+  - [x] Kombo Imob Pro: Implantação de Leads e Inteligência ofertadas (economia de R$ 994)
+  - [x] Kombo Locação Pro: Implantação de Inteligência ofertada (economia de R$ 497)
+  - [x] Kombo Core Gestão: Implantação de IMOB ofertada (economia de R$ 1.497)
+  - [x] Kombo Elite: Implantação de Imob, Leads e Inteligência ofertadas (economia de R$ 2.491)
+- [x] Validar todos os valores com testes automatizados - 28 testes passaram + validação visual completa
