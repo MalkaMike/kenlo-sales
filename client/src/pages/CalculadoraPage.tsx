@@ -4,7 +4,6 @@
  */
 
 import { useState, useEffect } from "react";
-// Layout is handled by App.tsx wrapper
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -93,7 +92,7 @@ const roundToEndIn7 = (price: number): number => {
   }
 };
 
-export default function Calculadora() {
+export default function CalculadoraPage() {
   // Step 1: Product selection
   const [product, setProduct] = useState<ProductSelection>("both");
   
@@ -438,7 +437,6 @@ export default function Calculadora() {
   };
 
   return (
-    <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12">
         <div className="container max-w-6xl">
           {/* Header */}
@@ -458,7 +456,7 @@ export default function Calculadora() {
           <Card className="shadow-xl">
             <CardContent className="p-6">
               {/* Step 1: Product Selection */}
-              <div className="mb-10">
+              <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   1. Escolha o Produto
                 </h2>
@@ -488,7 +486,7 @@ export default function Calculadora() {
               </div>
 
               {/* Step 2: Add-ons */}
-              <div className="mb-10">
+              <div className="mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-bold text-gray-900">
                     2. Add-ons Opcionais
@@ -608,7 +606,7 @@ export default function Calculadora() {
               </div>
 
                       {/* Step 3: Business Info */}
-              <div className="mb-10">
+              <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   3. Informações do Negócio
                 </h2>
@@ -625,8 +623,7 @@ export default function Calculadora() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {/* Campos básicos */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                           <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
                           <Input
@@ -649,69 +646,69 @@ export default function Calculadora() {
                             className="mt-1"
                           />
                         </div>
+                        <div>
+                          <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
+                          <Input
+                            id="leads"
+                            type="number"
+                            value={metrics.leadsPerMonth}
+                            onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
+                            disabled={product !== "imob" && product !== "both"}
+                            className="mt-1"
+                          />
+                        </div>
                       </div>
-
-                      {/* Sub-box: Leads */}
-                      <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
-                        <div className="text-xs font-semibold text-blue-700 mb-2 uppercase tracking-wide">Leads</div>
-                        <div className="space-y-2">
-                          <div>
-                            <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
-                            <Input
-                              id="leads"
-                              type="number"
-                              value={metrics.leadsPerMonth}
-                              onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
-                              disabled={product !== "imob" && product !== "both"}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)?</Label>
-                            <Switch
-                              id="externalAI"
-                              checked={metrics.usesExternalAI}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
-                              disabled={product !== "imob" && product !== "both"}
-                            />
-                          </div>
-                          {!metrics.usesExternalAI && (
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado?</Label>
-                              <Switch
-                                id="whatsapp"
-                                checked={metrics.wantsWhatsApp}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                                disabled={product !== "imob" && product !== "both"}
-                              />
-                            </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <Label htmlFor="externalAI" className="text-sm">Usa IA externa para SDR (ex: Lais)?</Label>
+                        <Switch
+                          id="externalAI"
+                          checked={metrics.usesExternalAI}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
+                      </div>
+                      {!metrics.usesExternalAI && (
+                        <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                          <Label htmlFor="whatsapp" className="text-sm">Quer WhatsApp integrado?</Label>
+                          <Switch
+                            id="whatsapp"
+                            checked={metrics.wantsWhatsApp}
+                            onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                            disabled={product !== "imob" && product !== "both"}
+                          />
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="imobVipSupport" className="text-sm">Quer Suporte VIP?</Label>
+                          {imobPlan === "prime" ? (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
                           )}
                         </div>
+                        <Switch
+                          id="imobVipSupport"
+                          checked={metrics.imobVipSupport}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
                       </div>
-
-                      {/* Sub-box: Serviços Premium */}
-                      <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
-                        <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="imobVipSupport" className="text-sm">Suporte Premium</Label>
-                            <Switch
-                              id="imobVipSupport"
-                              checked={metrics.imobVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
-                              disabled={product !== "imob" && product !== "both"}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
-                            <Switch
-                              id="imobDedicatedCS"
-                              checked={metrics.imobDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
-                              disabled={product !== "imob" && product !== "both"}
-                            />
-                          </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="imobDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
+                          {imobPlan === "k2" ? (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          )}
                         </div>
+                        <Switch
+                          id="imobDedicatedCS"
+                          checked={metrics.imobDedicatedCS}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
+                          disabled={product !== "imob" && product !== "both"}
+                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -727,8 +724,7 @@ export default function Calculadora() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {/* Campos básicos */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                           <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
                           <Input
@@ -752,12 +748,44 @@ export default function Calculadora() {
                           />
                         </div>
                       </div>
-
-                      {/* Sub-box: Kenlo Pay */}
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="locVipSupport" className="text-sm">Quer Suporte VIP?</Label>
+                          {locPlan === "prime" ? (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="locVipSupport"
+                          checked={metrics.locVipSupport}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
+                          disabled={product !== "loc" && product !== "both"}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="locDedicatedCS" className="text-sm">Quer CS Dedicado?</Label>
+                          {locPlan === "k2" ? (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Incluído</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">R$99/mês</Badge>
+                          )}
+                        </div>
+                        <Switch
+                          id="locDedicatedCS"
+                          checked={metrics.locDedicatedCS}
+                          onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
+                          disabled={product !== "loc" && product !== "both"}
+                        />
+                      </div>
+                      
+                      {/* Kenlo Pay Billing Questions - Only shown when Pay add-on is enabled */}
                       {addons.pay && (
-                        <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                           <div className="flex items-center justify-between mb-2">
-                            <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Kenlo Pay</div>
+                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay - Cobrança</span>
                             <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
                           </div>
                           <div className="space-y-2">
@@ -808,31 +836,6 @@ export default function Calculadora() {
                           </div>
                         </div>
                       )}
-
-                      {/* Sub-box: Serviços Premium */}
-                      <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
-                        <div className="text-xs font-semibold text-purple-700 mb-2 uppercase tracking-wide">Serviços Premium</div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="locVipSupport" className="text-sm">Suporte Premium</Label>
-                            <Switch
-                              id="locVipSupport"
-                              checked={metrics.locVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
-                              disabled={product !== "loc" && product !== "both"}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
-                            <Switch
-                              id="locDedicatedCS"
-                              checked={metrics.locDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
-                              disabled={product !== "loc" && product !== "both"}
-                            />
-                          </div>
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
                 
@@ -868,7 +871,7 @@ export default function Calculadora() {
               </div>
 
               {/* Results Section */}
-              <div className="mb-10">
+              <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   4. Planos Recomendados
                 </h2>
@@ -1021,6 +1024,67 @@ export default function Calculadora() {
                                   ))}
                                 </>
                               )}
+                              
+                              {/* Serviços Premium Section */}
+                              {(() => {
+                                const premiumServices = [];
+                                if (metrics.imobVipSupport || metrics.locVipSupport) {
+                                  premiumServices.push({
+                                    name: 'Suporte Premium',
+                                    priceSemKombo: 99,
+                                    priceComKombo: 75,
+                                  });
+                                }
+                                if (metrics.imobDedicatedCS || metrics.locDedicatedCS) {
+                                  premiumServices.push({
+                                    name: 'CS Dedicado',
+                                    priceSemKombo: 199,
+                                    priceComKombo: 149,
+                                  });
+                                }
+                                if (premiumServices.length > 0) {
+                                  return (
+                                    <>
+                                      <TableRow className="bg-slate-100">
+                                        <TableCell colSpan={5} className="font-bold text-sm text-slate-700">
+                                          Serviços Premium
+                                        </TableCell>
+                                      </TableRow>
+                                      {premiumServices.map((item, index) => (
+                                        <TableRow key={`premium-${index}`}>
+                                          <TableCell className="font-medium pl-6">{item.name}</TableCell>
+                                          <TableCell className="text-right text-gray-500 text-sm">
+                                            {formatCurrency(item.priceSemKombo)}
+                                          </TableCell>
+                                          <TableCell className="text-right font-semibold border-r-2">
+                                            {formatCurrency(item.priceSemKombo)}
+                                          </TableCell>
+                                          {detectKombo() ? (
+                                            <>
+                                              <TableCell className="text-right text-gray-500 text-sm">
+                                                {formatCurrency(item.priceComKombo)}
+                                              </TableCell>
+                                              <TableCell className="text-right font-semibold">
+                                                {formatCurrency(item.priceComKombo)}
+                                              </TableCell>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <TableCell className="text-right text-gray-500 text-sm opacity-0">
+                                                -
+                                              </TableCell>
+                                              <TableCell className="text-right font-semibold opacity-0">
+                                                -
+                                              </TableCell>
+                                            </>
+                                          )}
+                                        </TableRow>
+                                      ))}
+                                    </>
+                                  );
+                                }
+                                return null;
+                              })()}
                             </>
                           );
                         })()}
@@ -1398,9 +1462,9 @@ export default function Calculadora() {
                           if (metrics.imobVipSupport && imobPlan === 'prime') {
                             imobSupportCost += 99;
                           }
-                          // CS Dedicado: R$199/mês for Prime and K, free for K2
+                          // CS Dedicado: R$99/mês for Prime and K, free for K2
                           if (metrics.imobDedicatedCS && imobPlan !== 'k2') {
-                            imobSupportCost += 199;
+                            imobSupportCost += 99;
                           }
                         }
                         
@@ -1411,9 +1475,9 @@ export default function Calculadora() {
                           if (metrics.locVipSupport && locPlan === 'prime') {
                             locSupportCost += 99;
                           }
-                          // CS Dedicado: R$199/mês for Prime and K, free for K2
+                          // CS Dedicado: R$99/mês for Prime and K, free for K2
                           if (metrics.locDedicatedCS && locPlan !== 'k2') {
-                            locSupportCost += 199;
+                            locSupportCost += 99;
                           }
                         }
                         
@@ -1881,6 +1945,5 @@ export default function Calculadora() {
           </Card>
         </div>
       </div>
-    </>
   );
 }
