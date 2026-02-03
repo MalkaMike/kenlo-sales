@@ -80,3 +80,8 @@
 - [x] Substituir Input de "Nome do Vendedor" por Combobox com autocomplete
 - [x] Implementar busca fuzzy para encontrar nomes com erros de digitação
 - [x] Testar seleção de vendedor e autocomplete
+
+## Table Layout Fix
+
+- [x] Corrigir layout da box "Sem Kombo" do lado direito para ocupar apenas as últimas 2 colunas
+- [x] Garantir que a mensagem "Adicione mais add-ons" fique centralizada nas 2 colunas

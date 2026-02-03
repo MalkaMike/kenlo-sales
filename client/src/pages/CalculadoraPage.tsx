@@ -1293,7 +1293,7 @@ export default function CalculadoraPage() {
                       
                       {/* Overlay message when Kombo is not active */}
                       {activeKombo === "none" && (
-                        <div className="absolute top-[80px] right-0 w-[40%] bottom-[60px] flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300">
+                        <div className="absolute top-[80px] right-0 w-[35%] bottom-[60px] flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300">
                           <div className="text-center px-6">
                             <p className="text-gray-600 text-lg font-medium italic">
                               Adicione mais add-ons
