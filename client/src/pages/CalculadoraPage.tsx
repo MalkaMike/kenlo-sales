@@ -187,15 +187,15 @@ export default function CalculadoraPage() {
   useEffect(() => {
     const newMetrics = { ...metrics };
     
-    // IMOB: Suporte Premium included in Prime, CS Dedicado included in K2
+    // IMOB: Suporte Premium included in Prime and K2, CS Dedicado included in K2
     if (product === "imob" || product === "both") {
-      newMetrics.imobVipSupport = imobPlan === "prime" || imobPlan === "k" || imobPlan === "k2";
+      newMetrics.imobVipSupport = imobPlan === "prime" || imobPlan === "k2";
       newMetrics.imobDedicatedCS = imobPlan === "k2";
     }
     
-    // LOC: Suporte Premium included in Prime, CS Dedicado included in K2
+    // LOC: Suporte Premium included in Prime and K2, CS Dedicado included in K2
     if (product === "loc" || product === "both") {
-      newMetrics.locVipSupport = locPlan === "prime" || locPlan === "k" || locPlan === "k2";
+      newMetrics.locVipSupport = locPlan === "prime" || locPlan === "k2";
       newMetrics.locDedicatedCS = locPlan === "k2";
     }
     
