@@ -10,7 +10,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Loader2 } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { FileText, Loader2, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// Lista de vendedores
+const VENDORS = [
+  "AMANDA DE OLIVEIRA MATOS",
+  "BRUNO RIBEIRO DA SILVA",
+  "CASSIA MOREIRA BARBOSA",
+  "EMERSON DE MORAES",
+  "IVAN KERR CODO",
+  "JAQUELINE SILVA GRANELLI",
+  "LARISSA BRANDALISE FAVI",
+  "MARINA KIYOMI YOKOMUN",
+  "YR MADEIRAS DE GASPERIN",
+  "ROBERTA PACHECO DE AZEVEDO",
+];
 
 interface ProposalExportDialogProps {
   open: boolean;
@@ -26,6 +54,7 @@ export function ProposalExportDialog({
   const [salesPersonName, setSalesPersonName] = useState("");
   const [clientName, setClientName] = useState("");
   const [isExporting, setIsExporting] = useState(false);
+  const [openVendorCombobox, setOpenVendorCombobox] = useState(false);
 
   const handleExport = async () => {
     if (!salesPersonName.trim() || !clientName.trim()) {
@@ -68,14 +97,54 @@ export function ProposalExportDialog({
             <Label htmlFor="salesPersonName">
               Nome do Vendedor <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="salesPersonName"
-              placeholder="Digite seu nome completo"
-              value={salesPersonName}
-              onChange={(e) => setSalesPersonName(e.target.value)}
-              disabled={isExporting}
-              autoFocus
-            />
+            <Popover open={openVendorCombobox} onOpenChange={setOpenVendorCombobox}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openVendorCombobox}
+                  className="w-full justify-between"
+                  disabled={isExporting}
+                >
+                  {salesPersonName || "Selecione ou digite o nome do vendedor"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput 
+                    placeholder="Buscar vendedor..." 
+                    value={salesPersonName}
+                    onValueChange={setSalesPersonName}
+                  />
+                  <CommandList>
+                    <CommandEmpty>Nenhum vendedor encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {VENDORS.filter((vendor) =>
+                        vendor.toLowerCase().includes(salesPersonName.toLowerCase())
+                      ).map((vendor) => (
+                        <CommandItem
+                          key={vendor}
+                          value={vendor}
+                          onSelect={(currentValue) => {
+                            setSalesPersonName(currentValue === salesPersonName ? "" : vendor);
+                            setOpenVendorCombobox(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              salesPersonName === vendor ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {vendor}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">

@@ -73,3 +73,10 @@
 - [x] Revisar descontos dos Kombos (10%, 15%, 20%)
 - [x] Revisar implantação dos Kombos (R$ 1.497 fixo)
 - [x] Testar todos os cálculos com K2 atualizado
+
+## Vendor Dropdown with Autocomplete
+
+- [x] Criar lista de 10 vendedores no código
+- [x] Substituir Input de "Nome do Vendedor" por Combobox com autocomplete
+- [x] Implementar busca fuzzy para encontrar nomes com erros de digitação
+- [x] Testar seleção de vendedor e autocomplete
