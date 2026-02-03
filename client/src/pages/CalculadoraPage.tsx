@@ -1034,11 +1034,13 @@ export default function CalculadoraPage() {
                                 // CS Dedicado IMOB
                                 if (product === 'imob' || product === 'both') {
                                   const isIncluded = imobPlan === 'k2';
+                                  const isSelected = metrics.imobDedicatedCS;
                                   premiumServices.push({
                                     name: 'CS Dedicado - IMOB',
                                     isIncluded: isIncluded,
-                                    priceSemKombo: isIncluded ? null : 199,
-                                    priceComKombo: isIncluded ? null : 149,
+                                    isSelected: isSelected,
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 199 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 149 : null),
                                   });
                                 }
                                 
@@ -1056,11 +1058,13 @@ export default function CalculadoraPage() {
                                 // CS Dedicado LOC
                                 if (product === 'loc' || product === 'both') {
                                   const isIncluded = locPlan === 'k2';
+                                  const isSelected = metrics.locDedicatedCS;
                                   premiumServices.push({
                                     name: 'CS Dedicado - LOC',
                                     isIncluded: isIncluded,
-                                    priceSemKombo: isIncluded ? null : 199,
-                                    priceComKombo: isIncluded ? null : 149,
+                                    isSelected: isSelected,
+                                    priceSemKombo: isIncluded ? null : (isSelected ? 199 : null),
+                                    priceComKombo: isIncluded ? null : (isSelected ? 149 : null),
                                   });
                                 }
                                 
@@ -1076,18 +1080,18 @@ export default function CalculadoraPage() {
                                         <TableRow key={`premium-${index}`}>
                                           <TableCell className="font-medium pl-6">{item.name}</TableCell>
                                           <TableCell className="text-right text-gray-500 text-sm">
-                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : '-')}
+                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                           </TableCell>
                                           <TableCell className="text-right font-semibold border-r-2">
-                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : '-')}
+                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                           </TableCell>
                                           {detectKombo() ? (
                                             <>
                                               <TableCell className="text-right text-gray-500 text-sm">
-                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : '-')}
+                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
                                               </TableCell>
                                               <TableCell className="text-right font-semibold">
-                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : '-')}
+                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
                                               </TableCell>
                                             </>
                                           ) : (
