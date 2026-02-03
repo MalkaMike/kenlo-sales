@@ -39,6 +39,11 @@ export const proposals = mysqlTable("proposals", {
   
   /** Configuração de produtos selecionados */
   productType: varchar("productType", { length: 50 }).notNull(), // "imob", "loc", "both"
+  
+  /** Kombo information */
+  komboName: varchar("komboName", { length: 100 }), // "Kombo Elite", "Kombo Imob Pro", etc
+  komboDiscount: int("komboDiscount"), // Desconto em porcentagem (ex: 20 para 20%)
+  
   imobPlan: varchar("imobPlan", { length: 20 }), // "prime", "k", "k2"
   locPlan: varchar("locPlan", { length: 20 }), // "prime", "k", "k2"
   

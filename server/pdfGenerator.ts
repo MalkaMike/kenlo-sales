@@ -5,6 +5,8 @@ interface ProposalData {
   salesPersonName: string;
   clientName: string;
   productType: string;
+  komboName?: string; // Nome do Kombo ativo (ex: "Kombo Elite")
+  komboDiscount?: number; // Desconto do Kombo em porcentagem (ex: 20 para 20%)
   imobPlan?: string;
   locPlan?: string;
   imobUsers?: number;
@@ -48,6 +50,13 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(10).fillColor("#666666").text(`Vendedor: ${data.salesPersonName}`);
     doc.fontSize(10).fillColor("#666666").text(`Data: ${new Date().toLocaleDateString("pt-BR")}`);
     doc.moveDown(2);
+
+    // Kombo Section (if applicable)
+    if (data.komboName) {
+      doc.fontSize(16).fillColor(kenloGreen).text(`✨ ${data.komboName}`);
+      doc.fontSize(12).fillColor("#666666").text(`Desconto especial de ${data.komboDiscount}% em todos os produtos e add-ons`);
+      doc.moveDown(1.5);
+    }
 
     // Products Section
     doc.fontSize(14).fillColor(kenloPink).text("Produtos Selecionados");

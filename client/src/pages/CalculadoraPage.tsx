@@ -36,6 +36,49 @@ import {
 type ProductSelection = "imob" | "loc" | "both";
 type PlanTier = "prime" | "k" | "k2";
 type PaymentFrequency = "semestral" | "annual" | "biennial";
+type KomboType = "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite" | "none";
+
+// Kombo definitions
+const KOMBOS = {
+  imob_start: {
+    name: "Kombo Imob Start",
+    description: "IMOB + Leads + Assinaturas",
+    discount: 0.10, // 10% OFF
+    requiredProducts: ["imob"] as ProductSelection[],
+    requiredAddons: ["leads", "assinatura"],
+    forbiddenAddons: ["inteligencia"], // Must NOT have Inteligência
+  },
+  imob_pro: {
+    name: "Kombo Imob Pro",
+    description: "IMOB + Leads + Inteligência + Assinatura",
+    discount: 0.15, // 15% OFF
+    requiredProducts: ["imob"] as ProductSelection[],
+    requiredAddons: ["leads", "inteligencia", "assinatura"],
+  },
+  locacao_pro: {
+    name: "Kombo Locação Pro",
+    description: "LOC + Inteligência + Assinatura",
+    discount: 0.10, // 10% OFF
+    requiredProducts: ["loc"] as ProductSelection[],
+    requiredAddons: ["inteligencia", "assinatura"],
+    forbiddenAddons: ["leads"], // Must NOT have Leads
+  },
+  core_gestao: {
+    name: "Kombo Core Gestão",
+    description: "IMOB + LOC sem add-ons",
+    discount: 0.25, // 25% OFF (conforme tabela original)
+    requiredProducts: ["both"] as ProductSelection[],
+    requiredAddons: [], // No add-ons required
+    maxAddons: 0, // Must have ZERO add-ons
+  },
+  elite: {
+    name: "Kombo Elite",
+    description: "IMOB + LOC + Todos Add-ons",
+    discount: 0.20, // 20% OFF
+    requiredProducts: ["both"] as ProductSelection[],
+    requiredAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], // ALL add-ons
+  },
+};
 
 /**
  * CRITICAL: All base prices are ANNUAL prices (when paying annually)
@@ -147,6 +190,51 @@ export default function CalculadoraPage() {
   const [imobPlan, setImobPlan] = useState<PlanTier>("k");
   const [locPlan, setLocPlan] = useState<PlanTier>("k");
 
+  // Detect active Kombo
+  const detectKombo = (): KomboType => {
+    const activeAddons = Object.entries(addons)
+      .filter(([_, enabled]) => enabled)
+      .map(([name]) => name);
+
+    // Check each Kombo in priority order (most specific first)
+    
+    // Elite: IMOB + LOC + ALL add-ons
+    if (product === "both" && activeAddons.length === 6) {
+      const allAddonsPresent = KOMBOS.elite.requiredAddons.every(addon => activeAddons.includes(addon));
+      if (allAddonsPresent) return "elite";
+    }
+
+    // Core Gestão: IMOB + LOC + NO add-ons
+    if (product === "both" && activeAddons.length === 0) {
+      return "core_gestao";
+    }
+
+    // Imob Pro: IMOB + Leads + Inteligência + Assinatura
+    if (product === "imob") {
+      const hasRequired = KOMBOS.imob_pro.requiredAddons.every(addon => activeAddons.includes(addon));
+      if (hasRequired) return "imob_pro";
+    }
+
+    // Imob Start: IMOB + Leads + Assinatura (NO Inteligência)
+    if (product === "imob") {
+      const hasRequired = KOMBOS.imob_start.requiredAddons.every(addon => activeAddons.includes(addon));
+      const hasForbidden = activeAddons.includes("inteligencia");
+      if (hasRequired && !hasForbidden) return "imob_start";
+    }
+
+    // Locação Pro: LOC + Inteligência + Assinatura (NO Leads)
+    if (product === "loc") {
+      const hasRequired = KOMBOS.locacao_pro.requiredAddons.every(addon => activeAddons.includes(addon));
+      const hasForbidden = activeAddons.includes("leads");
+      if (hasRequired && !hasForbidden) return "locacao_pro";
+    }
+
+    return "none";
+  };
+
+  const activeKombo: KomboType = detectKombo();
+  const komboInfo = activeKombo !== "none" ? KOMBOS[activeKombo] : null;
+
   // Auto-recommend plans based on metrics
   // VIP Support requires minimum K plan, VIP Support + Dedicated CS requires minimum K2 plan
   useEffect(() => {
@@ -247,8 +335,7 @@ export default function CalculadoraPage() {
 
   // Get line items for pricing table
   const getLineItems = () => {
-    const kombo = detectKombo();
-    const komboDiscount = kombo ? (1 - kombo.discount) : 1;
+    const komboDiscount = komboInfo ? (1 - komboInfo.discount) : 1;
     const items: Array<{ 
       name: string; 
       monthlyRefSemKombo: number; 
@@ -334,47 +421,13 @@ export default function CalculadoraPage() {
   };
 
   // Detect which Kombo is active and return discount percentage
-  const detectKombo = (): { type: string; discount: number; name: string } | null => {
-    const hasImob = product === "imob" || product === "both";
-    const hasLoc = product === "loc" || product === "both";
-    const hasLeads = addons.leads;
-    const hasInteligencia = addons.inteligencia;
-    const hasAssinatura = addons.assinatura;
-    
-    // Combo COMPLETO: Imob + Loc + All Add-ons (Leads, Inteligência, Assinatura)
-    if (hasImob && hasLoc && hasLeads && hasInteligencia && hasAssinatura) {
-      return { type: "completo", discount: 0.20, name: "Combo COMPLETO" };
-    }
-    
-    // Combo IMOB Full: Imob + Leads + Inteligência + Assinatura
-    if (hasImob && !hasLoc && hasLeads && hasInteligencia && hasAssinatura) {
-      return { type: "imob_full", discount: 0.15, name: "Combo IMOB (Completo)" };
-    }
-    
-    // Combo IMOB: Imob + Leads + Assinatura
-    if (hasImob && !hasLoc && hasLeads && hasAssinatura) {
-      return { type: "imob", discount: 0.10, name: "Combo IMOB" };
-    }
-    
-    // Combo LOCAÇÃO: Loc + Inteligência + Assinatura
-    if (hasLoc && !hasImob && hasInteligencia && hasAssinatura) {
-      return { type: "locacao", discount: 0.10, name: "Combo LOCAÇÃO" };
-    }
-    
-    // Combo IMOB + LOCAÇÃO (sem add-ons): Only products, no add-ons
-    if (hasImob && hasLoc && !hasLeads && !hasInteligencia && !hasAssinatura) {
-      return { type: "imob_loc", discount: 0, name: "Combo IMOB + LOCAÇÃO" };
-    }
-    
-    return null;
-  };
+  // Old detectKombo function removed - now using new Kombo system above
 
   // Calculate total implementation cost
   const calculateTotalImplementation = (withKombo: boolean = false) => {
-    const kombo = detectKombo();
     
     // If any Kombo is active, implementation is fixed R$1.497
-    if (withKombo && kombo) {
+    if (withKombo && komboInfo) {
       return 1497;
     }
     
@@ -385,13 +438,12 @@ export default function CalculadoraPage() {
 
   // Calculate kombo discount on monthly recurring
   const calculateKomboDiscount = () => {
-    const kombo = detectKombo();
-    if (!kombo) return 0;
+    if (!komboInfo) return 0;
     
     // Apply discount percentage to ALL products and add-ons
     const lineItems = getLineItems();
     const subtotal = lineItems.reduce((sum, item) => sum + item.priceSemKombo, 0);
-    return Math.round(subtotal * kombo.discount);
+    return Math.round(subtotal * komboInfo.discount);
   };
 
   /**
@@ -887,8 +939,8 @@ export default function CalculadoraPage() {
                         <TableRow>
                           <TableHead className="w-[30%] font-bold text-gray-900"></TableHead>
                           <TableHead colSpan={2} className="text-center border-r-2 bg-gray-50">Sem Kombo</TableHead>
-                          <TableHead colSpan={2} className={`text-center ${detectKombo() ? 'bg-green-50' : 'bg-gray-100'}`}>
-                            {detectKombo() ? 'Kombo Ativado' : 'Kombo Desativado'}
+                          <TableHead colSpan={2} className={`text-center ${activeKombo !== 'none' ? 'bg-green-50' : 'bg-gray-100'}`}>
+                            {activeKombo !== 'none' ? 'Kombo Ativado' : 'Sem Kombo'}
                           </TableHead>
                         </TableRow>
                         <TableRow>
@@ -931,7 +983,7 @@ export default function CalculadoraPage() {
                                         {formatCurrency(item.priceSemKombo)}
                                       </TableCell>
                                       {/* Com Kombo / Kombo Desativado */}
-                                      {detectKombo() ? (
+                                      {activeKombo !== "none" ? (
                                         <>
                                           <TableCell className="text-right text-gray-500 text-sm">
                                             {formatCurrency(item.monthlyRefComKombo)}
@@ -974,7 +1026,7 @@ export default function CalculadoraPage() {
                                         {formatCurrency(item.priceSemKombo)}
                                       </TableCell>
                                       {/* Com Kombo / Kombo Desativado */}
-                                      {detectKombo() ? (
+                                      {activeKombo !== "none" ? (
                                         <>
                                           <TableCell className="text-right text-gray-500 text-sm">
                                             {formatCurrency(item.monthlyRefComKombo)}
@@ -1067,7 +1119,7 @@ export default function CalculadoraPage() {
                                           <TableCell className="text-right font-semibold border-r-2">
                                             {item.isIncluded ? 'Incluído' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                           </TableCell>
-                                          {detectKombo() ? (
+                                          {activeKombo !== "none" ? (
                                             <>
                                               <TableCell className="text-right text-gray-500 text-sm">
                                                 {item.isIncluded ? 'Incluído' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
@@ -1106,7 +1158,7 @@ export default function CalculadoraPage() {
                           <TableCell className="text-right font-bold text-gray-900 text-lg border-r-2 py-4">
                             {formatCurrency(calculateMonthlyRecurring(false))}
                           </TableCell>
-                          {detectKombo() ? (
+                          {activeKombo !== "none" ? (
                             <>
                               <TableCell className="text-right text-gray-500 text-sm py-4">
                                 {formatCurrency(calculateMonthlyReferenceTotal(true))}
@@ -1136,7 +1188,7 @@ export default function CalculadoraPage() {
                           <TableCell className="text-right font-semibold border-r-2">
                             {formatCurrency(calculateTotalImplementation(false))}
                           </TableCell>
-                          {detectKombo() ? (
+                          {activeKombo !== "none" ? (
                             <>
                               <TableCell className="text-right text-gray-500 text-sm">
                                 {formatCurrency(calculateTotalImplementation(true))}
@@ -1174,7 +1226,7 @@ export default function CalculadoraPage() {
                           <TableCell className="text-right font-bold text-gray-900 border-r-2 py-4">
                             {formatCurrency(calculateFirstYearTotal(false))}
                           </TableCell>
-                          {detectKombo() ? (
+                          {activeKombo !== "none" ? (
                             <>
                               <TableCell className="text-right text-gray-500 text-sm py-4">
                                 {formatCurrency(
@@ -1199,7 +1251,7 @@ export default function CalculadoraPage() {
                         </TableRow>
 
                         {/* Savings row - Prominent highlight */}
-                        {detectKombo() && (() => {
+                        {activeKombo !== "none" && (() => {
                           const lineItems = getLineItems();
                           // Monthly Sem Kombo (most expensive): monthly reference (+25%) * 12 + implementation without Kombo
                           const monthlySemKomboTotal = lineItems.reduce((sum, item) => sum + item.monthlyRefSemKombo, 0);
@@ -1227,7 +1279,7 @@ export default function CalculadoraPage() {
                       </Table>
                       
                       {/* Overlay message when Kombo is not active */}
-                      {!detectKombo() && (
+                      {activeKombo === "none" && (
                         <div className="absolute top-[80px] right-0 w-[40%] bottom-[60px] flex items-center justify-center bg-gray-100/95 border-l-2 border-gray-300">
                           <div className="text-center px-6">
                             <p className="text-gray-600 text-lg font-medium italic">
@@ -1942,12 +1994,18 @@ export default function CalculadoraPage() {
                 <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700">
                   <div className="container py-2 sm:py-3">
                     <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
-                      {/* Products Badge - Primary (Kenlo Red) */}
-                      <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
-                        {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
-                        {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
-                        {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
-                      </div>
+                      {/* Kombo Badge - Highlighted when active */}
+                      {komboInfo ? (
+                        <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
+                          ✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)
+                        </div>
+                      ) : (
+                        <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
+                          {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                          {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                          {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
+                        </div>
+                      )}
 
                       {/* Add-ons Badge */}
                       {(() => {
@@ -2017,9 +2075,9 @@ export default function CalculadoraPage() {
 
             // Calculate totals
             const items = getLineItems();
-            const totalMonthly = items.reduce((sum: number, item: any) => sum + (detectKombo() ? item.priceComKombo : item.priceSemKombo), 0);
+            const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
             const totalAnnual = totalMonthly * 12;
-            const implantationFee = calculateTotalImplementation(detectKombo() !== null);
+            const implantationFee = calculateTotalImplementation(activeKombo !== "none" !== null);
             const firstYearTotal = totalAnnual + implantationFee;
             
             // Calculate post-paid total
@@ -2119,6 +2177,8 @@ export default function CalculadoraPage() {
               salesPersonName,
               clientName,
               productType: product,
+              komboName: komboInfo?.name,
+              komboDiscount: komboInfo ? Math.round(komboInfo.discount * 100) : undefined,
               imobPlan: (product === "imob" || product === "both") ? imobPlan : undefined,
               locPlan: (product === "loc" || product === "both") ? locPlan : undefined,
               imobUsers: metrics.imobUsers,

@@ -39,3 +39,13 @@
 - [x] Adicionar add-ons selecionados na barra
 - [x] Adicionar frequência de pagamento escolhida na barra
 - [x] Garantir que todas as escolhas do usuário estejam visíveis
+
+## Kombo Naming System
+
+- [x] Criar lógica de detecção automática de Kombos baseada em produtos/add-ons selecionados
+- [x] Implementar descontos específicos por Kombo (10%, 15%, 20%)
+- [x] Mostrar nome do Kombo na barra sticky bottom
+- [x] Atualizar tabela de preços para indicar qual Kombo está ativo
+- [x] Incluir nome do Kombo no PDF gerado
+- [x] Salvar nome do Kombo no banco de dados junto com a proposta
+- [x] Testar todos os 5 Kombos (Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite)
