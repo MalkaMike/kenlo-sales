@@ -55,3 +55,10 @@
 - [x] Corrigir lógica do Kombo Core Gestão: desconto APENAS na implantação (50% OFF = R$ 1.497 ao invés de R$ 2.994)
 - [x] Mensalidades do Kombo Core Gestão devem usar preço normal da tabela (SEM desconto)
 - [x] Atualizar descrição do Kombo Core Gestão na barra sticky e documentação
+
+## Payment Frequency Buttons
+
+- [x] Adicionar botão "Mensal (0% - Referência)" aos botões de frequência
+- [x] Ajustar layout para 4 botões: Mensal, Semestral, Anual, Bienal
+- [x] Atualizar tipo PaymentFrequency para incluir "monthly"
+- [x] Testar seleção de frequência mensal

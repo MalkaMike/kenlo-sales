@@ -35,7 +35,7 @@ import {
 // Types
 type ProductSelection = "imob" | "loc" | "both";
 type PlanTier = "prime" | "k" | "k2";
-type PaymentFrequency = "semestral" | "annual" | "biennial";
+type PaymentFrequency = "monthly" | "semestral" | "annual" | "biennial";
 type KomboType = "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite" | "none";
 
 // Kombo definitions
@@ -518,16 +518,17 @@ export default function CalculadoraPage() {
   };
 
   const frequencyLabels = {
+    monthly: "Mensal",
     semestral: "Semestral",
     annual: "Anual",
     biennial: "Bienal",
   };
-
   const frequencyBadges = {
+    monthly: "0% - Refer\u00eancia",
     semestral: "-15%",
     annual: "-20%",
     biennial: "-25%",
-  };
+  };;
 
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-6 sm:py-12 px-4 sm:px-6">
@@ -921,7 +922,7 @@ export default function CalculadoraPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center mb-2 gap-2">
                         <div className="hidden sm:block sm:w-[30%]"></div>
                         <div className="flex-1 flex justify-center gap-2">
-                          {(["semestral", "annual", "biennial"] as PaymentFrequency[]).map((freq) => (
+                          {(["monthly", "semestral", "annual", "biennial"] as PaymentFrequency[]).map((freq) => (
                             <button
                               key={freq}
                               onClick={() => setFrequency(freq)}
@@ -2041,6 +2042,7 @@ export default function CalculadoraPage() {
 
                       {/* Frequency Badge */}
                       <div className="bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50">
+                        {frequency === 'monthly' && 'Mensal (0%)'}
                         {frequency === 'semestral' && 'Semestral (-15%)'}
                         {frequency === 'annual' && 'Anual (-20%)'}
                         {frequency === 'biennial' && 'Bienal (-25%)'}
