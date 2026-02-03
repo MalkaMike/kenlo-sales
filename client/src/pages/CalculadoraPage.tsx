@@ -44,6 +44,7 @@ const KOMBOS = {
     name: "Kombo Imob Start",
     description: "IMOB + Leads + Assinaturas",
     discount: 0.10, // 10% OFF
+    implantationDiscount: 0, // Sem desconto adicional na implantação
     requiredProducts: ["imob"] as ProductSelection[],
     requiredAddons: ["leads", "assinatura"],
     forbiddenAddons: ["inteligencia"], // Must NOT have Inteligência
@@ -52,12 +53,14 @@ const KOMBOS = {
     name: "Kombo Imob Pro",
     description: "IMOB + Leads + Inteligência + Assinatura",
     discount: 0.15, // 15% OFF
+    implantationDiscount: 0, // Sem desconto adicional na implantação
     requiredProducts: ["imob"] as ProductSelection[],
     requiredAddons: ["leads", "inteligencia", "assinatura"],
   },
   locacao_pro: {
     name: "Kombo Locação Pro",
     description: "LOC + Inteligência + Assinatura",
+    implantationDiscount: 0, // Sem desconto adicional na implantação
     discount: 0.10, // 10% OFF
     requiredProducts: ["loc"] as ProductSelection[],
     requiredAddons: ["inteligencia", "assinatura"],
@@ -66,7 +69,8 @@ const KOMBOS = {
   core_gestao: {
     name: "Kombo Core Gestão",
     description: "IMOB + LOC sem add-ons",
-    discount: 0.25, // 25% OFF (conforme tabela original)
+    discount: 0, // SEM desconto nas mensalidades (desconto apenas na implantação: 50% OFF)
+    implantationDiscount: 0.50, // 50% OFF na implantação (R$ 1.497 ao invés de R$ 2.994)
     requiredProducts: ["both"] as ProductSelection[],
     requiredAddons: [], // No add-ons required
     maxAddons: 0, // Must have ZERO add-ons
@@ -74,6 +78,7 @@ const KOMBOS = {
   elite: {
     name: "Kombo Elite",
     description: "IMOB + LOC + Todos Add-ons",
+    implantationDiscount: 0, // Sem desconto adicional na implantação
     discount: 0.20, // 20% OFF
     requiredProducts: ["both"] as ProductSelection[],
     requiredAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], // ALL add-ons
@@ -426,8 +431,15 @@ export default function CalculadoraPage() {
   // Calculate total implementation cost
   const calculateTotalImplementation = (withKombo: boolean = false) => {
     
-    // If any Kombo is active, implementation is fixed R$1.497
+    // If any Kombo is active
     if (withKombo && komboInfo) {
+      // Kombo Core Gestão: 50% OFF na implantação (R$ 1.497 ao invés de R$ 2.994)
+      if (activeKombo === "core_gestao") {
+        const items = getLineItems();
+        const fullImplantation = items.reduce((sum, item) => sum + (item.implantation || 0), 0);
+        return Math.round(fullImplantation * (1 - (komboInfo.implantationDiscount || 0)));
+      }
+      // Outros Kombos: implantação fixa R$1.497
       return 1497;
     }
     
@@ -1997,7 +2009,11 @@ export default function CalculadoraPage() {
                       {/* Kombo Badge - Highlighted when active */}
                       {komboInfo ? (
                         <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
-                          ✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)
+                          {activeKombo === "core_gestao" ? (
+                            <>✨ {komboInfo.name} (50% OFF Implantação)</>
+                          ) : (
+                            <>✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)</>
+                          )}
                         </div>
                       ) : (
                         <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">

@@ -49,3 +49,9 @@
 - [x] Incluir nome do Kombo no PDF gerado
 - [x] Salvar nome do Kombo no banco de dados junto com a proposta
 - [x] Testar todos os 5 Kombos (Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite)
+
+## Kombo Core Gestão Fix
+
+- [x] Corrigir lógica do Kombo Core Gestão: desconto APENAS na implantação (50% OFF = R$ 1.497 ao invés de R$ 2.994)
+- [x] Mensalidades do Kombo Core Gestão devem usar preço normal da tabela (SEM desconto)
+- [x] Atualizar descrição do Kombo Core Gestão na barra sticky e documentação
