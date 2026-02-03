@@ -183,6 +183,25 @@ export default function CalculadoraPage() {
     }
   }, [metrics, product]);
 
+  // Auto-activate Suporte Premium and CS Dedicado based on selected plans
+  useEffect(() => {
+    const newMetrics = { ...metrics };
+    
+    // IMOB: Suporte Premium included in Prime, CS Dedicado included in K2
+    if (product === "imob" || product === "both") {
+      newMetrics.imobVipSupport = imobPlan === "prime" || imobPlan === "k" || imobPlan === "k2";
+      newMetrics.imobDedicatedCS = imobPlan === "k2";
+    }
+    
+    // LOC: Suporte Premium included in Prime, CS Dedicado included in K2
+    if (product === "loc" || product === "both") {
+      newMetrics.locVipSupport = locPlan === "prime" || locPlan === "k" || locPlan === "k2";
+      newMetrics.locDedicatedCS = locPlan === "k2";
+    }
+    
+    setMetrics(newMetrics);
+  }, [imobPlan, locPlan, product]);
+
   // Check if add-on is available based on product selection
   const isAddonAvailable = (addon: keyof typeof addons) => {
     if (addon === "leads") return product === "imob" || product === "both";
