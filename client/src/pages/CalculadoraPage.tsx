@@ -1022,7 +1022,7 @@ export default function CalculadoraPage() {
                                 
                                 // Suporte Premium IMOB
                                 if (product === 'imob' || product === 'both') {
-                                  const isIncluded = imobPlan === 'prime';
+                                  const isIncluded = imobPlan === 'k' || imobPlan === 'k2';
                                   premiumServices.push({
                                     name: 'Suporte Premium - IMOB',
                                     isIncluded: isIncluded,
@@ -1046,7 +1046,7 @@ export default function CalculadoraPage() {
                                 
                                 // Suporte Premium LOC
                                 if (product === 'loc' || product === 'both') {
-                                  const isIncluded = locPlan === 'prime';
+                                  const isIncluded = locPlan === 'k' || locPlan === 'k2';
                                   premiumServices.push({
                                     name: 'Suporte Premium - LOC',
                                     isIncluded: isIncluded,
@@ -1080,18 +1080,18 @@ export default function CalculadoraPage() {
                                         <TableRow key={`premium-${index}`}>
                                           <TableCell className="font-medium pl-6">{item.name}</TableCell>
                                           <TableCell className="text-right text-gray-500 text-sm">
-                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
+                                            {item.isIncluded ? 'Incluído' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                           </TableCell>
                                           <TableCell className="text-right font-semibold border-r-2">
-                                            {item.isIncluded ? 'Incluido' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
+                                            {item.isIncluded ? 'Incluído' : (item.priceSemKombo !== null ? formatCurrency(item.priceSemKombo) : 'Não Incluído')}
                                           </TableCell>
                                           {detectKombo() ? (
                                             <>
                                               <TableCell className="text-right text-gray-500 text-sm">
-                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
+                                                {item.isIncluded ? 'Incluído' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
                                               </TableCell>
                                               <TableCell className="text-right font-semibold">
-                                                {item.isIncluded ? 'Incluido' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
+                                                {item.isIncluded ? 'Incluído' : (item.priceComKombo !== null ? formatCurrency(item.priceComKombo) : 'Não Incluído')}
                                               </TableCell>
                                             </>
                                           ) : (
