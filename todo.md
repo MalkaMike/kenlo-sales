@@ -156,3 +156,10 @@
 - [x] Adicionar seção hero explicando o conceito de Kombos e benefícios
 - [x] Incluir CTA para "Monte seu plano" redirecionando para calculadora
 - [x] Rota /kombos já existe no App.tsx
+
+## Core Gestão Premium Services Rule
+
+- [x] Implementar nova regra: Kombo Core Gestão (IMOB + LOC, qualquer plano) inclui automaticamente Serviços Premium (Suporte VIP + CS Dedicado) sem custo adicional
+- [x] Atualizar lógica da calculadora para marcar Serviços Premium como "Incluído" quando Core Gestão está ativo
+- [x] Atualizar descrição do Kombo Core Gestão na página /kombos para mencionar Serviços Premium incluídos
+- [x] Testar cenários: Prime+Prime, K+K, K2+K2, Prime+K, etc. todos devem ter Serviços Premium incluídos - 12 testes passaram

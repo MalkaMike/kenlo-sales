@@ -168,15 +168,15 @@ export default function KombosPage() {
     },
     {
       name: "Kombo Core Gestão",
-      description: "Gestão completa de vendas e locação",
+      description: "Gestão completa de vendas e locação com Serviços Premium incluídos",
       discount: 0,
       implementation: "R$ 1.497",
       products: ["Kenlo Imob (CRM + Site)", "Kenlo Locação (ERP)"],
-      addons: [],
+      addons: ["Suporte Premium IMOB + LOC", "CS Dedicado IMOB + LOC"],
       idealFor: [
         "Imobiliárias que atuam em vendas E locação",
-        "Negócios que querem plataforma unificada",
-        "Empresas que preferem adicionar add-ons depois"
+        "Negócios que querem plataforma unificada com suporte premium",
+        "Empresas que preferem adicionar outros add-ons depois"
       ],
       icon: Building2,
       gradient: "bg-gradient-to-br from-purple-500 to-indigo-500",

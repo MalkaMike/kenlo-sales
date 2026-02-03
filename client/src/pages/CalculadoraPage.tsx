@@ -1073,7 +1073,9 @@ export default function CalculadoraPage() {
                                 
                                 // Suporte Premium IMOB
                                 if (product === 'imob' || product === 'both') {
-                                  const isIncluded = imobPlan === 'k' || imobPlan === 'k2';
+                                  const isIncludedByPlan = imobPlan === 'k' || imobPlan === 'k2';
+                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
+                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
                                   const isSelected = metrics.imobVipSupport;
                                   premiumServices.push({
                                     name: 'Suporte Premium - IMOB',
@@ -1086,7 +1088,9 @@ export default function CalculadoraPage() {
                                 
                                 // CS Dedicado IMOB
                                 if (product === 'imob' || product === 'both') {
-                                  const isIncluded = imobPlan === 'k2';
+                                  const isIncludedByPlan = imobPlan === 'k2';
+                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
+                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
                                   const isSelected = metrics.imobDedicatedCS;
                                   premiumServices.push({
                                     name: 'CS Dedicado - IMOB',
@@ -1099,7 +1103,9 @@ export default function CalculadoraPage() {
                                 
                                 // Suporte Premium LOC
                                 if (product === 'loc' || product === 'both') {
-                                  const isIncluded = locPlan === 'k' || locPlan === 'k2';
+                                  const isIncludedByPlan = locPlan === 'k' || locPlan === 'k2';
+                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
+                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
                                   const isSelected = metrics.locVipSupport;
                                   premiumServices.push({
                                     name: 'Suporte Premium - LOC',
@@ -1112,7 +1118,9 @@ export default function CalculadoraPage() {
                                 
                                 // CS Dedicado LOC
                                 if (product === 'loc' || product === 'both') {
-                                  const isIncluded = locPlan === 'k2';
+                                  const isIncludedByPlan = locPlan === 'k2';
+                                  const isIncludedByCoreGestao = product === 'both'; // Core Gestão includes premium services
+                                  const isIncluded = isIncludedByPlan || isIncludedByCoreGestao;
                                   const isSelected = metrics.locDedicatedCS;
                                   premiumServices.push({
                                     name: 'CS Dedicado - LOC',
