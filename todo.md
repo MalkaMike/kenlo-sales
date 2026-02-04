@@ -324,3 +324,9 @@
 - [x] Incluir serviços premium (VIP/CS) incluídos
 - [x] Mostrar implantação única de R$1.497 para todos
 - [x] Adicionar CTAs claros para calculadora
+
+## Renomear para "Orçamento" e Corrigir Menu
+- [x] Corrigir alinhamento do menu de navegação
+- [x] Renomear "Monte seu plano" para "Orçamento" no menu
+- [x] Renomear "Calculadora" para "Orçamento" em todo o site
+- [x] Atualizar todos os CTAs e links que mencionam "calculadora" ou "monte seu plano"

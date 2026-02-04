@@ -357,7 +357,7 @@ export default function ImobPage() {
             <Link href="/calculadora">
               <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
                 <Calculator className="w-5 h-5" />
-                Simular Proposta Personalizada
+                Criar Orçamento Personalizada
               </Button>
             </Link>
           </div>

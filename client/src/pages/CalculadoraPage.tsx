@@ -631,7 +631,7 @@ export default function CalculadoraPage() {
               <Calculator className="w-6 h-6 text-primary" />
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 px-4">
-              Calculadora Inteligente Kenlo
+              Orçamento Kenlo
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
               Configure a solução ideal para sua imobiliária e veja o investimento em tempo real

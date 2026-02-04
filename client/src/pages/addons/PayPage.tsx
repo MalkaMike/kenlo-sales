@@ -72,7 +72,7 @@ export default function PayPage() {
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                  Simular Proposta
+                  Criar Orçamento
                 </Button>
               </Link>
               <Link href="/produtos/locacao">
@@ -178,7 +178,7 @@ export default function PayPage() {
             </p>
             <Link href="/calculadora">
               <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
-                Simular Proposta
+                Criar Orçamento
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>

@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Sparkles, Calculator, ArrowRight, Star, Info } from "lucide-react";
+import { Check, X, Sparkles, FileText, ArrowRight, Star, Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -144,8 +144,8 @@ export default function KombosPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
                 <Link href="/calculadora">
-                  <Calculator className="w-5 h-5" />
-                  Simular Proposta
+                  <FileText className="w-5 h-5" />
+                  Criar Orçamento
                 </Link>
               </Button>
             </div>
@@ -363,12 +363,12 @@ export default function KombosPage() {
               Pronto para montar a proposta ideal?
             </h2>
             <p className="text-lg mb-8 text-white/90">
-              Use nossa calculadora inteligente para simular diferentes Kombos e ver os preços em tempo real
+              Use nosso gerador de orçamentos para simular diferentes Kombos e ver os preços em tempo real
             </p>
             <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 gap-2" asChild>
               <Link href="/calculadora">
-                <Calculator className="w-5 h-5" />
-                Abrir Calculadora
+                <FileText className="w-5 h-5" />
+                Criar Orçamento
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>

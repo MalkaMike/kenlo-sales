@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Calculator, Package, Layers } from "lucide-react";
+import { Menu, FileText, Package, Layers } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +55,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Navigation */}
-          <NavigationMenu className="hidden lg:flex">
+          <NavigationMenu className="hidden lg:flex items-center">
             <NavigationMenuList>
               {/* Products */}
               <NavigationMenuItem>
@@ -137,7 +137,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Calculator */}
+              {/* Orçamento */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
@@ -147,8 +147,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/calculadora" && "bg-accent"
                     )}
                   >
-                    <Calculator className="w-4 h-4 mr-2" />
-                    Monte seu plano
+                    <FileText className="w-4 h-4 mr-2" />
+                    Orçamento
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -206,7 +206,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
                 >
-                  Monte seu plano
+                  Orçamento
                 </Link>
               </nav>
             </SheetContent>
@@ -253,7 +253,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h4 className="font-semibold mb-4">Ferramentas</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="hover:text-foreground transition-colors">Kombos</Link></li>
-                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Monte seu plano</Link></li>
+                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Orçamento</Link></li>
               </ul>
             </div>
           </div>

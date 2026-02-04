@@ -11,7 +11,7 @@ import {
   CreditCard, 
   Shield, 
   Banknote,
-  Calculator,
+  FileText,
   ArrowRight,
   Sparkles,
   TrendingUp,
@@ -112,14 +112,14 @@ export default function Home() {
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Produtos, add-ons e Kombos personalizados. Simule propostas em tempo real 
-              com nossa calculadora inteligente.
+              com nosso gerador de orçamentos.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
                 <Link href="/calculadora">
-                  <Calculator className="w-5 h-5" />
-                  Abrir Calculadora
+                  <FileText className="w-5 h-5" />
+                  Criar Orçamento
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="gap-2" asChild>
@@ -285,9 +285,9 @@ export default function Home() {
       <section className="py-20 bg-card/30">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <Calculator className="w-16 h-16 text-primary mx-auto mb-6" />
+            <FileText className="w-16 h-16 text-primary mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Calculadora Inteligente
+              Gerador de Orçamentos
             </h2>
             <p className="text-muted-foreground mb-8">
               Configure produtos, add-ons e veja o investimento em tempo real. 
@@ -295,8 +295,8 @@ export default function Home() {
             </p>
             <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
               <Link href="/calculadora">
-                <Calculator className="w-5 h-5" />
-                Simular Proposta
+                <FileText className="w-5 h-5" />
+                Criar Orçamento
               </Link>
             </Button>
           </div>
