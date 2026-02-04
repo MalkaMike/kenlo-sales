@@ -16,24 +16,14 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Check,
-  X,
   Calculator,
   Download,
-  Link2,
   TrendingUp,
   Key,
-  Zap,
   CheckCircle2,
+  Zap,
 } from "lucide-react";
 
 // Types

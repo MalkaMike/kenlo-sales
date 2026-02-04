@@ -809,3 +809,19 @@
 - [x] Ticket médio por vendedor
 - [x] Conversão por frequência de pagamento (Mensal/Semestral/Anual/Bienal)
 - [x] Top produtos/add-ons mais vendidos
+
+
+## Gráfico de Tendência e Limpeza de Código (Fev 2026)
+
+### Gráfico de Tendência
+- [x] Adicionar gráfico de linha mostrando evolução do MRR ao longo do tempo
+- [x] Agrupar dados por dia conforme período selecionado
+- [x] Mostrar duas linhas: MRR sem pós-pago e MRR com pós-pago
+
+### Limpeza de Código
+- [x] Remover arquivos não utilizados (ComponentShowcase, AIChatBox, DashboardLayout, Map, server/index.ts)
+- [x] Otimizar imports em PerformancePage (remover ícones não usados)
+- [x] Otimizar imports em CalculadoraPage (remover Table não usado)
+- [x] Remover import de useAuth não utilizado em Home.tsx
+- [x] Todos os 88 testes passando
+- [x] Código limpo e profissional

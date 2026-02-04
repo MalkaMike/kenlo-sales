@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -120,7 +119,6 @@ const benefits = [
 ];
 
 export default function Home() {
-  const { user, loading, error, isAuthenticated, logout } = useAuth();
 
   return (
     <div className="flex flex-col">

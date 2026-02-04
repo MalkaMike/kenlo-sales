@@ -22,8 +22,6 @@ import {
   FileText, 
   Download, 
   Calendar,
-  Building2,
-  Home,
   Package,
   TrendingUp,
   Loader2,
@@ -36,7 +34,6 @@ import {
   Target,
   LogOut,
   DollarSign,
-  Percent,
   Trash2,
   AlertCircle,
   Layers,
@@ -496,6 +493,46 @@ export default function PerformancePage() {
 
   const addonPopularity = calculateAddonPopularity();
 
+  // Calculate trend data for line chart
+  const calculateTrendData = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    // Group by date
+    const dateMap = new Map<string, { mrrWithoutPostPaid: number; mrrWithPostPaid: number; count: number }>();
+
+    filteredQuotes.forEach((quote) => {
+      const date = format(new Date(quote.createdAt), "dd/MM", { locale: ptBR });
+      const totals = parseJSON(quote.totals);
+      const monthly = totals?.monthly || 0;
+      const postPaid = totals?.postPaid || 0;
+
+      if (!dateMap.has(date)) {
+        dateMap.set(date, { mrrWithoutPostPaid: 0, mrrWithPostPaid: 0, count: 0 });
+      }
+      const data = dateMap.get(date)!;
+      data.mrrWithoutPostPaid += monthly;
+      data.mrrWithPostPaid += monthly + postPaid;
+      data.count++;
+    });
+
+    // Convert to array and sort by date
+    return Array.from(dateMap.entries())
+      .map(([date, data]) => ({
+        date,
+        "MRR s/ pós": data.mrrWithoutPostPaid,
+        "MRR c/ pós": data.mrrWithPostPaid,
+        cotacoes: data.count,
+      }))
+      .sort((a, b) => {
+        const [dayA, monthA] = a.date.split("/").map(Number);
+        const [dayB, monthB] = b.date.split("/").map(Number);
+        if (monthA !== monthB) return monthA - monthB;
+        return dayA - dayB;
+      });
+  };
+
+  const trendData = calculateTrendData();
+
   const exportToExcel = () => {
     if (!filteredQuotes || filteredQuotes.length === 0) {
       alert("Nenhuma cotação para exportar");
@@ -814,6 +851,50 @@ export default function PerformancePage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Trend Chart */}
+        {trendData.length > 1 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-500" />
+                Tendência de MRR
+              </CardTitle>
+              <CardDescription>Evolução do MRR ao longo do tempo</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis 
+                    tickFormatter={(value) => formatCompactCurrency(value)} 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => [formatCurrency(value), '']} 
+                    labelFormatter={(label) => `Data: ${label}`}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="MRR s/ pós" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="MRR c/ pós" 
+                    stroke="#10b981" 
+                    strokeWidth={2}
+                    dot={{ fill: '#10b981', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Kombo Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
