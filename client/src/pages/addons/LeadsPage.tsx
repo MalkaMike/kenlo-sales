@@ -1,48 +1,124 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Zap, Clock, Target, BarChart3, ArrowRight, Check } from "lucide-react";
+import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const features = [
+// Pricing data based on the official table
+const pricingData = {
+  sections: [
+    {
+      title: "Investimento",
+      rows: [
+        {
+          feature: "Licença mensal (plano anual)",
+          value: "R$ 497/mês",
+          highlight: true,
+          tooltip: undefined,
+        },
+        {
+          feature: "Implantação/Treinamento (única)",
+          value: "R$ 497",
+        },
+      ],
+    },
+    {
+      title: "Opções de Atendimento",
+      rows: [
+        {
+          feature: "Sem WhatsApp",
+          value: "Leads distribuídos ilimitados",
+          tooltip: "Distribuição automática de leads sem limite de quantidade",
+        },
+        {
+          feature: "Com WhatsApp",
+          value: "150 leads/mês via WhatsApp",
+          tooltip: "Atendimento automatizado via WhatsApp incluído",
+        },
+      ],
+    },
+    {
+      title: "Leads Adicionais (pós-pago)",
+      rows: [
+        {
+          feature: "1 a 200 leads",
+          value: "R$ 2,00/lead",
+        },
+        {
+          feature: "201 a 350 leads",
+          value: "R$ 1,80/lead",
+        },
+        {
+          feature: "351 a 1.000 leads",
+          value: "R$ 1,50/lead",
+        },
+        {
+          feature: "Acima de 1.000 leads",
+          value: "R$ 1,20/lead",
+        },
+      ],
+    },
+    {
+      title: "Integração com IA",
+      rows: [
+        {
+          feature: "Integração com IA",
+          value: true,
+          tooltip: "Parceiro homologado (Ex: Lais). Não requer WhatsApp.",
+        },
+      ],
+    },
+  ],
+};
+
+const highlights = [
   {
     icon: Zap,
     title: "Distribuição Automática",
-    description: "Leads distribuídos automaticamente por região, especialidade ou rodízio",
+    description: "Leads distribuídos por região, especialidade ou rodízio",
   },
   {
     icon: Clock,
     title: "Tempo de Resposta",
-    description: "Lead não atendido em 5 minutos? Vai para o próximo corretor",
+    description: "Lead não atendido em 5 min? Vai para o próximo corretor",
   },
   {
     icon: Target,
     title: "Qualificação Inteligente",
-    description: "Score de qualificação baseado em comportamento e interesse",
+    description: "Score baseado em comportamento e interesse",
   },
   {
-    icon: BarChart3,
-    title: "Analytics Avançado",
-    description: "Métricas de conversão por corretor, fonte e região",
+    icon: MessageSquare,
+    title: "WhatsApp Integrado",
+    description: "Atendimento automatizado via WhatsApp",
   },
 ];
 
-const benefits = [
-  "Zero leads perdidos",
-  "Distribuição por região ou especialidade",
-  "Rodízio automático entre corretores",
-  "Tempo máximo de resposta configurável",
-  "Relatórios de performance por corretor",
-  "Integração com WhatsApp",
-];
-
-const pricing = {
-  base: "627",
-  perLead: "2,50",
-  included: 150,
-};
-
 export default function LeadsPage() {
+  const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
+    if (typeof row.value === "boolean") {
+      return row.value ? (
+        <div className="flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+            <Check className="w-5 h-5 text-green-600" />
+          </div>
+        </div>
+      ) : (
+        <span className="text-muted-foreground">—</span>
+      );
+    }
+    
+    if (row.highlight) {
+      return <span className="text-lg font-bold text-secondary">{row.value}</span>;
+    }
+    
+    return <span className="font-medium">{row.value}</span>;
+  };
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -64,21 +140,32 @@ export default function LeadsPage() {
               Zero leads perdidos, máxima conversão.
             </p>
             
-            <div className="flex items-baseline gap-2 mb-8">
-              <span className="text-sm text-muted-foreground">A partir de</span>
-              <span className="text-4xl font-bold text-primary">R$ {pricing.base}</span>
-              <span className="text-muted-foreground">/mês</span>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <Badge variant="outline" className="text-sm py-1">
+                <Zap className="w-4 h-4 mr-1" />
+                Distribuição automática
+              </Badge>
+              <Badge variant="outline" className="text-sm py-1">
+                <MessageSquare className="w-4 h-4 mr-1" />
+                WhatsApp integrado
+              </Badge>
+              <Badge variant="outline" className="text-sm py-1">
+                <Bot className="w-4 h-4 mr-1" />
+                Integração com IA
+              </Badge>
             </div>
             
             <div className="flex gap-4">
               <Link href="/calculadora">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  Simular Proposta
+                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+                  <Calculator className="w-5 h-5" />
+                  Monte seu Plano
                 </Button>
               </Link>
-              <Link href="/produtos/imob">
-                <Button size="lg" variant="outline">
-                  Ver Kenlo Imob
+              <Link href="/kombos">
+                <Button size="lg" variant="outline" className="gap-2">
+                  Ver Kombos
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -86,98 +173,131 @@ export default function LeadsPage() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20">
+      {/* Highlights */}
+      <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Como Funciona</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Automatize a distribuição de leads e aumente a conversão da sua equipe
-            </p>
-          </div>
-          
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="kenlo-card">
-                <CardHeader>
-                  <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-4">
-                    <feature.icon className="w-6 h-6" />
-                  </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
+            {highlights.map((item, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <item.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-20 bg-card/30">
+      {/* Pricing Table */}
+      <section className="py-20">
         <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Benefícios do Kenlo Leads
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-secondary flex-shrink-0" />
-                    <span>{benefit}</span>
-                  </div>
-                ))}
-              </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Modelo transparente com preços por faixas. Quanto mais leads, menor o custo por unidade.
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-4 px-4 font-medium text-muted-foreground">
+                      Categoria / Recurso
+                    </th>
+                    <th className="text-center py-4 px-4 min-w-[200px]">
+                      <div className="flex flex-col items-center">
+                        <Users className="w-8 h-8 text-primary mb-2" />
+                        <span className="font-bold text-lg">Leads</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pricingData.sections.map((section, sectionIndex) => (
+                    <>
+                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                        <td
+                          colSpan={2}
+                          className="py-3 px-4 font-semibold text-foreground"
+                        >
+                          {section.title}
+                        </td>
+                      </tr>
+                      {section.rows.map((row, rowIndex) => (
+                        <tr
+                          key={`row-${sectionIndex}-${rowIndex}`}
+                          className="border-b border-border/50 hover:bg-muted/20 transition-colors"
+                        >
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <span>{row.feature}</span>
+                              {row.tooltip && (
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <span className="text-muted-foreground hover:text-foreground cursor-help">
+                                      ⓘ
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="max-w-xs">{row.tooltip}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            {renderValue(row)}
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  ))}
+                </tbody>
+              </table>
             </div>
             
-            <Card className="kenlo-card">
-              <CardHeader>
-                <CardTitle>Precificação</CardTitle>
-                <CardDescription>Modelo transparente e previsível</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center py-3 border-b border-border">
-                  <span className="text-muted-foreground">Mensalidade base</span>
-                  <span className="font-semibold">R$ {pricing.base}/mês</span>
-                </div>
-                <div className="flex justify-between items-center py-3 border-b border-border">
-                  <span className="text-muted-foreground">Mensagens incluídas</span>
-                  <span className="font-semibold">{pricing.included} mensagens</span>
-                </div>
-                <div className="flex justify-between items-center py-3">
-                  <span className="text-muted-foreground">Mensagem adicional</span>
-                  <span className="font-semibold">R$ {pricing.perLead}</span>
-                </div>
-                <Link href="/calculadora" className="block pt-4">
-                  <Button className="w-full bg-primary hover:bg-primary/90">
-                    Calcular meu investimento
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <strong>Exemplo de cálculo:</strong> Se a imobiliária tiver 500 leads adicionais/mês, 
+                paga 200 × R$ 2,00 + 150 × R$ 1,80 + 150 × R$ 1,50 = <strong>R$ 895/mês</strong> em leads adicionais.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16">
+      {/* Kombos CTA */}
+      <section className="py-16 bg-card/30">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <Users className="w-16 h-16 text-primary mx-auto mb-6" />
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Pronto para não perder mais leads?
+              Economize com Kombos
             </h2>
             <p className="text-muted-foreground mb-6">
-              Adicione Kenlo Leads ao seu Imob e veja a conversão aumentar
+              Combine Kenlo Leads com outros produtos e ganhe até 20% de desconto.
+              O Kombo Imob Start inclui IMOB + Leads + Assinatura com 10% OFF!
             </p>
-            <Link href="/calculadora">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
-                Simular Proposta
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
+            <div className="flex gap-4 justify-center">
+              <Link href="/kombos">
+                <Button size="lg" variant="outline" className="gap-2">
+                  Explorar Kombos
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/calculadora">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+                  <Calculator className="w-5 h-5" />
+                  Simular Proposta
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

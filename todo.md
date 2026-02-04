@@ -294,3 +294,24 @@
 - [x] Incluir: Kenlo Pay (Boletos/Split inclusos e pós-pago)
 - [x] Incluir: Kenlo Seguros (comissões 35%/40%/45%)
 - [x] Incluir: Funcionalidades Básicas, Avançadas e Exclusivas K2
+
+## Redesenho Páginas de Add-ons
+### Kenlo Inteligência
+- [x] Criar página com tabela de preços detalhada
+- [x] Incluir: Licença R$297/mês, Implantação R$497
+- [x] Incluir: Features (Relatórios, Preço m², Safra, Comparação mercado, Explorer)
+- [x] Indicar compatibilidade com IMOB e LOC
+
+### Kenlo Leads
+- [x] Criar página com tabela de preços detalhada
+- [x] Incluir: Licença R$497/mês, Implantação R$497
+- [x] Incluir: Leads WhatsApp (150/mês inclusos)
+- [x] Incluir: Leads adicionais por faixas (R$2,00 a R$1,20)
+- [x] Indicar integração com IA (parceiro homologado)
+
+### Kenlo Assinatura
+- [x] Criar página com tabela de preços detalhada
+- [x] Incluir: Licença R$37/mês, Implantação grátis
+- [x] Incluir: 20 assinaturas inclusas/mês
+- [x] Incluir: Assinaturas adicionais por faixas (R$1,80 a R$1,50)
+- [x] Incluir: Validação biométrica facial R$7,00
