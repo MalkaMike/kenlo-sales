@@ -381,3 +381,14 @@
 - [ ] Calculadora: Formulários e tabela de comparação adaptados para mobile
 - [ ] Histórico: Tabela responsiva com scroll ou cards em mobile
 - [ ] Testar todas as páginas em viewport 375px (iPhone SE)
+
+## Correção de Preços do Kenlo Leads
+- [x] Corrigir faixas de preços por lead adicional via WhatsApp:
+  - 1-200 leads: R$2,00/lead
+  - 201-350 leads: R$1,80/lead
+  - 351-1000 leads: R$1,50/lead
+  - Acima de 1000 leads: R$1,20/lead
+- [x] Verificar página LeadsPage.tsx (já estava correto)
+- [x] Verificar cálculos na CalculadoraPage.tsx (corrigido de 2.5/2.0 para 2.0/1.8)
+- [x] Verificar componente KomboComparisonTable.tsx (não tem cálculo pós-pago)
+- [x] Testar cálculos com diferentes quantidades de leads

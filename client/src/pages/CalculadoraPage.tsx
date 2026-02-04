@@ -1302,7 +1302,7 @@ export default function CalculadoraPage() {
                           const tier2 = Math.min(Math.max(0, additional - 200), 150);
                           const tier3 = Math.min(Math.max(0, additional - 350), 650);
                           const tier4 = Math.max(0, additional - 1000);
-                          return (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                          return (tier1 * 2.0) + (tier2 * 1.8) + (tier3 * 1.5) + (tier4 * 1.2);
                         })();
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
@@ -1533,7 +1533,7 @@ export default function CalculadoraPage() {
                             const tier2 = Math.min(Math.max(0, additional - 200), 150);
                             const tier3 = Math.min(Math.max(0, additional - 350), 650);
                             const tier4 = Math.max(0, additional - 1000);
-                            totalPostPaid += tier1 * 2.5 + tier2 * 2 + tier3 * 1.5 + tier4 * 1.2;
+                            totalPostPaid += tier1 * 2.0 + tier2 * 1.8 + tier3 * 1.5 + tier4 * 1.2;
                           }
                         }
                         
@@ -1728,7 +1728,7 @@ export default function CalculadoraPage() {
                                   const tier2 = Math.min(Math.max(0, additional - 200), 150);
                                   const tier3 = Math.min(Math.max(0, additional - 350), 650);
                                   const tier4 = Math.max(0, additional - 1000);
-                                  totalPostPaid += (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                                  totalPostPaid += (tier1 * 2.0) + (tier2 * 1.8) + (tier3 * 1.5) + (tier4 * 1.2);
                                 }
                               }
                               if (addons.assinatura) {
@@ -1834,7 +1834,7 @@ export default function CalculadoraPage() {
                             const tier2 = Math.min(Math.max(0, additional - 200), 150);
                             const tier3 = Math.min(Math.max(0, additional - 350), 650);
                             const tier4 = Math.max(0, additional - 1000);
-                            totalPostPaid += (tier1 * 2.5) + (tier2 * 2) + (tier3 * 1.5) + (tier4 * 1.2);
+                            totalPostPaid += (tier1 * 2.0) + (tier2 * 1.8) + (tier3 * 1.5) + (tier4 * 1.2);
                           }
                         }
                         if (addons.assinatura) {
@@ -2107,7 +2107,7 @@ export default function CalculadoraPage() {
                 const tier2 = Math.min(Math.max(0, additional - 200), 150);
                 const tier3 = Math.min(Math.max(0, additional - 350), 650);
                 const tier4 = Math.max(0, additional - 1000);
-                postPaidTotal += tier1 * 2.5 + tier2 * 2 + tier3 * 1.5 + tier4 * 1.2;
+                postPaidTotal += tier1 * 2.0 + tier2 * 1.8 + tier3 * 1.5 + tier4 * 1.2;
               }
             }
             
