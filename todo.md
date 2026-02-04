@@ -244,3 +244,12 @@
 - [x] Implementar lógica para recomendar Prime/K/K2 baseado no número de contratos (LOC)
 - [x] Considerar custo total: mensalidade + usuários/contratos adicionais
 - [x] Mostrar plano recomendado em vermelho/rosa (ex: "Imob - K")
+
+## Atualização de Preços IMOB (Fev 2026)
+- [x] Atualizar preços base: Prime R$247, K R$497, K2 R$1.197
+- [x] Atualizar usuários inclusos: Prime 2, K 7, K2 15
+- [x] Implementar cálculo de usuários adicionais por faixas:
+  - Prime: R$57 fixo por usuário
+  - K: 1-10 = R$47, 11+ = R$37
+  - K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
+- [x] Atualizar lógica de seleção automática do melhor plano com novos preços

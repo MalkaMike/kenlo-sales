@@ -252,22 +252,29 @@ export default function CalculadoraPage() {
     // Mensalidade base (anual)
     const baseCost = PLAN_ANNUAL_PRICES[plan];
     
-    // Usuários incluídos por plano
-    const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+    // Usuários incluídos por plano (atualizado Fev 2026)
+    // Prime: 2 usuários, K: 7 usuários, K2: 15 usuários
+    const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
     const additional = Math.max(0, users - included);
     
-    // Custo de usuários adicionais
+    // Custo de usuários adicionais (atualizado Fev 2026)
+    // Prime: R$57 fixo por usuário
+    // K: 1-10 = R$47, 11+ = R$37
+    // K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
     let additionalCost = 0;
     if (additional > 0) {
       if (plan === 'prime') {
+        // Prime: R$57 fixo por usuário adicional
         additionalCost = additional * 57;
       } else if (plan === 'k') {
-        const tier1 = Math.min(additional, 15);
-        const tier2 = Math.max(0, additional - 15);
+        // K: 1-10 = R$47, 11+ = R$37
+        const tier1 = Math.min(additional, 10);
+        const tier2 = Math.max(0, additional - 10);
         additionalCost = (tier1 * 47) + (tier2 * 37);
       } else {
-        const tier1 = Math.min(additional, 15);
-        const tier2 = Math.min(Math.max(0, additional - 15), 35);
+        // K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
+        const tier1 = Math.min(additional, 10);
+        const tier2 = Math.min(Math.max(0, additional - 10), 40); // 11-50 (40 usuários)
         const tier3 = Math.max(0, additional - 50);
         additionalCost = (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
       }
@@ -1025,17 +1032,19 @@ export default function CalculadoraPage() {
                       {/* IMOB Additional Users */}
                       {(product === 'imob' || product === 'both') && (() => {
                         const plan = imobPlan;
-                        const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                        // Usuários inclusos: Prime 2, K 7, K2 15
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
                         const additional = Math.max(0, metrics.imobUsers - included);
                         const totalCost = (() => {
+                          // Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
                           if (plan === 'prime') return additional * 57;
                           else if (plan === 'k') {
-                            const tier1 = Math.min(additional, 15);
-                            const tier2 = Math.max(0, additional - 15);
+                            const tier1 = Math.min(additional, 10);
+                            const tier2 = Math.max(0, additional - 10);
                             return (tier1 * 47) + (tier2 * 37);
                           } else {
-                            const tier1 = Math.min(additional, 15);
-                            const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                            const tier1 = Math.min(additional, 10);
+                            const tier2 = Math.min(Math.max(0, additional - 10), 40);
                             const tier3 = Math.max(0, additional - 50);
                             return (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
                           }
@@ -1304,16 +1313,24 @@ export default function CalculadoraPage() {
                           if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
                         }
                         
-                        // Additional Users (Imob)
+                        // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
                         if (product === 'imob' || product === 'both') {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
-                            const tier1 = Math.min(additional, 15);
-                            const tier2 = Math.min(Math.max(0, additional - 15), 35);
-                            const tier3 = Math.max(0, additional - 50);
-                            totalPostPaid += tier1 * 47 + tier2 * 37 + tier3 * 27;
+                            if (plan === 'prime') {
+                              totalPostPaid += additional * 57;
+                            } else if (plan === 'k') {
+                              const tier1 = Math.min(additional, 10);
+                              const tier2 = Math.max(0, additional - 10);
+                              totalPostPaid += (tier1 * 47) + (tier2 * 37);
+                            } else {
+                              const tier1 = Math.min(additional, 10);
+                              const tier2 = Math.min(Math.max(0, additional - 10), 40);
+                              const tier3 = Math.max(0, additional - 50);
+                              totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                            }
                           }
                         }
                         
@@ -1480,17 +1497,17 @@ export default function CalculadoraPage() {
                               let totalPostPaid = 0;
                               if (product === 'imob' || product === 'both') {
                                 const plan = imobPlan;
-                                const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                                const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
                                 const additional = Math.max(0, metrics.imobUsers - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 57;
                                   else if (plan === 'k') {
-                                    const tier1 = Math.min(additional, 15);
-                                    const tier2 = Math.max(0, additional - 15);
+                                    const tier1 = Math.min(additional, 10);
+                                    const tier2 = Math.max(0, additional - 10);
                                     totalPostPaid += (tier1 * 47) + (tier2 * 37);
                                   } else {
-                                    const tier1 = Math.min(additional, 15);
-                                    const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                                    const tier1 = Math.min(additional, 10);
+                                    const tier2 = Math.min(Math.max(0, additional - 10), 40);
                                     const tier3 = Math.max(0, additional - 50);
                                     totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
                                   }
@@ -1567,17 +1584,17 @@ export default function CalculadoraPage() {
                         let totalPostPaid = 0;
                         if (product === 'imob' || product === 'both') {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 57;
                             else if (plan === 'k') {
-                              const tier1 = Math.min(additional, 15);
-                              const tier2 = Math.max(0, additional - 15);
+                              const tier1 = Math.min(additional, 10);
+                              const tier2 = Math.max(0, additional - 10);
                               totalPostPaid += (tier1 * 47) + (tier2 * 37);
                             } else {
-                              const tier1 = Math.min(additional, 15);
-                              const tier2 = Math.min(Math.max(0, additional - 15), 35);
+                              const tier1 = Math.min(additional, 10);
+                              const tier2 = Math.min(Math.max(0, additional - 10), 40);
                               const tier3 = Math.max(0, additional - 50);
                               totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
                             }
@@ -1817,16 +1834,24 @@ export default function CalculadoraPage() {
               if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 197;
             }
             
-            // Additional Users (Imob)
+            // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
             if (product === 'imob' || product === 'both') {
               const plan = imobPlan;
-              const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+              const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
               const additional = Math.max(0, metrics.imobUsers - included);
               if (additional > 0) {
-                const tier1 = Math.min(additional, 15);
-                const tier2 = Math.min(Math.max(0, additional - 15), 35);
-                const tier3 = Math.max(0, additional - 50);
-                postPaidTotal += tier1 * 47 + tier2 * 37 + tier3 * 27;
+                if (plan === 'prime') {
+                  postPaidTotal += additional * 57;
+                } else if (plan === 'k') {
+                  const tier1 = Math.min(additional, 10);
+                  const tier2 = Math.max(0, additional - 10);
+                  postPaidTotal += (tier1 * 47) + (tier2 * 37);
+                } else {
+                  const tier1 = Math.min(additional, 10);
+                  const tier2 = Math.min(Math.max(0, additional - 10), 40);
+                  const tier3 = Math.max(0, additional - 50);
+                  postPaidTotal += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                }
               }
             }
             
