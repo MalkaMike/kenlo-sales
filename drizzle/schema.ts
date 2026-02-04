@@ -129,8 +129,13 @@ export const quotes = mysqlTable("quotes", {
   /** Shareable URL for link_copied actions */
   shareableUrl: text("shareableUrl"),
   
-  /** Client name if provided */
+  /** Client and vendor information */
   clientName: varchar("clientName", { length: 255 }),
+  vendorName: varchar("vendorName", { length: 255 }),
+  agencyName: varchar("agencyName", { length: 255 }),
+  cellPhone: varchar("cellPhone", { length: 50 }),
+  landlinePhone: varchar("landlinePhone", { length: 50 }),
+  websiteUrl: text("websiteUrl"),
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

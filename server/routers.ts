@@ -37,6 +37,11 @@ export const appRouter = router({
         komboDiscount: z.number().optional(),
         shareableUrl: z.string().optional(),
         clientName: z.string().optional(),
+        vendorName: z.string().optional(),
+        agencyName: z.string().optional(),
+        cellPhone: z.string().optional(),
+        landlinePhone: z.string().optional(),
+        websiteUrl: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const quoteId = await saveQuote({
@@ -53,6 +58,11 @@ export const appRouter = router({
           komboDiscount: input.komboDiscount,
           shareableUrl: input.shareableUrl,
           clientName: input.clientName,
+          vendorName: input.vendorName,
+          agencyName: input.agencyName,
+          cellPhone: input.cellPhone,
+          landlinePhone: input.landlinePhone,
+          websiteUrl: input.websiteUrl,
         });
         return { success: true, quoteId };
       }),

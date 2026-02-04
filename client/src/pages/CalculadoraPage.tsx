@@ -8,6 +8,7 @@ import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ProposalExportDialog } from "@/components/ProposalExportDialog";
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
+import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -211,6 +212,11 @@ export default function CalculadoraPage() {
 
   // Export dialog state
   const [showExportDialog, setShowExportDialog] = useState(false);
+  
+  // Quote info dialog state
+  const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
+  const [quoteInfoAction, setQuoteInfoAction] = useState<"pdf" | "link">("link");
+  const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   
   // tRPC mutations for PDF generation and proposal creation
   const generatePDF = trpc.proposals.generatePDF.useMutation();
@@ -1980,7 +1986,10 @@ export default function CalculadoraPage() {
 
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 mt-6 mb-24">
-                  <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowExportDialog(true)}>
+                  <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => {
+                    setQuoteInfoAction("pdf");
+                    setShowQuoteInfoDialog(true);
+                  }}>
                     <Download className="w-4 h-4 mr-2" />
                     Exportar Proposta (PDF)
                   </Button>
@@ -1988,40 +1997,9 @@ export default function CalculadoraPage() {
                     variant="outline" 
                     size="lg" 
                     className="min-h-[50px] sm:flex-1"
-                    onClick={async () => {
-                      // First copy the link
-                      await copyShareableLink();
-                      
-                      // Then save to database
-                      try {
-                        const items = getLineItems();
-                        const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
-                        const totalAnnual = totalMonthly * 12;
-                        const implantationFee = calculateTotalImplementation(activeKombo !== "none");
-                        const postPaidTotal = 0; // Simplified - full calculation in export dialog
-                        
-                        await saveQuoteMutation.mutateAsync({
-                          action: "link_copied",
-                          product: product,
-                          imobPlan: product !== "loc" ? imobPlan : undefined,
-                          locPlan: product !== "imob" ? locPlan : undefined,
-                          frequency: frequency,
-                          addons: JSON.stringify(addons),
-                          metrics: JSON.stringify(metrics),
-                          totals: JSON.stringify({
-                            monthly: totalMonthly,
-                            annual: totalAnnual,
-                            implantation: implantationFee,
-                            postPaid: postPaidTotal,
-                          }),
-                          komboId: activeKombo !== "none" ? activeKombo : undefined,
-                          komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
-                          komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
-                          shareableUrl: generateShareableURL(),
-                        });
-                      } catch (error) {
-                        console.error('Failed to save quote:', error);
-                      }
+                    onClick={() => {
+                      setQuoteInfoAction("link");
+                      setShowQuoteInfoDialog(true);
                     }}
                   >
                     <Copy className="w-4 h-4 mr-2" />
@@ -2247,6 +2225,61 @@ export default function CalculadoraPage() {
             throw error;
           }
         }}
+        />
+        
+        {/* Quote Info Dialog */}
+        <QuoteInfoDialog
+          open={showQuoteInfoDialog}
+          onOpenChange={setShowQuoteInfoDialog}
+          actionType={quoteInfoAction}
+          onSubmit={async (quoteInfo) => {
+            setPendingQuoteInfo(quoteInfo);
+            setShowQuoteInfoDialog(false);
+            
+            if (quoteInfoAction === "link") {
+              // Copy link and save to database
+              await copyShareableLink();
+              
+              try {
+                const items = getLineItems();
+                const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
+                const totalAnnual = totalMonthly * 12;
+                const implantationFee = calculateTotalImplementation(activeKombo !== "none");
+                const postPaidTotal = 0;
+                
+                await saveQuoteMutation.mutateAsync({
+                  action: "link_copied",
+                  product: product,
+                  imobPlan: product !== "loc" ? imobPlan : undefined,
+                  locPlan: product !== "imob" ? locPlan : undefined,
+                  frequency: frequency,
+                  addons: JSON.stringify(addons),
+                  metrics: JSON.stringify(metrics),
+                  totals: JSON.stringify({
+                    monthly: totalMonthly,
+                    annual: totalAnnual,
+                    implantation: implantationFee,
+                    postPaid: postPaidTotal,
+                  }),
+                  komboId: activeKombo !== "none" ? activeKombo : undefined,
+                  komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
+                  komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
+                  shareableUrl: generateShareableURL(),
+                  clientName: quoteInfo.ownerName,
+                  vendorName: quoteInfo.vendorName,
+                  agencyName: quoteInfo.agencyName,
+                  cellPhone: quoteInfo.cellPhone,
+                  landlinePhone: quoteInfo.landlinePhone,
+                  websiteUrl: quoteInfo.websiteUrl,
+                });
+              } catch (error) {
+                console.error('Failed to save quote:', error);
+              }
+            } else {
+              // Open PDF export dialog
+              setShowExportDialog(true);
+            }
+          }}
         />
       </div>
   );

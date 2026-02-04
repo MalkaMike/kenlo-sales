@@ -630,9 +630,15 @@ const createUnavailableColumn = (
 export function KomboComparisonTable(props: KomboComparisonProps) {
   // Default to annual as reference (0%)
   const [viewMode, setViewMode] = useState<ViewMode>("annual");
+  
+  // Selected Kombo (user can manually select)
+  const [selectedKombo, setSelectedKombo] = useState<KomboId | null>(null);
 
-  // Determine recommended Kombo
-  const recommendedKombo = getRecommendedKombo(props.product, props.addons);
+  // Determine recommended Kombo (auto-detected)
+  const autoRecommendedKombo = getRecommendedKombo(props.product, props.addons);
+  
+  // Use selected if available, otherwise use auto-recommended
+  const recommendedKombo = selectedKombo || autoRecommendedKombo;
 
   // Create modified props with viewMode as frequency for calculations
   const propsWithFrequency = { ...props, frequency: viewMode as PaymentFrequency };
@@ -777,7 +783,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     return (
                       <th
                         key={col.id}
-                        className={`text-center py-4 px-3 min-w-[130px] ${
+                        onClick={() => setSelectedKombo(col.id)}
+                        className={`text-center py-4 px-3 min-w-[130px] cursor-pointer hover:bg-gray-50 transition-colors ${
                           col.isRecommended
                             ? "bg-green-50 border-t-2 border-l-2 border-r-2 border-green-500 rounded-t-xl"
                             : ""
@@ -787,7 +794,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           {col.isRecommended && (
                             <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
                               <Star className="w-3 h-3 mr-1" />
-                              Recomendado
+                              Selected
                             </Badge>
                           )}
                           <div className="flex items-center gap-1">

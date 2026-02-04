@@ -392,3 +392,19 @@
 - [x] Verificar cálculos na CalculadoraPage.tsx (corrigido de 2.5/2.0 para 2.0/1.8)
 - [x] Verificar componente KomboComparisonTable.tsx (não tem cálculo pós-pago)
 - [x] Testar cálculos com diferentes quantidades de leads
+
+## Melhorias na Seleção de Kombos e Formulário de Export
+- [x] Mudar texto "Recomendado" para "Selected" na tabela de Kombos
+- [x] Tornar todos os Kombos clicáveis para seleção manual
+- [x] Criar formulário de informações obrigatórias com campos:
+  - Nome do vendedor (obrigatório)
+  - Nome da imobiliária (obrigatório)
+  - Nome do proprietário (obrigatório)
+  - Celular (obrigatório se telefone não preenchido)
+  - Telefone fixo (obrigatório se celular não preenchido)
+  - URL do site atual ou opção "Cliente não tem site ainda"
+- [x] Integrar formulário antes de exportar PDF
+- [x] Integrar formulário antes de copiar URL
+- [x] Validar que pelo menos um telefone (celular ou fixo) está preenchido
+- [x] Salvar informações do formulário no histórico de orçamentos
+- [ ] Testar fluxo completo de export com validação
