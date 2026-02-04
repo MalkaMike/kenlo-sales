@@ -2499,6 +2499,9 @@ export default function CalculadoraPage() {
 
                 const proposalData = {
                   salesPersonName: quoteInfo.vendorName,
+                  vendorEmail: quoteInfo.vendorEmail,
+                  vendorPhone: quoteInfo.vendorPhone,
+                  vendorRole: quoteInfo.vendorRole,
                   clientName: quoteInfo.ownerName,
                   productType: product,
                   komboName: komboInfo?.name,

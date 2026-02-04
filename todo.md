@@ -649,3 +649,26 @@
 - [x] Badge "Recomendado" deve permanecer fixo na coluna recomendada mesmo quando usuário seleciona outra
 - [x] Mover botões de seleção para logo após a linha de cabeçalho com badges de desconto
 - [x] Renomear texto dos botões de seleção para algo mais curto (ex: "Selecionar" em vez de "Selecionar Imob Start")
+
+
+## Feedback Equipe (Fev 2026) - Valorização do Site e Benefícios
+
+### Precificação Site Kenlo Standalone
+- [ ] Criar precificação pública do Site Kenlo standalone: R$ 249/mês + R$ 1.497 implantação
+- [ ] Site standalone pode ser vendido separadamente para clientes que não usam CRM Kenlo
+- [ ] Quando cliente usa CRM, Site é "Incluído" (não "grátis") - mostrar valor agregado
+
+### Seção "Benefícios Incluídos" na Calculadora
+- [ ] Adicionar seção destacando todos os benefícios incluídos no pacote CRM
+- [ ] Listar: Site (R$ 249/mês valor), Blog, Landing Page, Hospedagem
+- [ ] Listar: Quantidade de e-mails inclusos, Radar de parcerias da comunidade, App Kenlo
+- [ ] Usar termo "Incluído" em vez de "Grátis" para manter percepção de valor
+
+### Proposta PDF - Dados do Vendedor
+- [x] Incluir dados completos do vendedor na proposta PDF: e-mail, telefone, cargo
+- [x] Adicionar campos no formulário de geração de proposta para capturar esses dados
+
+### Modelo "Pague Só o Que Usa"
+- [x] Destacar na calculadora o conceito "Na Kenlo, você paga só o que você usa"
+- [x] Adicionar explicação clara sobre modelo de cobrança: mensalidade fixa + variável por uso
+- [x] Garantir que usuários/contratos adicionais são sempre pós-pago (nunca incluídos no plano anual)

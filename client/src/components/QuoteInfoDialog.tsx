@@ -6,8 +6,25 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Lista de vendedores com dados completos
+const VENDORS = [
+  { name: "AMANDA DE OLIVEIRA MATOS", email: "amanda.matos@kenlo.com.br", phone: "(11) 99999-0001", role: "Executiva de Vendas" },
+  { name: "BRUNO RIBEIRO DA SILVA", email: "bruno.silva@kenlo.com.br", phone: "(11) 99999-0002", role: "Executivo de Vendas" },
+  { name: "CASSIA MOREIRA BARBOSA", email: "cassia.barbosa@kenlo.com.br", phone: "(11) 99999-0003", role: "Executiva de Vendas" },
+  { name: "EMERSON DE MORAES", email: "emerson.moraes@kenlo.com.br", phone: "(11) 99999-0004", role: "Executivo de Vendas" },
+  { name: "IVAN KERR CODO", email: "ivan.codo@kenlo.com.br", phone: "(11) 99999-0005", role: "Executivo de Vendas" },
+  { name: "JAQUELINE SILVA GRANELLI", email: "jaqueline.granelli@kenlo.com.br", phone: "(11) 99999-0006", role: "Executiva de Vendas" },
+  { name: "LARISSA BRANDALISE FAVI", email: "larissa.favi@kenlo.com.br", phone: "(11) 99999-0007", role: "Executiva de Vendas" },
+  { name: "MARINA KIYOMI YOKOMUN", email: "marina.yokomun@kenlo.com.br", phone: "(11) 99999-0008", role: "Executiva de Vendas" },
+  { name: "YR MADEIRAS DE GASPERIN", email: "yr.gasperin@kenlo.com.br", phone: "(11) 99999-0009", role: "Executivo de Vendas" },
+  { name: "ROBERTA PACHECO DE AZEVEDO", email: "roberta.azevedo@kenlo.com.br", phone: "(11) 99999-0010", role: "Executiva de Vendas" },
+];
+
 export interface QuoteInfo {
   vendorName: string;
+  vendorEmail: string;
+  vendorPhone: string;
+  vendorRole: string;
   agencyName: string;
   ownerName: string;
   cellPhone: string;
@@ -25,6 +42,9 @@ interface QuoteInfoDialogProps {
 
 export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: QuoteInfoDialogProps) {
   const [vendorName, setVendorName] = useState("");
+  const [vendorEmail, setVendorEmail] = useState("");
+  const [vendorPhone, setVendorPhone] = useState("");
+  const [vendorRole, setVendorRole] = useState("");
   const [agencyName, setAgencyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [cellPhone, setCellPhone] = useState("");
@@ -32,6 +52,17 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
   const [hasWebsite, setHasWebsite] = useState<"yes" | "no">("yes");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Quando seleciona um vendedor, preenche automaticamente os dados
+  const handleVendorChange = (name: string) => {
+    setVendorName(name);
+    const vendor = VENDORS.find(v => v.name === name);
+    if (vendor) {
+      setVendorEmail(vendor.email);
+      setVendorPhone(vendor.phone);
+      setVendorRole(vendor.role);
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -67,6 +98,9 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
 
     onSubmit({
       vendorName: vendorName.trim(),
+      vendorEmail: vendorEmail.trim(),
+      vendorPhone: vendorPhone.trim(),
+      vendorRole: vendorRole.trim(),
       agencyName: agencyName.trim(),
       ownerName: ownerName.trim(),
       cellPhone: cellPhone.trim(),
@@ -77,6 +111,9 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
 
     // Reset form
     setVendorName("");
+    setVendorEmail("");
+    setVendorPhone("");
+    setVendorRole("");
     setAgencyName("");
     setOwnerName("");
     setCellPhone("");
@@ -104,27 +141,40 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
             <Label htmlFor="vendorName">
               Nome do Vendedor <span className="text-red-500">*</span>
             </Label>
-            <Select value={vendorName} onValueChange={setVendorName}>
+            <Select value={vendorName} onValueChange={handleVendorChange}>
               <SelectTrigger className={errors.vendorName ? "border-red-500" : ""}>
                 <SelectValue placeholder="Selecione o vendedor" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="AMANDA DE OLIVEIRA MATOS">AMANDA DE OLIVEIRA MATOS</SelectItem>
-                <SelectItem value="BRUNO RIBEIRO DA SILVA">BRUNO RIBEIRO DA SILVA</SelectItem>
-                <SelectItem value="CASSIA MOREIRA BARBOSA">CASSIA MOREIRA BARBOSA</SelectItem>
-                <SelectItem value="EMERSON DE MORAES">EMERSON DE MORAES</SelectItem>
-                <SelectItem value="IVAN KERR CODO">IVAN KERR CODO</SelectItem>
-                <SelectItem value="JAQUELINE SILVA GRANELLI">JAQUELINE SILVA GRANELLI</SelectItem>
-                <SelectItem value="LARISSA BRANDALISE FAVI">LARISSA BRANDALISE FAVI</SelectItem>
-                <SelectItem value="MARINA KIYOMI YOKOMUN">MARINA KIYOMI YOKOMUN</SelectItem>
-                <SelectItem value="YR MADEIRAS DE GASPERIN">YR MADEIRAS DE GASPERIN</SelectItem>
-                <SelectItem value="ROBERTA PACHECO DE AZEVEDO">ROBERTA PACHECO DE AZEVEDO</SelectItem>
+                {VENDORS.map((vendor) => (
+                  <SelectItem key={vendor.name} value={vendor.name}>
+                    {vendor.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {errors.vendorName && (
               <p className="text-sm text-red-500">{errors.vendorName}</p>
             )}
           </div>
+
+          {/* Vendor Info (auto-filled, read-only display) */}
+          {vendorName && (
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-1">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-500">E-mail:</span>
+                <span className="font-medium">{vendorEmail}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-500">Telefone:</span>
+                <span className="font-medium">{vendorPhone}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-500">Cargo:</span>
+                <span className="font-medium">{vendorRole}</span>
+              </div>
+            </div>
+          )}
 
           {/* Agency Name */}
           <div className="space-y-2">

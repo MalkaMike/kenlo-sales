@@ -2,6 +2,9 @@ import PDFDocument from "pdfkit";
 
 interface ProposalData {
   salesPersonName: string;
+  vendorEmail?: string;
+  vendorPhone?: string;
+  vendorRole?: string;
   clientName: string;
   productType: string;
   komboName?: string;
@@ -98,6 +101,27 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     y += 65;
 
     // ============================================
+    // VENDOR CONTACT INFO (new section)
+    // ============================================
+    if (data.vendorEmail || data.vendorPhone || data.vendorRole) {
+      doc.rect(margin, y, contentWidth, 35).fill("#f0f4ff");
+      doc.rect(margin, y, 4, 35).fill("#3b82f6");
+      
+      doc.font("Helvetica-Bold").fontSize(9).fillColor("#3b82f6")
+         .text("CONTATO DO VENDEDOR", margin + 15, y + 6);
+      
+      let contactInfo = [];
+      if (data.vendorRole) contactInfo.push(data.vendorRole);
+      if (data.vendorEmail) contactInfo.push(data.vendorEmail);
+      if (data.vendorPhone) contactInfo.push(data.vendorPhone);
+      
+      doc.font("Helvetica").fontSize(9).fillColor(darkText)
+         .text(contactInfo.join("  |  "), margin + 15, y + 20);
+      
+      y += 45;
+    }
+
+    // ============================================
     // KOMBO HIGHLIGHT (if applicable)
     // ============================================
     if (data.komboName) {
@@ -153,7 +177,32 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       y += 18;
     }
 
-    y += 10;
+    y += 5;
+
+    // ============================================
+    // BENEFÍCIOS INCLUÍDOS (new section)
+    // ============================================
+    doc.rect(margin, y, contentWidth, 55).fill("#f0fdf4");
+    doc.rect(margin, y, 4, 55).fill(kenloGreen);
+    
+    doc.font("Helvetica-Bold").fontSize(9).fillColor(kenloGreen)
+       .text("BENEFÍCIOS INCLUÍDOS NO SEU PLANO", margin + 15, y + 6);
+    
+    // First row of benefits
+    const benefits1 = ["Site Profissional (R$ 249/mês)", "Blog Integrado", "Landing Pages"];
+    doc.font("Helvetica").fontSize(8).fillColor(darkText)
+       .text("✓ " + benefits1.join("   ✓ "), margin + 15, y + 20);
+    
+    // Second row of benefits
+    const benefits2 = ["Hospedagem Ilimitada", "E-mails Corporativos", "App Kenlo"];
+    doc.font("Helvetica").fontSize(8).fillColor(darkText)
+       .text("✓ " + benefits2.join("   ✓ "), margin + 15, y + 32);
+    
+    // Third row
+    doc.font("Helvetica").fontSize(8).fillColor(darkText)
+       .text("✓ Radar de Parcerias da Comunidade   ✓ Treinamentos Online", margin + 15, y + 44);
+    
+    y += 65;
 
     // ============================================
     // PRICING TABLE (compact)
@@ -163,10 +212,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     y += 18;
 
     const paymentLabels: Record<string, string> = {
-      monthly: "Mensal (+25%)",
-      semestral: "Semestral (+10%)",
-      annual: "Anual (Referência)",
-      biennial: "Bienal (-10%)",
+      monthly: "Mensal (Referência)",
+      semestral: "Semestral (-15%)",
+      annual: "Anual (-20%)",
+      biennial: "Bienal (-25%)",
     };
 
     // Table header
@@ -207,10 +256,20 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     }
 
     // ============================================
+    // "PAGUE SÓ O QUE VOCÊ USA" highlight
+    // ============================================
+    doc.rect(margin, y, contentWidth, 25).fill("#fef3c7");
+    doc.rect(margin, y, 4, 25).fill("#f59e0b");
+    
+    doc.font("Helvetica-Bold").fontSize(9).fillColor("#92400e")
+       .text("💡 NA KENLO, VOCÊ PAGA SÓ O QUE VOCÊ USA", margin + 15, y + 8);
+    
+    y += 35;
+
+    // ============================================
     // KENLO EFFECT (if applicable)
     // ============================================
     if (data.netGain !== undefined && (data.revenueFromBoletos || data.revenueFromInsurance)) {
-      y += 5;
       doc.rect(margin, y, contentWidth, 60).fill("#f0fdf4");
       doc.rect(margin, y, 4, 60).fill(kenloGreen);
       

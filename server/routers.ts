@@ -136,6 +136,9 @@ export const appRouter = router({
     generatePDF: protectedProcedure
       .input(z.object({
         salesPersonName: z.string(),
+        vendorEmail: z.string().optional(),
+        vendorPhone: z.string().optional(),
+        vendorRole: z.string().optional(),
         clientName: z.string(),
         productType: z.string(),
         komboName: z.string().optional(),
