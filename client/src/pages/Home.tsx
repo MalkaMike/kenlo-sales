@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { AnimatedStat } from "@/components/AnimatedStat";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Building2, 
@@ -102,11 +103,11 @@ const addons = [
 ];
 
 const stats = [
-  { value: "8.500+", label: "Imobiliárias", icon: Building2 },
-  { value: "40.000+", label: "Corretores ativos", icon: Users },
-  { value: "R$40B+", label: "Em vendas", icon: TrendingUp },
-  { value: "10M+", label: "Visitantes únicos/mês", icon: Eye },
-  { value: "R$1,2B+", label: "Gestão de locação", icon: HomeIcon },
+  { value: "8.500+", numericValue: 8500, label: "Imobiliárias", icon: Building2, suffix: "+" },
+  { value: "40.000+", numericValue: 40000, label: "Corretores ativos", icon: Users, suffix: "+" },
+  { value: "R$40B+", numericValue: 40, label: "Em vendas", icon: TrendingUp, prefix: "R$", suffix: "B+" },
+  { value: "10M+", numericValue: 10, label: "Visitantes únicos/mês", icon: Eye, suffix: "M+" },
+  { value: "R$1,2B+", numericValue: 1.2, label: "Gestão de locação", icon: HomeIcon, prefix: "R$", suffix: "B+" },
 ];
 
 const benefits = [
@@ -186,15 +187,14 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-5 gap-6 md:gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition-transform">
-                  <stat.icon className="w-8 h-8" />
-                </div>
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
-              </div>
+              <AnimatedStat
+                key={index}
+                icon={stat.icon}
+                numericValue={stat.numericValue}
+                label={stat.label}
+                prefix={stat.prefix}
+                suffix={stat.suffix}
+              />
             ))}
           </div>
         </div>

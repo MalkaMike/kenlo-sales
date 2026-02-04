@@ -548,3 +548,9 @@
 ## Ajustar Layout de Estatísticas na Homepage
 - [x] Modificar grid de estatísticas para exibir todos os 5 itens em uma única linha horizontal
 - [x] Ajustar tamanho dos elementos para caber em uma linha sem quebra
+
+## Animação de Contagem nas Estatísticas
+- [x] Criar hook useCountUp para animar números de 0 até o valor final
+- [x] Implementar Intersection Observer para detectar quando a seção entra na viewport
+- [x] Integrar animação na seção de estatísticas da homepage
+- [x] Testar animação em diferentes velocidades de scroll
