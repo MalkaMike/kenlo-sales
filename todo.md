@@ -472,3 +472,6 @@
 ## Atualização de Estatísticas - Homepage
 - [x] Atualizar "R$8B+ Em vendas" para "R$40B+ Em vendas"
 - [x] Adicionar nova estatística "R$1,2B+ Gestão de locação"
+
+## Remover Trust Indicators Falsos
+- [x] Remover seção de trust indicators (Sem taxa de setup, Migração gratuita, Suporte 24/7) da hero section da homepage
