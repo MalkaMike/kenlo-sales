@@ -51,6 +51,21 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as XLSX from 'xlsx';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 
 // Helper to format currency
@@ -108,6 +123,9 @@ const VENDOR_NAMES = [
   "YR MADEIRAS DE GASPERIN",
   "ROBERTA PACHECO DE AZEVEDO",
 ];
+
+// Colors for charts
+const CHART_COLORS = ['#e11d48', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16'];
 
 export default function HistoricoPage() {
 
@@ -258,6 +276,61 @@ export default function HistoricoPage() {
     XLSX.writeFile(wb, filename);
   };
 
+  // Prepare chart data
+  const chartData = {
+    byVendor: [] as { name: string; count: number; value: number }[],
+    byProduct: [] as { name: string; count: number }[],
+    byTime: [] as { date: string; count: number }[],
+  };
+
+  if (filteredQuotes && filteredQuotes.length > 0) {
+    // Group by vendor
+    const vendorMap = new Map<string, { count: number; value: number }>();
+    filteredQuotes.forEach((quote) => {
+      const vendor = quote.vendorName || "Sem vendedor";
+      const totals = parseJSON(quote.totals);
+      const value = totals?.annual || 0;
+      
+      if (!vendorMap.has(vendor)) {
+        vendorMap.set(vendor, { count: 0, value: 0 });
+      }
+      const current = vendorMap.get(vendor)!;
+      current.count++;
+      current.value += value;
+    });
+    chartData.byVendor = Array.from(vendorMap.entries())
+      .map(([name, data]) => ({ name, count: data.count, value: data.value }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10); // Top 10 vendors
+
+    // Group by product
+    const productMap = new Map<string, number>();
+    filteredQuotes.forEach((quote) => {
+      const product = productNames[quote.product] || quote.product;
+      productMap.set(product, (productMap.get(product) || 0) + 1);
+    });
+    chartData.byProduct = Array.from(productMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Group by date (daily)
+    const dateMap = new Map<string, number>();
+    filteredQuotes.forEach((quote) => {
+      const date = format(new Date(quote.createdAt), "dd/MM", { locale: ptBR });
+      dateMap.set(date, (dateMap.get(date) || 0) + 1);
+    });
+    chartData.byTime = Array.from(dateMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => {
+        // Sort by date
+        const [dayA, monthA] = a.date.split('/').map(Number);
+        const [dayB, monthB] = b.date.split('/').map(Number);
+        if (monthA !== monthB) return monthA - monthB;
+        return dayA - dayB;
+      })
+      .slice(-30); // Last 30 days
+  }
+
   return (
     <Layout>
       <div className="container py-8">
@@ -307,6 +380,119 @@ export default function HistoricoPage() {
                 <CardTitle className="text-3xl text-green-600">{stats.pdfsExported}</CardTitle>
               </CardHeader>
             </Card>
+          </div>
+        )}
+
+        {/* Analytics Charts */}
+        {filteredQuotes && filteredQuotes.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Análise de Vendas</h2>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Chart 1: Orçamentos por Vendedor */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Orçamentos por Vendedor</CardTitle>
+                  <CardDescription>Top 10 vendedores com mais orçamentos</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData.byVendor}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="name" 
+                        angle={-45} 
+                        textAnchor="end" 
+                        height={100}
+                        interval={0}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="count" fill="#e11d48" name="Orçamentos" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Chart 2: Distribuição por Produto */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Distribuição por Produto</CardTitle>
+                  <CardDescription>Orçamentos por tipo de produto</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={chartData.byProduct}
+                        dataKey="count"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={(entry) => `${entry.name}: ${entry.count}`}
+                      >
+                        {chartData.byProduct.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Chart 3: Orçamentos ao Longo do Tempo */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Orçamentos ao Longo do Tempo</CardTitle>
+                  <CardDescription>Últimos 30 dias</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={chartData.byTime}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="count" stroke="#3b82f6" name="Orçamentos" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Chart 4: Valor Total por Vendedor */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Valor Total por Vendedor</CardTitle>
+                  <CardDescription>Top 10 vendedores por valor anual</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData.byVendor}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="name" 
+                        angle={-45} 
+                        textAnchor="end" 
+                        height={100}
+                        interval={0}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`} />
+                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                      <Legend />
+                      <Bar dataKey="value" fill="#10b981" name="Valor Anual" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 

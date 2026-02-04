@@ -443,3 +443,13 @@
 - [x] Incluir todas as colunas: data, ação, produto, planos, Kombo, frequência, valores, vendedor, cliente, imobiliária, telefones, site
 - [x] Usar biblioteca xlsx ou similar para geração do arquivo
 - [x] Testar exportação com diferentes filtros aplicados
+
+## Gráficos Analíticos no Histórico
+- [x] Instalar biblioteca recharts para visualização de dados
+- [x] Criar gráfico de barras: orçamentos por vendedor
+- [x] Criar gráfico de pizza: distribuição por produto (Imob/Locação/Ambos)
+- [x] Criar gráfico de linha: orçamentos ao longo do tempo (por dia/semana/mês)
+- [x] Criar gráfico de barras: valor total de propostas por vendedor
+- [x] Adicionar seção de analytics na página de histórico
+- [x] Aplicar filtros aos gráficos (mesmos filtros da tabela)
+- [x] Testar visualizações com diferentes conjuntos de dados
