@@ -672,3 +672,23 @@
 - [x] Destacar na calculadora o conceito "Na Kenlo, você paga só o que você usa"
 - [x] Adicionar explicação clara sobre modelo de cobrança: mensalidade fixa + variável por uso
 - [x] Garantir que usuários/contratos adicionais são sempre pós-pago (nunca incluídos no plano anual)
+
+
+## Melhorias Adicionais (Fev 2026)
+
+### Seção Benefícios Incluídos na Calculadora
+- [x] Adicionar seção visual "Benefícios Incluídos" na interface da calculadora (não só no PDF)
+- [x] Mostrar: Site (R$ 249/mês valor), Blog, Landing Page, Hospedagem
+- [x] Mostrar: E-mails corporativos, Radar de parcerias, App Kenlo
+- [x] Usar design destacado (verde) similar ao PDF
+
+### Precificação Site Kenlo Standalone
+- [x] Criar página/seção para Site Kenlo como produto standalone
+- [x] Preço: R$ 249/mês + R$ 1.497 implantação
+- [x] Pode ser vendido separadamente para clientes sem CRM
+- [x] Quando cliente usa CRM, Site é "Incluído" (não "grátis")
+
+### Correção Lógica WhatsApp
+- [x] Corrigir lógica: WhatsApp desabilitado quando IA SDR Externa está OFF
+- [x] Nova regra: WhatsApp habilitado apenas quando IA SDR Externa ON
+- [x] Testar cenário: Leads preenchido + IA SDR OFF → WhatsApp desabilitado

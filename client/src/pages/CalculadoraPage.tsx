@@ -35,6 +35,7 @@ import {
   Zap,
   Copy,
   CheckCircle2,
+  Gift,
 } from "lucide-react";
 
 // Types
@@ -1057,6 +1058,60 @@ export default function CalculadoraPage() {
                 </div>
               </div>
 
+              {/* Benefícios Incluídos Section */}
+              <div className="mb-6 sm:mb-8">
+                <div className="p-4 sm:p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 rounded-lg bg-green-100">
+                      <Gift className="w-5 h-5 text-green-600" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-bold text-green-800">
+                      Benefícios Incluídos no Seu Plano
+                    </h3>
+                  </div>
+                  <p className="text-sm text-green-700 mb-4">
+                    Todos os planos Kenlo incluem esses benefícios sem custo adicional:
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <div>
+                        <span className="text-sm font-medium text-gray-800">Site Profissional</span>
+                        <span className="text-xs text-green-600 block">Valor: R$ 249/mês</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">Blog Integrado</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">Landing Pages</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">Hospedagem Ilimitada</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">E-mails Corporativos</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">App Kenlo</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">Radar de Parcerias</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-800">Treinamentos Online</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
                       {/* Step 3: Business Info */}
               <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
@@ -1139,12 +1194,17 @@ export default function CalculadoraPage() {
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
+                              {!metrics.usesExternalAI && (
+                                <span className="text-xs text-muted-foreground">(Requer IA SDR)</span>
+                              )}
+                            </div>
                             <Switch
                               id="whatsapp"
-                              checked={metrics.wantsWhatsApp}
+                              checked={metrics.wantsWhatsApp && metrics.usesExternalAI}
                               onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                              disabled={(product !== "imob" && product !== "both") || (!addons.leads && !metrics.usesExternalAI)}
+                              disabled={(product !== "imob" && product !== "both") || !metrics.usesExternalAI}
                             />
                           </div>
                         </div>

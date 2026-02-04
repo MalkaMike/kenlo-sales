@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import ImobPage from "./pages/products/ImobPage";
 import LocacaoPage from "./pages/products/LocacaoPage";
+import SitePage from "./pages/products/SitePage";
 import LeadsPage from "./pages/addons/LeadsPage";
 import InteligenciaPage from "./pages/addons/InteligenciaPage";
 import AssinaturaPage from "./pages/addons/AssinaturaPage";
@@ -28,6 +29,7 @@ function Router() {
         {/* Products */}
         <Route path="/produtos/imob" component={ImobPage} />
         <Route path="/produtos/locacao" component={LocacaoPage} />
+        <Route path="/produtos/site" component={SitePage} />
         {/* Add-ons */}
         <Route path="/addons/leads" component={LeadsPage} />
         <Route path="/addons/inteligencia" component={InteligenciaPage} />
