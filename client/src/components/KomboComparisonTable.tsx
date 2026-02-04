@@ -908,6 +908,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     }
                   >
                     <td
+                      colSpan={row.isHeader ? 2 : 1}
                       className={`py-3 px-4 ${row.indent ? "pl-8" : ""} ${
                         row.isHeader || row.isHeaderWithValue
                           ? "font-semibold text-gray-700 text-sm" 
@@ -918,24 +919,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     >
                       {row.label}
                     </td>
-                    {columns.map((col) => (
-                      <td
-                        key={`${row.key}-${col.id}`}
-                        className={`text-center py-3 px-3 transition-all ${
-                          selectedPlan === col.id
-                            ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
-                            : col.isRecommended
-                            ? "bg-amber-50 border-l-2 border-r-2 border-amber-400"
-                            : ""
-                        } ${
-                          row.isTotal || row.isHeaderWithValue
-                            ? "font-bold text-gray-700"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        {row.isHeader ? null : getCellValue(row.key, col)}
-                      </td>
-                    ))}
+                    {columns.map((col, colIndex) => {
+                      // Skip first column for header rows since we're using colSpan=2
+                      if (row.isHeader && colIndex === 0) return null;
+                      return (
+                        <td
+                          key={`${row.key}-${col.id}`}
+                          className={`text-center py-3 px-3 transition-all ${
+                            selectedPlan === col.id
+                              ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
+                              : col.isRecommended
+                              ? "bg-amber-50 border-l-2 border-r-2 border-amber-400"
+                              : ""
+                          } ${
+                            row.isTotal || row.isHeaderWithValue
+                              ? "font-bold text-gray-700"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          {row.isHeader ? null : getCellValue(row.key, col)}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
