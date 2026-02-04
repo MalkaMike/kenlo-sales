@@ -147,7 +147,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/calculadora" && "bg-accent"
                     )}
                   >
-                    <FileText className="w-4 h-4 mr-2" />
                     Orçamento
                   </Link>
                 </NavigationMenuLink>

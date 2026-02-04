@@ -350,3 +350,6 @@
 - [x] Adicionar botão "Copiar Link" ao lado do botão "Exportar PDF"
 - [x] Mostrar toast de confirmação quando link for copiado
 - [x] Testar fluxo completo: gerar link → abrir em nova aba → verificar valores
+
+## Correção de Alinhamento do Menu
+- [x] Corrigir alinhamento vertical do item "Orçamento" no menu de navegação
