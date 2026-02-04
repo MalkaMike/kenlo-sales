@@ -408,3 +408,8 @@
 - [x] Validar que pelo menos um telefone (celular ou fixo) está preenchido
 - [x] Salvar informações do formulário no histórico de orçamentos
 - [ ] Testar fluxo completo de export com validação
+
+## Correções no Formulário de Informações
+- [x] Corrigir validação: apenas um telefone (celular OU fixo) é obrigatório, não ambos
+- [x] Transformar campo "Nome do vendedor" em dropdown com lista de vendedores
+- [x] Lista de vendedores: AMANDA DE OLIVEIRA MATOS, BRUNO RIBEIRO DA SILVA, CASSIA MOREIRA BARBOSA, EMERSON DE MORAES, IVAN KERR CODO, JAQUELINE SILVA GRANELLI, LARISSA BRANDALISE FAVI, MARINA KIYOMI YOKOMUN, YR MADEIRAS DE GASPERIN, ROBERTA PACHECO DE AZEVEDO

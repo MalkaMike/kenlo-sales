@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export interface QuoteInfo {
   vendorName: string;
@@ -103,13 +104,23 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
             <Label htmlFor="vendorName">
               Nome do Vendedor <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="vendorName"
-              value={vendorName}
-              onChange={(e) => setVendorName(e.target.value)}
-              placeholder="Digite o nome do vendedor"
-              className={errors.vendorName ? "border-red-500" : ""}
-            />
+            <Select value={vendorName} onValueChange={setVendorName}>
+              <SelectTrigger className={errors.vendorName ? "border-red-500" : ""}>
+                <SelectValue placeholder="Selecione o vendedor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="AMANDA DE OLIVEIRA MATOS">AMANDA DE OLIVEIRA MATOS</SelectItem>
+                <SelectItem value="BRUNO RIBEIRO DA SILVA">BRUNO RIBEIRO DA SILVA</SelectItem>
+                <SelectItem value="CASSIA MOREIRA BARBOSA">CASSIA MOREIRA BARBOSA</SelectItem>
+                <SelectItem value="EMERSON DE MORAES">EMERSON DE MORAES</SelectItem>
+                <SelectItem value="IVAN KERR CODO">IVAN KERR CODO</SelectItem>
+                <SelectItem value="JAQUELINE SILVA GRANELLI">JAQUELINE SILVA GRANELLI</SelectItem>
+                <SelectItem value="LARISSA BRANDALISE FAVI">LARISSA BRANDALISE FAVI</SelectItem>
+                <SelectItem value="MARINA KIYOMI YOKOMUN">MARINA KIYOMI YOKOMUN</SelectItem>
+                <SelectItem value="YR MADEIRAS DE GASPERIN">YR MADEIRAS DE GASPERIN</SelectItem>
+                <SelectItem value="ROBERTA PACHECO DE AZEVEDO">ROBERTA PACHECO DE AZEVEDO</SelectItem>
+              </SelectContent>
+            </Select>
             {errors.vendorName && (
               <p className="text-sm text-red-500">{errors.vendorName}</p>
             )}
@@ -152,7 +163,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
           {/* Cell Phone */}
           <div className="space-y-2">
             <Label htmlFor="cellPhone">
-              Celular <span className="text-red-500">*</span>
+              Celular
             </Label>
             <Input
               id="cellPhone"
@@ -166,7 +177,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
           {/* Landline Phone */}
           <div className="space-y-2">
             <Label htmlFor="landlinePhone">
-              Telefone Fixo <span className="text-red-500">*</span>
+              Telefone Fixo
             </Label>
             <Input
               id="landlinePhone"
