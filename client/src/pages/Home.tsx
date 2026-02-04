@@ -21,7 +21,8 @@ import {
   Award,
   Target,
   Rocket,
-  Globe
+  Globe,
+  Eye
 } from "lucide-react";
 
 const products = [
@@ -106,6 +107,7 @@ const stats = [
   { value: "8.500+", label: "Imobiliárias", icon: Building2 },
   { value: "40.000+", label: "Corretores ativos", icon: Users },
   { value: "R$40B+", label: "Em vendas", icon: TrendingUp },
+  { value: "10M+", label: "Visitantes únicos/mês", icon: Eye },
   { value: "R$1,2B+", label: "Gestão de locação", icon: HomeIcon },
 ];
 

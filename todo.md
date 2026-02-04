@@ -481,3 +481,6 @@
 - [x] Adicionar Site/CMS como terceira solução na seção de produtos
 - [x] Atualizar descrição geral para incluir CRM, Site/CMS e App como pilares
 - [x] Reorganizar seção de produtos para mostrar as 3 soluções de forma clara
+
+## Adicionar Estatística de Visitantes
+- [x] Adicionar "10M+ Visitantes únicos por mês" com ícone Eye à seção de estatísticas
