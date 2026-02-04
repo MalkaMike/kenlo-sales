@@ -489,3 +489,8 @@
 - [x] Separar add-ons em 2 grupos: IMOB Add-ons e LOC Add-ons
 - [x] Adicionar subtotais para cada categoria de add-ons
 - [x] Melhorar visualização da seção de custos pós-pago
+
+## Comparação Visual de Planos
+- [x] Criar componente de comparação lado a lado (Prime, K, K2)
+- [x] Mostrar impacto de cada plano nos custos de add-ons
+- [x] Integrar comparação na calculadora

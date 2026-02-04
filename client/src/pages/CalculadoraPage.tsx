@@ -1718,6 +1718,145 @@ export default function CalculadoraPage() {
                 </Card>
                 </div>
 
+                {/* SECTION 5.5: PLAN COMPARISON - Show impact of each plan on add-on costs */}
+                {(addons.leads || addons.assinatura || addons.pay) && (
+                <div className="mt-6 mb-4">
+                  <h2 className="text-lg font-bold text-gray-900 mb-3">
+                    Comparação de Planos - Impacto nos Custos de Add-ons
+                  </h2>
+                  
+                  <Card>
+                    <CardContent className="pt-6">
+                      <p className="text-sm text-gray-600 mb-4">
+                        Veja como cada plano (Prime, K, K2) impacta o custo total dos seus add-ons com a configuração atual:
+                      </p>
+                      
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b-2 border-gray-300">
+                              <th className="text-left py-3 px-3 font-semibold text-gray-900">Add-on</th>
+                              <th className="text-right py-3 px-3 font-semibold text-primary">Prime</th>
+                              <th className="text-right py-3 px-3 font-semibold text-blue-600">K</th>
+                              <th className="text-right py-3 px-3 font-semibold text-purple-600">K2</th>
+                              <th className="text-right py-3 px-3 font-semibold text-green-600">Economia (K2)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* IMOB Users Comparison */}
+                            {(product === 'imob' || product === 'both') && (() => {
+                              const included_prime = 2;
+                              const included_k = 7;
+                              const included_k2 = 15;
+                              const additional = Math.max(0, metrics.imobUsers - included_k2);
+                              
+                              const cost_prime = additional > 0 ? additional * 57 : 0;
+                              const cost_k = (() => {
+                                const add_k = Math.max(0, metrics.imobUsers - included_k);
+                                if (add_k === 0) return 0;
+                                const tier1 = Math.min(add_k, 10);
+                                const tier2 = Math.max(0, add_k - 10);
+                                return (tier1 * 47) + (tier2 * 37);
+                              })();
+                              const cost_k2 = (() => {
+                                const add_k2 = Math.max(0, metrics.imobUsers - included_k2);
+                                if (add_k2 === 0) return 0;
+                                const tier1 = Math.min(add_k2, 10);
+                                const tier2 = Math.min(Math.max(0, add_k2 - 10), 40);
+                                const tier3 = Math.max(0, add_k2 - 50);
+                                return (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                              })();
+                              
+                              return (
+                                <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                  <td className="py-3 px-3 text-gray-900 font-medium">Usuários Adicionais (IMOB)</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost_prime)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost_k)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900 font-semibold">{formatCurrency(cost_k2)}</td>
+                                  <td className="text-right py-3 px-3 text-green-600 font-semibold">{formatCurrency(cost_prime - cost_k2)}</td>
+                                </tr>
+                              );
+                            })()}
+                            
+                            {/* LOC Contracts Comparison */}
+                            {(product === 'loc' || product === 'both') && (() => {
+                              const included_prime = 100;
+                              const included_k = 250;
+                              const included_k2 = 500;
+                              
+                              const cost_prime = (() => {
+                                const add = Math.max(0, metrics.contractsUnderManagement - included_prime);
+                                return add * 3;
+                              })();
+                              
+                              const cost_k = (() => {
+                                const add = Math.max(0, metrics.contractsUnderManagement - included_k);
+                                if (add === 0) return 0;
+                                const tier1 = Math.min(add, 250);
+                                const tier2 = Math.max(0, add - 250);
+                                return (tier1 * 3) + (tier2 * 2.5);
+                              })();
+                              
+                              const cost_k2 = (() => {
+                                const add = Math.max(0, metrics.contractsUnderManagement - included_k2);
+                                if (add === 0) return 0;
+                                const tier1 = Math.min(add, 250);
+                                const tier2 = Math.min(Math.max(0, add - 250), 250);
+                                const tier3 = Math.max(0, add - 500);
+                                return (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+                              })();
+                              
+                              return (
+                                <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                  <td className="py-3 px-3 text-gray-900 font-medium">Contratos Adicionais (LOC)</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost_prime)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost_k)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900 font-semibold">{formatCurrency(cost_k2)}</td>
+                                  <td className="text-right py-3 px-3 text-green-600 font-semibold">{formatCurrency(cost_prime - cost_k2)}</td>
+                                </tr>
+                              );
+                            })()}
+                            
+                            {/* Leads WhatsApp Comparison */}
+                            {addons.leads && metrics.wantsWhatsApp && (() => {
+                              const included = 150;
+                              const additional = Math.max(0, metrics.leadsPerMonth - included);
+                              
+                              // All plans have same pricing for WhatsApp
+                              const cost = (() => {
+                                if (additional === 0) return 0;
+                                const tier1 = Math.min(additional, 200);
+                                const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                                const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                                const tier4 = Math.max(0, additional - 1000);
+                                return (tier1 * 2.0) + (tier2 * 1.8) + (tier3 * 1.5) + (tier4 * 1.2);
+                              })();
+                              
+                              return (
+                                <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                  <td className="py-3 px-3 text-gray-900 font-medium">Mensagens WhatsApp (Leads)</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900">{formatCurrency(cost)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-900 font-semibold">{formatCurrency(cost)}</td>
+                                  <td className="text-right py-3 px-3 text-gray-400">—</td>
+                                </tr>
+                              );
+                            })()}
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-200">
+                        <p className="text-xs text-blue-900">
+                          <strong>Insight:</strong> Escolher um plano superior (K ou K2) reduz significativamente o custo por unidade de add-ons. 
+                          Quanto mais você digitaliza, menor o impacto financeiro dos add-ons.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                )}
+
                 {/* SECTION 6: THE KENLO EFFECT - Only show when there are revenues */}
                 {(() => {
                   // Calculate if there are any revenues
