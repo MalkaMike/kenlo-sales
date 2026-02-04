@@ -601,3 +601,9 @@
 - [x] Verificar que TODOS os add-ons (Leads, Inteligência, Assinatura, Pay, Seguros, Cash) aplicam desconto corretamente
 - [x] Testar todos os Kombos: Imob Start (10%), Imob Pro (15%), Locação Pro (10%), Elite (20%)
 - [x] Validar valores esperados: Assinatura base R$37 → Imob Start R$33, Imob Pro R$31, etc.
+
+## Badge Verde nos Serviços Premium
+- [ ] Adicionar badge verde "Ofertado" ou "Incluído" ao lado do toggle de Suporte VIP quando incluído no plano (K ou K2)
+- [ ] Adicionar badge verde "Ofertado" ou "Incluído" ao lado do toggle de CS Dedicado quando incluído no plano (K2)
+- [ ] Badge deve aparecer apenas quando o serviço é incluído, não quando é opcional pago (Prime)
+- [ ] Testar todos os cenários: Prime (sem badge), K (VIP com badge), K2 (VIP e CS com badge)

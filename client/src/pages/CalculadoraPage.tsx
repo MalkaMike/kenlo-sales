@@ -155,10 +155,15 @@ const PAYMENT_FREQUENCY_MULTIPLIERS = {
 
 /**
  * Round price UP to next value ending in 7
- * ALWAYS rounds UP, never down
- * Example: 490 → 497, 495 → 497, 502 → 507, 507 → 507
+ * Rule applies ONLY for prices above R$ 100
+ * Prices below R$ 100 use normal rounding
+ * Example: 37 → 37, 490 → 497, 495 → 497, 502 → 507, 507 → 507
  */
 const roundToEndIn7 = (price: number): number => {
+  // For prices below 100, use normal rounding
+  if (price < 100) return Math.round(price);
+  
+  // For prices >= 100, round to end in 7
   const lastDigit = price % 10;
   if (lastDigit === 7) {
     return price; // Already ends in 7
@@ -1138,7 +1143,14 @@ export default function CalculadoraPage() {
                         </div>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="imobVipSupport" className="text-sm">Suporte VIP</Label>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="imobVipSupport" className="text-sm">Suporte VIP</Label>
+                              {(imobPlan === "k" || imobPlan === "k2") && (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  Incluído
+                                </Badge>
+                              )}
+                            </div>
                             <Switch
                               id="imobVipSupport"
                               checked={metrics.imobVipSupport}
@@ -1147,7 +1159,14 @@ export default function CalculadoraPage() {
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
+                              {imobPlan === "k2" && (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  Incluído
+                                </Badge>
+                              )}
+                            </div>
                             <Switch
                               id="imobDedicatedCS"
                               checked={metrics.imobDedicatedCS}
@@ -1259,7 +1278,14 @@ export default function CalculadoraPage() {
                         </div>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="locVipSupport" className="text-sm">Suporte VIP</Label>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="locVipSupport" className="text-sm">Suporte VIP</Label>
+                              {(locPlan === "k" || locPlan === "k2") && (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  Incluído
+                                </Badge>
+                              )}
+                            </div>
                             <Switch
                               id="locVipSupport"
                               checked={metrics.locVipSupport}
@@ -1268,7 +1294,14 @@ export default function CalculadoraPage() {
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
+                              {locPlan === "k2" && (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  Incluído
+                                </Badge>
+                              )}
+                            </div>
                             <Switch
                               id="locDedicatedCS"
                               checked={metrics.locDedicatedCS}

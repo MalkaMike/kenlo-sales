@@ -216,8 +216,14 @@ const KOMBO_DEFINITIONS = {
 
 /**
  * Round price UP to next value ending in 7
+ * Rule applies ONLY for prices above R$ 100
+ * Prices below R$ 100 use normal rounding
  */
 const roundToEndIn7 = (price: number): number => {
+  // For prices below 100, use normal rounding
+  if (price < 100) return Math.round(price);
+  
+  // For prices >= 100, round to end in 7
   const lastDigit = price % 10;
   if (lastDigit === 7) return price;
   if (lastDigit < 7) return price - lastDigit + 7;
