@@ -607,3 +607,10 @@
 - [ ] Adicionar badge verde "Ofertado" ou "Incluído" ao lado do toggle de CS Dedicado quando incluído no plano (K2)
 - [ ] Badge deve aparecer apenas quando o serviço é incluído, não quando é opcional pago (Prime)
 - [ ] Testar todos os cenários: Prime (sem badge), K (VIP com badge), K2 (VIP e CS com badge)
+
+## Validação de Entrada em Campos Numéricos
+- [x] Implementar validação para prevenir valores zero ou negativos em todos os campos numéricos
+- [x] Campos validados: Número de usuários (min=1), Fechamentos (min=0), Leads por mês (min=0), Contratos (min=1), Novos contratos (min=0), Boleto (min=0), Split (min=0)
+- [x] Valores mínimos definidos e aplicados via Math.max() e atributo HTML min
+- [x] Corrigido conflito de id entre toggle e input de Leads (renomeado para leadsPerMonth)
+- [x] Testado comportamento com valores zero e negativos - validação funciona corretamente

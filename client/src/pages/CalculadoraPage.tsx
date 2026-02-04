@@ -1080,7 +1080,11 @@ export default function CalculadoraPage() {
                             id="imobUsers"
                             type="number" inputMode="numeric"
                             value={metrics.imobUsers}
-                            onChange={(e) => setMetrics({ ...metrics, imobUsers: parseInt(e.target.value) || 0 })}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
+                            }}
+                            min="1"
                             disabled={product !== "imob" && product !== "both"}
                             className="mt-1"
                           />
@@ -1091,7 +1095,11 @@ export default function CalculadoraPage() {
                             id="closings"
                             type="number" inputMode="numeric"
                             value={metrics.closingsPerMonth}
-                            onChange={(e) => setMetrics({ ...metrics, closingsPerMonth: parseInt(e.target.value) || 0 })}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
+                            }}
+                            min="0"
                             disabled={product !== "imob" && product !== "both"}
                             className="mt-1"
                           />
@@ -1105,12 +1113,16 @@ export default function CalculadoraPage() {
                         </div>
                         <div className="space-y-2">
                           <div>
-                            <Label htmlFor="leads" className="text-sm">Leads recebidos por mês</Label>
+                            <Label htmlFor="leadsPerMonth" className="text-sm">Leads recebidos por mês</Label>
                             <Input
-                              id="leads"
+                              id="leadsPerMonth"
                               type="number" inputMode="numeric"
                               value={metrics.leadsPerMonth}
-                              onChange={(e) => setMetrics({ ...metrics, leadsPerMonth: parseInt(e.target.value) || 0 })}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
+                              }}
+                              min="0"
                               disabled={product !== "imob" && product !== "both"}
                               className="mt-1"
                             />
@@ -1197,7 +1209,11 @@ export default function CalculadoraPage() {
                             id="contracts"
                             type="number" inputMode="numeric"
                             value={metrics.contractsUnderManagement}
-                            onChange={(e) => setMetrics({ ...metrics, contractsUnderManagement: parseInt(e.target.value) || 0 })}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
+                            }}
+                            min="1"
                             disabled={product !== "loc" && product !== "both"}
                             className="mt-1"
                           />
@@ -1208,7 +1224,11 @@ export default function CalculadoraPage() {
                             id="newContracts"
                             type="number" inputMode="numeric"
                             value={metrics.newContractsPerMonth}
-                            onChange={(e) => setMetrics({ ...metrics, newContractsPerMonth: parseInt(e.target.value) || 0 })}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
+                            }}
+                            min="0"
                             disabled={product !== "loc" && product !== "both"}
                             className="mt-1"
                           />
@@ -1238,7 +1258,10 @@ export default function CalculadoraPage() {
                                   id="boletoAmount"
                                   type="number" inputMode="numeric"
                                   value={metrics.boletoChargeAmount}
-                                  onChange={(e) => setMetrics({ ...metrics, boletoChargeAmount: parseFloat(e.target.value) || 0 })}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
+                                  }}
                                   className="mt-1 h-8 text-sm"
                                   step="0.01"
                                   min="0"
@@ -1260,7 +1283,10 @@ export default function CalculadoraPage() {
                                   id="splitAmount"
                                   type="number" inputMode="numeric"
                                   value={metrics.splitChargeAmount}
-                                  onChange={(e) => setMetrics({ ...metrics, splitChargeAmount: parseFloat(e.target.value) || 0 })}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
+                                  }}
                                   className="mt-1 h-8 text-sm"
                                   step="0.01"
                                   min="0"
