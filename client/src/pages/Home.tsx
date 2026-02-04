@@ -156,8 +156,8 @@ export default function Home() {
             
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-              <strong className="text-foreground">CRM</strong>, <strong className="text-foreground">Site/CMS</strong> e <strong className="text-foreground">App</strong> totalmente integrados. 
-              Tudo em um só lugar. Faça tudo sem sair da plataforma.
+              Plataforma integrada para <strong className="text-foreground">vendas e locação</strong> com <strong className="text-foreground">Site personalizável</strong>. 
+              Tudo em um só lugar. Configure, simule e feche negócios mais rápido.
             </p>
             
             {/* CTAs */}
