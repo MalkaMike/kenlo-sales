@@ -465,3 +465,10 @@
 - [x] Garantir responsividade perfeita em mobile
 - [x] Adicionar CTAs estratégicos ao longo da página
 - [x] Testar experiência visual completa
+
+## Atualização de Título - Custos Pós-Pago
+- [x] Atualizar título da seção "5. Custos Pós-pago (Variáveis)" para "Custos Pós-Pago - Sem surpresas, só o que você usar"
+
+## Atualização de Estatísticas - Homepage
+- [x] Atualizar "R$8B+ Em vendas" para "R$40B+ Em vendas"
+- [x] Adicionar nova estatística "R$1,2B+ Gestão de locação"

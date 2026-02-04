@@ -94,8 +94,8 @@ const addons = [
 const stats = [
   { value: "8.500+", label: "Imobiliárias", icon: Building2 },
   { value: "40.000+", label: "Corretores ativos", icon: Users },
-  { value: "950+", label: "Cidades", icon: Target },
-  { value: "R$8B+", label: "Em vendas", icon: TrendingUp },
+  { value: "R$40B+", label: "Em vendas", icon: TrendingUp },
+  { value: "R$1,2B+", label: "Gestão de locação", icon: HomeIcon },
 ];
 
 const benefits = [

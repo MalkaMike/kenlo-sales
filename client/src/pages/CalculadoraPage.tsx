@@ -1205,7 +1205,7 @@ export default function CalculadoraPage() {
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    5. Custos Pós-pago (Variáveis)
+                    5. Custos Pós-Pago - Sem surpresas, só o que você usar
                   </h2>
                   
                   <Card>
