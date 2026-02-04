@@ -602,10 +602,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "premium", label: "Serviços Premium", isHeader: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
-    { key: "totals", label: "Totais", isHeader: true },
-    { key: "totalMonthly", label: "Total Mensal", indent: true, isTotal: true },
-    { key: "implementation", label: "Implantação", indent: true },
-    { key: "annualEquivalent", label: "Anual Equivalente", indent: true, isGrandTotal: true },
+    { key: "implementation", label: "Implantação" },
+    { key: "totalMonthly", label: "Total Mensal", isTotal: true },
+    { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
   ];
 
   /**
@@ -737,9 +736,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     key={row.key}
                     className={
                       row.isHeader
-                        ? "bg-blue-50/70"
-                        : row.isGrandTotal
-                        ? "bg-gray-50 border-t-2 border-gray-300"
+                        ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
                         ? "bg-gray-50/50"
                         : "border-b border-gray-100 hover:bg-gray-50/30"
@@ -749,10 +746,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       className={`py-3 px-4 ${row.indent ? "pl-8" : ""} ${
                         row.isHeader 
                           ? "font-semibold text-gray-700 text-sm" 
-                          : row.isGrandTotal
-                          ? "font-bold text-gray-900"
                           : row.isTotal
-                          ? "font-semibold text-gray-700"
+                          ? "font-bold text-gray-700"
                           : "text-gray-600"
                       }`}
                     >
@@ -766,10 +761,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             ? "bg-green-50 border-l-2 border-r-2 border-green-500"
                             : ""
                         } ${
-                          row.isGrandTotal
-                            ? "font-bold text-primary text-base"
-                            : row.isTotal
-                            ? "font-semibold text-gray-900"
+                          row.isTotal
+                            ? "font-bold text-gray-700"
                             : "text-gray-700"
                         }`}
                       >
