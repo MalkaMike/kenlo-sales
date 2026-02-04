@@ -499,3 +499,10 @@
 - [x] Remover comparação de planos da calculadora
 - [x] Adicionar comparação na página Kenlo Imob (Usuários Adicionais, Assinatura, Leads)
 - [x] Adicionar comparação na página Kenlo Locação (Contratos Adicionais, Assinatura, Boletos, Split)
+
+## Corrigir Categorização de Add-ons e Condensar Tabela
+- [x] Remover Assinatura da página Kenlo Imob (é add-on compartilhado)
+- [x] Manter apenas Usuários Adicionais e Leads na comparação Imob
+- [x] Remover Assinatura da página Kenlo Locação (é add-on compartilhado)
+- [x] Manter apenas Contratos Adicionais, Boletos e Split na comparação Locação
+- [x] Condensar visualmente a tabela de comparação (reduzir padding, fonte menor, layout mais compacto)

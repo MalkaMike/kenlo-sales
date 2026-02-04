@@ -365,64 +365,49 @@ export default function ImobPage() {
       </section>
 
       {/* Plan Comparison - Add-on Impact */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Comparação de Planos</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja como cada plano impacta o custo dos add-ons mais populares do Kenlo Imob
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">Comparação de Planos - Add-ons IMOB</h2>
+            <p className="text-sm text-muted-foreground">
+              Veja como cada plano impacta o custo dos add-ons específicos do Kenlo Imob
             </p>
           </div>
           
-          <div className="max-w-5xl mx-auto">
-            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-              <table className="w-full border-collapse min-w-[600px]">
+          <div className="max-w-4xl mx-auto">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-sm">
                 <thead>
-                  <tr>
-                    <th className="text-left p-4 bg-muted/30 rounded-tl-lg w-[40%]">
-                      <span className="text-sm font-medium text-muted-foreground">Add-on / Recurso</span>
-                    </th>
-                    <th className="p-4 text-center bg-muted/30 text-primary font-semibold">Prime</th>
-                    <th className="p-4 text-center bg-muted/30 text-blue-600 font-semibold">K</th>
-                    <th className="p-4 text-center bg-muted/30 rounded-tr-lg text-purple-600 font-semibold">K2</th>
-                    <th className="p-4 text-center bg-muted/30 text-green-600 font-semibold">Economia (K2)</th>
+                  <tr className="border-b-2 border-border">
+                    <th className="text-left py-2 px-3 font-semibold">Add-on</th>
+                    <th className="text-center py-2 px-3 font-semibold text-primary">Prime</th>
+                    <th className="text-center py-2 px-3 font-semibold text-blue-600">K</th>
+                    <th className="text-center py-2 px-3 font-semibold text-purple-600">K2</th>
+                    <th className="text-center py-2 px-3 font-semibold text-green-600">Economia</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Usuários Adicionais */}
-                  <tr>
-                    <td className="p-4 border-b border-border/40 font-medium">Usuários Adicionais</td>
-                    <td className="p-4 border-b border-border/40 text-center">R$ 57/usuário</td>
-                    <td className="p-4 border-b border-border/40 text-center">1-10: R$ 47<br/>11+: R$ 37</td>
-                    <td className="p-4 border-b border-border/40 text-center font-semibold">1-10: R$ 47<br/>11-50: R$ 37<br/>51+: R$ 27</td>
-                    <td className="p-4 border-b border-border/40 text-center text-green-600 font-semibold">Até 53%</td>
+                  <tr className="border-b border-border/40">
+                    <td className="py-2 px-3 font-medium">Usuários Adicionais</td>
+                    <td className="py-2 px-3 text-center text-xs">R$ 57/un</td>
+                    <td className="py-2 px-3 text-center text-xs">R$ 47 (1-10)<br/>R$ 37 (11+)</td>
+                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 47 (1-10)<br/>R$ 37 (11-50)<br/>R$ 27 (51+)</td>
+                    <td className="py-2 px-3 text-center text-green-600 font-semibold">53%</td>
                   </tr>
-                  
-                  {/* Assinatura Digital */}
-                  <tr>
-                    <td className="p-4 border-b border-border/40 font-medium">Assinatura Digital</td>
-                    <td className="p-4 border-b border-border/40 text-center">R$ 1,90 por assinatura</td>
-                    <td className="p-4 border-b border-border/40 text-center">R$ 1,90 por assinatura</td>
-                    <td className="p-4 border-b border-border/40 text-center font-semibold">R$ 1,90 por assinatura</td>
-                    <td className="p-4 border-b border-border/40 text-center text-gray-400">—</td>
-                  </tr>
-                  
-                  {/* Leads WhatsApp */}
-                  <tr>
-                    <td className="p-4 border-b border-border/40 font-medium">Mensagens WhatsApp (Leads)</td>
-                    <td className="p-4 border-b border-border/40 text-center">R$ 2,00 por mensagem</td>
-                    <td className="p-4 border-b border-border/40 text-center">R$ 2,00 por mensagem</td>
-                    <td className="p-4 border-b border-border/40 text-center font-semibold">R$ 2,00 por mensagem</td>
-                    <td className="p-4 border-b border-border/40 text-center text-gray-400">—</td>
+                  <tr className="border-b border-border/40">
+                    <td className="py-2 px-3 font-medium">Leads (WhatsApp)</td>
+                    <td className="py-2 px-3 text-center text-xs">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 text-center text-xs">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 text-center text-gray-400">—</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-900">
-                <strong>Insight:</strong> Escolher um plano superior (K ou K2) reduz significativamente o custo por unidade de add-ons. 
-                Quanto mais você digitaliza, menor o impacto financeiro dos add-ons.
+            <div className="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
+              <p className="text-xs text-blue-900">
+                <strong>Insight:</strong> Planos superiores (K ou K2) reduzem significativamente o custo por unidade. Quanto mais você digitaliza, menor o impacto dos add-ons.
               </p>
             </div>
           </div>
