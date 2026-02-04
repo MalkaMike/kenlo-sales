@@ -484,3 +484,8 @@
 
 ## Adicionar Estatística de Visitantes
 - [x] Adicionar "10M+ Visitantes únicos por mês" com ícone Eye à seção de estatísticas
+
+## Reorganizar Add-ons em Categorias
+- [x] Separar add-ons em 2 grupos: IMOB Add-ons e LOC Add-ons
+- [x] Adicionar subtotais para cada categoria de add-ons
+- [x] Melhorar visualização da seção de custos pós-pago

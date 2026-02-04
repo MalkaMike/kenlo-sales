@@ -1211,6 +1211,13 @@ export default function CalculadoraPage() {
                   <Card>
                     <CardContent className="pt-6">
                     <div>
+                      {/* IMOB ADD-ONS GROUP */}
+                      {(product === 'imob' || product === 'both') && (
+                        <div className="mb-4">
+                          <h3 className="text-sm font-semibold text-primary mb-3 pb-2 border-b-2 border-primary/20">IMOB Add-ons</h3>
+                        </div>
+                      )}
+                      
                       {/* IMOB Additional Users */}
                       {(product === 'imob' || product === 'both') && (() => {
                         const plan = imobPlan;
@@ -1255,6 +1262,13 @@ export default function CalculadoraPage() {
                         );
                       })()}
 
+                      {/* LOC ADD-ONS GROUP */}
+                      {(product === 'loc' || product === 'both') && (
+                        <div className="mb-4 mt-6">
+                          <h3 className="text-sm font-semibold text-secondary mb-3 pb-2 border-b-2 border-secondary/20">LOC Add-ons</h3>
+                        </div>
+                      )}
+                      
                       {/* LOC Additional Contracts */}
                       {(product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
@@ -1371,6 +1385,65 @@ export default function CalculadoraPage() {
                         );
                       })()}
 
+                      {/* IMOB SUBTOTAL */}
+                      {(product === 'imob' || product === 'both') && (() => {
+                        let imobSubtotal = 0;
+                        
+                        // Calculate IMOB users cost
+                        const imobPlanRef = imobPlan;
+                        const imobIncluded = imobPlanRef === 'prime' ? 2 : imobPlanRef === 'k' ? 7 : 15;
+                        const imobAdditional = Math.max(0, metrics.imobUsers - imobIncluded);
+                        if (imobAdditional > 0) {
+                          if (imobPlanRef === 'prime') imobSubtotal += imobAdditional * 57;
+                          else if (imobPlanRef === 'k') {
+                            const tier1 = Math.min(imobAdditional, 10);
+                            const tier2 = Math.max(0, imobAdditional - 10);
+                            imobSubtotal += (tier1 * 47) + (tier2 * 37);
+                          } else {
+                            const tier1 = Math.min(imobAdditional, 10);
+                            const tier2 = Math.min(Math.max(0, imobAdditional - 10), 40);
+                            const tier3 = Math.max(0, imobAdditional - 50);
+                            imobSubtotal += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                          }
+                        }
+                        
+                        // Calculate Leads WhatsApp cost
+                        if (addons.leads && metrics.wantsWhatsApp) {
+                          const included = 150;
+                          const totalLeads = metrics.leadsPerMonth;
+                          const additional = Math.max(0, totalLeads - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 200);
+                            const tier2 = Math.min(Math.max(0, additional - 200), 150);
+                            const tier3 = Math.min(Math.max(0, additional - 350), 650);
+                            const tier4 = Math.max(0, additional - 1000);
+                            imobSubtotal += (tier1 * 2.0) + (tier2 * 1.8) + (tier3 * 1.5) + (tier4 * 1.2);
+                          }
+                        }
+                        
+                        // Calculate Assinaturas cost (IMOB portion)
+                        if (addons.assinatura) {
+                          const included = 20;
+                          const totalSignatures = product === 'imob' ? metrics.closingsPerMonth : metrics.closingsPerMonth;
+                          const additional = Math.max(0, totalSignatures - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 20);
+                            const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                            const tier3 = Math.max(0, additional - 40);
+                            imobSubtotal += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                          }
+                        }
+                        
+                        if (imobSubtotal === 0) return null;
+                        
+                        return (
+                          <div className="flex justify-between items-center py-3 px-3 bg-primary/5 rounded-md border border-primary/10 font-semibold text-primary my-4">
+                            <span>Subtotal IMOB Add-ons</span>
+                            <span>{formatCurrency(imobSubtotal)}</span>
+                          </div>
+                        );
+                      })()}
+
                       {/* Custo Boletos (Pay) */}
                       {addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both') && (() => {
                         const contracts = metrics.contractsUnderManagement;
@@ -1419,6 +1492,63 @@ export default function CalculadoraPage() {
                                 R$ 3,00/split
                               </span>
                             </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* LOC SUBTOTAL */}
+                      {(product === 'loc' || product === 'both') && (() => {
+                        let locSubtotal = 0;
+                        
+                        // Calculate LOC contracts cost
+                        const locPlanRef = locPlan;
+                        const locIncluded = locPlanRef === 'prime' ? 100 : locPlanRef === 'k' ? 250 : 500;
+                        const locAdditional = Math.max(0, metrics.contractsUnderManagement - locIncluded);
+                        if (locAdditional > 0) {
+                          if (locPlanRef === 'prime') locSubtotal += locAdditional * 3;
+                          else if (locPlanRef === 'k') {
+                            const tier1 = Math.min(locAdditional, 250);
+                            const tier2 = Math.max(0, locAdditional - 250);
+                            locSubtotal += (tier1 * 3) + (tier2 * 2.5);
+                          } else {
+                            const tier1 = Math.min(locAdditional, 250);
+                            const tier2 = Math.min(Math.max(0, locAdditional - 250), 250);
+                            const tier3 = Math.max(0, locAdditional - 500);
+                            locSubtotal += (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+                          }
+                        }
+                        
+                        // Calculate Assinaturas cost (LOC portion)
+                        if (addons.assinatura) {
+                          const included = 20;
+                          const totalSignatures = product === 'loc' ? metrics.newContractsPerMonth : metrics.newContractsPerMonth;
+                          const additional = Math.max(0, totalSignatures - included);
+                          if (additional > 0) {
+                            const tier1 = Math.min(additional, 20);
+                            const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                            const tier3 = Math.max(0, additional - 40);
+                            locSubtotal += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                          }
+                        }
+                        
+                        // Calculate Boletos cost
+                        if (addons.pay && metrics.chargesBoletoToTenant) {
+                          const contracts = metrics.contractsUnderManagement;
+                          locSubtotal += contracts * 3.00;
+                        }
+                        
+                        // Calculate Split cost
+                        if (addons.pay && metrics.chargesSplitToOwner) {
+                          const contracts = metrics.contractsUnderManagement;
+                          locSubtotal += contracts * 3.00;
+                        }
+                        
+                        if (locSubtotal === 0) return null;
+                        
+                        return (
+                          <div className="flex justify-between items-center py-3 px-3 bg-secondary/5 rounded-md border border-secondary/10 font-semibold text-secondary my-4">
+                            <span>Subtotal LOC Add-ons</span>
+                            <span>{formatCurrency(locSubtotal)}</span>
                           </div>
                         );
                       })()}
