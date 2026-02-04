@@ -788,11 +788,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </div>
 
           {/* Comparison Table */}
-          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-            <table className="w-full text-sm border-collapse min-w-[750px]">
+          <div className="w-full">
+            <table className="w-full text-sm border-collapse table-fixed">
               <thead>
                 <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-4 px-2 w-[120px]"></th>
+                  <th className="text-left py-4 px-2"></th>
                   {columns.map((col) => {
                     // Get tooltip data only for valid kombo keys (not "none")
                     const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
@@ -803,7 +803,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <th
                         key={col.id}
                         onClick={() => setSelectedKombo(col.id)}
-                        className={`text-center py-4 px-1 min-w-[95px] cursor-pointer hover:bg-gray-50 transition-all ${
+                        className={`text-center py-4 px-1 cursor-pointer hover:bg-gray-50 transition-all ${
                           selectedPlan === col.id
                             ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
                             : col.isRecommended
