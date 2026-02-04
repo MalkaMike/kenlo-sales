@@ -1,5 +1,5 @@
 /**
- * Histórico de Orçamentos - Página para consultar todos os orçamentos gerados
+ * Histórico de Cotaçãos - Página para consultar todos os cotaçãos gerados
  */
 
 import { useState } from "react";
@@ -134,12 +134,12 @@ export default function HistoricoPage() {
   const { data: stats } = trpc.quotes.stats.useQuery();
   const deleteMutation = trpc.quotes.delete.useMutation({
     onSuccess: () => {
-      console.log("Orçamento deletado com sucesso");
+      console.log("Cotação deletado com sucesso");
       utils.quotes.list.invalidate();
       utils.quotes.stats.invalidate();
     },
     onError: () => {
-      console.error("Erro ao deletar orçamento");
+      console.error("Erro ao deletar cotação");
     },
   });
 
@@ -210,7 +210,7 @@ export default function HistoricoPage() {
 
   const exportToExcel = () => {
     if (!filteredQuotes || filteredQuotes.length === 0) {
-      alert("Nenhum orçamento para exportar");
+      alert("Nenhum cotação para exportar");
       return;
     }
 
@@ -243,7 +243,7 @@ export default function HistoricoPage() {
     // Create workbook and worksheet
     const ws = XLSX.utils.json_to_sheet(excelData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Orçamentos");
+    XLSX.utils.book_append_sheet(wb, ws, "Cotaçãos");
 
     // Set column widths
     const colWidths = [
@@ -270,7 +270,7 @@ export default function HistoricoPage() {
     ws['!cols'] = colWidths;
 
     // Generate filename with current date
-    const filename = `historico-orcamentos-${format(new Date(), "yyyy-MM-dd-HHmm")}.xlsx`;
+    const filename = `historico-cotacaos-${format(new Date(), "yyyy-MM-dd-HHmm")}.xlsx`;
 
     // Download file
     XLSX.writeFile(wb, filename);
@@ -337,9 +337,9 @@ export default function HistoricoPage() {
         {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Histórico de Orçamentos</h1>
+            <h1 className="text-3xl font-bold mb-2">Histórico de Cotaçãos</h1>
             <p className="text-muted-foreground">
-              Consulte todos os orçamentos gerados (links copiados e PDFs exportados)
+              Consulte todos os cotaçãos gerados (links copiados e PDFs exportados)
             </p>
           </div>
           <Button
@@ -358,7 +358,7 @@ export default function HistoricoPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <Card>
               <CardHeader className="pb-2">
-                <CardDescription>Total de Orçamentos</CardDescription>
+                <CardDescription>Total de Cotaçãos</CardDescription>
                 <CardTitle className="text-3xl">{stats.total}</CardTitle>
               </CardHeader>
             </Card>
@@ -389,11 +389,11 @@ export default function HistoricoPage() {
             <h2 className="text-2xl font-bold mb-4">Análise de Vendas</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              {/* Chart 1: Orçamentos por Vendedor */}
+              {/* Chart 1: Cotaçãos por Vendedor */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Orçamentos por Vendedor</CardTitle>
-                  <CardDescription>Top 10 vendedores com mais orçamentos</CardDescription>
+                  <CardTitle className="text-lg">Cotaçãos por Vendedor</CardTitle>
+                  <CardDescription>Top 10 vendedores com mais cotaçãos</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -410,7 +410,7 @@ export default function HistoricoPage() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="count" fill="#e11d48" name="Orçamentos" />
+                      <Bar dataKey="count" fill="#e11d48" name="Cotaçãos" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -420,7 +420,7 @@ export default function HistoricoPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Distribuição por Produto</CardTitle>
-                  <CardDescription>Orçamentos por tipo de produto</CardDescription>
+                  <CardDescription>Cotaçãos por tipo de produto</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -446,10 +446,10 @@ export default function HistoricoPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Chart 3: Orçamentos ao Longo do Tempo */}
+              {/* Chart 3: Cotaçãos ao Longo do Tempo */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Orçamentos ao Longo do Tempo</CardTitle>
+                  <CardTitle className="text-lg">Cotaçãos ao Longo do Tempo</CardTitle>
                   <CardDescription>Últimos 30 dias</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -460,7 +460,7 @@ export default function HistoricoPage() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="count" stroke="#3b82f6" name="Orçamentos" strokeWidth={2} />
+                      <Line type="monotone" dataKey="count" stroke="#3b82f6" name="Cotaçãos" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -503,7 +503,7 @@ export default function HistoricoPage() {
               <div>
                 <CardTitle className="text-lg">Filtros</CardTitle>
                 <CardDescription>
-                  Filtre os orçamentos por cliente, vendedor ou data
+                  Filtre os cotaçãos por cliente, vendedor ou data
                 </CardDescription>
               </div>
               <Button
@@ -586,11 +586,11 @@ export default function HistoricoPage() {
         {/* Quotes Table - Desktop */}
         <Card className="hidden md:block">
           <CardHeader>
-            <CardTitle>Orçamentos Recentes</CardTitle>
+            <CardTitle>Cotaçãos Recentes</CardTitle>
             <CardDescription>
               {filteredQuotes && filteredQuotes.length > 0
-                ? `Exibindo ${filteredQuotes.length} de ${quotes?.length || 0} orçamentos`
-                : "Últimos 100 orçamentos gerados"}
+                ? `Exibindo ${filteredQuotes.length} de ${quotes?.length || 0} cotaçãos`
+                : "Últimos 100 cotaçãos gerados"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -600,15 +600,15 @@ export default function HistoricoPage() {
               </div>
             ) : error ? (
               <div className="text-center py-12 text-muted-foreground">
-                Erro ao carregar orçamentos. Tente novamente.
+                Erro ao carregar cotaçãos. Tente novamente.
               </div>
             ) : !filteredQuotes || filteredQuotes.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>
                   {hasActiveFilters
-                    ? "Nenhum orçamento encontrado com os filtros aplicados."
-                    : "Nenhum orçamento gerado ainda."}
+                    ? "Nenhum cotação encontrado com os filtros aplicados."
+                    : "Nenhum cotação gerado ainda."}
                 </p>
                 {!hasActiveFilters && (
                   <p className="text-sm mt-2">
@@ -790,7 +790,7 @@ export default function HistoricoPage() {
 
         {/* Quotes Cards - Mobile */}
         <div className="md:hidden space-y-4">
-          <h2 className="text-lg font-semibold">Orçamentos Recentes</h2>
+          <h2 className="text-lg font-semibold">Cotaçãos Recentes</h2>
           
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
@@ -798,7 +798,7 @@ export default function HistoricoPage() {
             </div>
           ) : error ? (
             <div className="text-center py-12 text-muted-foreground">
-              Erro ao carregar orçamentos. Tente novamente.
+              Erro ao carregar cotaçãos. Tente novamente.
             </div>
           ) : !filteredQuotes || filteredQuotes.length === 0 ? (
             <Card>
@@ -806,8 +806,8 @@ export default function HistoricoPage() {
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>
                   {hasActiveFilters
-                    ? "Nenhum orçamento encontrado com os filtros aplicados."
-                    : "Nenhum orçamento gerado ainda."}
+                    ? "Nenhum cotação encontrado com os filtros aplicados."
+                    : "Nenhum cotação gerado ainda."}
                 </p>
                 {!hasActiveFilters && (
                   <p className="text-sm mt-2">
@@ -964,7 +964,7 @@ export default function HistoricoPage() {
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja deletar este orçamento? Esta ação não pode ser desfeita.
+              Tem certeza que deseja deletar este cotação? Esta ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

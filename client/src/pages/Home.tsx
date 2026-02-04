@@ -166,7 +166,7 @@ export default function Home() {
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all" asChild>
                 <Link href="/calculadora">
                   <Rocket className="w-6 h-6" />
-                  Criar Orçamento Agora
+                  Criar Cotação Agora
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 gap-3 border-2 hover:bg-accent" asChild>
@@ -437,7 +437,7 @@ export default function Home() {
               <FileText className="w-12 h-12" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Gerador de Orçamentos Inteligente
+              Gerador de Cotaçãos Inteligente
             </h2>
             <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
               Configure produtos e add-ons, veja o investimento em tempo real com detecção automática 
@@ -446,7 +446,7 @@ export default function Home() {
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25" asChild>
               <Link href="/calculadora">
                 <Rocket className="w-6 h-6" />
-                Criar Orçamento Agora
+                Criar Cotação Agora
               </Link>
             </Button>
           </div>

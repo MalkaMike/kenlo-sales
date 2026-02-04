@@ -37,10 +37,10 @@ interface QuoteInfoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (info: QuoteInfo) => void;
-  actionType: "pdf" | "link";
+  actionType?: "pdf";
 }
 
-export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: QuoteInfoDialogProps) {
+export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialogProps) {
   const [vendorName, setVendorName] = useState("");
   const [vendorEmail, setVendorEmail] = useState("");
   const [vendorPhone, setVendorPhone] = useState("");
@@ -131,7 +131,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
             Informações do Cliente
           </DialogTitle>
           <DialogDescription>
-            Preencha as informações abaixo antes de {actionType === "pdf" ? "exportar o PDF" : "copiar o link"}.
+            Preencha as informações abaixo antes de exportar a cotação.
           </DialogDescription>
         </DialogHeader>
 
@@ -284,7 +284,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, actionType }: Qu
             Cancelar
           </Button>
           <Button onClick={handleSubmit}>
-            {actionType === "pdf" ? "Exportar PDF" : "Copiar Link"}
+            Exportar Cotação
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -137,7 +137,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Orçamento */}
+              {/* Cotação */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
@@ -147,7 +147,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/calculadora" && "bg-accent"
                     )}
                   >
-                    Orçamento
+                    Cotação
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -206,7 +206,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
                 >
-                  Orçamento
+                  Cotação
                 </Link>
               </nav>
             </SheetContent>
@@ -253,7 +253,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h4 className="font-semibold mb-4">Ferramentas</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="hover:text-foreground transition-colors">Kombos</Link></li>
-                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Orçamento</Link></li>
+                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Cotação</Link></li>
               </ul>
             </div>
           </div>

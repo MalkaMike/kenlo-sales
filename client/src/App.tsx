@@ -39,9 +39,9 @@ function Router() {
         <Route path="/addons/cash" component={CashPage} />
         {/* Kombos */}
         <Route path="/kombos" component={KombosPage} />
-        {/* Calculator / Orçamento */}
+        {/* Calculator / Cotação */}
         <Route path="/calculadora" component={CalculadoraPage} />
-        <Route path="/orcamento" component={CalculadoraPage} />
+        <Route path="/cotacao" component={CalculadoraPage} />
         {/* Histórico */}
         <Route path="/historico" component={HistoricoPage} />
         {/* Fallback */}

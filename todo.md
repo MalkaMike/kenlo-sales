@@ -705,10 +705,36 @@
 - [x] Verificar faixas: 1-20: R$1,80, 21-40: R$1,70, 41+: R$1,50
 
 ### Kenlo Pay - Boleto/Split
-- [ ] Verificar preços por faixa para cada plano (Prime fixo, K/K2 por faixas)
+- [x] Verificar preços por faixa para cada plano (Prime fixo R$4, K/K2 por faixas)
 
 ### Contratos Adicionais
 - [ ] Verificar preços por faixa para cada plano
 
 ### Usuários IMOB
 - [x] Verificar: Prime=2, K=7, K2=14 (documento diz 14, não 15)
+
+
+## Alterações Solicitadas (Fev 2026 - Batch 2)
+
+### Remover Seção Benefícios Incluídos
+- [x] Remover box verde "Benefícios Incluídos no Seu Plano" da calculadora
+
+### Trocar Orçamento por Cotação
+- [x] Substituir "Orçamento" por "Cotação" em todo o site
+- [x] Substituir "Orçamento" por "Cotação" no PDF gerado
+- [x] Atualizar botões, títulos, labels e textos
+
+### Remover Menções de Parcelamentos
+- [x] Remover todas as menções de parcelamentos do site (não havia nenhuma)
+- [x] Remover lógica de parcelamento do código (não havia nenhuma)
+
+### Remover Link de Copiar URL
+- [x] Remover botão/funcionalidade de copiar URL para cliente
+- [x] Limpar código relacionado a compartilhamento de URL
+
+### Renomear Kenlo Effect
+- [x] Renomear "The Kenlo Effect" para "Kenlo Receita Extra"
+- [x] Atualizar em todas as ocorrências (calculadora, PDF, etc.)
+
+### Corrigir Preço Boleto/Split Prime LOC
+- [x] Verificar e corrigir: Prime LOC Boleto/Split já estava correto em R$4

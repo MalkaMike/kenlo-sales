@@ -33,9 +33,7 @@ import {
   TrendingUp,
   Key,
   Zap,
-  Copy,
   CheckCircle2,
-  Gift,
 } from "lucide-react";
 
 // Types
@@ -220,8 +218,7 @@ export default function CalculadoraPage() {
 
   
   // Quote info dialog state
-   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
-  const [quoteInfoAction, setQuoteInfoAction] = useState<"pdf" | "link">("pdf");
+  const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   
@@ -285,32 +282,12 @@ export default function CalculadoraPage() {
     params.set('ba', metrics.boletoChargeAmount.toString());
     params.set('sa', metrics.splitChargeAmount.toString());
     
-    const baseUrl = window.location.origin + '/orcamento';
+    const baseUrl = window.location.origin + '/cotacao';
     return `${baseUrl}?${params.toString()}`;
   }, [product, imobPlan, locPlan, frequency, addons, metrics]);
 
   // Mutation to save quote to database
   const saveQuoteMutation = trpc.quotes.save.useMutation();
-
-  /**
-   * Copy shareable URL to clipboard
-   */
-  const copyShareableLink = useCallback(async () => {
-    const url = generateShareableURL();
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success('Link copiado! Envie para o cliente.');
-    } catch (err) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = url;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      toast.success('Link copiado! Envie para o cliente.');
-    }
-  }, [generateShareableURL]);
 
   /**
    * Load configuration from URL parameters on mount
@@ -898,7 +875,7 @@ export default function CalculadoraPage() {
               <Calculator className="w-6 h-6 text-primary" />
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 px-4">
-              Orçamento Kenlo
+              Cotação Kenlo
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
               Configure a solução ideal para sua imobiliária e veja o investimento em tempo real
@@ -1054,60 +1031,6 @@ export default function CalculadoraPage() {
                       />
                     </div>
                     <div className="text-xs text-gray-500">Financie seus proprietários até 24 meses</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Benefícios Incluídos Section */}
-              <div className="mb-6 sm:mb-8">
-                <div className="p-4 sm:p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 rounded-lg bg-green-100">
-                      <Gift className="w-5 h-5 text-green-600" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-bold text-green-800">
-                      Benefícios Incluídos no Seu Plano
-                    </h3>
-                  </div>
-                  <p className="text-sm text-green-700 mb-4">
-                    Todos os planos Kenlo incluem esses benefícios sem custo adicional:
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <div>
-                        <span className="text-sm font-medium text-gray-800">Site Profissional</span>
-                        <span className="text-xs text-green-600 block">Valor: R$ 249/mês</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">Blog Integrado</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">Landing Pages</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">Hospedagem Ilimitada</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">E-mails Corporativos</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">App Kenlo</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">Radar de Parcerias</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-800">Treinamentos Online</span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -2034,7 +1957,7 @@ export default function CalculadoraPage() {
 
 
 
-                {/* SECTION 6: THE KENLO EFFECT - Only show when there are revenues */}
+                {/* SECTION 6: KENLO RECEITA EXTRA - Only show when there are revenues */}
                 {(() => {
                   // Calculate if there are any revenues
                   // Use local variable to avoid TypeScript narrowing issues
@@ -2048,7 +1971,7 @@ export default function CalculadoraPage() {
                   return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    6. The Kenlo Effect
+                    6. Kenlo Receita Extra
                   </h2>
                   
                   <Card>
@@ -2520,24 +2443,9 @@ export default function CalculadoraPage() {
                       </span>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => {
-                        setQuoteInfoAction("pdf");
-                        setShowQuoteInfoDialog(true);
-                      }}>
+                      <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowQuoteInfoDialog(true)}>
                         <Download className="w-4 h-4 mr-2" />
-                        Exportar Proposta (PDF)
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
-                        className="min-h-[50px] sm:flex-1"
-                        onClick={() => {
-                          setQuoteInfoAction("link");
-                          setShowQuoteInfoDialog(true);
-                        }}
-                      >
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copiar Link para Cliente
+                        Exportar Cotação (PDF)
                       </Button>
                     </div>
                   </div>
@@ -2553,51 +2461,12 @@ export default function CalculadoraPage() {
         <QuoteInfoDialog
           open={showQuoteInfoDialog}
           onOpenChange={setShowQuoteInfoDialog}
-          actionType={quoteInfoAction}
           onSubmit={async (quoteInfo) => {
             setPendingQuoteInfo(quoteInfo);
             setShowQuoteInfoDialog(false);
             
-            if (quoteInfoAction === "link") {
-              // Copy link and save to database
-              await copyShareableLink();
-              
-              try {
-                const items = getLineItems();
-                const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
-                const totalAnnual = totalMonthly * 12;
-                const implantationFee = calculateTotalImplementation(activeKombo !== "none");
-                const postPaidTotal = 0;
-                
-                await saveQuoteMutation.mutateAsync({
-                  action: "link_copied",
-                  product: product,
-                  imobPlan: product !== "loc" ? imobPlan : undefined,
-                  locPlan: product !== "imob" ? locPlan : undefined,
-                  frequency: frequency,
-                  addons: JSON.stringify(addons),
-                  metrics: JSON.stringify(metrics),
-                  totals: JSON.stringify({
-                    monthly: totalMonthly,
-                    annual: totalAnnual,
-                    implantation: implantationFee,
-                    postPaid: postPaidTotal,
-                  }),
-                  komboId: activeKombo !== "none" ? activeKombo : undefined,
-                  komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
-                  komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
-                  shareableUrl: generateShareableURL(),
-                  clientName: quoteInfo.ownerName,
-                  vendorName: quoteInfo.vendorName,
-                  agencyName: quoteInfo.agencyName,
-                  cellPhone: quoteInfo.cellPhone,
-                  landlinePhone: quoteInfo.landlinePhone,
-                  websiteUrl: quoteInfo.websiteUrl,
-                });
-              } catch (error) {
-                console.error('Failed to save quote:', error);
-              }
-            } else if (quoteInfoAction === "pdf") {
+            // Generate PDF with all quote info
+            {
               // Generate PDF with all quote info
               try {
                 toast.loading("Gerando PDF...");
@@ -2729,7 +2598,7 @@ export default function CalculadoraPage() {
                   }
                 }
                 
-                // The Kenlo Effect
+                // Kenlo Receita Extra
                 let revenueFromBoletos = 0;
                 if (addons.pay && (product === 'loc' || product === 'both')) {
                   if (metrics.chargesBoletoToTenant) {

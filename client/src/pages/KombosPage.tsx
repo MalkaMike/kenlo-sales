@@ -145,7 +145,7 @@ export default function KombosPage() {
               <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
                 <Link href="/calculadora">
                   <FileText className="w-5 h-5" />
-                  Criar Orçamento
+                  Criar Cotação
                 </Link>
               </Button>
             </div>
@@ -363,12 +363,12 @@ export default function KombosPage() {
               Pronto para montar a proposta ideal?
             </h2>
             <p className="text-lg mb-8 text-white/90">
-              Use nosso gerador de orçamentos para simular diferentes Kombos e ver os preços em tempo real
+              Use nosso gerador de cotaçãos para simular diferentes Kombos e ver os preços em tempo real
             </p>
             <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 gap-2" asChild>
               <Link href="/calculadora">
                 <FileText className="w-5 h-5" />
-                Criar Orçamento
+                Criar Cotação
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>

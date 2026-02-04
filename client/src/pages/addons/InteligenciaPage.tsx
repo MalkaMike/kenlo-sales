@@ -274,7 +274,7 @@ export default function InteligenciaPage() {
               <Link href="/calculadora">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
                   <Calculator className="w-5 h-5" />
-                  Criar Orçamento
+                  Criar Cotação
                 </Button>
               </Link>
             </div>
