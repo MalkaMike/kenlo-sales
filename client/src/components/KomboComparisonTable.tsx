@@ -137,7 +137,7 @@ const KOMBO_DEFINITIONS = {
     discount: 0.15,
     products: ["imob"] as ProductSelection[],
     includedAddons: ["leads", "inteligencia", "assinatura"],
-    includesPremiumServices: false,
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
     freeImplementations: ["leads", "inteligencia"],
   },
   locacao_pro: {
@@ -146,7 +146,7 @@ const KOMBO_DEFINITIONS = {
     discount: 0.10,
     products: ["loc"] as ProductSelection[],
     includedAddons: ["inteligencia", "assinatura"],
-    includesPremiumServices: false,
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
     freeImplementations: ["inteligencia"],
   },
   core_gestao: {
@@ -385,24 +385,34 @@ const calculateKomboColumn = (
   }
 
   // Premium Services
+  // Regra: Imob Pro, Locação Pro, Core Gestão, Elite = VIP + CS INCLUÍDO no Kombo
+  // Imob Start = NÃO inclui VIP/CS (cliente paga à parte se quiser)
   let vipSupportPrice: number | string | null = null;
   let dedicatedCSPrice: number | string | null = null;
 
   if (kombo.includesPremiumServices) {
-    // Core Gestão and Elite include Premium Services for free
+    // Imob Pro, Locação Pro, Core Gestão, Elite incluem VIP + CS Dedicado
     vipSupportPrice = "Incluído";
     dedicatedCSPrice = "Incluído";
   } else {
-    // For Kombos without premium services, show "Incluído" if plan K/K2
-    // Use imobPlan for IMOB-only Kombos, locPlan for LOC-only Kombos
+    // Imob Start NÃO inclui VIP/CS - cliente paga à parte
+    // Verificar se o plano (K/K2) já inclui
     const relevantPlan = komboIncludesLoc && !komboIncludesImob ? locPlan : imobPlan;
     if (isPremiumIncludedInPlan(relevantPlan)) {
+      // K e K2 já incluem VIP/CS no plano base
       vipSupportPrice = "Incluído";
       dedicatedCSPrice = "Incluído";
     } else {
-      // Show as optional (not included in total)
-      vipSupportPrice = null;
-      dedicatedCSPrice = null;
+      // Prime: VIP/CS são opcionais e pagos à parte
+      // Mostrar preço se o usuário selecionou
+      if (vipSupport) {
+        vipSupportPrice = PREMIUM_SERVICES_PRICES.vipSupport;
+        totalMonthly += PREMIUM_SERVICES_PRICES.vipSupport;
+      }
+      if (dedicatedCS) {
+        dedicatedCSPrice = PREMIUM_SERVICES_PRICES.dedicatedCS;
+        totalMonthly += PREMIUM_SERVICES_PRICES.dedicatedCS;
+      }
     }
   }
 

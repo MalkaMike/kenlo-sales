@@ -40,49 +40,68 @@ type PaymentFrequency = "monthly" | "semestral" | "annual" | "biennial";
 type KomboType = "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite" | "none";
 
 // Kombo definitions
+/**
+ * KOMBO DEFINITIONS
+ * 
+ * includesPremiumServices: true = VIP Support + CS Dedicado INCLUDED in Kombo price
+ * - Imob Start: NÃO inclui (cliente paga à parte se quiser)
+ * - Imob Pro, Locação Pro, Core Gestão, Elite: INCLUI VIP + CS Dedicado
+ * 
+ * freeImplementations: lista de implantações gratuitas no Kombo
+ */
 const KOMBOS = {
   imob_start: {
     name: "Kombo Imob Start",
     description: "IMOB + Leads + Assinaturas",
     discount: 0.10, // 10% OFF
-    implantationDiscount: 0, // Sem desconto adicional na implantação
+    implantationDiscount: 0, // Implantação fixa R$ 1.497
     requiredProducts: ["imob"] as ProductSelection[],
     requiredAddons: ["leads", "assinatura"],
     forbiddenAddons: ["inteligencia"], // Must NOT have Inteligência
+    includesPremiumServices: false, // NÃO inclui VIP/CS - cliente paga à parte
+    freeImplementations: ["leads"], // Implantação de Leads ofertada
   },
   imob_pro: {
     name: "Kombo Imob Pro",
     description: "IMOB + Leads + Inteligência + Assinatura",
     discount: 0.15, // 15% OFF
-    implantationDiscount: 0, // Sem desconto adicional na implantação
+    implantationDiscount: 0, // Implantação fixa R$ 1.497
     requiredProducts: ["imob"] as ProductSelection[],
     requiredAddons: ["leads", "inteligencia", "assinatura"],
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    freeImplementations: ["leads", "inteligencia"], // Implantação de Leads e Inteligência ofertada
   },
   locacao_pro: {
     name: "Kombo Locação Pro",
     description: "LOC + Inteligência + Assinatura",
-    implantationDiscount: 0, // Sem desconto adicional na implantação
     discount: 0.10, // 10% OFF
+    implantationDiscount: 0, // Implantação fixa R$ 1.497
     requiredProducts: ["loc"] as ProductSelection[],
     requiredAddons: ["inteligencia", "assinatura"],
     forbiddenAddons: ["leads"], // Must NOT have Leads
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    freeImplementations: ["inteligencia"], // Implantação de Inteligência ofertada
   },
   core_gestao: {
     name: "Kombo Core Gestão",
     description: "IMOB + LOC sem add-ons",
     discount: 0, // SEM desconto nas mensalidades
-    implantationDiscount: 0, // Implantação fixa R$ 1.497 (IMOB gratis, apenas LOC)
+    implantationDiscount: 0, // Implantação fixa R$ 1.497 (IMOB gratis)
     requiredProducts: ["both"] as ProductSelection[],
     requiredAddons: [], // No add-ons required
     maxAddons: 0, // Must have ZERO add-ons
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    freeImplementations: ["imob"], // Implantação de IMOB ofertada
   },
   elite: {
     name: "Kombo Elite",
     description: "IMOB + LOC + Todos Add-ons",
-    implantationDiscount: 0, // Sem desconto adicional na implantação
     discount: 0.20, // 20% OFF
+    implantationDiscount: 0, // Implantação fixa R$ 1.497
     requiredProducts: ["both"] as ProductSelection[],
     requiredAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], // ALL add-ons
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    freeImplementations: ["imob", "leads", "inteligencia"], // Implantação de IMOB, Leads e Inteligência ofertada
   },
 };
 

@@ -253,3 +253,11 @@
   - K: 1-10 = R$47, 11+ = R$37
   - K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
 - [x] Atualizar lógica de seleção automática do melhor plano com novos preços
+
+## Correção Regras dos Kombos (Fev 2026)
+- [x] Imob Start: NÃO inclui VIP/CS Dedicado (cliente paga à parte)
+- [x] Imob Pro: INCLUI VIP + CS Dedicado
+- [x] Locação Pro: INCLUI VIP + CS Dedicado
+- [x] Core Gestão: INCLUI VIP + CS Dedicado
+- [x] Elite: INCLUI VIP + CS Dedicado
+- [x] Triple check: revisar todos os cálculos e regras
