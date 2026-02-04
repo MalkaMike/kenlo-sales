@@ -525,3 +525,10 @@
 - [x] Implementar lógica de cálculo de custo total para cada Kombo disponível
 - [x] Recomendar automaticamente o Kombo com melhor custo-benefício
 - [x] Mostrar sugestão de Kombo na interface quando aplicável
+
+## Reorganizar Seção de Custos Pós-Pago com Subtotais nos Headers
+- [x] Mover subtotais de IMOB Add-ons para o header da seção
+- [x] Mover subtotais de LOC Add-ons para o header da seção
+- [x] Mover subtotais de Add-ons Compartilhados para o header da seção
+- [x] Remover repetição de "(IMOB)" e "(LOC)" dos nomes dos add-ons (já está claro pela seção)
+- [x] Manter Total Pós-pago no final
