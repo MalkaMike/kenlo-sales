@@ -573,8 +573,8 @@ const calculateNoKomboColumn = (
 
   return {
     id: "none",
-    name: "Sem Kombo",
-    shortName: "Sem Kombo",
+    name: "Sua Seleção (Sem Kombo)",
+    shortName: "Sua Seleção",
     discount: 0,
     isAvailable: true,
     isRecommended,
@@ -735,7 +735,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-bold text-gray-900 mb-3">
-        4. Preço Sem Kombo vs Kombo
+        4. Sua Seleção vs Kombos
       </h2>
 
       <Card>
@@ -794,7 +794,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           {col.isRecommended && (
                             <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
                               <Star className="w-3 h-3 mr-1" />
-                              Selected
+                              Recomendado
                             </Badge>
                           )}
                           <div className="flex items-center gap-1">

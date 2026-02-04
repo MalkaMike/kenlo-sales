@@ -577,3 +577,13 @@
 - [x] Identificar todas as funções e suas dependências no CalculadoraPage.tsx
 - [x] Reorganizar funções na ordem correta: utilitárias (calculateMonthlyReference, calculatePrice, roundToEndIn7) → dados (getLineItems, detectKombo) → lógica (recommendBestKombo, calculateTotalImplementation)
 - [x] Testar calculadora para garantir que não há mais erros de inicialização
+
+## Corrigir Lógica de WhatsApp, Renomear Coluna e Ajustar Recomendação
+- [x] Desabilitar toggle de WhatsApp quando não há add-ons de Leads ou IA SDR Externa selecionados
+- [x] Renomear coluna "Sem Kombo" para "Sua Seleção (Sem Kombo)" na tabela de preços
+- [x] Implementar lógica: quando NÃO há Kombo aplicável, "Sua Seleção (Sem Kombo)" é o recomendado
+- [x] Implementar lógica: quando HÁ Kombo aplicável, o Kombo detectado é o recomendado
+- [x] Badge "Recomendado" deve aparecer apenas na coluna recomendada (Kombo OU Sua Seleção)
+- [x] Sticky bar sempre mostra a opção recomendada (Kombo ou Sua Seleção)
+- [x] Testar cenário: "Imob só" sem add-ons → WhatsApp desabilitado + "Sua Seleção" recomendada
+- [x] Testar cenário: "Imob + Loc" + todos add-ons → "Elite" recomendado

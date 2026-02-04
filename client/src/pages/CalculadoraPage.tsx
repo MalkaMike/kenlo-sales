@@ -1090,17 +1090,15 @@ export default function CalculadoraPage() {
                               disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
-                          {!metrics.usesExternalAI && (
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
-                              <Switch
-                                id="whatsapp"
-                                checked={metrics.wantsWhatsApp}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                                disabled={product !== "imob" && product !== "both"}
-                              />
-                            </div>
-                          )}
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
+                            <Switch
+                              id="whatsapp"
+                              checked={metrics.wantsWhatsApp}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                              disabled={(product !== "imob" && product !== "both") || (!addons.leads && !metrics.usesExternalAI)}
+                            />
+                          </div>
                         </div>
                       </div>
 
