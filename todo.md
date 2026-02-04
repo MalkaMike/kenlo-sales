@@ -692,3 +692,23 @@
 - [x] Corrigir lógica: WhatsApp desabilitado quando IA SDR Externa está OFF
 - [x] Nova regra: WhatsApp habilitado apenas quando IA SDR Externa ON
 - [x] Testar cenário: Leads preenchido + IA SDR OFF → WhatsApp desabilitado
+
+
+## Bug Fix - Métricas Incorretas (Fev 2026)
+
+### WhatsApp Leads
+- [x] Corrigir: WhatsApp inclusos de 150 para **100** (conforme documento)
+- [x] Verificar faixas de preço adicional WhatsApp: 1-200: R$2,00, 201-350: R$1,80, 351-1000: R$1,50, 1000+: R$1,20
+
+### Assinaturas
+- [x] Verificar: Assinaturas inclusas = 15/mês (conforme documento)
+- [x] Verificar faixas: 1-20: R$1,80, 21-40: R$1,70, 41+: R$1,50
+
+### Kenlo Pay - Boleto/Split
+- [ ] Verificar preços por faixa para cada plano (Prime fixo, K/K2 por faixas)
+
+### Contratos Adicionais
+- [ ] Verificar preços por faixa para cada plano
+
+### Usuários IMOB
+- [x] Verificar: Prime=2, K=7, K2=14 (documento diz 14, não 15)

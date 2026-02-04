@@ -36,7 +36,7 @@ const pricingData = {
         },
         {
           feature: "Com WhatsApp",
-          value: "150 leads/mês via WhatsApp",
+          value: "100 leads/mês via WhatsApp",
           tooltip: "Atendimento automatizado via WhatsApp incluído",
         },
       ],

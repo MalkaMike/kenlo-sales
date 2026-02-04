@@ -636,8 +636,8 @@ export default function CalculadoraPage() {
     const baseCost = PLAN_ANNUAL_PRICES[plan];
     
     // Usuários incluídos por plano (atualizado Fev 2026)
-    // Prime: 2 usuários, K: 7 usuários, K2: 15 usuários
-    const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+    // Prime: 2 usuários, K: 7 usuários, K2: 14 usuários
+    const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
     const additional = Math.max(0, users - included);
     
     // Custo de usuários adicionais (atualizado Fev 2026)
@@ -706,8 +706,8 @@ export default function CalculadoraPage() {
       
       // IMOB: Baseado em capacidade incluída
       // Prime: 2 incluídos (até 7 usuários total)
-      // K: 7 incluídos (8 a 15 usuários total)
-      // K2: 15 incluídos (16+ usuários total)
+      // K: 7 incluídos (8 a 14 usuários total)
+      // K2: 14 incluídos (15+ usuários total)
       let recommendedPlan: PlanTier = 'prime';
       
       if (users >= 16) {
@@ -1434,7 +1434,7 @@ export default function CalculadoraPage() {
                         
                         // Additional Users
                         const plan = imobPlan;
-                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                         const additional = Math.max(0, metrics.imobUsers - included);
                         if (additional > 0) {
                           if (plan === 'prime') imobSubtotal += additional * 57;
@@ -1452,7 +1452,7 @@ export default function CalculadoraPage() {
                         
                         // WhatsApp Messages
                         if (addons.leads && metrics.wantsWhatsApp) {
-                          const included = 150;
+                          const included = 100;
                           const additional = Math.max(0, metrics.leadsPerMonth - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 200);
@@ -1478,8 +1478,8 @@ export default function CalculadoraPage() {
                       {/* IMOB Additional Users */}
                       {(product === 'imob' || product === 'both') && (() => {
                         const plan = imobPlan;
-                        // Usuários inclusos: Prime 2, K 7, K2 15
-                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                        // Usuários inclusos: Prime 2, K 7, K2 14
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                         const additional = Math.max(0, metrics.imobUsers - included);
                         const totalCost = (() => {
                           // Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
@@ -1521,7 +1521,7 @@ export default function CalculadoraPage() {
 
                       {/* Leads WhatsApp */}
                       {addons.leads && metrics.wantsWhatsApp && (() => {
-                        const included = 150;
+                        const included = 100;
                         const totalLeads = metrics.leadsPerMonth;
                         const additional = Math.max(0, totalLeads - included);
                         const totalCost = (() => {
@@ -1704,7 +1704,7 @@ export default function CalculadoraPage() {
                         
                         // Assinaturas
                         if (addons.assinatura) {
-                          const included = 20;
+                          const included = 15;
                           let totalSignatures = 0;
                           if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
                           else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
@@ -1733,7 +1733,7 @@ export default function CalculadoraPage() {
 
                       {/* Assinaturas */}
                       {addons.assinatura && (() => {
-                        const included = 20;
+                        const included = 15;
                         let totalSignatures = 0;
                         if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
                         else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
@@ -1844,7 +1844,7 @@ export default function CalculadoraPage() {
                         // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
                         if (product === 'imob' || product === 'both') {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
                             if (plan === 'prime') {
@@ -1877,7 +1877,7 @@ export default function CalculadoraPage() {
                         
                         // WhatsApp Messages (Leads)
                         if (addons.leads && metrics.wantsWhatsApp) {
-                          const included = 150;
+                          const included = 100;
                           const additional = Math.max(0, metrics.leadsPerMonth - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 200);
@@ -1890,7 +1890,7 @@ export default function CalculadoraPage() {
                         
                         // Digital Signatures
                         if (addons.assinatura) {
-                          const included = 20;
+                          const included = 15;
                           let totalSignatures = 0;
                           if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
                           if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
@@ -2038,7 +2038,7 @@ export default function CalculadoraPage() {
                               let totalPostPaid = 0;
                               if (product === 'imob' || product === 'both') {
                                 const plan = imobPlan;
-                                const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                                const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                                 const additional = Math.max(0, metrics.imobUsers - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 57;
@@ -2073,7 +2073,7 @@ export default function CalculadoraPage() {
                               }
                             }
                             if (addons.leads && metrics.wantsWhatsApp) {
-                                const included = 150;
+                                const included = 100;
                                 const totalLeads = metrics.leadsPerMonth;
                                 const additional = Math.max(0, totalLeads - included);
                                 if (additional > 0) {
@@ -2085,7 +2085,7 @@ export default function CalculadoraPage() {
                                 }
                               }
                               if (addons.assinatura) {
-                                const included = 20;
+                                const included = 15;
                                 let totalSignatures = 0;
                                 if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
                                 else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
@@ -2125,7 +2125,7 @@ export default function CalculadoraPage() {
                         let totalPostPaid = 0;
                         if (product === 'imob' || product === 'both') {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 57;
@@ -2179,7 +2179,7 @@ export default function CalculadoraPage() {
                           }
                         }
                         if (addons.leads && metrics.wantsWhatsApp) {
-                          const included = 150;
+                          const included = 100;
                           const totalLeads = metrics.leadsPerMonth;
                           const additional = Math.max(0, totalLeads - included);
                           if (additional > 0) {
@@ -2191,7 +2191,7 @@ export default function CalculadoraPage() {
                           }
                         }
                         if (addons.assinatura) {
-                          const included = 20;
+                          const included = 15;
                           let totalSignatures = 0;
                           if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
                           else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
@@ -2472,7 +2472,7 @@ export default function CalculadoraPage() {
                 // Additional Users (Imob)
                 if (product === 'imob' || product === 'both') {
                   const plan = imobPlan;
-                  const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
+                  const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                   const additional = Math.max(0, metrics.imobUsers - included);
                   if (additional > 0) {
                     if (plan === 'prime') {
@@ -2505,7 +2505,7 @@ export default function CalculadoraPage() {
                 
                 // WhatsApp Messages (Leads)
                 if (addons.leads && metrics.wantsWhatsApp) {
-                  const included = 150;
+                  const included = 100;
                   const additional = Math.max(0, metrics.leadsPerMonth - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 200);
@@ -2518,7 +2518,7 @@ export default function CalculadoraPage() {
                 
                 // Digital Signatures
                 if (addons.assinatura) {
-                  const included = 20;
+                  const included = 15;
                   let totalSignatures = 0;
                   if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
                   if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;

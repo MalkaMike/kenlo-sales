@@ -63,7 +63,7 @@ const addons = [
     description: "Gestão automatizada de leads com distribuição inteligente via WhatsApp",
     icon: Users,
     href: "/addons/leads",
-    highlight: "150 leads/mês inclusos"
+    highlight: "100 leads/mês inclusos"
   },
   {
     title: "Inteligência",
