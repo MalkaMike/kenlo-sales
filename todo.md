@@ -225,3 +225,9 @@
 - [x] Remover lógica que esconde valores de Kombos não aplicáveis
 - [x] Mostrar preços de todos os Kombos sempre, permitindo comparação hipotética
 - [x] Manter highlight apenas no Kombo recomendado (Elite com badge "Recomendado" e 20% OFF)
+
+## Atualizar seletor de frequência na seção 4 bis
+- [x] Substituir toggle Mensal/Anual por 4 cards: Mensal (0% - Referência), Semestral (-15%), Anual (-20%), Bienal (-25%)
+- [x] Centralizar cards acima da tabela
+- [x] Usar visual de cards com borda arredondada, card selecionado com fundo rosa claro e borda rosa
+- [x] Espalhar cards uniformemente na largura da tabela

@@ -44,7 +44,15 @@ interface KomboComparisonProps {
 }
 
 type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite";
-type ViewMode = "monthly" | "annual";
+type ViewMode = "monthly" | "semestral" | "annual" | "biennial";
+
+// Frequency options for the selector
+const FREQUENCY_OPTIONS: { id: ViewMode; label: string; discount: string }[] = [
+  { id: "monthly", label: "Mensal", discount: "0% - Referência" },
+  { id: "semestral", label: "Semestral", discount: "-15%" },
+  { id: "annual", label: "Anual", discount: "-20%" },
+  { id: "biennial", label: "Bienal", discount: "-25%" },
+];
 
 interface KomboColumnData {
   id: KomboId;
@@ -564,19 +572,22 @@ const createUnavailableColumn = (
 // ============================================================================
 
 export function KomboComparisonTable(props: KomboComparisonProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("monthly");
+  const [viewMode, setViewMode] = useState<ViewMode>("annual");
 
   // Determine recommended Kombo
   const recommendedKombo = getRecommendedKombo(props.product, props.addons);
 
-  // Calculate all columns
+  // Create modified props with viewMode as frequency for calculations
+  const propsWithFrequency = { ...props, frequency: viewMode as PaymentFrequency };
+
+  // Calculate all columns using the selected frequency
   const columns: KomboColumnData[] = [
-    calculateKomboColumn("none", props, recommendedKombo),
-    calculateKomboColumn("imob_start", props, recommendedKombo),
-    calculateKomboColumn("imob_pro", props, recommendedKombo),
-    calculateKomboColumn("locacao_pro", props, recommendedKombo),
-    calculateKomboColumn("core_gestao", props, recommendedKombo),
-    calculateKomboColumn("elite", props, recommendedKombo),
+    calculateKomboColumn("none", propsWithFrequency, recommendedKombo),
+    calculateKomboColumn("imob_start", propsWithFrequency, recommendedKombo),
+    calculateKomboColumn("imob_pro", propsWithFrequency, recommendedKombo),
+    calculateKomboColumn("locacao_pro", propsWithFrequency, recommendedKombo),
+    calculateKomboColumn("core_gestao", propsWithFrequency, recommendedKombo),
+    calculateKomboColumn("elite", propsWithFrequency, recommendedKombo),
   ];
 
   // Row definitions for the table
@@ -605,28 +616,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
    * Always shows values even when Kombo is not available (for comparison)
    */
   const getCellValue = (rowKey: string, column: KomboColumnData): React.ReactNode => {
-    const multiplier = viewMode === "annual" ? 12 : 1;
+    // Always show monthly values (prices are already calculated with frequency multiplier)
 
     switch (rowKey) {
       case "imob":
         return column.imobPrice !== null
-          ? `R$ ${formatCurrency(column.imobPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.imobPrice)}`
           : <span className="text-gray-400">—</span>;
       case "loc":
         return column.locPrice !== null
-          ? `R$ ${formatCurrency(column.locPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.locPrice)}`
           : <span className="text-gray-400">—</span>;
       case "leads":
         return column.leadsPrice !== null
-          ? `R$ ${formatCurrency(column.leadsPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.leadsPrice)}`
           : <span className="text-gray-400">—</span>;
       case "inteligencia":
         return column.inteligenciaPrice !== null
-          ? `R$ ${formatCurrency(column.inteligenciaPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.inteligenciaPrice)}`
           : <span className="text-gray-400">—</span>;
       case "assinatura":
         return column.assinaturaPrice !== null
-          ? `R$ ${formatCurrency(column.assinaturaPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.assinaturaPrice)}`
           : <span className="text-gray-400">—</span>;
       case "pay":
         return column.payPrice || <span className="text-gray-400">—</span>;
@@ -639,17 +650,17 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           return <span className="text-green-600 font-medium">Incluído</span>;
         }
         return typeof column.vipSupportPrice === "number"
-          ? `R$ ${formatCurrency(column.vipSupportPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.vipSupportPrice)}`
           : <span className="text-gray-400">—</span>;
       case "dedicatedCS":
         if (column.dedicatedCSPrice === "Incluído") {
           return <span className="text-green-600 font-medium">Incluído</span>;
         }
         return typeof column.dedicatedCSPrice === "number"
-          ? `R$ ${formatCurrency(column.dedicatedCSPrice * multiplier)}`
+          ? `R$ ${formatCurrency(column.dedicatedCSPrice)}`
           : <span className="text-gray-400">—</span>;
       case "totalMonthly":
-        return `R$ ${formatCurrency(column.totalMonthly * multiplier)}`;
+        return `R$ ${formatCurrency(column.totalMonthly)}`;
       case "implementation":
         return `R$ ${formatCurrency(column.implementation)}`;
       case "annualEquivalent":
@@ -667,30 +678,32 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
       <Card>
         <CardContent className="p-4">
-          {/* View Mode Toggle */}
-          <div className="flex justify-end mb-4">
-            <div className="inline-flex rounded-lg border border-gray-200 p-1">
+          {/* Frequency Selector - 4 Cards */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {FREQUENCY_OPTIONS.map((option) => (
               <button
-                onClick={() => setViewMode("monthly")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  viewMode === "monthly"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
+                key={option.id}
+                onClick={() => setViewMode(option.id)}
+                className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
+                  viewMode === option.id
+                    ? "bg-pink-50 border-primary text-primary"
+                    : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
                 }`}
               >
-                Mensal
+                <span className={`text-lg font-semibold ${
+                  viewMode === option.id ? "text-primary" : "text-gray-900"
+                }`}>
+                  {option.label}
+                </span>
+                <span className={`text-sm mt-1 px-3 py-0.5 rounded-full ${
+                  viewMode === option.id
+                    ? "bg-pink-100 text-primary"
+                    : "bg-gray-100 text-gray-500"
+                }`}>
+                  {option.discount}
+                </span>
               </button>
-              <button
-                onClick={() => setViewMode("annual")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  viewMode === "annual"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                Anual
-              </button>
-            </div>
+            ))}
           </div>
 
           {/* Comparison Table */}
