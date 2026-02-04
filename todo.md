@@ -423,3 +423,8 @@
 - [x] Adicionar botão de deletar em cada linha da tabela
 - [x] Implementar modal de confirmação antes de deletar
 - [x] Atualizar lista após deletar sem recarregar a página
+
+## Remover Diálogo Duplicado de Exportar PDF
+- [x] Remover ProposalExportDialog da CalculadoraPage.tsx
+- [x] Remover estado e funções relacionadas ao diálogo antigo
+- [x] Manter apenas QuoteInfoDialog para todas as ações (PDF e link)

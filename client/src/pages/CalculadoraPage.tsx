@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ProposalExportDialog } from "@/components/ProposalExportDialog";
+
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
 import { trpc } from "@/lib/trpc";
@@ -210,8 +210,7 @@ export default function CalculadoraPage() {
   // Step 4: Payment frequency (default: annual)
   const [frequency, setFrequency] = useState<PaymentFrequency>("annual");
 
-  // Export dialog state
-  const [showExportDialog, setShowExportDialog] = useState(false);
+
   
   // Quote info dialog state
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
@@ -2011,221 +2010,7 @@ export default function CalculadoraPage() {
           </Card>
         </div>
 
-        {/* Export Dialog */}
-        <ProposalExportDialog
-          open={showExportDialog}
-          onOpenChange={setShowExportDialog}
-        onExport={async (salesPersonName, clientName) => {
-          try {
-            // Get selected addons as array
-            const selectedAddons = Object.entries(addons)
-              .filter(([_, enabled]) => enabled)
-              .map(([name, _]) => name);
 
-            // Calculate totals
-            const items = getLineItems();
-            const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
-            const totalAnnual = totalMonthly * 12;
-            const implantationFee = calculateTotalImplementation(activeKombo !== "none" !== null);
-            const firstYearTotal = totalAnnual + implantationFee;
-            
-            // Calculate post-paid total
-            let postPaidTotal = 0;
-            
-            // Support Services
-            if (product === 'imob' || product === 'both') {
-              if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += 97;
-              if (metrics.imobDedicatedCS && imobPlan !== 'k2') postPaidTotal += 197;
-            }
-            if (product === 'loc' || product === 'both') {
-              if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += 97;
-              if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 197;
-            }
-            
-            // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
-            if (product === 'imob' || product === 'both') {
-              const plan = imobPlan;
-              const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 15;
-              const additional = Math.max(0, metrics.imobUsers - included);
-              if (additional > 0) {
-                if (plan === 'prime') {
-                  postPaidTotal += additional * 57;
-                } else if (plan === 'k') {
-                  const tier1 = Math.min(additional, 10);
-                  const tier2 = Math.max(0, additional - 10);
-                  postPaidTotal += (tier1 * 47) + (tier2 * 37);
-                } else {
-                  const tier1 = Math.min(additional, 10);
-                  const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                  const tier3 = Math.max(0, additional - 50);
-                  postPaidTotal += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
-                }
-              }
-            }
-            
-            // Additional Contracts (Loc)
-            if (product === 'loc' || product === 'both') {
-              const plan = locPlan;
-              const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
-              const additional = Math.max(0, metrics.contractsUnderManagement - included);
-              if (additional > 0) {
-                const tier1 = Math.min(additional, 250);
-                const tier2 = Math.min(Math.max(0, additional - 250), 500);
-                const tier3 = Math.max(0, additional - 750);
-                postPaidTotal += tier1 * 3 + tier2 * 2.5 + tier3 * 2;
-              }
-            }
-            
-            // WhatsApp Messages (Leads)
-            if (addons.leads && metrics.wantsWhatsApp) {
-              const included = 150;
-              const additional = Math.max(0, metrics.leadsPerMonth - included);
-              if (additional > 0) {
-                const tier1 = Math.min(additional, 200);
-                const tier2 = Math.min(Math.max(0, additional - 200), 150);
-                const tier3 = Math.min(Math.max(0, additional - 350), 650);
-                const tier4 = Math.max(0, additional - 1000);
-                postPaidTotal += tier1 * 2.0 + tier2 * 1.8 + tier3 * 1.5 + tier4 * 1.2;
-              }
-            }
-            
-            // Digital Signatures
-            if (addons.assinatura) {
-              const included = 20;
-              let totalSignatures = 0;
-              if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
-              if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
-              const additional = Math.max(0, totalSignatures - included);
-              if (additional > 0) {
-                const tier1 = Math.min(additional, 30);
-                const tier2 = Math.min(Math.max(0, additional - 30), 50);
-                const tier3 = Math.max(0, additional - 80);
-                postPaidTotal += tier1 * 1.9 + tier2 * 1.5 + tier3 * 1.2;
-              }
-            }
-            
-            // Boleto costs (Pay)
-            if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
-              postPaidTotal += metrics.contractsUnderManagement * 3.00;
-            }
-            
-            // Split costs (Pay)
-            if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
-              postPaidTotal += metrics.contractsUnderManagement * 3.00;
-            }
-            
-            // The Kenlo Effect
-            let revenueFromBoletos = 0;
-            if (addons.pay && (product === 'loc' || product === 'both')) {
-              if (metrics.chargesBoletoToTenant) {
-                revenueFromBoletos += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
-              }
-              if (metrics.chargesSplitToOwner) {
-                revenueFromBoletos += metrics.contractsUnderManagement * metrics.splitChargeAmount;
-              }
-            }
-            
-            const revenueFromInsurance = (addons.seguros && (product === 'loc' || product === 'both'))
-              ? metrics.contractsUnderManagement * 10
-              : 0;
-            const netGain = revenueFromBoletos + revenueFromInsurance - totalMonthly - (postPaidTotal || 0);
-
-            const proposalData = {
-              salesPersonName,
-              clientName,
-              productType: product,
-              komboName: komboInfo?.name,
-              komboDiscount: komboInfo ? Math.round(komboInfo.discount * 100) : undefined,
-              imobPlan: (product === "imob" || product === "both") ? imobPlan : undefined,
-              locPlan: (product === "loc" || product === "both") ? locPlan : undefined,
-              imobUsers: metrics.imobUsers,
-              closings: metrics.closingsPerMonth,
-              leads: metrics.leadsPerMonth,
-              externalAI: metrics.usesExternalAI ? 1 : 0,
-              whatsapp: metrics.wantsWhatsApp ? 1 : 0,
-              imobVipSupport: metrics.imobVipSupport ? 1 : 0,
-              imobDedicatedCS: metrics.imobDedicatedCS ? 1 : 0,
-              contracts: metrics.contractsUnderManagement,
-              newContracts: metrics.newContractsPerMonth,
-              locVipSupport: metrics.locVipSupport ? 1 : 0,
-              locDedicatedCS: metrics.locDedicatedCS ? 1 : 0,
-              chargesBoleto: metrics.chargesBoletoToTenant ? 1 : 0,
-              boletoAmount: metrics.boletoChargeAmount,
-              chargesSplit: metrics.chargesSplitToOwner ? 1 : 0,
-              splitAmount: metrics.splitChargeAmount,
-              selectedAddons: JSON.stringify(selectedAddons),
-              paymentPlan: frequency,
-              totalMonthly,
-              totalAnnual,
-              implantationFee,
-              firstYearTotal,
-              postPaidTotal,
-              revenueFromBoletos,
-              revenueFromInsurance,
-              netGain,
-            };
-
-            // Generate PDF
-            toast.loading("Gerando PDF...");
-            const pdfResult = await generatePDF.mutateAsync(proposalData);
-            
-            if (pdfResult.success && pdfResult.pdf) {
-              // Download PDF
-              console.log("PDF base64 length:", pdfResult.pdf.length);
-              const pdfBlob = new Blob(
-                [Uint8Array.from(atob(pdfResult.pdf), c => c.charCodeAt(0))],
-                { type: "application/pdf" }
-              );
-              console.log("PDF Blob size:", pdfBlob.size);
-              const url = URL.createObjectURL(pdfBlob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = pdfResult.filename;
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-
-              // Save to proposals database
-              await createProposal.mutateAsync(proposalData);
-              
-              // Also save to quotes database for tracking
-              try {
-                await saveQuoteMutation.mutateAsync({
-                  action: "pdf_exported",
-                  product: product,
-                  imobPlan: product !== "loc" ? imobPlan : undefined,
-                  locPlan: product !== "imob" ? locPlan : undefined,
-                  frequency: frequency,
-                  addons: JSON.stringify(addons),
-                  metrics: JSON.stringify(metrics),
-                  totals: JSON.stringify({
-                    monthly: totalMonthly,
-                    annual: totalAnnual,
-                    implantation: implantationFee,
-                    postPaid: postPaidTotal,
-                    firstYear: firstYearTotal,
-                  }),
-                  komboId: activeKombo !== "none" ? activeKombo : undefined,
-                  komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
-                  komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
-                  clientName: clientName,
-                });
-              } catch (quoteError) {
-                console.error('Failed to save quote:', quoteError);
-              }
-              
-              toast.dismiss();
-              toast.success("Proposta gerada e salva com sucesso!");
-            }
-          } catch (error) {
-            toast.dismiss();
-            toast.error("Erro ao gerar proposta. Tente novamente.");
-            console.error("Error generating proposal:", error);
-            throw error;
-          }
-        }}
-        />
         
         {/* Quote Info Dialog */}
         <QuoteInfoDialog
@@ -2275,9 +2060,9 @@ export default function CalculadoraPage() {
               } catch (error) {
                 console.error('Failed to save quote:', error);
               }
-            } else {
-              // Open PDF export dialog
-              setShowExportDialog(true);
+            } else if (quoteInfoAction === "pdf") {
+              // Generate PDF directly (implementation needed)
+              console.log("PDF generation triggered with quote info:", quoteInfo);
             }
           }}
         />
