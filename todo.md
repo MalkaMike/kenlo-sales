@@ -436,3 +436,10 @@
 - [x] Salvar no banco de dados (quotes e proposals)
 - [x] Fazer download automático do PDF gerado
 - [x] Testar fluxo completo de exportar PDF
+
+## Exportar Histórico para Excel
+- [x] Adicionar botão "Exportar para Excel" na página de histórico
+- [x] Implementar função para gerar planilha Excel com dados filtrados
+- [x] Incluir todas as colunas: data, ação, produto, planos, Kombo, frequência, valores, vendedor, cliente, imobiliária, telefones, site
+- [x] Usar biblioteca xlsx ou similar para geração do arquivo
+- [x] Testar exportação com diferentes filtros aplicados

@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import * as XLSX from 'xlsx';
 
 
 // Helper to format currency
@@ -189,15 +190,94 @@ export default function HistoricoPage() {
     setFilterDateTo("");
   };
 
+  const exportToExcel = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) {
+      alert("Nenhum orçamento para exportar");
+      return;
+    }
+
+    // Prepare data for Excel
+    const excelData = filteredQuotes.map((quote) => {
+      const totals = parseJSON(quote.totals);
+      return {
+        "Data": format(new Date(quote.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR }),
+        "Ação": quote.action === "link_copied" ? "Link Copiado" : "PDF Exportado",
+        "Vendedor": quote.vendorName || "-",
+        "Cliente": quote.clientName || "-",
+        "Imobiliária": quote.agencyName || "-",
+        "Celular": quote.cellPhone || "-",
+        "Telefone Fixo": quote.landlinePhone || "-",
+        "Site": quote.websiteUrl || "-",
+        "Produto": productNames[quote.product] || quote.product,
+        "Plano Imob": quote.imobPlan ? planNames[quote.imobPlan] : "-",
+        "Plano Locação": quote.locPlan ? planNames[quote.locPlan] : "-",
+        "Kombo": quote.komboName || "Sem Kombo",
+        "Desconto Kombo": quote.komboDiscount ? `${quote.komboDiscount}%` : "-",
+        "Frequência": frequencyNames[quote.frequency] || quote.frequency,
+        "Valor Mensal": totals?.monthly ? formatCurrency(totals.monthly) : "-",
+        "Valor Anual": totals?.annual ? formatCurrency(totals.annual) : "-",
+        "Implantação": totals?.implantation ? formatCurrency(totals.implantation) : "-",
+        "Pós-Pago": totals?.postPaid ? formatCurrency(totals.postPaid) : "-",
+        "Link": quote.shareableUrl || "-",
+      };
+    });
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Orçamentos");
+
+    // Set column widths
+    const colWidths = [
+      { wch: 18 }, // Data
+      { wch: 15 }, // Ação
+      { wch: 25 }, // Vendedor
+      { wch: 30 }, // Cliente
+      { wch: 30 }, // Imobiliária
+      { wch: 15 }, // Celular
+      { wch: 15 }, // Telefone Fixo
+      { wch: 30 }, // Site
+      { wch: 18 }, // Produto
+      { wch: 12 }, // Plano Imob
+      { wch: 15 }, // Plano Locação
+      { wch: 20 }, // Kombo
+      { wch: 15 }, // Desconto Kombo
+      { wch: 12 }, // Frequência
+      { wch: 15 }, // Valor Mensal
+      { wch: 15 }, // Valor Anual
+      { wch: 15 }, // Implantação
+      { wch: 12 }, // Pós-Pago
+      { wch: 50 }, // Link
+    ];
+    ws['!cols'] = colWidths;
+
+    // Generate filename with current date
+    const filename = `historico-orcamentos-${format(new Date(), "yyyy-MM-dd-HHmm")}.xlsx`;
+
+    // Download file
+    XLSX.writeFile(wb, filename);
+  };
+
   return (
     <Layout>
       <div className="container py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Histórico de Orçamentos</h1>
-          <p className="text-muted-foreground">
-            Consulte todos os orçamentos gerados (links copiados e PDFs exportados)
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Histórico de Orçamentos</h1>
+            <p className="text-muted-foreground">
+              Consulte todos os orçamentos gerados (links copiados e PDFs exportados)
+            </p>
+          </div>
+          <Button
+            onClick={exportToExcel}
+            variant="outline"
+            className="gap-2"
+            disabled={!filteredQuotes || filteredQuotes.length === 0}
+          >
+            <Download className="w-4 h-4" />
+            Exportar para Excel
+          </Button>
         </div>
 
         {/* Stats Cards */}
