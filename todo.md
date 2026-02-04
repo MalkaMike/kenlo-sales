@@ -315,3 +315,12 @@
 - [x] Incluir: 20 assinaturas inclusas/mês
 - [x] Incluir: Assinaturas adicionais por faixas (R$1,80 a R$1,50)
 - [x] Incluir: Validação biométrica facial R$7,00
+
+## Redesenho Página de Kombos
+- [x] Criar design visualmente impactante e não repetitivo
+- [x] Usar formato de tabela comparativa com ✔/✘ como IMOB/Locação
+- [x] Mostrar claramente o que cada Kombo inclui
+- [x] Destacar descontos e economia de cada Kombo
+- [x] Incluir serviços premium (VIP/CS) incluídos
+- [x] Mostrar implantação única de R$1.497 para todos
+- [x] Adicionar CTAs claros para calculadora
