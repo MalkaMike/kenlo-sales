@@ -724,23 +724,52 @@ export default function CalculadoraPage() {
   }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
   // Auto-activate Suporte Premium and CS Dedicado based on selected plans
+  // Rules:
+  // - Suporte VIP: Default ON for K and K2 (included), Default OFF for Prime (optional paid)
+  // - CS Dedicado: Default ON for K2 (included), Default OFF for Prime and K (optional paid)
   useEffect(() => {
-    const newMetrics = { ...metrics };
-    
-    // IMOB: Suporte Premium included in K and K2, CS Dedicado included in K2
-    if (product === "imob" || product === "both") {
-      newMetrics.imobVipSupport = imobPlan === "k" || imobPlan === "k2";
-      newMetrics.imobDedicatedCS = imobPlan === "k2";
-    }
-    
-    // LOC: Suporte Premium included in K and K2, CS Dedicado included in K2
-    if (product === "loc" || product === "both") {
-      newMetrics.locVipSupport = locPlan === "k" || locPlan === "k2";
-      newMetrics.locDedicatedCS = locPlan === "k2";
-    }
-    
-    setMetrics(newMetrics);
+    setMetrics(prev => {
+      const newMetrics = { ...prev };
+      
+      // IMOB: Set default values based on plan, user can manually override later
+      if (product === "imob" || product === "both") {
+        // Suporte VIP: Included in K and K2, optional for Prime
+        const shouldEnableImobVip = imobPlan === "k" || imobPlan === "k2";
+        newMetrics.imobVipSupport = shouldEnableImobVip;
+        
+        // CS Dedicado: Included only in K2, optional for Prime and K
+        const shouldEnableImobCS = imobPlan === "k2";
+        newMetrics.imobDedicatedCS = shouldEnableImobCS;
+      } else {
+        // If IMOB is not selected, reset to false
+        newMetrics.imobVipSupport = false;
+        newMetrics.imobDedicatedCS = false;
+      }
+      
+      // LOC: Same logic as IMOB
+      if (product === "loc" || product === "both") {
+        const shouldEnableLocVip = locPlan === "k" || locPlan === "k2";
+        newMetrics.locVipSupport = shouldEnableLocVip;
+        
+        const shouldEnableLocCS = locPlan === "k2";
+        newMetrics.locDedicatedCS = shouldEnableLocCS;
+      } else {
+        // If LOC is not selected, reset to false
+        newMetrics.locVipSupport = false;
+        newMetrics.locDedicatedCS = false;
+      }
+      
+      return newMetrics;
+    });
   }, [imobPlan, locPlan, product]);
+
+  // Auto-disable WhatsApp when both Leads and IA SDR Externa are OFF
+  useEffect(() => {
+    const shouldDisableWhatsApp = !addons.leads && !metrics.usesExternalAI;
+    if (shouldDisableWhatsApp && metrics.wantsWhatsApp) {
+      setMetrics({ ...metrics, wantsWhatsApp: false });
+    }
+  }, [addons.leads, metrics.usesExternalAI]);
 
   // Check if add-on is available based on product selection
   const isAddonAvailable = (addon: keyof typeof addons) => {

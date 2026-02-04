@@ -587,3 +587,11 @@
 - [x] Sticky bar sempre mostra a opção recomendada (Kombo ou Sua Seleção)
 - [x] Testar cenário: "Imob só" sem add-ons → WhatsApp desabilitado + "Sua Seleção" recomendada
 - [x] Testar cenário: "Imob + Loc" + todos add-ons → "Elite" recomendado
+
+## Corrigir Lógica de WhatsApp e Serviços Premium
+- [ ] Corrigir lógica de WhatsApp: deve estar desabilitado quando IA SDR Externa está OFF, mesmo que Leads esteja preenchido
+- [ ] Nova regra WhatsApp: habilitado apenas quando (Leads > 0 OU Leads preenchido) E (IA SDR Externa ON)
+- [ ] Desabilitar Serviços Premium (Suporte VIP + CS Dedicado) quando configuração não justifica serviço premium
+- [ ] Definir critérios para habilitar Serviços Premium (ex: múltiplos add-ons, planos específicos, ou configurações complexas)
+- [ ] Testar cenário reportado: "Imob só" + 300 Leads + IA SDR OFF → WhatsApp deve estar desabilitado
+- [ ] Testar cenário reportado: "Imob só" + 300 Leads + IA SDR OFF → Serviços Premium devem estar desabilitados
