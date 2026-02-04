@@ -234,3 +234,13 @@
 
 ## Mudança de conceito de frequência
 - [x] Mudar Anual para ser a referência (0%), Mensal (+25%), Semestral (+10%), Bienal (-10%)
+
+## Correção de Recomendação de Kombos
+- [x] Corrigir lógica: IMOB + Leads + Assinatura deve recomendar "Imob Start" (não "Sem Kombo")
+- [x] Verificar todas as combinações de Kombos estão sendo detectadas corretamente
+
+## Seleção Automática do Melhor Plano
+- [x] Implementar lógica para recomendar Prime/K/K2 baseado no número de usuários (IMOB)
+- [x] Implementar lógica para recomendar Prime/K/K2 baseado no número de contratos (LOC)
+- [x] Considerar custo total: mensalidade + usuários/contratos adicionais
+- [x] Mostrar plano recomendado em vermelho/rosa (ex: "Imob - K")

@@ -218,34 +218,45 @@ const isPremiumIncludedInPlan = (plan: PlanTier): boolean => {
 
 /**
  * Determine which Kombo is recommended based on user selections
+ * A Kombo is recommended when the user has the MINIMUM required items.
+ * Having EXTRA add-ons doesn't disqualify a Kombo - we recommend the best match.
  */
 const getRecommendedKombo = (
   product: ProductSelection,
   addons: KomboComparisonProps["addons"]
 ): KomboId => {
-  const activeAddons = Object.entries(addons)
-    .filter(([_, active]) => active)
-    .map(([name]) => name);
-
   // Elite: IMOB + LOC + ALL 6 add-ons
-  if (product === "both" && activeAddons.length === 6) {
+  if (
+    product === "both" &&
+    addons.leads &&
+    addons.inteligencia &&
+    addons.assinatura &&
+    addons.pay &&
+    addons.seguros &&
+    addons.cash
+  ) {
     return "elite";
   }
 
   // Core Gestão: IMOB + LOC + NO add-ons
-  if (product === "both" && activeAddons.length === 0) {
+  if (
+    product === "both" &&
+    !addons.leads &&
+    !addons.inteligencia &&
+    !addons.assinatura &&
+    !addons.pay &&
+    !addons.seguros &&
+    !addons.cash
+  ) {
     return "core_gestao";
   }
 
-  // Imob Pro: IMOB + Leads + Inteligência + Assinatura
+  // Imob Pro: IMOB + Leads + Inteligência + Assinatura (priority over Imob Start)
   if (
     product === "imob" &&
     addons.leads &&
     addons.inteligencia &&
-    addons.assinatura &&
-    !addons.pay &&
-    !addons.seguros &&
-    !addons.cash
+    addons.assinatura
   ) {
     return "imob_pro";
   }
@@ -255,10 +266,7 @@ const getRecommendedKombo = (
     product === "imob" &&
     addons.leads &&
     addons.assinatura &&
-    !addons.inteligencia &&
-    !addons.pay &&
-    !addons.seguros &&
-    !addons.cash
+    !addons.inteligencia
   ) {
     return "imob_start";
   }
@@ -267,11 +275,7 @@ const getRecommendedKombo = (
   if (
     product === "loc" &&
     addons.inteligencia &&
-    addons.assinatura &&
-    !addons.leads &&
-    !addons.pay &&
-    !addons.seguros &&
-    !addons.cash
+    addons.assinatura
   ) {
     return "locacao_pro";
   }
@@ -593,10 +597,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   ];
 
   // Row definitions for the table
+  // Include plan name (K2) in red for Imob and Loc rows
+  const imobLabel = props.product === "imob" || props.product === "both" 
+    ? <span>Imob - <span className="text-primary font-bold">{props.imobPlan.toUpperCase()}</span></span>
+    : "Imob";
+  const locLabel = props.product === "loc" || props.product === "both"
+    ? <span>Loc - <span className="text-primary font-bold">{props.locPlan.toUpperCase()}</span></span>
+    : "Loc";
+
   const rows = [
     { key: "products", label: "Produtos", isHeader: true },
-    { key: "imob", label: "Imob", indent: true },
-    { key: "loc", label: "Loc", indent: true },
+    { key: "imob", label: imobLabel, indent: true },
+    { key: "loc", label: locLabel, indent: true },
     { key: "addons", label: "Add-ons", isHeader: true },
     { key: "leads", label: "Leads", indent: true },
     { key: "inteligencia", label: "Inteligência", indent: true },

@@ -244,51 +244,119 @@ export default function CalculadoraPage() {
   const activeKombo: KomboType = detectKombo();
   const komboInfo = activeKombo !== "none" ? KOMBOS[activeKombo] : null;
 
-  // Auto-recommend plans based on metrics
-  // VIP Support requires minimum K plan, VIP Support + Dedicated CS requires minimum K2 plan
+  /**
+   * Calculate total monthly cost for IMOB plan (mensalidade + usuários adicionais)
+   * Returns the cheapest plan considering the number of users
+   */
+  const calculateImobPlanCost = (plan: PlanTier, users: number): number => {
+    // Mensalidade base (anual)
+    const baseCost = PLAN_ANNUAL_PRICES[plan];
+    
+    // Usuários incluídos por plano
+    const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 12;
+    const additional = Math.max(0, users - included);
+    
+    // Custo de usuários adicionais
+    let additionalCost = 0;
+    if (additional > 0) {
+      if (plan === 'prime') {
+        additionalCost = additional * 57;
+      } else if (plan === 'k') {
+        const tier1 = Math.min(additional, 15);
+        const tier2 = Math.max(0, additional - 15);
+        additionalCost = (tier1 * 47) + (tier2 * 37);
+      } else {
+        const tier1 = Math.min(additional, 15);
+        const tier2 = Math.min(Math.max(0, additional - 15), 35);
+        const tier3 = Math.max(0, additional - 50);
+        additionalCost = (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+      }
+    }
+    
+    return baseCost + additionalCost;
+  };
+
+  /**
+   * Calculate total monthly cost for LOC plan (mensalidade + contratos adicionais)
+   * Returns the cheapest plan considering the number of contracts
+   */
+  const calculateLocPlanCost = (plan: PlanTier, contracts: number): number => {
+    // Mensalidade base (anual)
+    const baseCost = PLAN_ANNUAL_PRICES[plan];
+    
+    // Contratos incluídos por plano
+    const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+    const additional = Math.max(0, contracts - included);
+    
+    // Custo de contratos adicionais
+    let additionalCost = 0;
+    if (additional > 0) {
+      if (plan === 'prime') {
+        additionalCost = additional * 3;
+      } else if (plan === 'k') {
+        const tier1 = Math.min(additional, 250);
+        const tier2 = Math.max(0, additional - 250);
+        additionalCost = (tier1 * 3) + (tier2 * 2.5);
+      } else {
+        const tier1 = Math.min(additional, 250);
+        const tier2 = Math.min(Math.max(0, additional - 250), 250);
+        const tier3 = Math.max(0, additional - 500);
+        additionalCost = (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+      }
+    }
+    
+    return baseCost + additionalCost;
+  };
+
+  // Auto-recommend plans based on TOTAL COST (mensalidade + adicionais)
+  // Selects the cheapest plan considering the user's volume
   useEffect(() => {
     if (product === "imob" || product === "both") {
-      let recommendedPlan: PlanTier = "prime";
+      const users = metrics.imobUsers;
       
-      // Base recommendation from volume
-      if (metrics.imobUsers <= 3 && metrics.closingsPerMonth <= 10) {
-        recommendedPlan = "prime";
-      } else if (metrics.imobUsers <= 10 && metrics.closingsPerMonth <= 30) {
-        recommendedPlan = "k";
-      } else {
-        recommendedPlan = "k2";
+      // Calculate total cost for each plan
+      const primeCost = calculateImobPlanCost('prime', users);
+      const kCost = calculateImobPlanCost('k', users);
+      const k2Cost = calculateImobPlanCost('k2', users);
+      
+      // Select cheapest plan
+      let recommendedPlan: PlanTier = 'prime';
+      let minCost = primeCost;
+      
+      if (kCost < minCost) {
+        recommendedPlan = 'k';
+        minCost = kCost;
       }
-      
-      // Note: VIP Support and CS Dedicado are now optional paid services
-      // Prime: VIP Support R$97/mês, CS Dedicado R$197/mês
-      // K: VIP Support is free, CS Dedicado is paid @ R$197/mês
-      // K2: Both are free (included)
-      // No longer force plan upgrade - user can pay for services on lower plans
+      if (k2Cost < minCost) {
+        recommendedPlan = 'k2';
+      }
       
       setImobPlan(recommendedPlan);
     }
 
     if (product === "loc" || product === "both") {
-      let recommendedPlan: PlanTier = "prime";
+      const contracts = metrics.contractsUnderManagement;
       
-      // Base recommendation from volume
-      if (metrics.contractsUnderManagement <= 100) {
-        recommendedPlan = "prime";
-      } else if (metrics.contractsUnderManagement <= 500) {
-        recommendedPlan = "k";
-      } else {
-        recommendedPlan = "k2";
+      // Calculate total cost for each plan
+      const primeCost = calculateLocPlanCost('prime', contracts);
+      const kCost = calculateLocPlanCost('k', contracts);
+      const k2Cost = calculateLocPlanCost('k2', contracts);
+      
+      // Select cheapest plan
+      let recommendedPlan: PlanTier = 'prime';
+      let minCost = primeCost;
+      
+      if (kCost < minCost) {
+        recommendedPlan = 'k';
+        minCost = kCost;
       }
-      
-      // Note: VIP Support and CS Dedicado are now optional paid services
-      // Prime: VIP Support R$97/mês, CS Dedicado R$197/mês
-      // K: VIP Support is free, CS Dedicado is paid @ R$197/mês
-      // K2: Both are free (included)
-      // No longer force plan upgrade - user can pay for services on lower plans
+      if (k2Cost < minCost) {
+        recommendedPlan = 'k2';
+      }
       
       setLocPlan(recommendedPlan);
     }
-  }, [metrics, product]);
+  }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
   // Auto-activate Suporte Premium and CS Dedicado based on selected plans
   useEffect(() => {
