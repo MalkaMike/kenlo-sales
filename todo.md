@@ -276,3 +276,21 @@
 - [x] Incluir todas as informações da simulação organizadas
 - [x] Adicionar logo Kenlo e cabeçalho elegante
 - [x] Adicionar rodapé com informações de contato
+
+## Redesenho Páginas de Produtos
+### Kenlo IMOB
+- [x] Criar tabela de preços detalhada com formato ✔/✘
+- [x] Incluir: Preços mensais (Prime R$247, K R$497, K2 R$1.197)
+- [x] Incluir: Taxa de implantação (R$1.497)
+- [x] Incluir: Usuários inclusos (Prime 2, K 7, K2 15)
+- [x] Incluir: Features (CRM, App Corretor, Landing Page, Blog, Treinamentos, API)
+- [x] Incluir: Serviços Premium (Suporte VIP, CS Dedicado)
+- [x] Incluir: Usuários adicionais por faixas
+
+### Kenlo Locação
+- [x] Criar tabela de preços detalhada com formato ✔/✘
+- [x] Incluir: Preços mensais e features específicas de locação
+- [x] Incluir: Contratos inclusos e adicionais por faixas
+- [x] Incluir: Kenlo Pay (Boletos/Split inclusos e pós-pago)
+- [x] Incluir: Kenlo Seguros (comissões 35%/40%/45%)
+- [x] Incluir: Funcionalidades Básicas, Avançadas e Exclusivas K2

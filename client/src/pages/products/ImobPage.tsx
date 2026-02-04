@@ -1,76 +1,105 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Building2, Users, Globe, Smartphone, MessageSquare, BarChart3, ArrowRight } from "lucide-react";
+import { Check, X, Building2, Users, Globe, Smartphone, BarChart3, ArrowRight, Calculator, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const plans = [
-  {
-    name: "Prime",
-    description: "Corretor independente ou pequena equipe",
-    price: "247",
-    users: 2,
-    implantacao: "1.497",
-    badge: "kenlo-badge-prime",
-    features: {
-      crm: true,
-      app: true,
-      site: true,
-      portais: true,
-      lya: false,
-      blog: false,
-      treinamento: false,
-      suporteVip: false,
+// Pricing data based on the official table
+const pricingData = {
+  plans: ["Prime", "K", "K2"],
+  sections: [
+    {
+      title: "Investimento",
+      rows: [
+        {
+          feature: "Licença mensal (plano anual)",
+          type: "price",
+          values: ["R$ 247/mês", "R$ 497/mês", "R$ 1.197/mês"],
+          highlight: true,
+        },
+        {
+          feature: "Taxa de implantação (única)",
+          type: "price",
+          values: ["R$ 1.497", "R$ 1.497", "R$ 1.497"],
+        },
+        {
+          feature: "Usuários inclusos",
+          type: "text",
+          values: ["2", "7", "15"],
+        },
+      ],
     },
-  },
-  {
-    name: "K",
-    description: "Imobiliária em crescimento",
-    price: "497",
-    users: 5,
-    implantacao: "1.497",
-    badge: "kenlo-badge-k",
-    popular: true,
-    features: {
-      crm: true,
-      app: true,
-      site: true,
-      portais: true,
-      lya: true,
-      blog: true,
-      treinamento: true,
-      suporteVip: false,
+    {
+      title: "Funcionalidades",
+      rows: [
+        {
+          feature: "Funcionalidades básicas de CRM",
+          type: "check",
+          values: [true, true, true],
+        },
+        {
+          feature: "App Corretor",
+          type: "check",
+          values: [true, true, true],
+        },
+        {
+          feature: "Landing Page",
+          type: "check",
+          values: [false, true, true],
+        },
+        {
+          feature: "Blog",
+          type: "check",
+          values: [false, false, true],
+        },
+        {
+          feature: "Treinamentos online",
+          tooltip: "Valor de referência R$ 2.000 por unidade",
+          type: "text",
+          values: ["—", "—", "2x por ano"],
+        },
+        {
+          feature: "Acesso à API Imob",
+          tooltip: "Disponível a partir de Março 2026",
+          type: "check",
+          values: [false, false, true],
+        },
+      ],
     },
-  },
-  {
-    name: "K2",
-    description: "Rede ou franquia",
-    price: "1.247",
-    users: 12,
-    implantacao: "2.997",
-    badge: "kenlo-badge-k2",
-    features: {
-      crm: true,
-      app: true,
-      site: true,
-      portais: true,
-      lya: true,
-      blog: true,
-      treinamento: true,
-      suporteVip: true,
+    {
+      title: "Serviços Premium",
+      rows: [
+        {
+          feature: "Suporte VIP",
+          type: "mixed",
+          values: ["Opcional", "Incluído", "Incluído"],
+        },
+        {
+          feature: "Customer Success dedicado",
+          type: "mixed",
+          values: ["Opcional", "Opcional", "Incluído"],
+        },
+      ],
     },
-  },
-];
-
-const featureLabels: Record<string, { label: string; description: string }> = {
-  crm: { label: "CRM Completo", description: "Funil, pipeline, relatórios" },
-  app: { label: "App Corretor", description: "iOS e Android" },
-  site: { label: "Site Incluso", description: "Website profissional" },
-  portais: { label: "Publicação Portais", description: "+50 portais integrados" },
-  lya: { label: "LYA (IA)", description: "Assistente de IA 24/7" },
-  blog: { label: "Blog Completo", description: "SEO otimizado" },
-  treinamento: { label: "Treinamento Equipe", description: "Onboarding dedicado" },
-  suporteVip: { label: "Suporte VIP", description: "Atendimento prioritário" },
+    {
+      title: "Usuários Adicionais (pós-pago)",
+      rows: [
+        {
+          feature: "Custo por usuário adicional",
+          type: "complex",
+          values: [
+            "R$ 57/usuário fixo",
+            "1-10: R$ 47\n11+: R$ 37",
+            "1-10: R$ 47\n11-50: R$ 37\n51+: R$ 27",
+          ],
+        },
+      ],
+    },
+  ],
 };
 
 const highlights = [
@@ -90,13 +119,63 @@ const highlights = [
     description: "Cadastre imóveis e receba leads no celular",
   },
   {
-    icon: MessageSquare,
-    title: "WhatsApp Integrado",
-    description: "Atendimento via WhatsApp com LYA (IA)",
+    icon: BarChart3,
+    title: "+50 Portais",
+    description: "Publicação automática em todos os portais",
   },
 ];
 
 export default function ImobPage() {
+  type PricingRow = {
+    feature: string;
+    type: string;
+    values: (string | boolean)[];
+    highlight?: boolean;
+    tooltip?: string;
+  };
+
+  const renderValue = (row: PricingRow, planIndex: number) => {
+    const value = row.values[planIndex];
+    
+    if (row.type === "check") {
+      return value ? (
+        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 mx-auto">
+          <Check className="w-5 h-5 text-green-600" />
+        </div>
+      ) : (
+        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 mx-auto">
+          <X className="w-5 h-5 text-red-400" />
+        </div>
+      );
+    }
+    
+    if (row.type === "mixed") {
+      if (value === "Incluído") {
+        return <span className="text-secondary font-medium">Incluído</span>;
+      }
+      return <span className="text-muted-foreground text-sm">Opcional: pagar à parte</span>;
+    }
+    
+    if (row.type === "complex") {
+      const lines = (value as string).split("\n");
+      return (
+        <div className="text-xs space-y-0.5">
+          {lines.map((line, i) => (
+            <div key={i} className={i === 0 ? "font-medium" : "text-muted-foreground"}>
+              {line}
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    if (row.type === "price" && row.highlight) {
+      return <span className="font-bold text-primary">{value}</span>;
+    }
+    
+    return <span className={row.type === "price" ? "font-medium" : ""}>{value}</span>;
+  };
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -106,7 +185,7 @@ export default function ImobPage() {
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              VENDAS
+              CRM + SITE PARA VENDAS
             </Badge>
             
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -133,11 +212,20 @@ export default function ImobPage() {
               </div>
             </div>
             
-            <Link href="/calculadora">
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                Simular Proposta
-              </Button>
-            </Link>
+            <div className="flex flex-wrap gap-4">
+              <Link href="/calculadora">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+                  <Calculator className="w-5 h-5" />
+                  Monte seu Plano
+                </Button>
+              </Link>
+              <Link href="/kombos">
+                <Button size="lg" variant="outline" className="gap-2">
+                  Ver Kombos
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -161,79 +249,117 @@ export default function ImobPage() {
         </div>
       </section>
 
-      {/* Plans Section */}
+      {/* Pricing Table Section */}
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Planos Kenlo Imob</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Planos e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Escolha o plano ideal para o tamanho da sua imobiliária
+              Escolha o plano ideal para o tamanho da sua imobiliária. Todos os valores são para pagamento anual.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {plans.map((plan) => (
-              <Card 
-                key={plan.name} 
-                className={`relative kenlo-card ${plan.popular ? 'border-primary ring-2 ring-primary/20' : ''}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground">
-                      Popular
-                    </Badge>
-                  </div>
-                )}
-                
-                <CardHeader className="text-center pb-4">
-                  <div className="mb-2">
-                    <span className={`kenlo-badge ${plan.badge}`}>{plan.name}</span>
-                  </div>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                
-                <CardContent className="space-y-6">
-                  <div className="text-center">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-sm text-muted-foreground">R$</span>
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      <span className="text-muted-foreground">/mês</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {plan.users} usuários
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Implantação: R$ {plan.implantacao}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    {Object.entries(plan.features).map(([key, value]) => (
-                      <div key={key} className="flex items-center gap-3">
-                        {value ? (
-                          <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                        ) : (
-                          <X className="w-4 h-4 text-muted-foreground/50 flex-shrink-0" />
-                        )}
-                        <span className={value ? '' : 'text-muted-foreground/50'}>
-                          {featureLabels[key].label}
-                        </span>
-                      </div>
+          {/* Pricing Table */}
+          <div className="max-w-5xl mx-auto">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                {/* Header */}
+                <thead>
+                  <tr>
+                    <th className="text-left p-4 bg-muted/30 rounded-tl-lg w-[40%]">
+                      <span className="text-sm font-medium text-muted-foreground">Categoria / Recurso</span>
+                    </th>
+                    {pricingData.plans.map((plan, index) => (
+                      <th 
+                        key={plan} 
+                        className={`p-4 text-center bg-muted/30 ${index === pricingData.plans.length - 1 ? 'rounded-tr-lg' : ''}`}
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <span className={`kenlo-badge ${
+                            plan === "Prime" ? "kenlo-badge-prime" : 
+                            plan === "K" ? "kenlo-badge-k" : "kenlo-badge-k2"
+                          }`}>
+                            {plan}
+                          </span>
+                          {plan === "K" && (
+                            <Badge className="bg-primary text-primary-foreground text-[10px]">
+                              Popular
+                            </Badge>
+                          )}
+                        </div>
+                      </th>
                     ))}
-                  </div>
-                  
-                  <Link href="/calculadora" className="block">
-                    <Button 
-                      className="w-full" 
-                      variant={plan.popular ? "default" : "outline"}
-                    >
-                      Selecionar {plan.name}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {pricingData.sections.map((section, sectionIndex) => (
+                    <>
+                      {/* Section Header */}
+                      <tr key={`section-${sectionIndex}`}>
+                        <td 
+                          colSpan={4} 
+                          className="p-3 bg-primary/5 font-semibold text-primary border-t border-border/40"
+                        >
+                          {section.title}
+                        </td>
+                      </tr>
+                      
+                      {/* Section Rows */}
+                      {section.rows.map((row, rowIndex) => {
+                        const typedRow = row as PricingRow;
+                        return (
+                        <tr 
+                          key={`row-${sectionIndex}-${rowIndex}`}
+                          className="border-b border-border/20 hover:bg-muted/10 transition-colors"
+                        >
+                          <td className="p-4 text-sm">
+                            <div className="flex items-center gap-2">
+                              {typedRow.feature}
+                              {typedRow.tooltip && (                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Info className="w-4 h-4 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="text-xs max-w-[200px]">{typedRow.tooltip}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </td>
+                          {pricingData.plans.map((_, planIndex) => (
+                            <td 
+                              key={planIndex} 
+                              className="p-4 text-center text-sm"
+                            >
+                              {renderValue(typedRow, planIndex)}
+                            </td>
+                          ))}
+                        </tr>
+                      );})}
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Example calculation */}
+            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <strong>Exemplo de cálculo (Plano K):</strong> Se a imobiliária tiver 20 usuários adicionais, 
+                paga 10 × R$ 47 + 10 × R$ 37 = <strong>R$ 840/mês</strong> em usuários adicionais.
+              </p>
+            </div>
+          </div>
+          
+          {/* CTA */}
+          <div className="text-center mt-12">
+            <Link href="/calculadora">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
+                <Calculator className="w-5 h-5" />
+                Simular Proposta Personalizada
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -246,7 +372,8 @@ export default function ImobPage() {
               Potencialize com Add-ons
             </h2>
             <p className="text-muted-foreground mb-6">
-              Adicione Leads, Inteligência e Assinatura para maximizar resultados
+              Adicione Leads, Inteligência e Assinatura para maximizar resultados. 
+              Combine em um Kombo e ganhe até 20% de desconto!
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/addons/leads">
@@ -265,6 +392,31 @@ export default function ImobPage() {
                 <Button variant="outline" className="gap-2">
                   Kenlo Assinatura
                   <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Kombos CTA */}
+      <section className="py-16">
+        <div className="container">
+          <div className="relative rounded-2xl overflow-hidden">
+            <div className="absolute inset-0 kenlo-gradient opacity-90" />
+            
+            <div className="relative px-8 py-12 md:px-16 md:py-16 text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Economize com Kombos
+              </h2>
+              <p className="text-white/80 max-w-2xl mx-auto mb-6">
+                Combine Kenlo Imob com add-ons e ganhe até 20% de desconto. 
+                O Kombo Elite inclui todos os produtos e serviços premium!
+              </p>
+              <Link href="/kombos">
+                <Button size="lg" variant="secondary" className="gap-2">
+                  Explorar Kombos
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
