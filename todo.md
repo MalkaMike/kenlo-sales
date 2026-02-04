@@ -595,3 +595,9 @@
 - [ ] Definir critérios para habilitar Serviços Premium (ex: múltiplos add-ons, planos específicos, ou configurações complexas)
 - [ ] Testar cenário reportado: "Imob só" + 300 Leads + IA SDR OFF → WhatsApp deve estar desabilitado
 - [ ] Testar cenário reportado: "Imob só" + 300 Leads + IA SDR OFF → Serviços Premium devem estar desabilitados
+
+## Correção de Desconto de Kombo em Assinatura
+- [x] Corrigir desconto de Kombo não sendo aplicado em Assinatura (e verificar todos os add-ons)
+- [x] Verificar que TODOS os add-ons (Leads, Inteligência, Assinatura, Pay, Seguros, Cash) aplicam desconto corretamente
+- [x] Testar todos os Kombos: Imob Start (10%), Imob Pro (15%), Locação Pro (10%), Elite (20%)
+- [x] Validar valores esperados: Assinatura base R$37 → Imob Start R$33, Imob Pro R$31, etc.

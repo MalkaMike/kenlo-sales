@@ -234,10 +234,11 @@ const calculatePrice = (annualPrice: number, frequency: PaymentFrequency): numbe
 
 /**
  * Apply Kombo discount to a price
+ * Note: price is already rounded to end in 7, so we just apply discount without re-rounding
  */
 const applyDiscount = (price: number, discount: number): number => {
   if (discount === 0) return price;
-  return roundToEndIn7(Math.round(price * (1 - discount)));
+  return Math.round(price * (1 - discount));
 };
 
 /**
