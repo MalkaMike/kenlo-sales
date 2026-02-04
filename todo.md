@@ -635,3 +635,10 @@
 - [x] Reduzir padding horizontal: px-3 → px-2
 - [x] Testar em tela padrão - tabela agora cabe perfeitamente sem scroll
 - [x] Garantir que todas as 6 colunas cabem na tela sem scroll
+
+## Eliminar Scroll Horizontal Persistente
+- [x] Reduzir ainda mais a largura das colunas da tabela (primeira coluna 140px→12px, Kombos 110px→95px)
+- [x] Reduzir padding horizontal (px-2→px-1)
+- [x] Reduzir largura mínima da tabela (900px→750px)
+- [x] Testar em resolução padrão - scroll horizontal completamente eliminado
+- [x] Validar que todo o conteúdo ainda é legível após redução
