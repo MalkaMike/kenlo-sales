@@ -566,3 +566,9 @@
 - [x] Adicionar cores diferentes para cada estatística (azul, roxo, verde, laranja, rosa)
 - [x] Manter cores nos ícones correspondentes
 - [x] Testar legibilidade e contraste visual
+
+## Corrigir Erro de Inicialização na Calculadora
+- [x] Investigar erro "Cannot access 'getLineItems' before initialization" no CalculadoraPage.tsx
+- [x] Identificar referência circular ou ordem incorreta de declaração
+- [x] Corrigir ordem de declaração das funções
+- [x] Testar a calculadora para garantir que o erro foi resolvido

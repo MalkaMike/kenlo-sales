@@ -426,6 +426,93 @@ export default function CalculadoraPage() {
   const activeKombo: KomboType = detectKombo();
   const komboInfo = activeKombo !== "none" ? KOMBOS[activeKombo] : null;
 
+  // Get line items for pricing table
+  const getLineItems = () => {
+    const komboDiscount = komboInfo ? (1 - komboInfo.discount) : 1;
+    const items: Array<{ 
+      name: string; 
+      monthlyRefSemKombo: number; 
+      monthlyRefComKombo: number;
+      priceSemKombo: number;
+      priceComKombo: number;
+      implantation?: number 
+    }> = [];
+
+    if (product === "imob" || product === "both") {
+      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[imobPlan]);
+      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
+      items.push({
+        name: `Imob - ${imobPlan.toUpperCase()}`,
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.imob,
+      });
+    }
+
+    if (product === "loc" || product === "both") {
+      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[locPlan]);
+      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
+      items.push({
+        name: `Loc - ${locPlan.toUpperCase()}`,
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.loc,
+      });
+    }
+
+    // Add-ons
+    if (addons.leads && isAddonAvailable("leads")) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.leads);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.leads, frequency);
+      items.push({
+        name: "Leads",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.leads,
+      });
+    }
+
+    if (addons.inteligencia) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.inteligencia);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
+      items.push({
+        name: "Inteligência",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.inteligencia,
+      });
+    }
+
+    if (addons.assinatura) {
+      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.assinatura);
+      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
+      items.push({
+        name: "Assinatura",
+        monthlyRefSemKombo: baseMonthlyRef,
+        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
+        priceSemKombo: basePrice,
+        priceComKombo: Math.round(basePrice * komboDiscount),
+        implantation: IMPLEMENTATION_COSTS.assinatura,
+      });
+    }
+
+    // Pay and Seguros are NOT included in pré-pago line items
+    // Pay is shown in Section 2 (Pós-pago)
+    // Seguros is shown in Section 3 (Receitas Potenciais)
+
+    // Cash is FREE - not included in pricing table
+
+    return items;
+  };
+
   /**
    * Recommend best Kombo based on cost-benefit analysis
    * Returns the Kombo that offers the best savings compared to no Kombo
@@ -664,93 +751,6 @@ export default function CalculadoraPage() {
     const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[freq];
     const price = annualPrice * multiplier;
     return roundToEndIn7(Math.round(price));
-  };
-
-  // Get line items for pricing table
-  const getLineItems = () => {
-    const komboDiscount = komboInfo ? (1 - komboInfo.discount) : 1;
-    const items: Array<{ 
-      name: string; 
-      monthlyRefSemKombo: number; 
-      monthlyRefComKombo: number;
-      priceSemKombo: number;
-      priceComKombo: number;
-      implantation?: number 
-    }> = [];
-
-    if (product === "imob" || product === "both") {
-      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[imobPlan]);
-      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
-      items.push({
-        name: `Imob - ${imobPlan.toUpperCase()}`,
-        monthlyRefSemKombo: baseMonthlyRef,
-        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
-        priceSemKombo: basePrice,
-        priceComKombo: Math.round(basePrice * komboDiscount),
-        implantation: IMPLEMENTATION_COSTS.imob,
-      });
-    }
-
-    if (product === "loc" || product === "both") {
-      const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[locPlan]);
-      const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
-      items.push({
-        name: `Loc - ${locPlan.toUpperCase()}`,
-        monthlyRefSemKombo: baseMonthlyRef,
-        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
-        priceSemKombo: basePrice,
-        priceComKombo: Math.round(basePrice * komboDiscount),
-        implantation: IMPLEMENTATION_COSTS.loc,
-      });
-    }
-
-    // Add-ons
-    if (addons.leads && isAddonAvailable("leads")) {
-      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.leads);
-      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.leads, frequency);
-      items.push({
-        name: "Leads",
-        monthlyRefSemKombo: baseMonthlyRef,
-        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
-        priceSemKombo: basePrice,
-        priceComKombo: Math.round(basePrice * komboDiscount),
-        implantation: IMPLEMENTATION_COSTS.leads,
-      });
-    }
-
-    if (addons.inteligencia) {
-      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.inteligencia);
-      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
-      items.push({
-        name: "Inteligência",
-        monthlyRefSemKombo: baseMonthlyRef,
-        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
-        priceSemKombo: basePrice,
-        priceComKombo: Math.round(basePrice * komboDiscount),
-        implantation: IMPLEMENTATION_COSTS.inteligencia,
-      });
-    }
-
-    if (addons.assinatura) {
-      const baseMonthlyRef = calculateMonthlyReference(ADDON_ANNUAL_PRICES.assinatura);
-      const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
-      items.push({
-        name: "Assinatura",
-        monthlyRefSemKombo: baseMonthlyRef,
-        monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
-        priceSemKombo: basePrice,
-        priceComKombo: Math.round(basePrice * komboDiscount),
-        implantation: IMPLEMENTATION_COSTS.assinatura,
-      });
-    }
-
-    // Pay and Seguros are NOT included in pré-pago line items
-    // Pay is shown in Section 2 (Pós-pago)
-    // Seguros is shown in Section 3 (Receitas Potenciais)
-
-    // Cash is FREE - not included in pricing table
-
-    return items;
   };
 
   // Detect which Kombo is active and return discount percentage
