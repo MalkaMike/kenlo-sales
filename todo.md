@@ -772,3 +772,17 @@
 - [x] Remover campos manuais de nome/email/telefone do vendedor
 - [x] Injetar automaticamente dados do vendedor logado no PDF
 - [x] Exibir nome completo, email e telefone no PDF
+
+
+## Login Master e Página Performance (Fev 2026)
+
+### Login Master
+- [x] Criar usuário master (master@kenlo.com.br / Oxygen1011!)
+- [x] Sessão permanente para master (sem expiração de 24h)
+
+### Página Performance
+- [x] Criar página /performance (histórico de cotações)
+- [x] Proteger página com autenticação (mesmo login/senha)
+- [x] Mostrar performance do time inteiro por padrão
+- [x] Filtro para ver performance individual por vendedor
+- [x] Adicionar link "Performance" no rodapé do site

@@ -254,6 +254,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="hover:text-foreground transition-colors">Kombos</Link></li>
                 <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Cotação</Link></li>
+                <li><Link href="/performance" className="hover:text-foreground transition-colors">Performance</Link></li>
               </ul>
             </div>
           </div>

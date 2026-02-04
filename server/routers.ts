@@ -13,6 +13,10 @@ import * as jose from "jose";
 const SALESPERSON_PASSWORD = "KenloLobos2026!";
 const SALESPERSON_COOKIE_NAME = "kenlo_salesperson_session";
 
+// Master account credentials
+const MASTER_EMAIL = "master@kenlo.com.br";
+const MASTER_PASSWORD = "Oxygen1011!";
+
 // JWT secret for salesperson sessions
 const getJwtSecret = () => new TextEncoder().encode(process.env.JWT_SECRET || "kenlo-sales-secret-key");
 
@@ -24,15 +28,22 @@ function getEndOfDay(): Date {
   return endOfDay;
 }
 
-// Create JWT token for salesperson
-async function createSalespersonToken(salespersonId: number): Promise<string> {
-  const endOfDay = getEndOfDay();
-  const token = await new jose.SignJWT({ salespersonId })
+// Create JWT token for salesperson (with optional permanent session for master)
+async function createSalespersonToken(salespersonId: number, isPermanent: boolean = false): Promise<string> {
+  const jwtBuilder = new jose.SignJWT({ salespersonId, isMaster: isPermanent })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(endOfDay)
-    .setIssuedAt()
-    .sign(getJwtSecret());
-  return token;
+    .setIssuedAt();
+  
+  if (isPermanent) {
+    // Master account: 1 year expiration
+    jwtBuilder.setExpirationTime('1y');
+  } else {
+    // Regular salespeople: end of current day
+    const endOfDay = getEndOfDay();
+    jwtBuilder.setExpirationTime(endOfDay);
+  }
+  
+  return jwtBuilder.sign(getJwtSecret());
 }
 
 // Verify JWT token
@@ -67,7 +78,30 @@ export const appRouter = router({
         password: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Verify password
+        // Check if master account
+        const isMaster = input.email.toLowerCase() === MASTER_EMAIL.toLowerCase();
+        
+        // Verify password based on account type
+        if (isMaster) {
+          if (input.password !== MASTER_PASSWORD) {
+            return { success: false, error: "Senha incorreta" };
+          }
+          // Master account - create virtual salesperson data
+          const token = await createSalespersonToken(-1, true); // -1 for master
+          return {
+            success: true,
+            token,
+            isMaster: true,
+            salesperson: {
+              id: -1,
+              name: "Master Admin",
+              email: MASTER_EMAIL,
+              phone: "",
+            },
+          };
+        }
+        
+        // Regular salesperson login
         if (input.password !== SALESPERSON_PASSWORD) {
           return { success: false, error: "Senha incorreta" };
         }
@@ -82,8 +116,8 @@ export const appRouter = router({
           return { success: false, error: "Usuário inativo" };
         }
 
-        // Create JWT token
-        const token = await createSalespersonToken(salesperson.id);
+        // Create JWT token (expires at end of day)
+        const token = await createSalespersonToken(salesperson.id, false);
         const endOfDay = getEndOfDay();
 
         // Set cookie using same options as auth cookies
@@ -129,8 +163,19 @@ export const appRouter = router({
       }
 
       const salespersonId = await verifySalespersonToken(token);
-      if (!salespersonId) {
+      if (salespersonId === null) {
         return null;
+      }
+
+      // Check if master account (id = -1)
+      if (salespersonId === -1) {
+        return {
+          id: -1,
+          name: "Master Admin",
+          email: MASTER_EMAIL,
+          phone: "",
+          isMaster: true,
+        };
       }
 
       const salesperson = await getSalespersonById(salespersonId);
@@ -143,6 +188,7 @@ export const appRouter = router({
         name: salesperson.name,
         email: salesperson.email,
         phone: salesperson.phone,
+        isMaster: false,
       };
     }),
 

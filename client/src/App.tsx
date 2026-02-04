@@ -21,6 +21,7 @@ import CashPage from "./pages/addons/CashPage";
 import KombosPage from "./pages/KombosPage";
 import CalculadoraPage from "./pages/CalculadoraPage";
 import HistoricoPage from "./pages/HistoricoPage";
+import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";
 
 // Protected Calculadora wrapper
@@ -37,6 +38,15 @@ function ProtectedHistorico() {
   return (
     <ProtectedRoute>
       <HistoricoPage />
+    </ProtectedRoute>
+  );
+}
+
+// Protected Performance wrapper
+function ProtectedPerformance() {
+  return (
+    <ProtectedRoute>
+      <PerformancePage />
     </ProtectedRoute>
   );
 }
@@ -70,6 +80,8 @@ function Router() {
             <Route path="/cotacao" component={ProtectedCalculadora} />
             {/* Histórico - PROTECTED */}
             <Route path="/historico" component={ProtectedHistorico} />
+            {/* Performance - PROTECTED */}
+            <Route path="/performance" component={ProtectedPerformance} />
             {/* Fallback */}
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />

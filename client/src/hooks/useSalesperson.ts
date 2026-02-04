@@ -6,13 +6,25 @@ export interface Salesperson {
   name: string;
   email: string;
   phone: string;
+  isMaster?: boolean;
 }
 
 const STORAGE_KEY = "kenlo_salesperson_token";
 const SALESPERSON_DATA_KEY = "kenlo_salesperson_data";
 
-// Check if token is expired (expires at end of day)
+// Check if token is expired (expires at end of day, except for master)
 function isTokenExpired(): boolean {
+  // Check if master account (never expires)
+  const storedData = localStorage.getItem(SALESPERSON_DATA_KEY);
+  if (storedData) {
+    try {
+      const data = JSON.parse(storedData);
+      if (data.isMaster) return false; // Master never expires
+    } catch {
+      // Continue with normal check
+    }
+  }
+  
   const storedDate = localStorage.getItem("kenlo_salesperson_date");
   if (!storedDate) return true;
   
