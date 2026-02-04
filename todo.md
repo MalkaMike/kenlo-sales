@@ -544,3 +544,7 @@
 - [x] Redesenhar título hero para ficar em uma linha com melhor hierarquia visual
 - [x] Adicionar background escuro/destaque nos números para melhor contraste
 - [x] Adicionar ponto entre "única" e "Infinitas" no título hero
+
+## Ajustar Layout de Estatísticas na Homepage
+- [x] Modificar grid de estatísticas para exibir todos os 5 itens em uma única linha horizontal
+- [x] Ajustar tamanho dos elementos para caber em uma linha sem quebra

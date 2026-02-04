@@ -184,7 +184,7 @@ export default function Home() {
       {/* Stats Section - Enhanced */}
       <section className="py-16 border-y border-border/40 bg-gradient-to-r from-card/50 to-card/30">
         <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-5 gap-6 md:gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center group">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition-transform">
