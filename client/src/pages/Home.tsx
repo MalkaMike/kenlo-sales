@@ -13,12 +13,10 @@ import {
   Banknote,
   FileText,
   ArrowRight,
-  Sparkles,
   TrendingUp,
   Zap,
   Check,
   Star,
-  Award,
   Target,
   Rocket,
   Globe,
@@ -137,23 +135,23 @@ export default function Home() {
         
         <div className="container relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 backdrop-blur-sm border border-primary/20 text-primary text-sm font-semibold mb-8 animate-fade-in">
-              <Sparkles className="w-5 h-5" />
-              Portal de Vendas Kenlo
-              <Award className="w-5 h-5 text-secondary" />
-            </div>
-            
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
-              3 soluções.{" "}
-              <span className="kenlo-gradient-text relative">
-                1 plataforma única
-                <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 10C60 2 140 2 198 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary/30"/>
-                </svg>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-8 leading-tight">
+              <span className="inline-flex items-center gap-2 md:gap-3 flex-wrap justify-center">
+                <span className="inline-flex items-baseline gap-2">
+                  <span className="inline-flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-pink-600 to-pink-700 text-white text-xl md:text-2xl font-black shadow-lg">
+                    3
+                  </span>
+                  <span>soluções.</span>
+                </span>
+                <span className="inline-flex items-baseline gap-2">
+                  <span className="inline-flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-purple-600 to-purple-700 text-white text-xl md:text-2xl font-black shadow-lg">
+                    1
+                  </span>
+                  <span className="kenlo-gradient-text">plataforma única.</span>
+                </span>
+                <span className="text-foreground">Infinitas possibilidades.</span>
               </span>
-              {" "}Infinitas possibilidades.
             </h1>
             
             {/* Subheadline */}
@@ -315,7 +313,7 @@ export default function Home() {
                   <CardContent>
                     {/* Highlight Badge */}
                     <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold mb-3">
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Star className="w-3.5 h-3.5" />
                       {addon.highlight}
                     </div>
 

@@ -538,3 +538,9 @@
 - [x] Aumentar intensidade da cor rosa do header "LOC Add-ons" para melhor visibilidade
 - [x] Aumentar intensidade da cor roxa do header "Add-ons Compartilhados" para melhor visibilidade
 - [x] Validar visualmente que as cores têm contraste adequado com o fundo branco
+
+## Correções e Redesign na Homepage
+- [x] Remover badge "Portal de Vendas Kenlo" da seção hero (elemento inútil)
+- [x] Redesenhar título hero para ficar em uma linha com melhor hierarquia visual
+- [x] Adicionar background escuro/destaque nos números para melhor contraste
+- [x] Adicionar ponto entre "única" e "Infinitas" no título hero
