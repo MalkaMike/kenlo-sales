@@ -428,3 +428,11 @@
 - [x] Remover ProposalExportDialog da CalculadoraPage.tsx
 - [x] Remover estado e funções relacionadas ao diálogo antigo
 - [x] Manter apenas QuoteInfoDialog para todas as ações (PDF e link)
+
+## Implementar Geração de PDF com QuoteInfoDialog
+- [x] Adicionar lógica de geração de PDF no callback do QuoteInfoDialog quando actionType === "pdf"
+- [x] Calcular todos os totais necessários (monthly, annual, implantation, postPaid)
+- [x] Chamar generatePDF.mutateAsync com todos os dados do formulário
+- [x] Salvar no banco de dados (quotes e proposals)
+- [x] Fazer download automático do PDF gerado
+- [x] Testar fluxo completo de exportar PDF
