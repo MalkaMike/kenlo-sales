@@ -34,6 +34,7 @@ import {
   Key,
   Zap,
   Copy,
+  CheckCircle2,
 } from "lucide-react";
 
 // Types
@@ -218,8 +219,9 @@ export default function CalculadoraPage() {
 
   
   // Quote info dialog state
-  const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
-  const [quoteInfoAction, setQuoteInfoAction] = useState<"pdf" | "link">("link");
+   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
+  const [quoteInfoAction, setQuoteInfoAction] = useState<"pdf" | "link">("pdf");
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   
   // tRPC mutations for PDF generation and proposal creation
@@ -1352,6 +1354,7 @@ export default function CalculadoraPage() {
                 frequency={frequency}
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
+                onPlanSelected={setSelectedPlan}
               />
 
 
@@ -2289,28 +2292,38 @@ export default function CalculadoraPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6 mb-24">
-                  <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => {
-                    setQuoteInfoAction("pdf");
-                    setShowQuoteInfoDialog(true);
-                  }}>
-                    <Download className="w-4 h-4 mr-2" />
-                    Exportar Proposta (PDF)
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="min-h-[50px] sm:flex-1"
-                    onClick={() => {
-                      setQuoteInfoAction("link");
-                      setShowQuoteInfoDialog(true);
-                    }}
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copiar Link para Cliente
-                  </Button>
-                </div>
+                {/* Actions - Only show when a plan is selected */}
+                {selectedPlan && (
+                  <div className="flex flex-col gap-3 mt-6 mb-24">
+                    <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                      <span className="text-sm font-medium text-green-900">
+                        Plano selecionado! Agora você pode exportar a proposta.
+                      </span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => {
+                        setQuoteInfoAction("pdf");
+                        setShowQuoteInfoDialog(true);
+                      }}>
+                        <Download className="w-4 h-4 mr-2" />
+                        Exportar Proposta (PDF)
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="min-h-[50px] sm:flex-1"
+                        onClick={() => {
+                          setQuoteInfoAction("link");
+                          setShowQuoteInfoDialog(true);
+                        }}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copiar Link para Cliente
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
             </CardContent>
           </Card>

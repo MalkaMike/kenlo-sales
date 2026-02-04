@@ -614,3 +614,15 @@
 - [x] Valores mínimos definidos e aplicados via Math.max() e atributo HTML min
 - [x] Corrigido conflito de id entre toggle e input de Leads (renomeado para leadsPerMonth)
 - [x] Testado comportamento com valores zero e negativos - validação funciona corretamente
+
+## UX de Seleção de Plano (Opção A)
+- [x] Adicionar estado `selectedPlan` para armazenar qual coluna está selecionada (null | "sua-selecao" | "imob-start" | "imob-pro" | etc.)
+- [x] Adicionar botão "Selecionar Este Plano" no rodapé de cada coluna da tabela de Kombos
+- [x] Coluna "Sua Seleção": botão "Selecionar Personalizado"
+- [x] Colunas dos Kombos: botão "Selecionar [Nome do Kombo]"
+- [x] Adicionar destaque visual na coluna selecionada: borda verde grossa (4px) + sombra + background verde claro
+- [x] Adicionar badge "✓ SELECIONADO" no topo da coluna ativa
+- [x] Implementar botões "Exportar Proposta (PDF)" e "Copiar Link para Cliente" que aparecem apenas após seleção
+- [x] Botões de ação aparecem após a seção "The Kenlo Effect" com mensagem de confirmação verde
+- [x] Permitir trocar seleção clicando em outra coluna (remove destaque da anterior)
+- [x] Testar fluxo completo: configurar → selecionar coluna → ver destaque + badge → botões aparecem → gerar PDF/URL

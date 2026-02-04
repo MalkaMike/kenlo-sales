@@ -14,7 +14,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Check, Star, Info, CheckCircle2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -47,6 +48,8 @@ interface KomboComparisonProps {
   // Premium services
   vipSupport: boolean;
   dedicatedCS: boolean;
+  // Callback when user selects a plan
+  onPlanSelected?: (planId: KomboId | null) => void;
 }
 
 type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite";
@@ -640,6 +643,15 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   
   // Selected Kombo (user can manually select)
   const [selectedKombo, setSelectedKombo] = useState<KomboId | null>(null);
+  
+  // Selected Plan for export (user confirms their choice)
+  const [selectedPlan, setSelectedPlan] = useState<KomboId | null>(null);
+
+  // Notify parent when plan selection changes
+  const handlePlanSelect = (planId: KomboId) => {
+    setSelectedPlan(planId);
+    props.onPlanSelected?.(planId);
+  };
 
   // Determine recommended Kombo (auto-detected)
   const autoRecommendedKombo = getRecommendedKombo(props.product, props.addons);
@@ -791,14 +803,22 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <th
                         key={col.id}
                         onClick={() => setSelectedKombo(col.id)}
-                        className={`text-center py-4 px-3 min-w-[130px] cursor-pointer hover:bg-gray-50 transition-colors ${
-                          col.isRecommended
+                        className={`text-center py-4 px-3 min-w-[130px] cursor-pointer hover:bg-gray-50 transition-all ${
+                          selectedPlan === col.id
+                            ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
+                            : col.isRecommended
                             ? "bg-green-50 border-t-2 border-l-2 border-r-2 border-green-500 rounded-t-xl"
                             : ""
                         }`}
                       >
                         <div className="flex flex-col items-center gap-1.5">
-                          {col.isRecommended && (
+                          {selectedPlan === col.id && (
+                            <Badge className="bg-green-600 text-white text-[10px] px-2 py-0.5 font-semibold">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              SELECIONADO
+                            </Badge>
+                          )}
+                          {col.isRecommended && selectedPlan !== col.id && (
                             <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
                               <Star className="w-3 h-3 mr-1" />
                               Recomendado
@@ -864,8 +884,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     {columns.map((col) => (
                       <td
                         key={`${row.key}-${col.id}`}
-                        className={`text-center py-3 px-3 ${
-                          col.isRecommended
+                        className={`text-center py-3 px-3 transition-all ${
+                          selectedPlan === col.id
+                            ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
+                            : col.isRecommended
                             ? "bg-green-50 border-l-2 border-r-2 border-green-500"
                             : ""
                         } ${
@@ -880,6 +902,36 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td className="py-4"></td>
+                  {columns.map((col) => (
+                    <td key={`select-${col.id}`} className={`text-center py-4 px-3 transition-all ${
+                      selectedPlan === col.id
+                        ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
+                        : col.isRecommended
+                        ? "bg-green-50 border-l-2 border-r-2 border-b-2 border-green-500 rounded-b-xl"
+                        : ""
+                    }`}>
+                      <Button
+                        onClick={() => handlePlanSelect(col.id)}
+                        variant={selectedPlan === col.id ? "default" : "outline"}
+                        className={`w-full ${selectedPlan === col.id ? "bg-green-600 hover:bg-green-700" : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"}`}
+                        size="sm"
+                      >
+                        {selectedPlan === col.id ? (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Selecionado
+                          </>
+                        ) : (
+                          col.id === "none" ? "Selecionar Personalizado" : `Selecionar ${col.shortName}`
+                        )}
+                      </Button>
+                    </td>
+                  ))}
+                </tr>
+              </tfoot>
             </table>
           </div>
 
