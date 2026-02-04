@@ -366,3 +366,8 @@
 - [x] Criar página /historico para consultar orçamentos salvos
 - [x] Adicionar link para histórico no menu ou na calculadora
 - [x] Testar fluxo completo de salvamento e consulta
+
+## Esconder Histórico do Menu Público
+- [x] Remover link "Histórico" do menu desktop
+- [x] Remover link "Histórico" do menu mobile
+- [x] Manter rota /historico funcionando (URL oculta para vendedores)
