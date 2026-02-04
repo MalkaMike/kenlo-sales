@@ -1580,12 +1580,42 @@ export default function CalculadoraPage() {
                         
                         // Boletos
                         if (addons.pay && metrics.chargesBoletoToTenant) {
-                          locSubtotal += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          if (additionalBoletos > 0) {
+                            if (plan === 'prime') locSubtotal += additionalBoletos * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.max(0, additionalBoletos - 250);
+                              locSubtotal += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                              const tier3 = Math.max(0, additionalBoletos - 500);
+                              locSubtotal += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         
                         // Split
                         if (addons.pay && metrics.chargesSplitToOwner) {
-                          locSubtotal += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          if (additionalSplits > 0) {
+                            if (plan === 'prime') locSubtotal += additionalSplits * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.max(0, additionalSplits - 250);
+                              locSubtotal += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                              const tier3 = Math.max(0, additionalSplits - 500);
+                              locSubtotal += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         
                         if (locSubtotal === 0) return null;
@@ -1645,25 +1675,44 @@ export default function CalculadoraPage() {
 
                       {/* Custo Boletos (Pay) */}
                       {addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both') && (() => {
-                        const contracts = metrics.contractsUnderManagement;
-                        const costPerBoleto = 3.00; // Kenlo's cost per boleto
-                        const totalCost = contracts * costPerBoleto;
+                        const plan = locPlan;
+                        const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                        const totalBoletos = metrics.contractsUnderManagement;
+                        const additionalBoletos = Math.max(0, totalBoletos - includedBoletos);
+                        
+                        const totalCost = (() => {
+                          if (additionalBoletos === 0) return 0;
+                          if (plan === 'prime') return additionalBoletos * 4;
+                          else if (plan === 'k') {
+                            const tier1 = Math.min(additionalBoletos, 250);
+                            const tier2 = Math.max(0, additionalBoletos - 250);
+                            return (tier1 * 4) + (tier2 * 3.5);
+                          } else {
+                            const tier1 = Math.min(additionalBoletos, 250);
+                            const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                            const tier3 = Math.max(0, additionalBoletos - 500);
+                            return (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                          }
+                        })();
+                        const pricePerUnit = additionalBoletos > 0 ? totalCost / additionalBoletos : 0;
 
                         return (
                           <div className="flex justify-between items-start py-4 border-b border-gray-200">
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Custo Boletos (Pay)</span>
                               <span className="text-xs text-gray-500 italic">
-                                {contracts} boletos × R$ 3,00
+                                Incluídos: {includedBoletos} | Adicionais: {additionalBoletos}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
-                              <span className="text-sm font-semibold text-gray-900">
-                                {formatCurrency(totalCost)}
+                              <span className={additionalBoletos > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additionalBoletos > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
                               </span>
-                              <span className="text-xs text-gray-500 italic">
-                                R$ 3,00/boleto
-                              </span>
+                              {additionalBoletos > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/boleto
+                                </span>
+                              )}
                             </div>
                           </div>
                         );
@@ -1671,25 +1720,44 @@ export default function CalculadoraPage() {
 
                       {/* Custo Split (Pay) */}
                       {addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both') && (() => {
-                        const contracts = metrics.contractsUnderManagement;
-                        const costPerSplit = 3.00; // Kenlo's cost per split
-                        const totalCost = contracts * costPerSplit;
+                        const plan = locPlan;
+                        const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                        const totalSplits = metrics.contractsUnderManagement;
+                        const additionalSplits = Math.max(0, totalSplits - includedSplits);
+                        
+                        const totalCost = (() => {
+                          if (additionalSplits === 0) return 0;
+                          if (plan === 'prime') return additionalSplits * 4;
+                          else if (plan === 'k') {
+                            const tier1 = Math.min(additionalSplits, 250);
+                            const tier2 = Math.max(0, additionalSplits - 250);
+                            return (tier1 * 4) + (tier2 * 3.5);
+                          } else {
+                            const tier1 = Math.min(additionalSplits, 250);
+                            const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                            const tier3 = Math.max(0, additionalSplits - 500);
+                            return (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                          }
+                        })();
+                        const pricePerUnit = additionalSplits > 0 ? totalCost / additionalSplits : 0;
 
                         return (
                           <div className="flex justify-between items-start py-4 border-b border-gray-200">
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Custo Split (Pay)</span>
                               <span className="text-xs text-gray-500 italic">
-                                {contracts} splits × R$ 3,00
+                                Incluídos: {includedSplits} | Adicionais: {additionalSplits}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
-                              <span className="text-sm font-semibold text-gray-900">
-                                {formatCurrency(totalCost)}
+                              <span className={additionalSplits > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additionalSplits > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
                               </span>
-                              <span className="text-xs text-gray-500 italic">
-                                R$ 3,00/split
-                              </span>
+                              {additionalSplits > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/split
+                                </span>
+                              )}
                             </div>
                           </div>
                         );
@@ -1905,12 +1973,42 @@ export default function CalculadoraPage() {
                         
                         // Boleto costs (Pay)
                         if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
-                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          if (additionalBoletos > 0) {
+                            if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.max(0, additionalBoletos - 250);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                              const tier3 = Math.max(0, additionalBoletos - 500);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         
                         // Split costs (Pay)
                         if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
-                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          if (additionalSplits > 0) {
+                            if (plan === 'prime') totalPostPaid += additionalSplits * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.max(0, additionalSplits - 250);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                              const tier3 = Math.max(0, additionalSplits - 500);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         
                         return (
@@ -2099,10 +2197,40 @@ export default function CalculadoraPage() {
                                 }
                               }
                               if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
-                                totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                                const plan = locPlan;
+                                const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                                const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                                if (additionalBoletos > 0) {
+                                  if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
+                                  else if (plan === 'k') {
+                                    const tier1 = Math.min(additionalBoletos, 250);
+                                    const tier2 = Math.max(0, additionalBoletos - 250);
+                                    totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                                  } else {
+                                    const tier1 = Math.min(additionalBoletos, 250);
+                                    const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                                    const tier3 = Math.max(0, additionalBoletos - 500);
+                                    totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                                  }
+                                }
                               }
                               if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
-                                totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                                const plan = locPlan;
+                                const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                                const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                                if (additionalSplits > 0) {
+                                  if (plan === 'prime') totalPostPaid += additionalSplits * 4;
+                                  else if (plan === 'k') {
+                                    const tier1 = Math.min(additionalSplits, 250);
+                                    const tier2 = Math.max(0, additionalSplits - 250);
+                                    totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                                  } else {
+                                    const tier1 = Math.min(additionalSplits, 250);
+                                    const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                                    const tier3 = Math.max(0, additionalSplits - 500);
+                                    totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                                  }
+                                }
                               }
                               // Support Services
                               if (product === 'imob' || product === 'both') {
@@ -2161,7 +2289,7 @@ export default function CalculadoraPage() {
                         }
                         if (addons.pay && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
-                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 10 : 20;
+                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
                           const totalBoletos = metrics.contractsUnderManagement;
                           const additionalBoletos = Math.max(0, totalBoletos - includedBoletos);
                           if (additionalBoletos > 0) {
@@ -2205,10 +2333,40 @@ export default function CalculadoraPage() {
                           }
                         }
                         if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
-                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          if (additionalBoletos > 0) {
+                            if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.max(0, additionalBoletos - 250);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalBoletos, 250);
+                              const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                              const tier3 = Math.max(0, additionalBoletos - 500);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
-                          totalPostPaid += metrics.contractsUnderManagement * 3.00;
+                          const plan = locPlan;
+                          const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          if (additionalSplits > 0) {
+                            if (plan === 'prime') totalPostPaid += additionalSplits * 4;
+                            else if (plan === 'k') {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.max(0, additionalSplits - 250);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5);
+                            } else {
+                              const tier1 = Math.min(additionalSplits, 250);
+                              const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                              const tier3 = Math.max(0, additionalSplits - 500);
+                              totalPostPaid += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                            }
+                          }
                         }
                         // Support Services
                         if (product === 'imob' || product === 'both') {
@@ -2533,12 +2691,42 @@ export default function CalculadoraPage() {
                 
                 // Boleto costs (Pay)
                 if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
-                  postPaidTotal += metrics.contractsUnderManagement * 3.00;
+                  const plan = locPlan;
+                  const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                  const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                  if (additionalBoletos > 0) {
+                    if (plan === 'prime') postPaidTotal += additionalBoletos * 4;
+                    else if (plan === 'k') {
+                      const tier1 = Math.min(additionalBoletos, 250);
+                      const tier2 = Math.max(0, additionalBoletos - 250);
+                      postPaidTotal += (tier1 * 4) + (tier2 * 3.5);
+                    } else {
+                      const tier1 = Math.min(additionalBoletos, 250);
+                      const tier2 = Math.min(Math.max(0, additionalBoletos - 250), 250);
+                      const tier3 = Math.max(0, additionalBoletos - 500);
+                      postPaidTotal += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                    }
+                  }
                 }
                 
                 // Split costs (Pay)
                 if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
-                  postPaidTotal += metrics.contractsUnderManagement * 3.00;
+                  const plan = locPlan;
+                  const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                  const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                  if (additionalSplits > 0) {
+                    if (plan === 'prime') postPaidTotal += additionalSplits * 4;
+                    else if (plan === 'k') {
+                      const tier1 = Math.min(additionalSplits, 250);
+                      const tier2 = Math.max(0, additionalSplits - 250);
+                      postPaidTotal += (tier1 * 4) + (tier2 * 3.5);
+                    } else {
+                      const tier1 = Math.min(additionalSplits, 250);
+                      const tier2 = Math.min(Math.max(0, additionalSplits - 250), 250);
+                      const tier3 = Math.max(0, additionalSplits - 500);
+                      postPaidTotal += (tier1 * 4) + (tier2 * 3.5) + (tier3 * 3);
+                    }
+                  }
                 }
                 
                 // The Kenlo Effect
