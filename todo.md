@@ -554,3 +554,9 @@
 - [x] Implementar Intersection Observer para detectar quando a seção entra na viewport
 - [x] Integrar animação na seção de estatísticas da homepage
 - [x] Testar animação em diferentes velocidades de scroll
+
+## Micro-Interações nos Cards de Produtos e Add-ons
+- [x] Adicionar efeito lift (elevação) nos cards ao hover com transform translateY
+- [x] Adicionar efeito glow (brilho) nos cards ao hover com box-shadow colorido
+- [x] Implementar transições suaves para os efeitos (duration 300-400ms)
+- [x] Testar efeitos em todos os cards (produtos e add-ons)

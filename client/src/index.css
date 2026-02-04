@@ -335,3 +335,32 @@ html {
 .nav-item-active {
   animation: nav-item-active 0.2s ease-out;
 }
+
+/* Card Micro-Interactions: Lift + Glow Effect */
+.kenlo-card {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Subtle glow animation on hover */
+@keyframes card-glow {
+  0%, 100% {
+    box-shadow: 
+      0 20px 40px -12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px oklch(0.62 0.24 15 / 0.1),
+      0 0 40px oklch(0.62 0.24 15 / 0.2),
+      0 0 80px oklch(0.62 0.24 15 / 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 20px 40px -12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px oklch(0.62 0.24 15 / 0.15),
+      0 0 50px oklch(0.62 0.24 15 / 0.3),
+      0 0 100px oklch(0.62 0.24 15 / 0.15);
+  }
+}
+
+.kenlo-card:hover {
+  transform: translateY(-8px);
+  animation: card-glow 2s ease-in-out infinite;
+}
