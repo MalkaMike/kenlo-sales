@@ -613,55 +613,52 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
    * Always shows values even when Kombo is not available (for comparison)
    */
   const getCellValue = (rowKey: string, column: KomboColumnData): React.ReactNode => {
-    // Always show monthly values (prices are already calculated with frequency multiplier)
+    // Helper to render price with optional discount styling
+    const renderPrice = (price: number | null, hasDiscount: boolean = false) => {
+      if (price === null) return <span className="text-gray-300">—</span>;
+      const priceStr = `R$ ${formatCurrency(price)}`;
+      return hasDiscount && column.discount > 0 
+        ? <span className="font-semibold text-primary">{priceStr}</span>
+        : <span className="font-medium">{priceStr}</span>;
+    };
 
     switch (rowKey) {
       case "imob":
-        return column.imobPrice !== null
-          ? `R$ ${formatCurrency(column.imobPrice)}`
-          : <span className="text-gray-400">—</span>;
+        return renderPrice(column.imobPrice, column.id !== "none");
       case "loc":
-        return column.locPrice !== null
-          ? `R$ ${formatCurrency(column.locPrice)}`
-          : <span className="text-gray-400">—</span>;
+        return renderPrice(column.locPrice, column.id !== "none");
       case "leads":
-        return column.leadsPrice !== null
-          ? `R$ ${formatCurrency(column.leadsPrice)}`
-          : <span className="text-gray-400">—</span>;
+        return renderPrice(column.leadsPrice, column.id !== "none");
       case "inteligencia":
-        return column.inteligenciaPrice !== null
-          ? `R$ ${formatCurrency(column.inteligenciaPrice)}`
-          : <span className="text-gray-400">—</span>;
+        return renderPrice(column.inteligenciaPrice, column.id !== "none");
       case "assinatura":
-        return column.assinaturaPrice !== null
-          ? `R$ ${formatCurrency(column.assinaturaPrice)}`
-          : <span className="text-gray-400">—</span>;
+        return renderPrice(column.assinaturaPrice, column.id !== "none");
       case "pay":
-        return column.payPrice || <span className="text-gray-400">—</span>;
+        return column.payPrice || <span className="text-gray-300">—</span>;
       case "seguros":
-        return column.segurosPrice || <span className="text-gray-400">—</span>;
+        return column.segurosPrice || <span className="text-gray-300">—</span>;
       case "cash":
-        return column.cashPrice || <span className="text-gray-400">—</span>;
+        return column.cashPrice || <span className="text-gray-300">—</span>;
       case "vipSupport":
         if (column.vipSupportPrice === "Incluído") {
-          return <span className="text-green-600 font-medium">Incluído</span>;
+          return <span className="text-green-600 font-semibold">Incluído</span>;
         }
         return typeof column.vipSupportPrice === "number"
-          ? `R$ ${formatCurrency(column.vipSupportPrice)}`
-          : <span className="text-gray-400">—</span>;
+          ? <span className="font-medium">R$ {formatCurrency(column.vipSupportPrice)}</span>
+          : <span className="text-gray-300">—</span>;
       case "dedicatedCS":
         if (column.dedicatedCSPrice === "Incluído") {
-          return <span className="text-green-600 font-medium">Incluído</span>;
+          return <span className="text-green-600 font-semibold">Incluído</span>;
         }
         return typeof column.dedicatedCSPrice === "number"
-          ? `R$ ${formatCurrency(column.dedicatedCSPrice)}`
-          : <span className="text-gray-400">—</span>;
+          ? <span className="font-medium">R$ {formatCurrency(column.dedicatedCSPrice)}</span>
+          : <span className="text-gray-300">—</span>;
       case "totalMonthly":
-        return `R$ ${formatCurrency(column.totalMonthly)}`;
+        return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
       case "implementation":
-        return `R$ ${formatCurrency(column.implementation)}`;
+        return <span className="font-medium">R$ {formatCurrency(column.implementation)}</span>;
       case "annualEquivalent":
-        return `R$ ${formatCurrency(column.annualEquivalent)}`;
+        return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
       default:
         return null;
     }
@@ -705,22 +702,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
           {/* Comparison Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm border-collapse">
               <thead>
-                <tr>
-                  <th className="text-left p-2 w-[140px]"></th>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="text-left py-4 px-4 w-[180px]"></th>
                   {columns.map((col) => (
                     <th
                       key={col.id}
-                      className={`text-center p-2 min-w-[120px] ${
+                      className={`text-center py-4 px-3 min-w-[130px] ${
                         col.isRecommended
-                          ? "bg-green-50 border-2 border-green-500 rounded-t-lg"
-                          : col.isAvailable
-                          ? "bg-gray-50"
-                          : "bg-gray-100 opacity-50"
+                          ? "bg-green-50 border-t-2 border-l-2 border-r-2 border-green-500 rounded-t-xl"
+                          : ""
                       }`}
                     >
-                      <div className="flex flex-col items-center gap-1">
+                      <div className="flex flex-col items-center gap-1.5">
                         {col.isRecommended && (
                           <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
                             <Star className="w-3 h-3 mr-1" />
@@ -728,8 +723,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           </Badge>
                         )}
                         <span className="font-bold text-gray-900">{col.shortName}</span>
-                        {col.discount > 0 && col.isAvailable && (
-                          <Badge variant="secondary" className="text-[10px]">
+                        {col.discount > 0 && (
+                          <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
                             {Math.round(col.discount * 100)}% OFF
                           </Badge>
                         )}
@@ -739,22 +734,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
+                {rows.map((row, rowIndex) => (
                   <tr
                     key={row.key}
                     className={
                       row.isHeader
-                        ? "bg-gray-100"
+                        ? "bg-blue-50/70"
                         : row.isGrandTotal
-                        ? "bg-primary/5 font-bold"
+                        ? "bg-gray-50 border-t-2 border-gray-300"
                         : row.isTotal
-                        ? "bg-gray-50 font-semibold"
-                        : ""
+                        ? "bg-gray-50/50"
+                        : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
                     <td
-                      className={`p-2 ${row.indent ? "pl-6" : ""} ${
-                        row.isHeader ? "font-bold text-gray-700" : "text-gray-600"
+                      className={`py-3 px-4 ${row.indent ? "pl-8" : ""} ${
+                        row.isHeader 
+                          ? "font-semibold text-gray-700 text-sm" 
+                          : row.isGrandTotal
+                          ? "font-bold text-gray-900"
+                          : row.isTotal
+                          ? "font-semibold text-gray-700"
+                          : "text-gray-600"
                       }`}
                     >
                       {row.label}
@@ -762,11 +763,17 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     {columns.map((col) => (
                       <td
                         key={`${row.key}-${col.id}`}
-                        className={`text-center p-2 ${
+                        className={`text-center py-3 px-3 ${
                           col.isRecommended
                             ? "bg-green-50 border-l-2 border-r-2 border-green-500"
                             : ""
-                        } ${row.isHeader ? "" : ""}`}
+                        } ${
+                          row.isGrandTotal
+                            ? "font-bold text-primary text-base"
+                            : row.isTotal
+                            ? "font-semibold text-gray-900"
+                            : "text-gray-700"
+                        }`}
                       >
                         {row.isHeader ? null : getCellValue(row.key, col)}
                       </td>
