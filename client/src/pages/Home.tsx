@@ -20,7 +20,8 @@ import {
   Star,
   Award,
   Target,
-  Rocket
+  Rocket,
+  Globe
 } from "lucide-react";
 
 const products = [
@@ -43,6 +44,16 @@ const products = [
     color: "text-secondary",
     plans: ["Prime", "K", "K2"],
     features: ["Gestão de Contratos", "Boletos Automáticos", "Repasses", "Inadimplência"]
+  },
+  {
+    title: "Site/CMS",
+    description: "Landing page e site profissional com CMS integrado",
+    icon: Globe,
+    href: "#",
+    badge: "DIGITAL",
+    color: "text-blue-600",
+    plans: ["Inclusos"],
+    features: ["Landing Page", "Blog Integrado", "SEO Otimizado", "Responsivo"]
   },
 ];
 
@@ -133,20 +144,20 @@ export default function Home() {
             
             {/* Main Headline */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
-              A solução{" "}
+              3 soluções.{" "}
               <span className="kenlo-gradient-text relative">
-                completa
+                1 plataforma única
                 <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
                   <path d="M2 10C60 2 140 2 198 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary/30"/>
                 </svg>
               </span>
-              {" "}para transformar sua imobiliária
+              {" "}Infinitas possibilidades.
             </h1>
             
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-              Plataforma integrada de <strong className="text-foreground">vendas e locação</strong> com add-ons inteligentes. 
-              Configure, simule e feche negócios mais rápido.
+              <strong className="text-foreground">CRM</strong>, <strong className="text-foreground">Site/CMS</strong> e <strong className="text-foreground">App</strong> totalmente integrados. 
+              Tudo em um só lugar. Faça tudo sem sair da plataforma.
             </p>
             
             {/* CTAs */}
@@ -198,16 +209,15 @@ export default function Home() {
               Produtos Core
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Duas plataformas.{" "}
-              <span className="kenlo-gradient-text">Infinitas possibilidades.</span>
+              3 pilares.{" "}
+              <span className="kenlo-gradient-text">1 plataforma integrada.</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Escolha Imob para vendas, Locação para gestão de contratos, ou combine ambos 
-              para uma solução completa com descontos progressivos.
+              CRM para vendas ou locação, Site/CMS profissional e App mobile. Tudo funcionando junto, sem integrações complexas.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {products.map((product) => (
               <Link key={product.href} href={product.href}>
                 <Card className="h-full kenlo-card group cursor-pointer border-2 hover:border-primary/50 hover:shadow-2xl transition-all duration-300">

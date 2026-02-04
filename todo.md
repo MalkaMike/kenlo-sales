@@ -475,3 +475,9 @@
 
 ## Remover Trust Indicators Falsos
 - [x] Remover seção de trust indicators (Sem taxa de setup, Migração gratuita, Suporte 24/7) da hero section da homepage
+
+## Atualização: 3 Soluções em 1 Plataforma
+- [x] Atualizar headline principal para "3 soluções. 1 plataforma única. Infinitas possibilidades."
+- [x] Adicionar Site/CMS como terceira solução na seção de produtos
+- [x] Atualizar descrição geral para incluir CRM, Site/CMS e App como pilares
+- [x] Reorganizar seção de produtos para mostrar as 3 soluções de forma clara
