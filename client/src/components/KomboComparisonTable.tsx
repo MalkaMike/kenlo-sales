@@ -14,7 +14,13 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // ============================================================================
 // TYPES
@@ -130,6 +136,13 @@ const KOMBO_DEFINITIONS = {
     includedAddons: ["leads", "assinatura"],
     includesPremiumServices: false,
     freeImplementations: ["leads"], // Leads implementation is free
+    tooltipInfo: {
+      description: "Ideal para imobiliárias focadas em vendas",
+      includes: ["Imob", "Leads", "Assinatura"],
+      discountText: "10% OFF em todos produtos e add-ons",
+      premiumServices: "Não inclui (pagar à parte)",
+      implementation: "R$ 1.497 (Leads grátis)",
+    },
   },
   imob_pro: {
     name: "Kombo Imob Pro",
@@ -139,6 +152,13 @@ const KOMBO_DEFINITIONS = {
     includedAddons: ["leads", "inteligencia", "assinatura"],
     includesPremiumServices: true, // INCLUI VIP + CS Dedicado
     freeImplementations: ["leads", "inteligencia"],
+    tooltipInfo: {
+      description: "Solução completa para vendas com BI",
+      includes: ["Imob", "Leads", "Inteligência", "Assinatura"],
+      discountText: "15% OFF em todos produtos e add-ons",
+      premiumServices: "VIP + CS Dedicado incluídos",
+      implementation: "R$ 1.497 (Leads + Intel grátis)",
+    },
   },
   locacao_pro: {
     name: "Kombo Locação Pro",
@@ -148,6 +168,13 @@ const KOMBO_DEFINITIONS = {
     includedAddons: ["inteligencia", "assinatura"],
     includesPremiumServices: true, // INCLUI VIP + CS Dedicado
     freeImplementations: ["inteligencia"],
+    tooltipInfo: {
+      description: "Ideal para gestão de locações com BI",
+      includes: ["Locação", "Inteligência", "Assinatura"],
+      discountText: "10% OFF em todos produtos e add-ons",
+      premiumServices: "VIP + CS Dedicado incluídos",
+      implementation: "R$ 1.497 (Intel grátis)",
+    },
   },
   core_gestao: {
     name: "Kombo Core Gestão",
@@ -157,6 +184,13 @@ const KOMBO_DEFINITIONS = {
     includedAddons: [] as string[],
     includesPremiumServices: true, // VIP + CS included
     freeImplementations: ["imob"],
+    tooltipInfo: {
+      description: "IMOB + LOC sem add-ons",
+      includes: ["Imob", "Locação"],
+      discountText: "Desconto conforme tabela",
+      premiumServices: "VIP + CS Dedicado incluídos",
+      implementation: "R$ 1.497 (IMOB grátis)",
+    },
   },
   elite: {
     name: "Kombo Elite",
@@ -166,6 +200,13 @@ const KOMBO_DEFINITIONS = {
     includedAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"],
     includesPremiumServices: true, // VIP + CS included
     freeImplementations: ["imob", "leads", "inteligencia"],
+    tooltipInfo: {
+      description: "Solução completa com todos os produtos",
+      includes: ["Imob", "Locação", "Todos Add-ons"],
+      discountText: "20% OFF em todos produtos e add-ons",
+      premiumServices: "VIP + CS Dedicado incluídos",
+      implementation: "R$ 1.497 (IMOB + Leads + Intel grátis)",
+    },
   },
 };
 
@@ -727,31 +768,58 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               <thead>
                 <tr className="border-b-2 border-gray-200">
                   <th className="text-left py-4 px-4 w-[180px]"></th>
-                  {columns.map((col) => (
-                    <th
-                      key={col.id}
-                      className={`text-center py-4 px-3 min-w-[130px] ${
-                        col.isRecommended
-                          ? "bg-green-50 border-t-2 border-l-2 border-r-2 border-green-500 rounded-t-xl"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex flex-col items-center gap-1.5">
-                        {col.isRecommended && (
-                          <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
-                            <Star className="w-3 h-3 mr-1" />
-                            Recomendado
-                          </Badge>
-                        )}
-                        <span className="font-bold text-gray-900">{col.shortName}</span>
-                        {col.discount > 0 && (
-                          <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
-                            {Math.round(col.discount * 100)}% OFF
-                          </Badge>
-                        )}
-                      </div>
-                    </th>
-                  ))}
+                  {columns.map((col) => {
+                    const komboKey = col.id as keyof typeof KOMBO_DEFINITIONS;
+                    const tooltipData = komboKey !== "none" ? KOMBO_DEFINITIONS[komboKey]?.tooltipInfo : null;
+                    
+                    return (
+                      <th
+                        key={col.id}
+                        className={`text-center py-4 px-3 min-w-[130px] ${
+                          col.isRecommended
+                            ? "bg-green-50 border-t-2 border-l-2 border-r-2 border-green-500 rounded-t-xl"
+                            : ""
+                        }`}
+                      >
+                        <div className="flex flex-col items-center gap-1.5">
+                          {col.isRecommended && (
+                            <Badge className="bg-green-500 text-white text-[10px] px-2 py-0.5">
+                              <Star className="w-3 h-3 mr-1" />
+                              Recomendado
+                            </Badge>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <span className="font-bold text-gray-900">{col.shortName}</span>
+                            {tooltipData && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Info className="w-4 h-4 text-gray-400 hover:text-primary cursor-help" />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-[280px] p-3">
+                                    <div className="space-y-2 text-left">
+                                      <p className="font-semibold text-sm">{tooltipData.description}</p>
+                                      <div className="text-xs space-y-1">
+                                        <p><span className="font-medium">Inclui:</span> {tooltipData.includes.join(", ")}</p>
+                                        <p><span className="font-medium">Desconto:</span> {tooltipData.discountText}</p>
+                                        <p><span className="font-medium">Serviços Premium:</span> {tooltipData.premiumServices}</p>
+                                        <p><span className="font-medium">Implantação:</span> {tooltipData.implementation}</p>
+                                      </div>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                          </div>
+                          {col.discount > 0 && (
+                            <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
+                              {Math.round(col.discount * 100)}% OFF
+                            </Badge>
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

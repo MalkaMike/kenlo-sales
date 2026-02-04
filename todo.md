@@ -264,3 +264,7 @@
 
 ## Kenlo Effect - Visibilidade Condicional
 - [x] Esconder seção Kenlo Effect quando não houver receitas (Pay, Seguros, etc.)
+
+## Tooltips nos Headers dos Kombos
+- [x] Adicionar tooltips com informações detalhadas em cada header de Kombo
+- [x] Incluir: produtos incluídos, desconto, serviços premium, implantação
