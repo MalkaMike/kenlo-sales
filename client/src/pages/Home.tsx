@@ -15,7 +15,12 @@ import {
   ArrowRight,
   Sparkles,
   TrendingUp,
-  Zap
+  Zap,
+  Check,
+  Star,
+  Award,
+  Target,
+  Rocket
 } from "lucide-react";
 
 const products = [
@@ -27,6 +32,7 @@ const products = [
     badge: "VENDAS",
     color: "text-primary",
     plans: ["Prime", "K", "K2"],
+    features: ["CRM Completo", "Site Responsivo", "App Mobile", "Gestão de Leads"]
   },
   {
     title: "Kenlo Locação",
@@ -36,153 +42,220 @@ const products = [
     badge: "LOCAÇÃO",
     color: "text-secondary",
     plans: ["Prime", "K", "K2"],
+    features: ["Gestão de Contratos", "Boletos Automáticos", "Repasses", "Inadimplência"]
   },
 ];
 
 const addons = [
   {
     title: "Leads",
-    description: "Gestão automatizada de leads com distribuição inteligente",
+    description: "Gestão automatizada de leads com distribuição inteligente via WhatsApp",
     icon: Users,
     href: "/addons/leads",
+    highlight: "150 leads/mês inclusos"
   },
   {
     title: "Inteligência",
-    description: "BI de KPIs de performance e analytics avançado",
+    description: "BI de KPIs de performance com Google Looker integrado",
     icon: Brain,
     href: "/addons/inteligencia",
+    highlight: "Dashboards personalizados"
   },
   {
     title: "Assinatura",
-    description: "Assinatura digital embutida na plataforma",
+    description: "Assinatura digital embutida na plataforma com validade jurídica",
     icon: FileSignature,
     href: "/addons/assinatura",
+    highlight: "100% digital"
   },
   {
     title: "Pay",
-    description: "Boleto e Split digital embutido na plataforma",
+    description: "Boleto e Split digital para cobrança automatizada",
     icon: CreditCard,
     href: "/addons/pay",
+    highlight: "Split automático"
   },
   {
     title: "Seguros",
-    description: "Seguros embutido no boleto - ganhe R$10/contrato/mês",
+    description: "Seguros embutidos - ganhe receita extra por contrato",
     icon: Shield,
     href: "/addons/seguros",
+    highlight: "R$10/contrato/mês"
   },
   {
     title: "Cash",
-    description: "Antecipe até 24 meses de aluguel para proprietários",
+    description: "Antecipação de até 24 meses de aluguel para proprietários",
     icon: Banknote,
     href: "/addons/cash",
+    highlight: "Liquidez imediata"
   },
 ];
 
 const stats = [
-  { value: "8.500+", label: "Imobiliárias" },
-  { value: "40.000+", label: "Corretores ativos" },
-  { value: "950+", label: "Cidades" },
-  { value: "R$8B+", label: "Em vendas" },
+  { value: "8.500+", label: "Imobiliárias", icon: Building2 },
+  { value: "40.000+", label: "Corretores ativos", icon: Users },
+  { value: "950+", label: "Cidades", icon: Target },
+  { value: "R$8B+", label: "Em vendas", icon: TrendingUp },
+];
+
+const benefits = [
+  "Plataforma completa para vendas e locação",
+  "Integração nativa entre todos os módulos",
+  "Suporte técnico especializado 24/7",
+  "Atualizações constantes sem custo adicional",
+  "Treinamento completo da equipe",
+  "Migração de dados sem complicação"
 ];
 
 export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { user, loading, error, isAuthenticated, logout } = useAuth();
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-3xl opacity-20" />
+      {/* Hero Section - Redesigned */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNlMTFkNDgiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHptLTYgNmgtMnYtNGgydjR6bTAtNmgtMnYtNGgydjR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
         
-        <div className="container relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        
+        <div className="container relative z-10">
+          <div className="max-w-5xl mx-auto text-center">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 backdrop-blur-sm border border-primary/20 text-primary text-sm font-semibold mb-8 animate-fade-in">
+              <Sparkles className="w-5 h-5" />
               Portal de Vendas Kenlo
+              <Award className="w-5 h-5 text-secondary" />
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Configure a solução{" "}
-              <span className="kenlo-gradient-text">ideal</span>{" "}
-              para cada imobiliária
+            {/* Main Headline */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
+              A solução{" "}
+              <span className="kenlo-gradient-text relative">
+                completa
+                <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
+                  <path d="M2 10C60 2 140 2 198 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary/30"/>
+                </svg>
+              </span>
+              {" "}para transformar sua imobiliária
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Produtos, add-ons e Kombos personalizados. Simule propostas em tempo real 
-              com nosso gerador de orçamentos.
+            {/* Subheadline */}
+            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+              Plataforma integrada de <strong className="text-foreground">vendas e locação</strong> com add-ons inteligentes. 
+              Configure, simule e feche negócios mais rápido.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all" asChild>
                 <Link href="/calculadora">
-                  <FileText className="w-5 h-5" />
-                  Criar Orçamento
+                  <Rocket className="w-6 h-6" />
+                  Criar Orçamento Agora
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="gap-2" asChild>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 gap-3 border-2 hover:bg-accent" asChild>
                 <Link href="/kombos">
-                  Ver Kombos
-                  <ArrowRight className="w-5 h-5" />
+                  Ver Kombos e Descontos
+                  <ArrowRight className="w-6 h-6" />
                 </Link>
               </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Sem taxa de setup</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Migração gratuita</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Suporte 24/7</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 border-y border-border/40 bg-card/30">
+      {/* Stats Section - Enhanced */}
+      <section className="py-16 border-y border-border/40 bg-gradient-to-r from-card/50 to-card/30">
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-1">
+              <div key={index} className="text-center group">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition-transform">
+                  <stat.icon className="w-8 h-8" />
+                </div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Products Section */}
-      <section className="py-20">
+      {/* Products Section - Enhanced */}
+      <section className="py-24">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Produtos Core</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Duas plataformas completas para vendas e locação, cada uma com 3 níveis de plano
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
+              <Star className="w-4 h-4" />
+              Produtos Core
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Duas plataformas.{" "}
+              <span className="kenlo-gradient-text">Infinitas possibilidades.</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Escolha Imob para vendas, Locação para gestão de contratos, ou combine ambos 
+              para uma solução completa com descontos progressivos.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {products.map((product) => (
               <Link key={product.href} href={product.href}>
-                <Card className="h-full kenlo-card group cursor-pointer">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className={`p-3 rounded-xl bg-muted ${product.color}`}>
-                        <product.icon className="w-6 h-6" />
+                <Card className="h-full kenlo-card group cursor-pointer border-2 hover:border-primary/50 hover:shadow-2xl transition-all duration-300">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br from-muted to-muted/50 ${product.color} group-hover:scale-110 transition-transform`}>
+                        <product.icon className="w-8 h-8" />
                       </div>
-                      <span className="text-[10px] font-semibold px-2 py-1 rounded bg-primary/10 text-primary">
+                      <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                         {product.badge}
                       </span>
                     </div>
-                    <CardTitle className="text-xl mt-4 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-2xl mt-2 group-hover:text-primary transition-colors">
                       {product.title}
                     </CardTitle>
-                    <CardDescription>{product.description}</CardDescription>
+                    <CardDescription className="text-base">{product.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-2">
+                  <CardContent className="space-y-4">
+                    {/* Features List */}
+                    <div className="space-y-2">
+                      {product.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm">
+                          <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Plans */}
+                    <div className="flex gap-2 pt-2">
                       {product.plans.map((plan, idx) => (
                         <span
                           key={plan}
-                          className={`text-xs font-medium px-2 py-1 rounded ${
+                          className={`text-xs font-semibold px-3 py-1.5 rounded-lg ${
                             idx === 0
                               ? "bg-muted text-muted-foreground"
                               : idx === 1
@@ -194,7 +267,9 @@ export default function Home() {
                         </span>
                       ))}
                     </div>
-                    <div className="mt-4 flex items-center text-sm text-muted-foreground group-hover:text-primary transition-colors">
+
+                    {/* CTA */}
+                    <div className="flex items-center text-sm font-semibold text-primary group-hover:gap-3 transition-all pt-2">
                       Ver planos e preços
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -206,39 +281,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Add-ons Section */}
-      <section className="py-20 bg-card/30">
+      {/* Add-ons Section - Enhanced */}
+      <section className="py-24 bg-gradient-to-b from-card/30 to-background">
         <div className="container">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary text-sm font-medium mb-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary text-sm font-semibold mb-4">
               <Zap className="w-4 h-4" />
               Potencialize seus resultados
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Add-ons</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Funcionalidades extras que se integram nativamente aos produtos Kenlo
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Add-ons que fazem a{" "}
+              <span className="kenlo-gradient-text">diferença</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Funcionalidades inteligentes que se integram perfeitamente aos produtos Kenlo 
+              e automatizam processos críticos do seu negócio.
             </p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {addons.map((addon) => (
               <Link key={addon.href} href={addon.href}>
-                <Card className="h-full kenlo-card group cursor-pointer">
-                  <CardHeader>
-                    <div className="p-3 rounded-xl bg-muted text-foreground w-fit">
-                      <addon.icon className="w-5 h-5" />
+                <Card className="h-full kenlo-card group cursor-pointer hover:shadow-xl transition-all duration-300">
+                  <CardHeader className="pb-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-muted to-muted/50 text-foreground w-fit group-hover:scale-110 transition-transform">
+                      <addon.icon className="w-6 h-6" />
                     </div>
-                    <CardTitle className="text-lg mt-3 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-xl mt-3 group-hover:text-primary transition-colors">
                       Kenlo {addon.title}
                     </CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardDescription className="text-sm leading-relaxed">
                       {addon.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                    {/* Highlight Badge */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold mb-3">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      {addon.highlight}
+                    </div>
+
+                    <div className="flex items-center text-sm font-semibold text-muted-foreground group-hover:text-primary group-hover:gap-2 transition-all">
                       Saiba mais
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
                 </Card>
@@ -248,32 +333,64 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Kombos CTA Section */}
-      <section className="py-20">
+      {/* Benefits Section - NEW */}
+      <section className="py-24">
         <div className="container">
-          <div className="relative rounded-2xl overflow-hidden">
-            <div className="absolute inset-0 kenlo-gradient opacity-90" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnY0em0wLTZoLTJ2LTRoMnY0em0tNiA2aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Por que escolher{" "}
+                <span className="kenlo-gradient-text">Kenlo</span>?
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Mais do que software, uma parceria para o crescimento do seu negócio
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="flex items-start gap-4 p-4 rounded-xl hover:bg-accent/50 transition-colors">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Check className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="flex-1 pt-1.5">
+                    <p className="text-base font-medium">{benefit}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Kombos CTA Section - Enhanced */}
+      <section className="py-24">
+        <div className="container">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 kenlo-gradient opacity-95" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnY0em0wLTZoLTJ2LTRoMnY0em0tNiA2aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-20" />
             
-            <div className="relative px-8 py-16 md:px-16 md:py-20 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium mb-6">
-                <TrendingUp className="w-4 h-4" />
-                Economize até 25%
+            <div className="relative px-8 py-20 md:px-16 md:py-24 text-center">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-bold mb-8">
+                <TrendingUp className="w-5 h-5" />
+                Economize até 25% com Kombos
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Kombos: Produtos + Add-ons com desconto
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                Kombos: Mais produtos,{" "}
+                <br className="hidden md:block" />
+                menor investimento
               </h2>
               
-              <p className="text-white/80 max-w-2xl mx-auto mb-8">
+              <p className="text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed">
                 Combine Imob + Locação com add-ons e ganhe descontos progressivos. 
                 Quanto mais você digitaliza, menor o custo por unidade.
               </p>
               
-              <Button size="lg" variant="secondary" className="gap-2" asChild>
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6 gap-3 shadow-xl hover:scale-105 transition-transform" asChild>
                 <Link href="/kombos">
                   Explorar Kombos
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-6 h-6" />
                 </Link>
               </Button>
             </div>
@@ -281,22 +398,57 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Calculator CTA */}
-      <section className="py-20 bg-card/30">
+      {/* Testimonials Placeholder - NEW */}
+      <section className="py-24 bg-card/30">
         <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <FileText className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Gerador de Orçamentos
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Quem usa{" "}
+              <span className="kenlo-gradient-text">Kenlo</span>{" "}
+              recomenda
             </h2>
-            <p className="text-muted-foreground mb-8">
-              Configure produtos, add-ons e veja o investimento em tempo real. 
-              Exporte propostas em PDF e compartilhe com clientes.
+            <p className="text-xl text-muted-foreground">
+              Depoimentos de imobiliárias que transformaram seus resultados
             </p>
-            <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2" asChild>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-12 text-center border-2 border-dashed border-muted-foreground/30">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
+                  <Star className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-2xl font-bold text-muted-foreground">
+                  Depoimentos em breve
+                </h3>
+                <p className="text-muted-foreground max-w-md">
+                  Estamos coletando depoimentos em vídeo de nossos clientes. 
+                  Em breve você verá aqui histórias reais de sucesso.
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Calculator CTA - Enhanced */}
+      <section className="py-24">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-primary/10 text-primary mx-auto mb-8 group-hover:scale-110 transition-transform">
+              <FileText className="w-12 h-12" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Gerador de Orçamentos Inteligente
+            </h2>
+            <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+              Configure produtos e add-ons, veja o investimento em tempo real com detecção automática 
+              de Kombos, e exporte propostas profissionais em PDF ou link compartilhável.
+            </p>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25" asChild>
               <Link href="/calculadora">
-                <FileText className="w-5 h-5" />
-                Criar Orçamento
+                <Rocket className="w-6 h-6" />
+                Criar Orçamento Agora
               </Link>
             </Button>
           </div>

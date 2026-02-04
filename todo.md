@@ -453,3 +453,15 @@
 - [x] Adicionar seção de analytics na página de histórico
 - [x] Aplicar filtros aos gráficos (mesmos filtros da tabela)
 - [x] Testar visualizações com diferentes conjuntos de dados
+
+## Redesign Completo da Homepage
+- [x] Criar hero section impactante com gradiente animado e call-to-action destacado
+- [x] Adicionar seção de estatísticas (8.500+ imobiliárias, 40.000+ corretores, etc.)
+- [x] Criar seção de produtos core (Imob e Locação) com cards visuais
+- [x] Adicionar seção de add-ons em grid com ícones e descrições
+- [x] Criar seção de Kombos com destaque visual
+- [x] Adicionar seção de depoimentos/social proof (placeholder para vídeos futuros)
+- [x] Implementar animações suaves e transições
+- [x] Garantir responsividade perfeita em mobile
+- [x] Adicionar CTAs estratégicos ao longo da página
+- [x] Testar experiência visual completa
