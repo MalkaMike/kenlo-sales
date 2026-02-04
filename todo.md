@@ -642,3 +642,10 @@
 - [x] Reduzir largura mínima da tabela (900px→750px)
 - [x] Testar em resolução padrão - scroll horizontal completamente eliminado
 - [x] Validar que todo o conteúdo ainda é legível após redução
+
+
+## UX Improvements - Badges e Botões de Seleção
+- [x] Separar badge "Recomendado" (fixo, baseado em lógica) do badge "Selecionado" (escolha do usuário)
+- [x] Badge "Recomendado" deve permanecer fixo na coluna recomendada mesmo quando usuário seleciona outra
+- [x] Mover botões de seleção para logo após a linha de cabeçalho com badges de desconto
+- [x] Renomear texto dos botões de seleção para algo mais curto (ex: "Selecionar" em vez de "Selecionar Imob Start")
