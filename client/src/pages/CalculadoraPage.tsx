@@ -1347,43 +1347,7 @@ export default function CalculadoraPage() {
                         );
                       })()}
 
-                      {/* Assinaturas */}
-                      {addons.assinatura && (() => {
-                        const included = 20;
-                        let totalSignatures = 0;
-                        if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
-                        else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
-                        else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
-                        const additional = Math.max(0, totalSignatures - included);
-                        const totalCost = (() => {
-                          const tier1 = Math.min(additional, 20);
-                          const tier2 = Math.min(Math.max(0, additional - 20), 20);
-                          const tier3 = Math.max(0, additional - 40);
-                          return (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
-                        })();
-                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
-                        return (
-                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium text-slate-900">Assinaturas Digitais</span>
-                              <span className="text-xs text-gray-500 italic">
-                                Incluídas: {included} | Adicionais: {additional}
-                              </span>
-                            </div>
-                            <div className="flex flex-col items-end">
-                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
-                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
-                              </span>
-                              {additional > 0 && (
-                                <span className="text-xs text-gray-500 italic">
-                                  {formatCurrency(pricePerUnit, 2)}/assinatura
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })()}
 
                       {/* IMOB SUBTOTAL */}
                       {(product === 'imob' || product === 'both') && (() => {
@@ -1549,6 +1513,49 @@ export default function CalculadoraPage() {
                           <div className="flex justify-between items-center py-3 px-3 bg-secondary/5 rounded-md border border-secondary/10 font-semibold text-secondary my-4">
                             <span>Subtotal LOC Add-ons</span>
                             <span>{formatCurrency(locSubtotal)}</span>
+                          </div>
+                        );
+                      })()}
+
+                      {/* SHARED ADD-ONS GROUP */}
+                      <div className="mb-4 mt-6">
+                        <h3 className="text-sm font-semibold text-purple-600 mb-3 pb-2 border-b-2 border-purple-600/20">Add-ons Compartilhados (IMOB e LOC)</h3>
+                      </div>
+
+                      {/* Assinaturas */}
+                      {addons.assinatura && (() => {
+                        const included = 20;
+                        let totalSignatures = 0;
+                        if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
+                        else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
+                        else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                        const additional = Math.max(0, totalSignatures - included);
+                        const totalCost = (() => {
+                          const tier1 = Math.min(additional, 20);
+                          const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                          const tier3 = Math.max(0, additional - 40);
+                          return (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                        })();
+                        const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+
+                        return (
+                          <div className="flex justify-between items-start py-4 border-b border-gray-200">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-slate-900">Assinaturas Digitais</span>
+                              <span className="text-xs text-gray-500 italic">
+                                Incluídas: {included} | Adicionais: {additional}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
+                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                              </span>
+                              {additional > 0 && (
+                                <span className="text-xs text-gray-500 italic">
+                                  {formatCurrency(pricePerUnit, 2)}/assinatura
+                                </span>
+                              )}
+                            </div>
                           </div>
                         );
                       })()}

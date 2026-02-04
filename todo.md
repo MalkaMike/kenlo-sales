@@ -506,3 +506,8 @@
 - [x] Remover Assinatura da página Kenlo Locação (é add-on compartilhado)
 - [x] Manter apenas Contratos Adicionais, Boletos e Split na comparação Locação
 - [x] Condensar visualmente a tabela de comparação (reduzir padding, fonte menor, layout mais compacto)
+
+## Adicionar Seção de Add-ons Compartilhados
+- [x] Adicionar seção "Add-ons Compartilhados (IMOB e LOC)" na calculadora
+- [x] Incluir Assinatura Digital nesta seção
+- [x] Posicionar entre IMOB Add-ons e LOC Add-ons
