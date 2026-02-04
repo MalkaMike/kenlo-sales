@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, salespeople, Salesperson } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,60 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Salespeople authentication functions
+
+/**
+ * Get a salesperson by email for authentication
+ */
+export async function getSalespersonByEmail(email: string): Promise<Salesperson | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get salesperson: database not available");
+    return undefined;
+  }
+
+  const result = await db
+    .select()
+    .from(salespeople)
+    .where(eq(salespeople.email, email.toLowerCase()))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get a salesperson by ID
+ */
+export async function getSalespersonById(id: number): Promise<Salesperson | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get salesperson: database not available");
+    return undefined;
+  }
+
+  const result = await db
+    .select()
+    .from(salespeople)
+    .where(eq(salespeople.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get all active salespeople
+ */
+export async function getAllSalespeople(): Promise<Salesperson[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get salespeople: database not available");
+    return [];
+  }
+
+  const result = await db
+    .select()
+    .from(salespeople)
+    .where(eq(salespeople.isActive, 1));
+
+  return result;
+}

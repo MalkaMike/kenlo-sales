@@ -5,7 +5,45 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
 import { saveQuote, getQuotes, getQuoteStats, deleteQuote } from "./quotes";
+import { getSalespersonByEmail, getSalespersonById, getAllSalespeople } from "./db";
 import { z } from "zod";
+import * as jose from "jose";
+
+// Fixed password for all salespeople
+const SALESPERSON_PASSWORD = "KenloLobos2026!";
+const SALESPERSON_COOKIE_NAME = "kenlo_salesperson_session";
+
+// JWT secret for salesperson sessions
+const getJwtSecret = () => new TextEncoder().encode(process.env.JWT_SECRET || "kenlo-sales-secret-key");
+
+// Calculate expiration time (end of current day)
+function getEndOfDay(): Date {
+  const now = new Date();
+  const endOfDay = new Date(now);
+  endOfDay.setHours(23, 59, 59, 999);
+  return endOfDay;
+}
+
+// Create JWT token for salesperson
+async function createSalespersonToken(salespersonId: number): Promise<string> {
+  const endOfDay = getEndOfDay();
+  const token = await new jose.SignJWT({ salespersonId })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime(endOfDay)
+    .setIssuedAt()
+    .sign(getJwtSecret());
+  return token;
+}
+
+// Verify JWT token
+async function verifySalespersonToken(token: string): Promise<number | null> {
+  try {
+    const { payload } = await jose.jwtVerify(token, getJwtSecret());
+    return payload.salespersonId as number;
+  } catch {
+    return null;
+  }
+}
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -18,6 +56,104 @@ export const appRouter = router({
       return {
         success: true,
       } as const;
+    }),
+  }),
+
+  // Salesperson authentication (separate from Manus OAuth)
+  salesperson: router({
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify password
+        if (input.password !== SALESPERSON_PASSWORD) {
+          return { success: false, error: "Senha incorreta" };
+        }
+
+        // Find salesperson by email
+        const salesperson = await getSalespersonByEmail(input.email);
+        if (!salesperson) {
+          return { success: false, error: "E-mail não encontrado" };
+        }
+
+        if (!salesperson.isActive) {
+          return { success: false, error: "Usuário inativo" };
+        }
+
+        // Create JWT token
+        const token = await createSalespersonToken(salesperson.id);
+        const endOfDay = getEndOfDay();
+
+        // Set cookie using same options as auth cookies
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(SALESPERSON_COOKIE_NAME, token, {
+          ...cookieOptions,
+          expires: endOfDay,
+        });
+
+        return {
+          success: true,
+          token, // Return token for client-side storage
+          salesperson: {
+            id: salesperson.id,
+            name: salesperson.name,
+            email: salesperson.email,
+            phone: salesperson.phone,
+          },
+        };
+      }),
+
+    logout: publicProcedure.mutation(({ ctx }) => {
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.clearCookie(SALESPERSON_COOKIE_NAME, {
+        ...cookieOptions,
+        maxAge: -1,
+      });
+      return { success: true };
+    }),
+
+    me: publicProcedure.query(async ({ ctx }) => {
+      // Try to get token from cookie first, then from Authorization header
+      let token = ctx.req.cookies?.[SALESPERSON_COOKIE_NAME];
+      
+      // Also check Authorization header (for localStorage-based auth)
+      const authHeader = ctx.req.headers.authorization;
+      if (!token && authHeader?.startsWith('Bearer ')) {
+        token = authHeader.slice(7);
+      }
+      
+      if (!token) {
+        return null;
+      }
+
+      const salespersonId = await verifySalespersonToken(token);
+      if (!salespersonId) {
+        return null;
+      }
+
+      const salesperson = await getSalespersonById(salespersonId);
+      if (!salesperson || !salesperson.isActive) {
+        return null;
+      }
+
+      return {
+        id: salesperson.id,
+        name: salesperson.name,
+        email: salesperson.email,
+        phone: salesperson.phone,
+      };
+    }),
+
+    list: publicProcedure.query(async () => {
+      const salespeople = await getAllSalespeople();
+      return salespeople.map(s => ({
+        id: s.id,
+        name: s.name,
+        email: s.email,
+        phone: s.phone,
+      }));
     }),
   }),
 

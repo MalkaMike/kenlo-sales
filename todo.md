@@ -749,3 +749,26 @@
 - [x] LocacaoPage Boletos K2: 10 → 15
 - [x] LocacaoPage Split K2: 10 → 15
 - [x] AssinaturaPage assinaturas inclusas: 20 → 15
+
+
+## Sistema de Autenticação para Vendedores (Fev 2026)
+
+### Banco de Dados
+- [x] Criar tabela de vendedores (salespeople) com nome, email, telefone
+- [x] Normalizar telefones para formato brasileiro (XX) XXXXX-XXXX
+- [x] Popular tabela com 11 vendedores da lista
+
+### Autenticação
+- [x] Login por email + senha fixa (KenloLobos2026!)
+- [x] Sessão com localStorage que expira diariamente (meia-noite)
+- [x] Redirecionar usuários não autenticados para página de login
+
+### Proteção de Páginas
+- [x] Página /calculadora (cotação) requer autenticação
+- [x] Todas as outras páginas públicas (sem login)
+- [x] Criar página de login com design consistente
+
+### PDF com Dados do Vendedor
+- [x] Remover campos manuais de nome/email/telefone do vendedor
+- [x] Injetar automaticamente dados do vendedor logado no PDF
+- [x] Exibir nome completo, email e telefone no PDF
