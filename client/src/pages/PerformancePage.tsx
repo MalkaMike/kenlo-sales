@@ -1,5 +1,6 @@
 /**
- * Performance - Página protegida para consultar performance de vendas do time
+ * Performance - Dashboard executivo para acompanhar performance de vendas
+ * Visão de CEO com métricas de Kombos, MRR, implantações e ranking de vendedores
  */
 
 import { useState, useEffect } from "react";
@@ -34,6 +35,14 @@ import {
   Trophy,
   Target,
   LogOut,
+  DollarSign,
+  Percent,
+  Trash2,
+  AlertCircle,
+  Layers,
+  Zap,
+  CreditCard,
+  PiggyBank,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +54,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as XLSX from 'xlsx';
@@ -73,6 +92,17 @@ const formatCurrency = (value: number) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
+};
+
+// Helper to format compact currency
+const formatCompactCurrency = (value: number) => {
+  if (value >= 1000000) {
+    return `R$ ${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `R$ ${(value / 1000).toFixed(0)}K`;
+  }
+  return formatCurrency(value);
 };
 
 // Helper to parse JSON safely
@@ -107,8 +137,38 @@ const frequencyNames: Record<string, string> = {
   biennial: "Bienal",
 };
 
+// Kombo display names
+const komboNames: Record<string, string> = {
+  imob_start: "Imob Start",
+  imob_pro: "Imob Pro",
+  loc_pro: "Locação Pro",
+  core_gestao: "Core Gestão",
+  elite: "Elite",
+  sem_kombo: "Sem Kombo",
+};
+
+// Add-on display names
+const addonNames: Record<string, string> = {
+  leads: "Leads",
+  inteligencia: "Inteligência",
+  assinatura: "Assinatura",
+  pay: "Pay",
+  seguros: "Seguros",
+  cash: "Cash",
+};
+
 // Colors for charts
 const CHART_COLORS = ['#e11d48', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16'];
+
+// Kombo colors
+const KOMBO_COLORS: Record<string, string> = {
+  imob_start: '#3b82f6',
+  imob_pro: '#8b5cf6',
+  loc_pro: '#10b981',
+  core_gestao: '#f59e0b',
+  elite: '#e11d48',
+  sem_kombo: '#6b7280',
+};
 
 export default function PerformancePage() {
   const [, navigate] = useLocation();
@@ -122,16 +182,25 @@ export default function PerformancePage() {
   }, [authLoading, salesperson, navigate]);
 
   const utils = trpc.useUtils();
-  const { data: quotes, isLoading, error } = trpc.quotes.list.useQuery({ limit: 500 });
-  const { data: stats } = trpc.quotes.stats.useQuery();
+  const { data: quotes, isLoading, refetch: refetchQuotes } = trpc.quotes.list.useQuery({ limit: 1000 });
+  const { data: performanceMetrics, isLoading: metricsLoading } = trpc.quotes.performance.useQuery();
   const { data: salespeople } = trpc.salesperson.list.useQuery();
+  const deleteMutation = trpc.quotes.delete.useMutation({
+    onSuccess: () => {
+      refetchQuotes();
+      utils.quotes.performance.invalidate();
+    },
+  });
 
   // Filter states
   const [filterVendor, setFilterVendor] = useState<string>("all");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");
+  const [filterKombo, setFilterKombo] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"team" | "individual">("team");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
 
   // Set default filter to current user if not master
   useEffect(() => {
@@ -145,11 +214,35 @@ export default function PerformancePage() {
     navigate("/login");
   };
 
+  const handleDeleteClick = (quoteId: number) => {
+    setQuoteToDelete(quoteId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (quoteToDelete) {
+      const result = await deleteMutation.mutateAsync({ id: quoteToDelete });
+      if (!result.success && result.error) {
+        alert(result.error);
+      }
+    }
+    setDeleteDialogOpen(false);
+    setQuoteToDelete(null);
+  };
+
   // Filter quotes
   const filteredQuotes = quotes?.filter((quote) => {
     // Filter by vendor name
     if (filterVendor && filterVendor !== "all" && quote.vendorName !== filterVendor) {
       return false;
+    }
+
+    // Filter by Kombo
+    if (filterKombo && filterKombo !== "all") {
+      const quoteKombo = quote.komboId || "sem_kombo";
+      if (quoteKombo !== filterKombo) {
+        return false;
+      }
     }
 
     // Filter by date range
@@ -172,18 +265,236 @@ export default function PerformancePage() {
     return true;
   });
 
-  const hasActiveFilters = filterVendor !== "all" || filterDateFrom || filterDateTo;
+  const hasActiveFilters = filterVendor !== "all" || filterDateFrom || filterDateTo || filterKombo !== "all";
 
   const clearFilters = () => {
     setFilterVendor("all");
     setFilterDateFrom("");
     setFilterDateTo("");
+    setFilterKombo("all");
   };
 
   // Get unique vendor names from quotes
   const vendorNames = quotes 
     ? Array.from(new Set(quotes.map(q => q.vendorName).filter(Boolean)))
     : [];
+
+  // Calculate metrics from filtered quotes
+  const calculateMetrics = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) {
+      return {
+        totalQuotes: 0,
+        mrrWithoutPostPaid: 0,
+        mrrWithPostPaid: 0,
+        implantationVolume: 0,
+        implantationValue: 0,
+        ticketMedio: 0,
+      };
+    }
+
+    let mrrWithoutPostPaid = 0;
+    let mrrWithPostPaid = 0;
+    let implantationVolume = 0;
+    let implantationValue = 0;
+
+    filteredQuotes.forEach((quote) => {
+      const totals = parseJSON(quote.totals);
+      const monthly = totals?.monthly || 0;
+      const postPaid = totals?.postPaid || 0;
+      const implantation = totals?.implantation || 0;
+
+      mrrWithoutPostPaid += monthly;
+      mrrWithPostPaid += monthly + postPaid;
+      if (implantation > 0) {
+        implantationVolume++;
+        implantationValue += implantation;
+      }
+    });
+
+    return {
+      totalQuotes: filteredQuotes.length,
+      mrrWithoutPostPaid,
+      mrrWithPostPaid,
+      implantationVolume,
+      implantationValue,
+      ticketMedio: filteredQuotes.length > 0 ? mrrWithPostPaid / filteredQuotes.length : 0,
+    };
+  };
+
+  const metrics = calculateMetrics();
+
+  // Calculate Kombo breakdown from filtered quotes
+  const calculateKomboBreakdown = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    const komboMap = new Map<string, { count: number; mrrWithoutPostPaid: number; mrrWithPostPaid: number; implantationValue: number }>();
+
+    filteredQuotes.forEach((quote) => {
+      const komboId = quote.komboId || "sem_kombo";
+      const totals = parseJSON(quote.totals);
+      const monthly = totals?.monthly || 0;
+      const postPaid = totals?.postPaid || 0;
+      const implantation = totals?.implantation || 0;
+
+      if (!komboMap.has(komboId)) {
+        komboMap.set(komboId, { count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0, implantationValue: 0 });
+      }
+      const data = komboMap.get(komboId)!;
+      data.count++;
+      data.mrrWithoutPostPaid += monthly;
+      data.mrrWithPostPaid += monthly + postPaid;
+      data.implantationValue += implantation;
+    });
+
+    return Array.from(komboMap.entries())
+      .map(([komboId, data]) => ({
+        komboId,
+        komboName: komboNames[komboId] || komboId,
+        ...data,
+      }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const komboBreakdown = calculateKomboBreakdown();
+
+  // Calculate Plan breakdown for non-Kombo quotes
+  const calculatePlanBreakdown = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    const planMap = new Map<string, { count: number; mrrWithoutPostPaid: number; mrrWithPostPaid: number }>();
+
+    filteredQuotes.forEach((quote) => {
+      const totals = parseJSON(quote.totals);
+      const monthly = totals?.monthly || 0;
+      const postPaid = totals?.postPaid || 0;
+
+      if (quote.imobPlan) {
+        const key = `IMOB ${planNames[quote.imobPlan] || quote.imobPlan}`;
+        if (!planMap.has(key)) {
+          planMap.set(key, { count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0 });
+        }
+        const data = planMap.get(key)!;
+        data.count++;
+        data.mrrWithoutPostPaid += monthly / (quote.locPlan ? 2 : 1);
+        data.mrrWithPostPaid += (monthly + postPaid) / (quote.locPlan ? 2 : 1);
+      }
+
+      if (quote.locPlan) {
+        const key = `LOC ${planNames[quote.locPlan] || quote.locPlan}`;
+        if (!planMap.has(key)) {
+          planMap.set(key, { count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0 });
+        }
+        const data = planMap.get(key)!;
+        data.count++;
+        data.mrrWithoutPostPaid += monthly / (quote.imobPlan ? 2 : 1);
+        data.mrrWithPostPaid += (monthly + postPaid) / (quote.imobPlan ? 2 : 1);
+      }
+    });
+
+    return Array.from(planMap.entries())
+      .map(([plan, data]) => ({ plan, ...data }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const planBreakdown = calculatePlanBreakdown();
+
+  // Calculate Vendor ranking
+  const calculateVendorRanking = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    const vendorMap = new Map<string, { 
+      count: number; 
+      mrrWithoutPostPaid: number; 
+      mrrWithPostPaid: number; 
+      implantationValue: number;
+      salespersonId: number | null;
+    }>();
+
+    filteredQuotes.forEach((quote) => {
+      const vendorName = quote.vendorName || "Sem vendedor";
+      const totals = parseJSON(quote.totals);
+      const monthly = totals?.monthly || 0;
+      const postPaid = totals?.postPaid || 0;
+      const implantation = totals?.implantation || 0;
+
+      if (!vendorMap.has(vendorName)) {
+        vendorMap.set(vendorName, { 
+          count: 0, 
+          mrrWithoutPostPaid: 0, 
+          mrrWithPostPaid: 0, 
+          implantationValue: 0,
+          salespersonId: quote.salespersonId,
+        });
+      }
+      const data = vendorMap.get(vendorName)!;
+      data.count++;
+      data.mrrWithoutPostPaid += monthly;
+      data.mrrWithPostPaid += monthly + postPaid;
+      data.implantationValue += implantation;
+    });
+
+    return Array.from(vendorMap.entries())
+      .map(([vendorName, data]) => ({
+        vendorName,
+        ...data,
+        ticketMedio: data.count > 0 ? data.mrrWithPostPaid / data.count : 0,
+      }))
+      .sort((a, b) => b.mrrWithPostPaid - a.mrrWithPostPaid);
+  };
+
+  const vendorRanking = calculateVendorRanking();
+
+  // Calculate Frequency breakdown
+  const calculateFrequencyBreakdown = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    const freqMap = new Map<string, number>();
+    filteredQuotes.forEach((quote) => {
+      const freq = quote.frequency || "unknown";
+      freqMap.set(freq, (freqMap.get(freq) || 0) + 1);
+    });
+
+    const total = filteredQuotes.length;
+    return Array.from(freqMap.entries())
+      .map(([frequency, count]) => ({
+        frequency,
+        name: frequencyNames[frequency] || frequency,
+        count,
+        percentage: total > 0 ? (count / total) * 100 : 0,
+      }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const frequencyBreakdown = calculateFrequencyBreakdown();
+
+  // Calculate Add-on popularity
+  const calculateAddonPopularity = () => {
+    if (!filteredQuotes || filteredQuotes.length === 0) return [];
+
+    const addonMap = new Map<string, number>();
+    filteredQuotes.forEach((quote) => {
+      const addons = parseJSON(quote.addons);
+      if (addons && typeof addons === "object") {
+        for (const [addon, enabled] of Object.entries(addons)) {
+          if (enabled) {
+            addonMap.set(addon, (addonMap.get(addon) || 0) + 1);
+          }
+        }
+      }
+    });
+
+    const total = filteredQuotes.length;
+    return Array.from(addonMap.entries())
+      .map(([addon, count]) => ({
+        addon,
+        name: addonNames[addon] || addon,
+        count,
+        percentage: total > 0 ? (count / total) * 100 : 0,
+      }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const addonPopularity = calculateAddonPopularity();
 
   const exportToExcel = () => {
     if (!filteredQuotes || filteredQuotes.length === 0) {
@@ -207,8 +518,8 @@ export default function PerformancePage() {
         "Kombo": quote.komboName || "Sem Kombo",
         "Desconto Kombo": quote.komboDiscount ? `${quote.komboDiscount}%` : "-",
         "Frequência": frequencyNames[quote.frequency] || quote.frequency,
-        "Valor Mensal": totals?.monthly ? formatCurrency(totals.monthly) : "-",
-        "Valor Anual": totals?.annual ? formatCurrency(totals.annual) : "-",
+        "MRR (sem pós-pago)": totals?.monthly ? formatCurrency(totals.monthly) : "-",
+        "MRR (com pós-pago)": totals?.monthly && totals?.postPaid !== undefined ? formatCurrency(totals.monthly + (totals.postPaid || 0)) : "-",
         "Implantação": totals?.implantation ? formatCurrency(totals.implantation) : "-",
       };
     });
@@ -224,68 +535,6 @@ export default function PerformancePage() {
     // Download file
     XLSX.writeFile(wb, filename);
   };
-
-  // Prepare chart data
-  const chartData = {
-    byVendor: [] as { name: string; count: number; value: number }[],
-    byProduct: [] as { name: string; count: number }[],
-    byTime: [] as { date: string; count: number }[],
-  };
-
-  if (filteredQuotes && filteredQuotes.length > 0) {
-    // Group by vendor
-    const vendorMap = new Map<string, { count: number; value: number }>();
-    filteredQuotes.forEach((quote) => {
-      const vendor = quote.vendorName || "Sem vendedor";
-      const totals = parseJSON(quote.totals);
-      const value = totals?.annual || 0;
-      
-      if (!vendorMap.has(vendor)) {
-        vendorMap.set(vendor, { count: 0, value: 0 });
-      }
-      const current = vendorMap.get(vendor)!;
-      current.count++;
-      current.value += value;
-    });
-    chartData.byVendor = Array.from(vendorMap.entries())
-      .map(([name, data]) => ({ name, count: data.count, value: data.value }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10); // Top 10 vendors
-
-    // Group by product
-    const productMap = new Map<string, number>();
-    filteredQuotes.forEach((quote) => {
-      const product = productNames[quote.product] || quote.product;
-      productMap.set(product, (productMap.get(product) || 0) + 1);
-    });
-    chartData.byProduct = Array.from(productMap.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count);
-
-    // Group by date (daily)
-    const dateMap = new Map<string, number>();
-    filteredQuotes.forEach((quote) => {
-      const date = format(new Date(quote.createdAt), "dd/MM", { locale: ptBR });
-      dateMap.set(date, (dateMap.get(date) || 0) + 1);
-    });
-    chartData.byTime = Array.from(dateMap.entries())
-      .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => {
-        // Sort by date
-        const [dayA, monthA] = a.date.split('/').map(Number);
-        const [dayB, monthB] = b.date.split('/').map(Number);
-        if (monthA !== monthB) return monthA - monthB;
-        return dayA - dayB;
-      })
-      .slice(-30); // Last 30 days
-  }
-
-  // Calculate totals for filtered quotes
-  const totalQuotes = filteredQuotes?.length || 0;
-  const totalValue = filteredQuotes?.reduce((sum, quote) => {
-    const totals = parseJSON(quote.totals);
-    return sum + (totals?.annual || 0);
-  }, 0) || 0;
 
   // Show loading while checking auth
   if (authLoading) {
@@ -314,13 +563,16 @@ export default function PerformancePage() {
               <h1 className="text-3xl font-bold">Performance</h1>
             </div>
             <p className="text-muted-foreground">
-              Acompanhe a performance de vendas do time
+              Dashboard executivo - Acompanhe a performance de vendas do time
             </p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Logado como</p>
               <p className="font-medium">{salesperson.name}</p>
+              {salesperson.isMaster && (
+                <Badge variant="secondary" className="mt-1">Master</Badge>
+              )}
             </div>
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
@@ -330,7 +582,7 @@ export default function PerformancePage() {
         </div>
 
         {/* View Mode Toggle */}
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
             <Button
               variant={viewMode === "team" ? "default" : "ghost"}
@@ -390,7 +642,7 @@ export default function PerformancePage() {
             Filtros
             {hasActiveFilters && (
               <Badge variant="secondary" className="ml-1">
-                {[filterVendor !== "all", filterDateFrom, filterDateTo].filter(Boolean).length}
+                {[filterVendor !== "all", filterDateFrom, filterDateTo, filterKombo !== "all"].filter(Boolean).length}
               </Badge>
             )}
           </Button>
@@ -416,7 +668,7 @@ export default function PerformancePage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label>Vendedor</Label>
                   <Select value={filterVendor} onValueChange={setFilterVendor}>
@@ -430,6 +682,24 @@ export default function PerformancePage() {
                           {name}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Kombo</Label>
+                  <Select value={filterKombo} onValueChange={setFilterKombo}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="elite">Elite</SelectItem>
+                      <SelectItem value="core_gestao">Core Gestão</SelectItem>
+                      <SelectItem value="imob_pro">Imob Pro</SelectItem>
+                      <SelectItem value="imob_start">Imob Start</SelectItem>
+                      <SelectItem value="loc_pro">Locação Pro</SelectItem>
+                      <SelectItem value="sem_kombo">Sem Kombo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -456,218 +726,356 @@ export default function PerformancePage() {
           </Card>
         )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {/* Main Metrics Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                Total de Cotações
+              <CardDescription className="flex items-center gap-2 text-xs">
+                <FileText className="w-3 h-3" />
+                Cotações
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">{totalQuotes}</div>
+              <div className="text-2xl font-bold text-primary">{metrics.totalQuotes}</div>
+              <p className="text-xs text-muted-foreground">volume</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                Valor Total (Anual)
+              <CardDescription className="flex items-center gap-2 text-xs text-blue-700 dark:text-blue-300">
+                <DollarSign className="w-3 h-3" />
+                MRR (s/ pós-pago)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">
-                {formatCurrency(totalValue)}
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                {formatCompactCurrency(metrics.mrrWithoutPostPaid)}
               </div>
+              <p className="text-xs text-blue-600 dark:text-blue-400">mensalidade fixa</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2 text-xs text-green-700 dark:text-green-300">
+                <TrendingUp className="w-3 h-3" />
+                MRR (c/ pós-pago)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+                {formatCompactCurrency(metrics.mrrWithPostPaid)}
+              </div>
+              <p className="text-xs text-green-600 dark:text-green-400">receita total</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <Target className="w-4 h-4" />
+              <CardDescription className="flex items-center gap-2 text-xs">
+                <CreditCard className="w-3 h-3" />
+                Implantações
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{metrics.implantationVolume}</div>
+              <p className="text-xs text-muted-foreground">volume</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2 text-xs">
+                <PiggyBank className="w-3 h-3" />
+                Implantações
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-600">
+                {formatCompactCurrency(metrics.implantationValue)}
+              </div>
+              <p className="text-xs text-muted-foreground">valor total</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2 text-xs">
+                <Target className="w-3 h-3" />
                 Ticket Médio
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
-                {totalQuotes > 0 ? formatCurrency(totalValue / totalQuotes) : "R$ 0"}
+              <div className="text-2xl font-bold text-purple-600">
+                {formatCompactCurrency(metrics.ticketMedio)}
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <Trophy className="w-4 h-4" />
-                Vendedores Ativos
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-purple-600">
-                {chartData.byVendor.length}
-              </div>
+              <p className="text-xs text-muted-foreground">MRR/cotação</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Charts */}
-        {filteredQuotes && filteredQuotes.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Ranking by Vendor */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
-                  Ranking de Vendedores
-                </CardTitle>
-                <CardDescription>Por número de cotações</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={chartData.byVendor} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis 
-                      dataKey="name" 
-                      type="category" 
-                      width={120}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string) => {
-                        if (name === 'count') return [value, 'Cotações'];
-                        return [formatCurrency(value), 'Valor'];
-                      }}
-                    />
-                    <Bar dataKey="count" fill="#e11d48" name="count" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Quotes Over Time */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-blue-500" />
-                  Cotações por Dia
-                </CardTitle>
-                <CardDescription>Últimos 30 dias</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData.byTime}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                    <YAxis />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="count" 
-                      stroke="#3b82f6" 
-                      strokeWidth={2}
-                      dot={{ fill: '#3b82f6' }}
-                      name="Cotações"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* By Product */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="w-5 h-5 text-green-500" />
-                  Por Produto
-                </CardTitle>
-                <CardDescription>Distribuição de cotações</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={chartData.byProduct}
-                      dataKey="count"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                    >
-                      {chartData.byProduct.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+        {/* Kombo Breakdown */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="w-5 h-5 text-primary" />
+                Vendas por Kombo
+              </CardTitle>
+              <CardDescription>Volume e valor por tipo de Kombo</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {komboBreakdown.length > 0 ? (
+                <div className="space-y-4">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={komboBreakdown}
+                        dataKey="count"
+                        nameKey="komboName"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                      >
+                        {komboBreakdown.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={KOMBO_COLORS[entry.komboId] || CHART_COLORS[index % CHART_COLORS.length]} 
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value: number) => [value, 'Cotações']} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Kombo</TableHead>
+                        <TableHead className="text-right">Qtd</TableHead>
+                        <TableHead className="text-right">MRR s/ pós</TableHead>
+                        <TableHead className="text-right">MRR c/ pós</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {komboBreakdown.map((kombo) => (
+                        <TableRow key={kombo.komboId}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: KOMBO_COLORS[kombo.komboId] || '#6b7280' }}
+                              />
+                              {komboNames[kombo.komboId] || kombo.komboId}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right font-medium">{kombo.count}</TableCell>
+                          <TableCell className="text-right text-blue-600">{formatCompactCurrency(kombo.mrrWithoutPostPaid)}</TableCell>
+                          <TableCell className="text-right text-green-600">{formatCompactCurrency(kombo.mrrWithPostPaid)}</TableCell>
+                        </TableRow>
                       ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">Nenhuma cotação encontrada</p>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* Value by Vendor */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-500" />
-                  Valor por Vendedor
-                </CardTitle>
-                <CardDescription>Valor anual total cotado</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={chartData.byVendor} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      type="number" 
-                      tickFormatter={(value) => formatCurrency(value)}
-                    />
-                    <YAxis 
-                      dataKey="name" 
-                      type="category" 
-                      width={120}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip 
-                      formatter={(value: number) => [formatCurrency(value), 'Valor']}
-                    />
-                    <Bar dataKey="value" fill="#10b981" name="Valor" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="w-5 h-5 text-secondary" />
+                Vendas por Plano
+              </CardTitle>
+              <CardDescription>Detalhamento por tipo de plano (IMOB/LOC)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {planBreakdown.length > 0 ? (
+                <div className="space-y-4">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={planBreakdown} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="plan" type="category" width={100} tick={{ fontSize: 12 }} />
+                      <Tooltip formatter={(value: number) => [value, 'Cotações']} />
+                      <Bar dataKey="count" fill="#e11d48" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Plano</TableHead>
+                        <TableHead className="text-right">Qtd</TableHead>
+                        <TableHead className="text-right">MRR s/ pós</TableHead>
+                        <TableHead className="text-right">MRR c/ pós</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {planBreakdown.map((plan) => (
+                        <TableRow key={plan.plan}>
+                          <TableCell className="font-medium">{plan.plan}</TableCell>
+                          <TableCell className="text-right">{plan.count}</TableCell>
+                          <TableCell className="text-right text-blue-600">{formatCompactCurrency(plan.mrrWithoutPostPaid)}</TableCell>
+                          <TableCell className="text-right text-green-600">{formatCompactCurrency(plan.mrrWithPostPaid)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">Nenhuma cotação encontrada</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Quotes Table */}
+        {/* Vendor Ranking */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+              Ranking de Vendedores
+            </CardTitle>
+            <CardDescription>Performance por vendedor ordenado por MRR total</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {vendorRanking.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">#</TableHead>
+                    <TableHead>Vendedor</TableHead>
+                    <TableHead className="text-right">Cotações</TableHead>
+                    <TableHead className="text-right">MRR s/ pós-pago</TableHead>
+                    <TableHead className="text-right">MRR c/ pós-pago</TableHead>
+                    <TableHead className="text-right">Implantação</TableHead>
+                    <TableHead className="text-right">Ticket Médio</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vendorRanking.map((vendor, index) => (
+                    <TableRow key={vendor.vendorName}>
+                      <TableCell>
+                        {index === 0 ? (
+                          <span className="text-2xl">🥇</span>
+                        ) : index === 1 ? (
+                          <span className="text-2xl">🥈</span>
+                        ) : index === 2 ? (
+                          <span className="text-2xl">🥉</span>
+                        ) : (
+                          <span className="text-muted-foreground">{index + 1}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">{vendor.vendorName}</TableCell>
+                      <TableCell className="text-right">{vendor.count}</TableCell>
+                      <TableCell className="text-right text-blue-600">{formatCurrency(vendor.mrrWithoutPostPaid)}</TableCell>
+                      <TableCell className="text-right text-green-600 font-medium">{formatCurrency(vendor.mrrWithPostPaid)}</TableCell>
+                      <TableCell className="text-right text-amber-600">{formatCurrency(vendor.implantationValue)}</TableCell>
+                      <TableCell className="text-right text-purple-600">{formatCurrency(vendor.ticketMedio)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">Nenhuma cotação encontrada</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Frequency and Add-ons */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-blue-500" />
+                Frequência de Pagamento
+              </CardTitle>
+              <CardDescription>Distribuição por tipo de pagamento</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {frequencyBreakdown.length > 0 ? (
+                <div className="space-y-3">
+                  {frequencyBreakdown.map((freq) => (
+                    <div key={freq.frequency} className="flex items-center gap-4">
+                      <div className="w-24 text-sm font-medium">{freq.name}</div>
+                      <div className="flex-1">
+                        <div className="h-6 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all"
+                            style={{ width: `${freq.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-16 text-right text-sm">
+                        <span className="font-medium">{freq.count}</span>
+                        <span className="text-muted-foreground ml-1">({freq.percentage.toFixed(0)}%)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">Nenhuma cotação encontrada</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-500" />
+                Add-ons Mais Populares
+              </CardTitle>
+              <CardDescription>Frequência de uso de cada add-on</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {addonPopularity.length > 0 ? (
+                <div className="space-y-3">
+                  {addonPopularity.map((addon) => (
+                    <div key={addon.addon} className="flex items-center gap-4">
+                      <div className="w-24 text-sm font-medium">{addon.name}</div>
+                      <div className="flex-1">
+                        <div className="h-6 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-secondary rounded-full transition-all"
+                            style={{ width: `${addon.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-16 text-right text-sm">
+                        <span className="font-medium">{addon.count}</span>
+                        <span className="text-muted-foreground ml-1">({addon.percentage.toFixed(0)}%)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">Nenhum add-on encontrado</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Quotes Table */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Cotações Recentes</CardTitle>
-                <CardDescription>
-                  {filteredQuotes?.length || 0} cotações encontradas
-                </CardDescription>
-              </div>
-            </div>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Cotações Recentes
+            </CardTitle>
+            <CardDescription>
+              {filteredQuotes?.length || 0} cotações encontradas
+              {!salesperson.isMaster && " (você pode apagar apenas suas próprias cotações)"}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
               </div>
-            ) : error ? (
-              <div className="text-center py-8 text-destructive">
-                Erro ao carregar cotações
-              </div>
-            ) : !filteredQuotes || filteredQuotes.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                Nenhuma cotação encontrada
-              </div>
-            ) : (
+            ) : filteredQuotes && filteredQuotes.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -675,65 +1083,65 @@ export default function PerformancePage() {
                       <TableHead>Data</TableHead>
                       <TableHead>Vendedor</TableHead>
                       <TableHead>Cliente</TableHead>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Plano</TableHead>
-                      <TableHead>Kombo</TableHead>
-                      <TableHead className="text-right">Valor Anual</TableHead>
+                      <TableHead>Kombo/Plano</TableHead>
+                      <TableHead>Frequência</TableHead>
+                      <TableHead className="text-right">MRR s/ pós</TableHead>
+                      <TableHead className="text-right">MRR c/ pós</TableHead>
+                      <TableHead className="text-right">Impl.</TableHead>
+                      <TableHead className="w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredQuotes.slice(0, 50).map((quote) => {
                       const totals = parseJSON(quote.totals);
+                      const canDelete = salesperson.isMaster || quote.salespersonId === salesperson.id;
+                      
                       return (
                         <TableRow key={quote.id}>
-                          <TableCell className="whitespace-nowrap">
-                            {format(new Date(quote.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                          <TableCell className="text-sm">
+                            {format(new Date(quote.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}
                           </TableCell>
-                          <TableCell>
-                            <span className="font-medium">{quote.vendorName || "-"}</span>
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{quote.clientName || "-"}</div>
-                              {quote.agencyName && (
-                                <div className="text-sm text-muted-foreground">{quote.agencyName}</div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="gap-1">
-                              {quote.product === "imob" && <Building2 className="w-3 h-3" />}
-                              {quote.product === "loc" && <Home className="w-3 h-3" />}
-                              {quote.product === "both" && <Package className="w-3 h-3" />}
-                              {productNames[quote.product] || quote.product}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-1">
-                              {quote.imobPlan && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Imob: {planNames[quote.imobPlan]}
-                                </Badge>
-                              )}
-                              {quote.locPlan && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Loc: {planNames[quote.locPlan]}
-                                </Badge>
-                              )}
-                            </div>
-                          </TableCell>
+                          <TableCell className="font-medium">{quote.vendorName || "-"}</TableCell>
+                          <TableCell>{quote.clientName || "-"}</TableCell>
                           <TableCell>
                             {quote.komboName ? (
-                              <Badge className="bg-primary/10 text-primary border-primary/20">
+                              <Badge variant="secondary" className="text-xs">
                                 {quote.komboName}
-                                {quote.komboDiscount && ` (-${quote.komboDiscount}%)`}
                               </Badge>
                             ) : (
-                              <span className="text-muted-foreground">-</span>
+                              <span className="text-sm text-muted-foreground">
+                                {quote.imobPlan && `IMOB ${planNames[quote.imobPlan]}`}
+                                {quote.imobPlan && quote.locPlan && " + "}
+                                {quote.locPlan && `LOC ${planNames[quote.locPlan]}`}
+                              </span>
                             )}
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {totals?.annual ? formatCurrency(totals.annual) : "-"}
+                          <TableCell>
+                            <Badge variant="outline" className="text-xs">
+                              {frequencyNames[quote.frequency] || quote.frequency}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right text-blue-600">
+                            {totals?.monthly ? formatCurrency(totals.monthly) : "-"}
+                          </TableCell>
+                          <TableCell className="text-right text-green-600 font-medium">
+                            {totals?.monthly !== undefined ? formatCurrency((totals.monthly || 0) + (totals.postPaid || 0)) : "-"}
+                          </TableCell>
+                          <TableCell className="text-right text-amber-600">
+                            {totals?.implantation ? formatCurrency(totals.implantation) : "-"}
+                          </TableCell>
+                          <TableCell>
+                            {canDelete && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => handleDeleteClick(quote.id)}
+                                disabled={deleteMutation.isPending}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </TableCell>
                         </TableRow>
                       );
@@ -741,14 +1149,45 @@ export default function PerformancePage() {
                   </TableBody>
                 </Table>
                 {filteredQuotes.length > 50 && (
-                  <div className="text-center py-4 text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground text-center mt-4">
                     Mostrando 50 de {filteredQuotes.length} cotações. Exporte para Excel para ver todas.
-                  </div>
+                  </p>
                 )}
               </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">Nenhuma cotação encontrada</p>
             )}
           </CardContent>
         </Card>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                Confirmar exclusão
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja apagar esta cotação? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteConfirm}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleteMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Trash2 className="w-4 h-4 mr-2" />
+                )}
+                Apagar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </Layout>
   );

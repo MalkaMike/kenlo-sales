@@ -43,6 +43,13 @@
       "when": 1770245787305,
       "tag": "0005_sticky_charles_xavier",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1770248386223,
+      "tag": "0006_awesome_loki",
+      "breakpoints": true
     }
   ]
 }

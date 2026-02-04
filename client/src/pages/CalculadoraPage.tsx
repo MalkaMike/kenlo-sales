@@ -2695,6 +2695,7 @@ export default function CalculadoraPage() {
                       komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
                       clientName: quoteInfo.ownerName,
                       vendorName: quoteInfo.vendorName,
+                      salespersonId: quoteInfo.salespersonId,
                       agencyName: quoteInfo.agencyName,
                       cellPhone: quoteInfo.cellPhone,
                       landlinePhone: quoteInfo.landlinePhone,

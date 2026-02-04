@@ -12,6 +12,7 @@ export interface QuoteInfo {
   vendorEmail: string;
   vendorPhone: string;
   vendorRole: string;
+  salespersonId?: number;
   agencyName: string;
   ownerName: string;
   cellPhone: string;
@@ -79,6 +80,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
       vendorEmail: salesperson?.email || "",
       vendorPhone: salesperson?.phone || "",
       vendorRole: "Executivo(a) de Vendas",
+      salespersonId: salesperson?.id,
       agencyName: agencyName.trim(),
       ownerName: ownerName.trim(),
       cellPhone: cellPhone.trim(),

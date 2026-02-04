@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
-import { saveQuote, getQuotes, getQuoteStats, deleteQuote } from "./quotes";
+import { saveQuote, getQuotes, getQuoteStats, deleteQuote, softDeleteQuote, getPerformanceMetrics } from "./quotes";
 import { getSalespersonByEmail, getSalespersonById, getAllSalespeople } from "./db";
 import { z } from "zod";
 import * as jose from "jose";
@@ -46,14 +46,32 @@ async function createSalespersonToken(salespersonId: number, isPermanent: boolea
   return jwtBuilder.sign(getJwtSecret());
 }
 
-// Verify JWT token
-async function verifySalespersonToken(token: string): Promise<number | null> {
+// Verify JWT token and return payload
+async function verifySalespersonToken(token: string): Promise<{ salespersonId: number; isMaster: boolean } | null> {
   try {
     const { payload } = await jose.jwtVerify(token, getJwtSecret());
-    return payload.salespersonId as number;
+    return {
+      salespersonId: payload.salespersonId as number,
+      isMaster: payload.isMaster as boolean || false,
+    };
   } catch {
     return null;
   }
+}
+
+// Helper to get salesperson from request context
+async function getSalespersonFromContext(ctx: any): Promise<{ id: number; isMaster: boolean } | null> {
+  let token = ctx.req.cookies?.[SALESPERSON_COOKIE_NAME];
+  const authHeader = ctx.req.headers.authorization;
+  if (!token && authHeader?.startsWith('Bearer ')) {
+    token = authHeader.slice(7);
+  }
+  if (!token) return null;
+  
+  const payload = await verifySalespersonToken(token);
+  if (!payload) return null;
+  
+  return { id: payload.salespersonId, isMaster: payload.isMaster };
 }
 
 export const appRouter = router({
@@ -162,13 +180,13 @@ export const appRouter = router({
         return null;
       }
 
-      const salespersonId = await verifySalespersonToken(token);
-      if (salespersonId === null) {
+      const payload = await verifySalespersonToken(token);
+      if (payload === null) {
         return null;
       }
 
       // Check if master account (id = -1)
-      if (salespersonId === -1) {
+      if (payload.salespersonId === -1) {
         return {
           id: -1,
           name: "Master Admin",
@@ -178,7 +196,7 @@ export const appRouter = router({
         };
       }
 
-      const salesperson = await getSalespersonById(salespersonId);
+      const salesperson = await getSalespersonById(payload.salespersonId);
       if (!salesperson || !salesperson.isActive) {
         return null;
       }
@@ -220,6 +238,7 @@ export const appRouter = router({
         shareableUrl: z.string().optional(),
         clientName: z.string().optional(),
         vendorName: z.string().optional(),
+        salespersonId: z.number().optional(),
         agencyName: z.string().optional(),
         cellPhone: z.string().optional(),
         landlinePhone: z.string().optional(),
@@ -241,6 +260,7 @@ export const appRouter = router({
           shareableUrl: input.shareableUrl,
           clientName: input.clientName,
           vendorName: input.vendorName,
+          salespersonId: input.salespersonId,
           agencyName: input.agencyName,
           cellPhone: input.cellPhone,
           landlinePhone: input.landlinePhone,
@@ -263,13 +283,38 @@ export const appRouter = router({
         return await getQuoteStats();
       }),
     
+    // Soft delete with ownership check
     delete: publicProcedure
       .input(z.object({
         id: z.number(),
       }))
-      .mutation(async ({ input }) => {
-        const success = await deleteQuote(input.id);
-        return { success };
+      .mutation(async ({ ctx, input }) => {
+        // Get current salesperson from context
+        const currentUser = await getSalespersonFromContext(ctx);
+        if (!currentUser) {
+          return { success: false, error: "Não autorizado" };
+        }
+        
+        // Soft delete with ownership check
+        const result = await softDeleteQuote(input.id, currentUser.id, currentUser.isMaster);
+        return result;
+      }),
+
+    // Performance metrics endpoint
+    performance: publicProcedure
+      .input(z.object({
+        salespersonId: z.number().optional(),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const filters = input ? {
+          salespersonId: input.salespersonId,
+          dateFrom: input.dateFrom ? new Date(input.dateFrom) : undefined,
+          dateTo: input.dateTo ? new Date(input.dateTo) : undefined,
+        } : undefined;
+        
+        return await getPerformanceMetrics(filters);
       }),
   }),
 
@@ -346,7 +391,7 @@ export const appRouter = router({
         return {
           success: true,
           pdf: pdfBuffer.toString("base64"),
-          filename: `Orcamento_Kenlo_${input.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
+          filename: `Cotacao_Kenlo_${input.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
         };
       }),
   }),

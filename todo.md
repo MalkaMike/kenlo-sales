@@ -786,3 +786,26 @@
 - [x] Mostrar performance do time inteiro por padrão
 - [x] Filtro para ver performance individual por vendedor
 - [x] Adicionar link "Performance" no rodapé do site
+
+
+## Página Performance Avançada (Fev 2026)
+
+### Métricas por Kombo
+- [x] Mostrar volume e valor de vendas por Kombo (Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite)
+- [x] Agrupamento inteligente para clientes sem Kombo (por tipo de plano: IMOB Prime/K/K2, LOC Prime/K/K2)
+
+### Métricas Financeiras
+- [x] MRR sem pós-pago (mensalidade fixa apenas)
+- [x] MRR com pós-pago (mensalidade + estimativa pós-pago)
+- [x] Volume e valor de implantações
+- [x] Todas métricas em volume (quantidade) e valor (R$)
+
+### Funcionalidades
+- [x] Vendedor pode apagar apenas suas próprias propostas (não de outros)
+- [x] Filtros por vendedor, período, Kombo
+- [x] Cards de resumo com métricas principais no topo
+
+### Outras Métricas Relevantes
+- [x] Ticket médio por vendedor
+- [x] Conversão por frequência de pagamento (Mensal/Semestral/Anual/Bienal)
+- [x] Top produtos/add-ons mais vendidos
