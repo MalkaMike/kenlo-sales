@@ -3,7 +3,8 @@
  * Streamlined tool for sales team with smart filters and dynamic questions
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ProposalExportDialog } from "@/components/ProposalExportDialog";
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
@@ -27,10 +28,11 @@ import {
   X,
   Calculator,
   Download,
-
+  Link2,
   TrendingUp,
   Key,
   Zap,
+  Copy,
 } from "lucide-react";
 
 // Types
@@ -217,6 +219,159 @@ export default function CalculadoraPage() {
   // Recommended plans
   const [imobPlan, setImobPlan] = useState<PlanTier>("k");
   const [locPlan, setLocPlan] = useState<PlanTier>("k");
+
+  // URL search params for shareable links
+  const searchString = useSearch();
+
+  /**
+   * Generate shareable URL with all current configuration
+   */
+  const generateShareableURL = useCallback((): string => {
+    const params = new URLSearchParams();
+    
+    // Product selection
+    params.set('p', product);
+    
+    // Plans
+    params.set('ip', imobPlan);
+    params.set('lp', locPlan);
+    
+    // Frequency
+    params.set('f', frequency);
+    
+    // Add-ons (compact format: 1 for enabled, 0 for disabled)
+    params.set('a', [
+      addons.leads ? '1' : '0',
+      addons.inteligencia ? '1' : '0',
+      addons.assinatura ? '1' : '0',
+      addons.pay ? '1' : '0',
+      addons.seguros ? '1' : '0',
+      addons.cash ? '1' : '0',
+    ].join(''));
+    
+    // Metrics (numeric values)
+    params.set('iu', metrics.imobUsers.toString());
+    params.set('cm', metrics.closingsPerMonth.toString());
+    params.set('lm', metrics.leadsPerMonth.toString());
+    params.set('cu', metrics.contractsUnderManagement.toString());
+    params.set('nc', metrics.newContractsPerMonth.toString());
+    
+    // Boolean metrics (compact)
+    params.set('b', [
+      metrics.usesExternalAI ? '1' : '0',
+      metrics.wantsWhatsApp ? '1' : '0',
+      metrics.imobVipSupport ? '1' : '0',
+      metrics.imobDedicatedCS ? '1' : '0',
+      metrics.locVipSupport ? '1' : '0',
+      metrics.locDedicatedCS ? '1' : '0',
+      metrics.chargesBoletoToTenant ? '1' : '0',
+      metrics.chargesSplitToOwner ? '1' : '0',
+    ].join(''));
+    
+    // Pay charge amounts
+    params.set('ba', metrics.boletoChargeAmount.toString());
+    params.set('sa', metrics.splitChargeAmount.toString());
+    
+    const baseUrl = window.location.origin + '/orcamento';
+    return `${baseUrl}?${params.toString()}`;
+  }, [product, imobPlan, locPlan, frequency, addons, metrics]);
+
+  /**
+   * Copy shareable URL to clipboard
+   */
+  const copyShareableLink = useCallback(async () => {
+    const url = generateShareableURL();
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copiado! Envie para o cliente.');
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast.success('Link copiado! Envie para o cliente.');
+    }
+  }, [generateShareableURL]);
+
+  /**
+   * Load configuration from URL parameters on mount
+   */
+  useEffect(() => {
+    if (!searchString) return;
+    
+    const params = new URLSearchParams(searchString);
+    
+    // Product selection
+    const p = params.get('p');
+    if (p && ['imob', 'loc', 'both'].includes(p)) {
+      setProduct(p as ProductSelection);
+    }
+    
+    // Plans
+    const ip = params.get('ip');
+    if (ip && ['prime', 'k', 'k2'].includes(ip)) {
+      setImobPlan(ip as PlanTier);
+    }
+    const lp = params.get('lp');
+    if (lp && ['prime', 'k', 'k2'].includes(lp)) {
+      setLocPlan(lp as PlanTier);
+    }
+    
+    // Frequency
+    const f = params.get('f');
+    if (f && ['monthly', 'semestral', 'annual', 'biennial'].includes(f)) {
+      setFrequency(f as PaymentFrequency);
+    }
+    
+    // Add-ons
+    const a = params.get('a');
+    if (a && a.length === 6) {
+      setAddons({
+        leads: a[0] === '1',
+        inteligencia: a[1] === '1',
+        assinatura: a[2] === '1',
+        pay: a[3] === '1',
+        seguros: a[4] === '1',
+        cash: a[5] === '1',
+      });
+    }
+    
+    // Numeric metrics
+    const iu = params.get('iu');
+    const cm = params.get('cm');
+    const lm = params.get('lm');
+    const cu = params.get('cu');
+    const nc = params.get('nc');
+    const ba = params.get('ba');
+    const sa = params.get('sa');
+    
+    // Boolean metrics
+    const b = params.get('b');
+    
+    setMetrics(prev => ({
+      ...prev,
+      imobUsers: iu ? parseInt(iu, 10) : prev.imobUsers,
+      closingsPerMonth: cm ? parseInt(cm, 10) : prev.closingsPerMonth,
+      leadsPerMonth: lm ? parseInt(lm, 10) : prev.leadsPerMonth,
+      contractsUnderManagement: cu ? parseInt(cu, 10) : prev.contractsUnderManagement,
+      newContractsPerMonth: nc ? parseInt(nc, 10) : prev.newContractsPerMonth,
+      boletoChargeAmount: ba ? parseFloat(ba) : prev.boletoChargeAmount,
+      splitChargeAmount: sa ? parseFloat(sa) : prev.splitChargeAmount,
+      ...(b && b.length === 8 ? {
+        usesExternalAI: b[0] === '1',
+        wantsWhatsApp: b[1] === '1',
+        imobVipSupport: b[2] === '1',
+        imobDedicatedCS: b[3] === '1',
+        locVipSupport: b[4] === '1',
+        locDedicatedCS: b[5] === '1',
+        chargesBoletoToTenant: b[6] === '1',
+        chargesSplitToOwner: b[7] === '1',
+      } : {}),
+    }));
+  }, [searchString]);
 
   // Detect active Kombo
   const detectKombo = (): KomboType => {
@@ -1826,8 +1981,14 @@ export default function CalculadoraPage() {
                     <Download className="w-4 h-4 mr-2" />
                     Exportar Proposta (PDF)
                   </Button>
-                  <Button variant="outline" size="lg" className="min-h-[50px] sm:flex-1">
-                    Compartilhar com Cliente
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="min-h-[50px] sm:flex-1"
+                    onClick={copyShareableLink}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copiar Link para Cliente
                   </Button>
                 </div>
 

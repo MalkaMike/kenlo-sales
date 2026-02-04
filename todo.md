@@ -338,3 +338,15 @@
 - [x] Incluir: Exemplos de cálculo para cada plano
 - [x] Indicar que é exclusivo para Kenlo Locação
 - [x] Adicionar CTAs para Kombos e Orçamento
+
+## URL Compartilhável para Propostas
+- [x] Criar função para codificar todos os parâmetros da proposta em URL
+- [x] Parâmetros a incluir: produto (imob/loc/both), planos (prime/k/k2), add-ons, frequência
+- [x] Parâmetros numéricos: usuários, contratos, leads, fechamentos, novos contratos
+- [x] Parâmetros de serviços premium: VIP, CS Dedicado
+- [x] Parâmetros de Pay: boleto, split, valores de cobrança
+- [x] Implementar leitura de parâmetros da URL ao carregar a página
+- [x] Pré-preencher todos os campos com valores da URL
+- [x] Adicionar botão "Copiar Link" ao lado do botão "Exportar PDF"
+- [x] Mostrar toast de confirmação quando link for copiado
+- [x] Testar fluxo completo: gerar link → abrir em nova aba → verificar valores

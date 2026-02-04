@@ -36,8 +36,9 @@ function Router() {
         <Route path="/addons/cash" component={CashPage} />
         {/* Kombos */}
         <Route path="/kombos" component={KombosPage} />
-        {/* Calculator */}
+        {/* Calculator / Orçamento */}
         <Route path="/calculadora" component={CalculadoraPage} />
+        <Route path="/orcamento" component={CalculadoraPage} />
         {/* Fallback */}
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
