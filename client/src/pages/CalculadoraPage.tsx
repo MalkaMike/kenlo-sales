@@ -426,6 +426,28 @@ export default function CalculadoraPage() {
   const activeKombo: KomboType = detectKombo();
   const komboInfo = activeKombo !== "none" ? KOMBOS[activeKombo] : null;
 
+  /**
+   * Calculate monthly reference price (month-to-month payment)
+   * Monthly is 25% MORE expensive than annual: Annual × 1.25
+   * This is shown in the "Mensal" column as the most expensive option
+   */
+  const calculateMonthlyReference = (annualPrice: number): number => {
+    const monthlyPrice = annualPrice * PAYMENT_FREQUENCY_MULTIPLIERS.monthly;
+    return roundToEndIn7(Math.round(monthlyPrice));
+  };
+
+  /**
+   * Calculate price based on payment frequency
+   * @param annualPrice - The base annual price (when paying annually)
+   * @param freq - Payment frequency (semestral, annual, biennial)
+   * @returns Monthly equivalent price for the selected frequency
+   */
+  const calculatePrice = (annualPrice: number, freq: PaymentFrequency): number => {
+    const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[freq];
+    const price = annualPrice * multiplier;
+    return roundToEndIn7(Math.round(price));
+  };
+
   // Get line items for pricing table
   const getLineItems = () => {
     const komboDiscount = komboInfo ? (1 - komboInfo.discount) : 1;
@@ -729,28 +751,6 @@ export default function CalculadoraPage() {
     if (addon === "seguros") return product === "loc" || product === "both";
     if (addon === "cash") return product === "loc" || product === "both";
     return false;
-  };
-
-  /**
-   * Calculate monthly reference price (month-to-month payment)
-   * Monthly is 25% MORE expensive than annual: Annual × 1.25
-   * This is shown in the "Mensal" column as the most expensive option
-   */
-  const calculateMonthlyReference = (annualPrice: number): number => {
-    const monthlyPrice = annualPrice * PAYMENT_FREQUENCY_MULTIPLIERS.monthly;
-    return roundToEndIn7(Math.round(monthlyPrice));
-  };
-
-  /**
-   * Calculate price based on payment frequency
-   * @param annualPrice - The base annual price (when paying annually)
-   * @param freq - Payment frequency (semestral, annual, biennial)
-   * @returns Monthly equivalent price for the selected frequency
-   */
-  const calculatePrice = (annualPrice: number, freq: PaymentFrequency): number => {
-    const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[freq];
-    const price = annualPrice * multiplier;
-    return roundToEndIn7(Math.round(price));
   };
 
   // Detect which Kombo is active and return discount percentage

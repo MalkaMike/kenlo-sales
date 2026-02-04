@@ -572,3 +572,8 @@
 - [x] Identificar referência circular ou ordem incorreta de declaração
 - [x] Corrigir ordem de declaração das funções
 - [x] Testar a calculadora para garantir que o erro foi resolvido
+
+## Corrigir Erro de Dependências de Funções na Calculadora
+- [x] Identificar todas as funções e suas dependências no CalculadoraPage.tsx
+- [x] Reorganizar funções na ordem correta: utilitárias (calculateMonthlyReference, calculatePrice, roundToEndIn7) → dados (getLineItems, detectKombo) → lógica (recommendBestKombo, calculateTotalImplementation)
+- [x] Testar calculadora para garantir que não há mais erros de inicialização
