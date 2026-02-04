@@ -67,6 +67,8 @@ export const appRouter = router({
         salesPersonName: z.string(),
         clientName: z.string(),
         productType: z.string(),
+        komboName: z.string().optional(),
+        komboDiscount: z.number().optional(),
         imobPlan: z.string().optional(),
         locPlan: z.string().optional(),
         imobUsers: z.number().optional(),
@@ -88,7 +90,7 @@ export const appRouter = router({
         return {
           success: true,
           pdf: pdfBuffer.toString("base64"),
-          filename: `proposta_${input.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
+          filename: `Orcamento_Kenlo_${input.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
         };
       }),
   }),

@@ -268,3 +268,11 @@
 ## Tooltips nos Headers dos Kombos
 - [x] Adicionar tooltips com informações detalhadas em cada header de Kombo
 - [x] Incluir: produtos incluídos, desconto, serviços premium, implantação
+
+## PDF Orçamento Profissional
+- [x] Renomear PDF para "Orçamento"
+- [x] Redesign completo com identidade visual Kenlo (rosa/magenta)
+- [x] Layout limpo e profissional (1 página)
+- [x] Incluir todas as informações da simulação organizadas
+- [x] Adicionar logo Kenlo e cabeçalho elegante
+- [x] Adicionar rodapé com informações de contato

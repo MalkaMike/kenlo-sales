@@ -1,33 +1,22 @@
-import { generateProposalPDF } from "./server/pdfGenerator.ts";
-import { writeFileSync } from "fs";
+import PDFDocument from "pdfkit";
+import fs from "fs";
 
-const testData = {
-  salesPersonName: "Maria Santos",
-  clientName: "Imobiliária Teste Ltda",
-  productType: "both",
-  imobPlan: "k2",
-  locPlan: "k2",
-  imobUsers: 18,
-  contracts: 550,
-  selectedAddons: JSON.stringify(["leads", "inteligencia", "assinatura"]),
-  paymentPlan: "annual",
-  totalMonthly: 2262,
-  totalAnnual: 27144,
-  implantationFee: 1497,
-  firstYearTotal: 28641,
-  postPaidTotal: 4107,
-  revenueFromBoletos: 5500,
-  revenueFromInsurance: 5500,
-  netGain: 4631,
-};
+const doc = new PDFDocument({ 
+  size: "A4", 
+  margin: 0,
+  bufferPages: true 
+});
 
-try {
-  console.log("Generating PDF...");
-  const pdfBuffer = await generateProposalPDF(testData);
-  console.log(`PDF generated, size: ${pdfBuffer.length} bytes`);
-  
-  writeFileSync("/home/ubuntu/test-proposal.pdf", pdfBuffer);
-  console.log("PDF saved to /home/ubuntu/test-proposal.pdf");
-} catch (error) {
-  console.error("Error generating PDF:", error);
-}
+const chunks = [];
+doc.on("data", (chunk) => chunks.push(chunk));
+doc.on("end", () => {
+  const buffer = Buffer.concat(chunks);
+  fs.writeFileSync("/home/ubuntu/test-output.pdf", buffer);
+  console.log("PDF generated successfully! Size:", buffer.length);
+});
+
+// Simple test
+doc.rect(0, 0, 595, 140).fill("#F82E52");
+doc.fontSize(32).fillColor("#ffffff").text("kenlo.", 50, 45);
+doc.fontSize(14).fillColor("#ffffff").text("ORÇAMENTO COMERCIAL", 50, 90);
+doc.end();
