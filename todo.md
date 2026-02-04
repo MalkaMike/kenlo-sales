@@ -532,3 +532,9 @@
 - [x] Mover subtotais de Add-ons Compartilhados para o header da seção
 - [x] Remover repetição de "(IMOB)" e "(LOC)" dos nomes dos add-ons (já está claro pela seção)
 - [x] Manter Total Pós-pago no final
+
+## Melhorar Contraste das Cores dos Headers de Subtotais
+- [x] Aumentar intensidade da cor azul do header "IMOB Add-ons" para melhor visibilidade
+- [x] Aumentar intensidade da cor rosa do header "LOC Add-ons" para melhor visibilidade
+- [x] Aumentar intensidade da cor roxa do header "Add-ons Compartilhados" para melhor visibilidade
+- [x] Validar visualmente que as cores têm contraste adequado com o fundo branco

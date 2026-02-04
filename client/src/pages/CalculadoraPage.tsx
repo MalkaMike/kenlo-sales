@@ -1318,9 +1318,9 @@ export default function CalculadoraPage() {
                         
                         return (
                           <div className="mb-4">
-                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-primary/20">
-                              <h3 className="text-sm font-semibold text-primary">IMOB Add-ons</h3>
-                              <span className="text-sm font-bold text-primary">{formatCurrency(imobSubtotal)}</span>
+                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-blue-600/30">
+                              <h3 className="text-sm font-semibold text-blue-700">IMOB Add-ons</h3>
+                              <span className="text-sm font-bold text-blue-700">{formatCurrency(imobSubtotal)}</span>
                             </div>
                           </div>
                         );
@@ -1443,9 +1443,9 @@ export default function CalculadoraPage() {
                         
                         return (
                           <div className="mb-4 mt-6">
-                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-secondary/20">
-                              <h3 className="text-sm font-semibold text-secondary">LOC Add-ons</h3>
-                              <span className="text-sm font-bold text-secondary">{formatCurrency(locSubtotal)}</span>
+                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-pink-600/30">
+                              <h3 className="text-sm font-semibold text-pink-700">LOC Add-ons</h3>
+                              <span className="text-sm font-bold text-pink-700">{formatCurrency(locSubtotal)}</span>
                             </div>
                           </div>
                         );
@@ -1574,9 +1574,9 @@ export default function CalculadoraPage() {
                         
                         return (
                           <div className="mb-4 mt-6">
-                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-purple-600/20">
-                              <h3 className="text-sm font-semibold text-purple-600">Add-ons Compartilhados (IMOB e LOC)</h3>
-                              <span className="text-sm font-bold text-purple-600">{formatCurrency(sharedSubtotal)}</span>
+                            <div className="flex justify-between items-center mb-3 pb-2 border-b-2 border-purple-600/30">
+                              <h3 className="text-sm font-semibold text-purple-700">Add-ons Compartilhados (IMOB e LOC)</h3>
+                              <span className="text-sm font-bold text-purple-700">{formatCurrency(sharedSubtotal)}</span>
                             </div>
                           </div>
                         );
