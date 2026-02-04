@@ -231,3 +231,6 @@
 - [x] Centralizar cards acima da tabela
 - [x] Usar visual de cards com borda arredondada, card selecionado com fundo rosa claro e borda rosa
 - [x] Espalhar cards uniformemente na largura da tabela
+
+## Mudança de conceito de frequência
+- [x] Mudar Anual para ser a referência (0%), Mensal (+25%), Semestral (+10%), Bienal (-10%)

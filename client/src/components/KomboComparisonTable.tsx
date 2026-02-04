@@ -47,11 +47,12 @@ type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao
 type ViewMode = "monthly" | "semestral" | "annual" | "biennial";
 
 // Frequency options for the selector
+// Anual is the reference (0%), others are relative to annual
 const FREQUENCY_OPTIONS: { id: ViewMode; label: string; discount: string }[] = [
-  { id: "monthly", label: "Mensal", discount: "0% - Referência" },
-  { id: "semestral", label: "Semestral", discount: "-15%" },
-  { id: "annual", label: "Anual", discount: "-20%" },
-  { id: "biennial", label: "Bienal", discount: "-25%" },
+  { id: "monthly", label: "Mensal", discount: "+25%" },
+  { id: "semestral", label: "Semestral", discount: "+10%" },
+  { id: "annual", label: "Anual", discount: "0% - Referência" },
+  { id: "biennial", label: "Bienal", discount: "-10%" },
 ];
 
 interface KomboColumnData {
@@ -572,6 +573,7 @@ const createUnavailableColumn = (
 // ============================================================================
 
 export function KomboComparisonTable(props: KomboComparisonProps) {
+  // Default to annual as reference (0%)
   const [viewMode, setViewMode] = useState<ViewMode>("annual");
 
   // Determine recommended Kombo
@@ -737,6 +739,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     className={
                       row.isHeader || row.isHeaderWithValue
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
+                        : row.isTotal
+                        ? "bg-gray-100/70 border-b border-gray-200"
                         : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
