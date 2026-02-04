@@ -1425,7 +1425,16 @@ export default function CalculadoraPage() {
                 </Card>
                 </div>
 
-                {/* SECTION 6: THE KENLO EFFECT */}
+                {/* SECTION 6: THE KENLO EFFECT - Only show when there are revenues */}
+                {(() => {
+                  // Calculate if there are any revenues
+                  const hasPayRevenue = addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both');
+                  const hasSegurosRevenue = addons.seguros && (product === 'loc' || product === 'both');
+                  const hasAnyRevenue = hasPayRevenue || hasSegurosRevenue;
+                  
+                  if (!hasAnyRevenue) return null;
+                  
+                  return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
                     6. The Kenlo Effect
@@ -1744,6 +1753,8 @@ export default function CalculadoraPage() {
                     </CardContent>
                   </Card>
                 </div>
+                  );
+                })()}
 
                 {/* Sticky Bottom Summary Bar - Kenlo Brand Colors */}
                 <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700">

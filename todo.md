@@ -261,3 +261,6 @@
 - [x] Core Gestão: INCLUI VIP + CS Dedicado
 - [x] Elite: INCLUI VIP + CS Dedicado
 - [x] Triple check: revisar todos os cálculos e regras
+
+## Kenlo Effect - Visibilidade Condicional
+- [x] Esconder seção Kenlo Effect quando não houver receitas (Pay, Seguros, etc.)
