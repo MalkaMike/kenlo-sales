@@ -1428,8 +1428,10 @@ export default function CalculadoraPage() {
                 {/* SECTION 6: THE KENLO EFFECT - Only show when there are revenues */}
                 {(() => {
                   // Calculate if there are any revenues
-                  const hasPayRevenue = addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both');
-                  const hasSegurosRevenue = addons.seguros && (product === 'loc' || product === 'both');
+                  // Use local variable to avoid TypeScript narrowing issues
+                  const currentProduct = product;
+                  const hasPayRevenue = addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (currentProduct === 'loc' || currentProduct === 'both');
+                  const hasSegurosRevenue = addons.seguros && (currentProduct === 'loc' || currentProduct === 'both');
                   const hasAnyRevenue = hasPayRevenue || hasSegurosRevenue;
                   
                   if (!hasAnyRevenue) return null;

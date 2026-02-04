@@ -769,8 +769,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr className="border-b-2 border-gray-200">
                   <th className="text-left py-4 px-4 w-[180px]"></th>
                   {columns.map((col) => {
-                    const komboKey = col.id as keyof typeof KOMBO_DEFINITIONS;
-                    const tooltipData = komboKey !== "none" ? KOMBO_DEFINITIONS[komboKey]?.tooltipInfo : null;
+                    // Get tooltip data only for valid kombo keys (not "none")
+                    const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
+                      ? KOMBO_DEFINITIONS[col.id as Exclude<KomboId, "none">]?.tooltipInfo
+                      : null;
                     
                     return (
                       <th

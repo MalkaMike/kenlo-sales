@@ -330,3 +330,11 @@
 - [x] Renomear "Monte seu plano" para "Orçamento" no menu
 - [x] Renomear "Calculadora" para "Orçamento" em todo o site
 - [x] Atualizar todos os CTAs e links que mencionam "calculadora" ou "monte seu plano"
+
+## Página Kenlo Pay
+- [x] Criar página com tabela de preços detalhada
+- [x] Incluir: Preços por Boleto (Prime R$4, K faixas, K2 faixas)
+- [x] Incluir: Preços por Split (Prime R$4, K faixas, K2 faixas)
+- [x] Incluir: Exemplos de cálculo para cada plano
+- [x] Indicar que é exclusivo para Kenlo Locação
+- [x] Adicionar CTAs para Kombos e Orçamento
