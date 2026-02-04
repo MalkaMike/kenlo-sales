@@ -626,3 +626,12 @@
 - [x] Botões de ação aparecem após a seção "The Kenlo Effect" com mensagem de confirmação verde
 - [x] Permitir trocar seleção clicando em outra coluna (remove destaque da anterior)
 - [x] Testar fluxo completo: configurar → selecionar coluna → ver destaque + badge → botões aparecem → gerar PDF/URL
+
+## Correção de Scroll Horizontal na Tabela de Kombos
+- [x] Investigar por que a tabela está causando scroll horizontal (largura das colunas aumentada?)
+- [x] Reverter para largura original que funcionava sem scroll
+- [x] Reduzir largura da primeira coluna: 180px → 140px (-40px)
+- [x] Reduzir largura das colunas de Kombos: 130px → 110px (-20px cada)
+- [x] Reduzir padding horizontal: px-3 → px-2
+- [x] Testar em tela padrão - tabela agora cabe perfeitamente sem scroll
+- [x] Garantir que todas as 6 colunas cabem na tela sem scroll

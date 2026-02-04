@@ -792,7 +792,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             <table className="w-full text-sm border-collapse min-w-[900px]">
               <thead>
                 <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-4 px-4 w-[180px]"></th>
+                  <th className="text-left py-4 px-3 w-[140px]"></th>
                   {columns.map((col) => {
                     // Get tooltip data only for valid kombo keys (not "none")
                     const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
@@ -803,7 +803,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <th
                         key={col.id}
                         onClick={() => setSelectedKombo(col.id)}
-                        className={`text-center py-4 px-3 min-w-[130px] cursor-pointer hover:bg-gray-50 transition-all ${
+                        className={`text-center py-4 px-2 min-w-[110px] cursor-pointer hover:bg-gray-50 transition-all ${
                           selectedPlan === col.id
                             ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
                             : col.isRecommended
@@ -906,7 +906,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr>
                   <td className="py-4"></td>
                   {columns.map((col) => (
-                    <td key={`select-${col.id}`} className={`text-center py-4 px-3 transition-all ${
+                    <td key={`select-${col.id}`} className={`text-center py-4 px-2 transition-all ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
                         : col.isRecommended
