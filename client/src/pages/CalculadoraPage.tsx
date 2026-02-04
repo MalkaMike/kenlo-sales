@@ -427,6 +427,79 @@ export default function CalculadoraPage() {
   const komboInfo = activeKombo !== "none" ? KOMBOS[activeKombo] : null;
 
   /**
+   * Recommend best Kombo based on cost-benefit analysis
+   * Returns the Kombo that offers the best savings compared to no Kombo
+   */
+  const recommendBestKombo = (): { kombo: KomboType; savings: number; message: string } | null => {
+    // If already in a Kombo, no recommendation needed
+    if (activeKombo !== "none") return null;
+
+    const currentActiveAddons = Object.entries(addons)
+      .filter(([_, enabled]) => enabled)
+      .map(([name, _]) => name as keyof typeof addons);
+
+    // Calculate current cost without Kombo
+    const currentCost = getLineItems().reduce((sum, item) => sum + item.priceSemKombo, 0);
+
+    let bestKombo: KomboType | null = null;
+    let bestSavings = 0;
+    let bestMessage = "";
+
+    // Check each Kombo for potential savings
+    Object.entries(KOMBOS).forEach(([komboKey, kombo]) => {
+      const komboType = komboKey as KomboType;
+      
+      // Skip if product doesn't match
+      if (!kombo.requiredProducts.includes(product)) return;
+
+      // Calculate missing add-ons
+      const missingAddons = kombo.requiredAddons.filter(
+        addon => !currentActiveAddons.includes(addon as keyof typeof addons)
+      );
+
+      // Skip if has forbidden add-ons
+      if ('forbiddenAddons' in kombo && kombo.forbiddenAddons?.some((addon: string) => currentActiveAddons.includes(addon as keyof typeof addons))) return;
+
+      // Calculate cost with this Kombo (including missing add-ons)
+      const komboDiscount = 1 - kombo.discount;
+      let projectedCost = currentCost * komboDiscount;
+
+      // Add cost of missing add-ons (with Kombo discount)
+      missingAddons.forEach(addon => {
+        if (addon === "leads") projectedCost += 97 * komboDiscount;
+        if (addon === "inteligencia") projectedCost += 197 * komboDiscount;
+        if (addon === "assinatura") projectedCost += 0; // Pos-pago
+        if (addon === "pay") projectedCost += 0; // Pos-pago
+      });
+
+      const savings = currentCost - projectedCost;
+
+      // Only recommend if savings > R$50/month
+      if (savings > 50 && savings > bestSavings) {
+        bestKombo = komboType;
+        bestSavings = savings;
+        
+        if (missingAddons.length === 0) {
+          bestMessage = `Ative o ${kombo.name} e economize R$${Math.round(bestSavings)}/mês!`;
+        } else {
+          const addonNames = missingAddons.map(a => {
+            if (a === "leads") return "Leads";
+            if (a === "inteligencia") return "Inteligência";
+            if (a === "assinatura") return "Assinatura";
+            if (a === "pay") return "Pay";
+            return a;
+          }).join(", ");
+          bestMessage = `Adicione ${addonNames} e ative o ${kombo.name} para economizar R$${Math.round(bestSavings)}/mês!`;
+        }
+      }
+    });
+
+    return bestKombo ? { kombo: bestKombo, savings: bestSavings, message: bestMessage } : null;
+  };
+
+  const komboRecommendation = recommendBestKombo();
+
+  /**
    * Calculate total monthly cost for IMOB plan (mensalidade + usuários adicionais)
    * Returns the cheapest plan considering the number of users
    */
@@ -2068,10 +2141,31 @@ export default function CalculadoraPage() {
               )}
             </div>
                       ) : (
-                        <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
-                          {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
-                          {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
-                          {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
+                        <div className="flex items-center gap-2">
+                          <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
+                            {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                            {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                            {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
+                          </div>
+                          <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                            ✓ Recomendado
+                            {product === "imob" && metrics.imobUsers > 0 && (
+                              <span className="ml-1">para {metrics.imobUsers} usuários</span>
+                            )}
+                            {product === "loc" && metrics.contractsUnderManagement > 0 && (
+                              <span className="ml-1">para {metrics.contractsUnderManagement} contratos</span>
+                            )}
+                            {product === "both" && (
+                              <span className="ml-1">para seu volume</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Kombo Recommendation Banner */}
+                      {komboRecommendation && (
+                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+                          💡 {komboRecommendation.message}
                         </div>
                       )}
 

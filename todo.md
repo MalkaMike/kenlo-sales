@@ -518,3 +518,10 @@
 - [x] Aplicar para IMOB: Prime (até 7), K (8-15), K2 (16+)
 - [x] Aplicar para LOC: Prime (até 200), K (201-500), K2 (501+)
 - [x] Testar cenário: 20 usuários IMOB deve recomendar K2
+
+## Indicador Visual de Plano Recomendado e Recomendação de Kombos
+- [x] Adicionar badge "Plano Recomendado" no plano selecionado automaticamente
+- [x] Mostrar explicação de por que o plano foi recomendado (ex: "Melhor para 20 usuários")
+- [x] Implementar lógica de cálculo de custo total para cada Kombo disponível
+- [x] Recomendar automaticamente o Kombo com melhor custo-benefício
+- [x] Mostrar sugestão de Kombo na interface quando aplicável
