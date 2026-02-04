@@ -602,8 +602,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "premium", label: "Serviços Premium", isHeader: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
-    { key: "implementation", label: "Implantação" },
     { key: "totalMonthly", label: "Total Mensal", isTotal: true },
+    { key: "implementation", label: "Implantação", isHeaderWithValue: true },
     { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
   ];
 
@@ -735,16 +735,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   <tr
                     key={row.key}
                     className={
-                      row.isHeader
+                      row.isHeader || row.isHeaderWithValue
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
-                        : row.isTotal
-                        ? "bg-gray-50/50"
                         : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
                     <td
                       className={`py-3 px-4 ${row.indent ? "pl-8" : ""} ${
-                        row.isHeader 
+                        row.isHeader || row.isHeaderWithValue
                           ? "font-semibold text-gray-700 text-sm" 
                           : row.isTotal
                           ? "font-bold text-gray-700"
@@ -761,7 +759,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             ? "bg-green-50 border-l-2 border-r-2 border-green-500"
                             : ""
                         } ${
-                          row.isTotal
+                          row.isTotal || row.isHeaderWithValue
                             ? "font-bold text-gray-700"
                             : "text-gray-700"
                         }`}
