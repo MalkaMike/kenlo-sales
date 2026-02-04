@@ -448,6 +448,17 @@ export default function CalculadoraPage() {
     return roundToEndIn7(Math.round(price));
   };
 
+  // Check if add-on is available based on product selection
+  const isAddonAvailable = (addon: keyof typeof addons) => {
+    if (addon === "leads") return product === "imob" || product === "both";
+    if (addon === "inteligencia") return true; // Available for both
+    if (addon === "assinatura") return true; // Available for both
+    if (addon === "pay") return product === "loc" || product === "both";
+    if (addon === "seguros") return product === "loc" || product === "both";
+    if (addon === "cash") return product === "loc" || product === "both";
+    return false;
+  };
+
   // Get line items for pricing table
   const getLineItems = () => {
     const komboDiscount = komboInfo ? (1 - komboInfo.discount) : 1;
@@ -770,17 +781,6 @@ export default function CalculadoraPage() {
       setMetrics({ ...metrics, wantsWhatsApp: false });
     }
   }, [addons.leads, metrics.usesExternalAI]);
-
-  // Check if add-on is available based on product selection
-  const isAddonAvailable = (addon: keyof typeof addons) => {
-    if (addon === "leads") return product === "imob" || product === "both";
-    if (addon === "inteligencia") return true; // Available for both
-    if (addon === "assinatura") return true; // Available for both
-    if (addon === "pay") return product === "loc" || product === "both";
-    if (addon === "seguros") return product === "loc" || product === "both";
-    if (addon === "cash") return product === "loc" || product === "both";
-    return false;
-  };
 
   // Detect which Kombo is active and return discount percentage
   // Old detectKombo function removed - now using new Kombo system above
