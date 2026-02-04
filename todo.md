@@ -371,3 +371,13 @@
 - [x] Remover link "Histórico" do menu desktop
 - [x] Remover link "Histórico" do menu mobile
 - [x] Manter rota /historico funcionando (URL oculta para vendedores)
+
+## Otimização Mobile-Friendly
+- [ ] Homepage: Ajustar hero, stats, cards de produtos e add-ons para mobile
+- [ ] Página Imob: Tabelas de preços responsivas, cards empilhados em mobile
+- [ ] Página Locação: Tabelas de preços responsivas, cards empilhados em mobile
+- [ ] Páginas Add-ons (6): Tabelas responsivas, layout adaptado para telas pequenas
+- [ ] Página Kombos: Tabela comparativa com scroll horizontal ou cards em mobile
+- [ ] Calculadora: Formulários e tabela de comparação adaptados para mobile
+- [ ] Histórico: Tabela responsiva com scroll ou cards em mobile
+- [ ] Testar todas as páginas em viewport 375px (iPhone SE)

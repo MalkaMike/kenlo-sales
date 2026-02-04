@@ -735,7 +735,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       <Card>
         <CardContent className="p-4">
           {/* Frequency Selector - 4 Cards */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-6">
             {FREQUENCY_OPTIONS.map((option) => (
               <button
                 key={option.id}
@@ -763,8 +763,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </div>
 
           {/* Comparison Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+            <table className="w-full text-sm border-collapse min-w-[900px]">
               <thead>
                 <tr className="border-b-2 border-gray-200">
                   <th className="text-left py-4 px-4 w-[180px]"></th>

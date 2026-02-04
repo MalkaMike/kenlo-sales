@@ -117,8 +117,8 @@ export default function HistoricoPage() {
           </div>
         )}
 
-        {/* Quotes Table */}
-        <Card>
+        {/* Quotes Table - Desktop */}
+        <Card className="hidden md:block">
           <CardHeader>
             <CardTitle>Orçamentos Recentes</CardTitle>
             <CardDescription>
@@ -266,6 +266,124 @@ export default function HistoricoPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Quotes Cards - Mobile */}
+        <div className="md:hidden space-y-4">
+          <h2 className="text-lg font-semibold">Orçamentos Recentes</h2>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-muted-foreground">
+              Erro ao carregar orçamentos. Tente novamente.
+            </div>
+          ) : !quotes || quotes.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-12 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhum orçamento gerado ainda.</p>
+                <p className="text-sm mt-2">
+                  Copie um link ou exporte um PDF na calculadora para começar.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            quotes.map((quote) => {
+              const totals = parseJSON(quote.totals);
+              return (
+                <Card key={quote.id}>
+                  <CardContent className="p-4 space-y-3">
+                    {/* Header row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        {format(new Date(quote.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}
+                      </div>
+                      {quote.action === "link_copied" ? (
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                          <Link2 className="w-3 h-3 mr-1" />
+                          Link
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          <Download className="w-3 h-3 mr-1" />
+                          PDF
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Product and Plan */}
+                    <div className="flex items-center gap-2">
+                      {quote.product === "imob" && <Building2 className="w-5 h-5 text-primary" />}
+                      {quote.product === "loc" && <Home className="w-5 h-5 text-secondary" />}
+                      {quote.product === "both" && <Package className="w-5 h-5 text-purple-600" />}
+                      <span className="font-medium">{productNames[quote.product] || quote.product}</span>
+                      <div className="flex gap-1 ml-auto">
+                        {quote.imobPlan && (
+                          <Badge variant="secondary" className="text-xs">
+                            {planNames[quote.imobPlan]}
+                          </Badge>
+                        )}
+                        {quote.locPlan && (
+                          <Badge variant="secondary" className="text-xs">
+                            {planNames[quote.locPlan]}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Kombo */}
+                    {quote.komboName && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <TrendingUp className="w-4 h-4 text-green-600" />
+                        <span>{quote.komboName}</span>
+                        {quote.komboDiscount && quote.komboDiscount > 0 && (
+                          <Badge className="bg-green-100 text-green-700 text-xs">
+                            -{quote.komboDiscount}%
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Values */}
+                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/50">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Mensal</p>
+                        <p className="font-semibold">{totals?.monthly ? formatCurrency(totals.monthly) : "-"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Anual</p>
+                        <p className="font-semibold">{totals?.annual ? formatCurrency(totals.annual) : "-"}</p>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                      <div className="text-sm">
+                        {quote.clientName ? (
+                          <span>{quote.clientName}</span>
+                        ) : (
+                          <span className="text-muted-foreground">Sem cliente</span>
+                        )}
+                      </div>
+                      {quote.shareableUrl && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(quote.shareableUrl!, "_blank")}
+                        >
+                          <ExternalLink className="w-4 h-4 mr-1" />
+                          Abrir
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </div>
 
         {/* Add-ons Legend */}
         <Card className="mt-6">
