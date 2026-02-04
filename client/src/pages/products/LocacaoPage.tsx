@@ -39,12 +39,12 @@ const pricingData = {
         {
           feature: "Boletos incluídos",
           type: "text",
-          values: ["2", "5", "10"],
+          values: ["2", "5", "15"],
         },
         {
           feature: "Split incluídos",
           type: "text",
-          values: ["2", "5", "10"],
+          values: ["2", "5", "15"],
         },
       ],
     },

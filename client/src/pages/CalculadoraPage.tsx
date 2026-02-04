@@ -1706,7 +1706,7 @@ export default function CalculadoraPage() {
                             const tier1 = Math.min(additional, 20);
                             const tier2 = Math.min(Math.max(0, additional - 20), 20);
                             const tier3 = Math.max(0, additional - 40);
-                            sharedSubtotal += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                            sharedSubtotal += (tier1 * 1.8) + (tier2 * 1.7) + (tier3 * 1.5);
                           }
                         }
                         
@@ -1734,7 +1734,7 @@ export default function CalculadoraPage() {
                           const tier1 = Math.min(additional, 20);
                           const tier2 = Math.min(Math.max(0, additional - 20), 20);
                           const tier3 = Math.max(0, additional - 40);
-                          return (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                          return (tier1 * 1.8) + (tier2 * 1.7) + (tier3 * 1.5);
                         })();
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
@@ -1890,7 +1890,7 @@ export default function CalculadoraPage() {
                             const tier1 = Math.min(additional, 30);
                             const tier2 = Math.min(Math.max(0, additional - 30), 50);
                             const tier3 = Math.max(0, additional - 80);
-                            totalPostPaid += tier1 * 1.9 + tier2 * 1.5 + tier3 * 1.2;
+                            totalPostPaid += tier1 * 1.8 + tier2 * 1.5 + tier3 * 1.2;
                           }
                         }
                         
@@ -2116,7 +2116,7 @@ export default function CalculadoraPage() {
                                   const tier1 = Math.min(additional, 20);
                                   const tier2 = Math.min(Math.max(0, additional - 20), 20);
                                   const tier3 = Math.max(0, additional - 40);
-                                  totalPostPaid += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                                  totalPostPaid += (tier1 * 1.8) + (tier2 * 1.7) + (tier3 * 1.5);
                                 }
                               }
                               if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
@@ -2252,7 +2252,7 @@ export default function CalculadoraPage() {
                             const tier1 = Math.min(additional, 20);
                             const tier2 = Math.min(Math.max(0, additional - 20), 20);
                             const tier3 = Math.max(0, additional - 40);
-                            totalPostPaid += (tier1 * 1.9) + (tier2 * 1.7) + (tier3 * 1.5);
+                            totalPostPaid += (tier1 * 1.8) + (tier2 * 1.7) + (tier3 * 1.5);
                           }
                         }
                         if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
@@ -2554,7 +2554,7 @@ export default function CalculadoraPage() {
                     const tier1 = Math.min(additional, 30);
                     const tier2 = Math.min(Math.max(0, additional - 30), 50);
                     const tier3 = Math.max(0, additional - 80);
-                    postPaidTotal += tier1 * 1.9 + tier2 * 1.5 + tier3 * 1.2;
+                    postPaidTotal += tier1 * 1.8 + tier2 * 1.5 + tier3 * 1.2;
                   }
                 }
                 

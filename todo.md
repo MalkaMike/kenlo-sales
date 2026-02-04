@@ -742,3 +742,10 @@
 
 ## Bug Fix - Contratos Inclusos LOC (Fev 2026)
 - [x] Corrigir contratos inclusos plano K: 250 → 200 (conforme documento oficial)
+
+
+## Validação Completa de Métricas (Fev 2026)
+- [x] Assinaturas tier1: R$1,90 → R$1,80 (6 ocorrências corrigidas)
+- [x] LocacaoPage Boletos K2: 10 → 15
+- [x] LocacaoPage Split K2: 10 → 15
+- [x] AssinaturaPage assinaturas inclusas: 20 → 15

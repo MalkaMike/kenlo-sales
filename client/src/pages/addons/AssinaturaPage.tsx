@@ -27,7 +27,7 @@ const pricingData = {
         },
         {
           feature: "Assinaturas inclusas/mês",
-          value: "20 assinaturas",
+          value: "15 assinaturas",
           tooltip: undefined,
         },
       ],
