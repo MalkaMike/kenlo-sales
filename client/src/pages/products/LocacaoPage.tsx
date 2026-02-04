@@ -416,6 +416,80 @@ export default function LocacaoPage() {
         </div>
       </section>
 
+      {/* Plan Comparison - Add-on Impact */}
+      <section className="py-16">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Comparação de Planos</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Veja como cada plano impacta o custo dos add-ons mais populares do Kenlo Locação
+            </p>
+          </div>
+          
+          <div className="max-w-5xl mx-auto">
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+              <table className="w-full border-collapse min-w-[600px]">
+                <thead>
+                  <tr>
+                    <th className="text-left p-4 bg-muted/30 rounded-tl-lg w-[40%]">
+                      <span className="text-sm font-medium text-muted-foreground">Add-on / Recurso</span>
+                    </th>
+                    <th className="p-4 text-center bg-muted/30 text-secondary font-semibold">Prime</th>
+                    <th className="p-4 text-center bg-muted/30 text-blue-600 font-semibold">K</th>
+                    <th className="p-4 text-center bg-muted/30 rounded-tr-lg text-purple-600 font-semibold">K2</th>
+                    <th className="p-4 text-center bg-muted/30 text-green-600 font-semibold">Economia (K2)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Contratos Adicionais */}
+                  <tr>
+                    <td className="p-4 border-b border-border/40 font-medium">Contratos Adicionais</td>
+                    <td className="p-4 border-b border-border/40 text-center">R$ 3,00/contrato</td>
+                    <td className="p-4 border-b border-border/40 text-center">1-250: R$ 3,00<br/>251+: R$ 2,50</td>
+                    <td className="p-4 border-b border-border/40 text-center font-semibold">1-250: R$ 3,00<br/>251-500: R$ 2,50<br/>501+: R$ 2,00</td>
+                    <td className="p-4 border-b border-border/40 text-center text-green-600 font-semibold">Até 33%</td>
+                  </tr>
+                  
+                  {/* Assinatura Digital */}
+                  <tr>
+                    <td className="p-4 border-b border-border/40 font-medium">Assinatura Digital</td>
+                    <td className="p-4 border-b border-border/40 text-center">R$ 1,90 por assinatura</td>
+                    <td className="p-4 border-b border-border/40 text-center">R$ 1,90 por assinatura</td>
+                    <td className="p-4 border-b border-border/40 text-center font-semibold">R$ 1,90 por assinatura</td>
+                    <td className="p-4 border-b border-border/40 text-center text-gray-400">—</td>
+                  </tr>
+                  
+                  {/* Boletos */}
+                  <tr>
+                    <td className="p-4 border-b border-border/40 font-medium">Custo Boletos (Pay)</td>
+                    <td className="p-4 border-b border-border/40 text-center">R$ 4,00/boleto</td>
+                    <td className="p-4 border-b border-border/40 text-center">1-250: R$ 4,00<br/>251+: R$ 3,50</td>
+                    <td className="p-4 border-b border-border/40 text-center font-semibold">1-250: R$ 4,00<br/>251-500: R$ 3,50<br/>501+: R$ 3,00</td>
+                    <td className="p-4 border-b border-border/40 text-center text-green-600 font-semibold">Até 25%</td>
+                  </tr>
+                  
+                  {/* Split */}
+                  <tr>
+                    <td className="p-4 border-b border-border/40 font-medium">Custo Split (Pay)</td>
+                    <td className="p-4 border-b border-border/40 text-center">R$ 4,00/split</td>
+                    <td className="p-4 border-b border-border/40 text-center">1-250: R$ 4,00<br/>251+: R$ 3,50</td>
+                    <td className="p-4 border-b border-border/40 text-center font-semibold">1-250: R$ 4,00<br/>251-500: R$ 3,50<br/>501+: R$ 3,00</td>
+                    <td className="p-4 border-b border-border/40 text-center text-green-600 font-semibold">Até 25%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-900">
+                <strong>Insight:</strong> Escolher um plano superior (K ou K2) reduz significativamente o custo por unidade de add-ons. 
+                Quanto mais você digitaliza, menor o impacto financeiro dos add-ons.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Add-ons CTA */}
       <section className="py-16 bg-card/30">
         <div className="container">

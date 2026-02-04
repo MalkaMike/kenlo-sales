@@ -494,3 +494,8 @@
 - [x] Criar componente de comparação lado a lado (Prime, K, K2)
 - [x] Mostrar impacto de cada plano nos custos de add-ons
 - [x] Integrar comparação na calculadora
+
+## Mover Comparação de Planos para Páginas de Produtos
+- [x] Remover comparação de planos da calculadora
+- [x] Adicionar comparação na página Kenlo Imob (Usuários Adicionais, Assinatura, Leads)
+- [x] Adicionar comparação na página Kenlo Locação (Contratos Adicionais, Assinatura, Boletos, Split)
