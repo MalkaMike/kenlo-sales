@@ -413,3 +413,13 @@
 - [x] Corrigir validação: apenas um telefone (celular OU fixo) é obrigatório, não ambos
 - [x] Transformar campo "Nome do vendedor" em dropdown com lista de vendedores
 - [x] Lista de vendedores: AMANDA DE OLIVEIRA MATOS, BRUNO RIBEIRO DA SILVA, CASSIA MOREIRA BARBOSA, EMERSON DE MORAES, IVAN KERR CODO, JAQUELINE SILVA GRANELLI, LARISSA BRANDALISE FAVI, MARINA KIYOMI YOKOMUN, YR MADEIRAS DE GASPERIN, ROBERTA PACHECO DE AZEVEDO
+
+## Melhorias na Página de Histórico
+- [x] Adicionar colunas para exibir: vendedor, imobiliária, telefones, site
+- [x] Implementar filtros por data (range de datas)
+- [x] Implementar filtro por nome do cliente
+- [x] Implementar filtro por nome do vendedor
+- [x] Adicionar procedimento tRPC para deletar orçamento
+- [x] Adicionar botão de deletar em cada linha da tabela
+- [x] Implementar modal de confirmação antes de deletar
+- [x] Atualizar lista após deletar sem recarregar a página

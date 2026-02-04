@@ -2,6 +2,7 @@
  * Histórico de Orçamentos - Página para consultar todos os orçamentos gerados
  */
 
+import { useState } from "react";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +26,31 @@ import {
   TrendingUp,
   Loader2,
   ExternalLink,
+  Trash2,
+  Filter,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
 
 // Helper to format currency
 const formatCurrency = (value: number) => {
@@ -72,9 +94,100 @@ const frequencyNames: Record<string, string> = {
   biennial: "Bienal",
 };
 
+// Vendor names for filter
+const VENDOR_NAMES = [
+  "AMANDA DE OLIVEIRA MATOS",
+  "BRUNO RIBEIRO DA SILVA",
+  "CASSIA MOREIRA BARBOSA",
+  "EMERSON DE MORAES",
+  "IVAN KERR CODO",
+  "JAQUELINE SILVA GRANELLI",
+  "LARISSA BRANDALISE FAVI",
+  "MARINA KIYOMI YOKOMUN",
+  "YR MADEIRAS DE GASPERIN",
+  "ROBERTA PACHECO DE AZEVEDO",
+];
+
 export default function HistoricoPage() {
+
+  const utils = trpc.useUtils();
   const { data: quotes, isLoading, error } = trpc.quotes.list.useQuery({ limit: 100 });
   const { data: stats } = trpc.quotes.stats.useQuery();
+  const deleteMutation = trpc.quotes.delete.useMutation({
+    onSuccess: () => {
+      console.log("Orçamento deletado com sucesso");
+      utils.quotes.list.invalidate();
+      utils.quotes.stats.invalidate();
+    },
+    onError: () => {
+      console.error("Erro ao deletar orçamento");
+    },
+  });
+
+  // Filter states
+  const [filterClient, setFilterClient] = useState("");
+  const [filterVendor, setFilterVendor] = useState("");
+  const [filterDateFrom, setFilterDateFrom] = useState("");
+  const [filterDateTo, setFilterDateTo] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Delete confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setQuoteToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (quoteToDelete !== null) {
+      deleteMutation.mutate({ id: quoteToDelete });
+      setDeleteDialogOpen(false);
+      setQuoteToDelete(null);
+    }
+  };
+
+  // Filter quotes
+  const filteredQuotes = quotes?.filter((quote) => {
+    // Filter by client name
+    if (filterClient && !quote.clientName?.toLowerCase().includes(filterClient.toLowerCase())) {
+      return false;
+    }
+
+    // Filter by vendor name
+    if (filterVendor && filterVendor !== "all" && quote.vendorName !== filterVendor) {
+      return false;
+    }
+
+    // Filter by date range
+    const quoteDate = new Date(quote.createdAt);
+    if (filterDateFrom) {
+      const fromDate = new Date(filterDateFrom);
+      fromDate.setHours(0, 0, 0, 0);
+      if (quoteDate < fromDate) {
+        return false;
+      }
+    }
+    if (filterDateTo) {
+      const toDate = new Date(filterDateTo);
+      toDate.setHours(23, 59, 59, 999);
+      if (quoteDate > toDate) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  const hasActiveFilters = filterClient || filterVendor || filterDateFrom || filterDateTo;
+
+  const clearFilters = () => {
+    setFilterClient("");
+    setFilterVendor("");
+    setFilterDateFrom("");
+    setFilterDateTo("");
+  };
 
   return (
     <Layout>
@@ -117,12 +230,101 @@ export default function HistoricoPage() {
           </div>
         )}
 
+        {/* Filters */}
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Filtros</CardTitle>
+                <CardDescription>
+                  Filtre os orçamentos por cliente, vendedor ou data
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                {showFilters ? "Ocultar" : "Mostrar"}
+              </Button>
+            </div>
+          </CardHeader>
+          {showFilters && (
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Client Name Filter */}
+                <div className="space-y-2">
+                  <Label htmlFor="filterClient">Nome do Cliente</Label>
+                  <Input
+                    id="filterClient"
+                    placeholder="Digite o nome..."
+                    value={filterClient}
+                    onChange={(e) => setFilterClient(e.target.value)}
+                  />
+                </div>
+
+                {/* Vendor Filter */}
+                <div className="space-y-2">
+                  <Label htmlFor="filterVendor">Vendedor</Label>
+                  <Select value={filterVendor} onValueChange={setFilterVendor}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os vendedores" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os vendedores</SelectItem>
+                      {VENDOR_NAMES.map((vendor) => (
+                        <SelectItem key={vendor} value={vendor}>
+                          {vendor}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Date From Filter */}
+                <div className="space-y-2">
+                  <Label htmlFor="filterDateFrom">Data Inicial</Label>
+                  <Input
+                    id="filterDateFrom"
+                    type="date"
+                    value={filterDateFrom}
+                    onChange={(e) => setFilterDateFrom(e.target.value)}
+                  />
+                </div>
+
+                {/* Date To Filter */}
+                <div className="space-y-2">
+                  <Label htmlFor="filterDateTo">Data Final</Label>
+                  <Input
+                    id="filterDateTo"
+                    type="date"
+                    value={filterDateTo}
+                    onChange={(e) => setFilterDateTo(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {hasActiveFilters && (
+                <div className="mt-4">
+                  <Button variant="outline" size="sm" onClick={clearFilters}>
+                    <X className="w-4 h-4 mr-2" />
+                    Limpar Filtros
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          )}
+        </Card>
+
         {/* Quotes Table - Desktop */}
         <Card className="hidden md:block">
           <CardHeader>
             <CardTitle>Orçamentos Recentes</CardTitle>
             <CardDescription>
-              Últimos 100 orçamentos gerados
+              {filteredQuotes && filteredQuotes.length > 0
+                ? `Exibindo ${filteredQuotes.length} de ${quotes?.length || 0} orçamentos`
+                : "Últimos 100 orçamentos gerados"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -134,13 +336,19 @@ export default function HistoricoPage() {
               <div className="text-center py-12 text-muted-foreground">
                 Erro ao carregar orçamentos. Tente novamente.
               </div>
-            ) : !quotes || quotes.length === 0 ? (
+            ) : !filteredQuotes || filteredQuotes.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum orçamento gerado ainda.</p>
-                <p className="text-sm mt-2">
-                  Copie um link ou exporte um PDF na calculadora para começar.
+                <p>
+                  {hasActiveFilters
+                    ? "Nenhum orçamento encontrado com os filtros aplicados."
+                    : "Nenhum orçamento gerado ainda."}
                 </p>
+                {!hasActiveFilters && (
+                  <p className="text-sm mt-2">
+                    Copie um link ou exporte um PDF na calculadora para começar.
+                  </p>
+                )}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -149,23 +357,25 @@ export default function HistoricoPage() {
                     <TableRow>
                       <TableHead>Data</TableHead>
                       <TableHead>Ação</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Vendedor</TableHead>
+                      <TableHead>Imobiliária</TableHead>
+
+                      <TableHead>Telefones</TableHead>
+                      <TableHead>Site</TableHead>
                       <TableHead>Produto</TableHead>
                       <TableHead>Plano</TableHead>
                       <TableHead>Kombo</TableHead>
                       <TableHead>Frequência</TableHead>
                       <TableHead className="text-right">Mensal</TableHead>
                       <TableHead className="text-right">Anual</TableHead>
-                      <TableHead>Cliente</TableHead>
                       <TableHead>Link</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {quotes.map((quote) => {
+                    {filteredQuotes.map((quote) => {
                       const totals = parseJSON(quote.totals);
-                      const addonsData = parseJSON(quote.addons);
-                      const enabledAddons = addonsData 
-                        ? Object.entries(addonsData).filter(([_, v]) => v).map(([k]) => k)
-                        : [];
                       
                       return (
                         <TableRow key={quote.id}>
@@ -186,6 +396,48 @@ export default function HistoricoPage() {
                                 <Download className="w-3 h-3 mr-1" />
                                 PDF
                               </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {quote.clientName ? (
+                              <span className="text-sm">{quote.clientName}</span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {quote.vendorName ? (
+                              <span className="text-sm">{quote.vendorName}</span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {quote.agencyName ? (
+                              <span className="text-sm">{quote.agencyName}</span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex flex-col gap-1 text-sm">
+                              {quote.cellPhone && (
+                                <span>📱 {quote.cellPhone}</span>
+                              )}
+                              {quote.landlinePhone && (
+                                <span>☎️ {quote.landlinePhone}</span>
+                              )}
+                              {!quote.cellPhone && !quote.landlinePhone && (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {quote.websiteUrl ? (
+                              <span className="text-sm">{quote.websiteUrl}</span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
                             )}
                           </TableCell>
                           <TableCell>
@@ -237,13 +489,6 @@ export default function HistoricoPage() {
                             {totals?.annual ? formatCurrency(totals.annual) : "-"}
                           </TableCell>
                           <TableCell>
-                            {quote.clientName ? (
-                              <span className="text-sm">{quote.clientName}</span>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
                             {quote.shareableUrl ? (
                               <Button
                                 variant="ghost"
@@ -256,6 +501,16 @@ export default function HistoricoPage() {
                             ) : (
                               <span className="text-muted-foreground">-</span>
                             )}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleDeleteClick(quote.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       );
@@ -270,6 +525,7 @@ export default function HistoricoPage() {
         {/* Quotes Cards - Mobile */}
         <div className="md:hidden space-y-4">
           <h2 className="text-lg font-semibold">Orçamentos Recentes</h2>
+          
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -278,27 +534,35 @@ export default function HistoricoPage() {
             <div className="text-center py-12 text-muted-foreground">
               Erro ao carregar orçamentos. Tente novamente.
             </div>
-          ) : !quotes || quotes.length === 0 ? (
+          ) : !filteredQuotes || filteredQuotes.length === 0 ? (
             <Card>
               <CardContent className="text-center py-12 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum orçamento gerado ainda.</p>
-                <p className="text-sm mt-2">
-                  Copie um link ou exporte um PDF na calculadora para começar.
+                <p>
+                  {hasActiveFilters
+                    ? "Nenhum orçamento encontrado com os filtros aplicados."
+                    : "Nenhum orçamento gerado ainda."}
                 </p>
+                {!hasActiveFilters && (
+                  <p className="text-sm mt-2">
+                    Copie um link ou exporte um PDF na calculadora para começar.
+                  </p>
+                )}
               </CardContent>
             </Card>
           ) : (
-            quotes.map((quote) => {
+            filteredQuotes.map((quote) => {
               const totals = parseJSON(quote.totals);
+              
               return (
                 <Card key={quote.id}>
-                  <CardContent className="p-4 space-y-3">
-                    {/* Header row */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        {format(new Date(quote.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          {format(new Date(quote.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        </span>
                       </div>
                       {quote.action === "link_copied" ? (
                         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
@@ -312,32 +576,61 @@ export default function HistoricoPage() {
                         </Badge>
                       )}
                     </div>
+                    <CardTitle className="text-base mt-2">
+                      {quote.clientName || "Cliente não informado"}
+                    </CardTitle>
+                    <CardDescription>
+                      {quote.agencyName || "Imobiliária não informada"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {/* Vendor and Owner */}
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Vendedor:</span>
+                        <p className="font-medium">{quote.vendorName || "-"}</p>
+                      </div>
+
+                    </div>
+
+                    {/* Phones and Website */}
+                    <div className="text-sm space-y-1">
+                      {quote.cellPhone && (
+                        <p>📱 {quote.cellPhone}</p>
+                      )}
+                      {quote.landlinePhone && (
+                        <p>☎️ {quote.landlinePhone}</p>
+                      )}
+                      {quote.websiteUrl && (
+                        <p className="text-muted-foreground">🌐 {quote.websiteUrl}</p>
+                      )}
+                    </div>
 
                     {/* Product and Plan */}
                     <div className="flex items-center gap-2">
-                      {quote.product === "imob" && <Building2 className="w-5 h-5 text-primary" />}
-                      {quote.product === "loc" && <Home className="w-5 h-5 text-secondary" />}
-                      {quote.product === "both" && <Package className="w-5 h-5 text-purple-600" />}
-                      <span className="font-medium">{productNames[quote.product] || quote.product}</span>
-                      <div className="flex gap-1 ml-auto">
-                        {quote.imobPlan && (
-                          <Badge variant="secondary" className="text-xs">
-                            {planNames[quote.imobPlan]}
-                          </Badge>
-                        )}
-                        {quote.locPlan && (
-                          <Badge variant="secondary" className="text-xs">
-                            {planNames[quote.locPlan]}
-                          </Badge>
-                        )}
-                      </div>
+                      {quote.product === "imob" && <Building2 className="w-4 h-4 text-primary" />}
+                      {quote.product === "loc" && <Home className="w-4 h-4 text-secondary" />}
+                      {quote.product === "both" && <Package className="w-4 h-4 text-purple-600" />}
+                      <span className="text-sm font-medium">
+                        {productNames[quote.product] || quote.product}
+                      </span>
+                      {quote.imobPlan && (
+                        <Badge variant="secondary" className="text-xs">
+                          Imob: {planNames[quote.imobPlan] || quote.imobPlan}
+                        </Badge>
+                      )}
+                      {quote.locPlan && (
+                        <Badge variant="secondary" className="text-xs">
+                          Loc: {planNames[quote.locPlan] || quote.locPlan}
+                        </Badge>
+                      )}
                     </div>
 
                     {/* Kombo */}
                     {quote.komboName && (
-                      <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-green-600" />
-                        <span>{quote.komboName}</span>
+                        <span className="text-sm">{quote.komboName}</span>
                         {quote.komboDiscount && quote.komboDiscount > 0 && (
                           <Badge className="bg-green-100 text-green-700 text-xs">
                             -{quote.komboDiscount}%
@@ -346,37 +639,50 @@ export default function HistoricoPage() {
                       </div>
                     )}
 
-                    {/* Values */}
-                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/50">
+                    {/* Frequency and Totals */}
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Frequência: </span>
+                      <span className="font-medium">
+                        {frequencyNames[quote.frequency] || quote.frequency}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <p className="text-xs text-muted-foreground">Mensal</p>
-                        <p className="font-semibold">{totals?.monthly ? formatCurrency(totals.monthly) : "-"}</p>
+                        <span className="text-muted-foreground">Mensal:</span>
+                        <p className="font-medium">
+                          {totals?.monthly ? formatCurrency(totals.monthly) : "-"}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Anual</p>
-                        <p className="font-semibold">{totals?.annual ? formatCurrency(totals.annual) : "-"}</p>
+                        <span className="text-muted-foreground">Anual:</span>
+                        <p className="font-medium">
+                          {totals?.annual ? formatCurrency(totals.annual) : "-"}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                      <div className="text-sm">
-                        {quote.clientName ? (
-                          <span>{quote.clientName}</span>
-                        ) : (
-                          <span className="text-muted-foreground">Sem cliente</span>
-                        )}
-                      </div>
+                    {/* Actions */}
+                    <div className="flex gap-2 pt-2">
                       {quote.shareableUrl && (
                         <Button
                           variant="outline"
                           size="sm"
+                          className="flex-1"
                           onClick={() => window.open(quote.shareableUrl!, "_blank")}
                         >
-                          <ExternalLink className="w-4 h-4 mr-1" />
-                          Abrir
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Abrir Link
                         </Button>
                       )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => handleDeleteClick(quote.id)}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Deletar
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -384,24 +690,41 @@ export default function HistoricoPage() {
             })
           )}
         </div>
-
-        {/* Add-ons Legend */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Legenda de Add-ons</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Badge variant="outline">leads = Kenlo Leads</Badge>
-              <Badge variant="outline">inteligencia = Kenlo Inteligência</Badge>
-              <Badge variant="outline">assinatura = Kenlo Assinatura</Badge>
-              <Badge variant="outline">pay = Kenlo Pay</Badge>
-              <Badge variant="outline">seguros = Kenlo Seguros</Badge>
-              <Badge variant="outline">cash = Kenlo Cash</Badge>
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja deletar este orçamento? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deletando...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Deletar
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }

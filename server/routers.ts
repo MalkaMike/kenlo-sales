@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
-import { saveQuote, getQuotes, getQuoteStats } from "./quotes";
+import { saveQuote, getQuotes, getQuoteStats, deleteQuote } from "./quotes";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -79,6 +79,15 @@ export const appRouter = router({
     stats: publicProcedure
       .query(async () => {
         return await getQuoteStats();
+      }),
+    
+    delete: publicProcedure
+      .input(z.object({
+        id: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const success = await deleteQuote(input.id);
+        return { success };
       }),
   }),
 

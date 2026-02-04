@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { quotes, InsertQuote, Quote } from "../drizzle/schema";
 import { getDb } from "./db";
 
@@ -40,6 +40,25 @@ export async function getQuotes(limit: number = 100): Promise<Quote[]> {
     return result;
   } catch (error) {
     console.error("[Database] Failed to get quotes:", error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a quote from the database
+ */
+export async function deleteQuote(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot delete quote: database not available");
+    return false;
+  }
+
+  try {
+    await db.delete(quotes).where(eq(quotes.id, id));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to delete quote:", error);
     throw error;
   }
 }
