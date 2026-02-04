@@ -652,7 +652,7 @@ export default function CalculadoraPage() {
     const baseCost = PLAN_ANNUAL_PRICES[plan];
     
     // Contratos incluídos por plano
-    const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+    const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
     const additional = Math.max(0, contracts - included);
     
     // Custo de contratos adicionais
@@ -1485,7 +1485,7 @@ export default function CalculadoraPage() {
                         
                         // Additional Contracts
                         const plan = locPlan;
-                        const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                        const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                         const additional = Math.max(0, metrics.contractsUnderManagement - included);
                         if (additional > 0) {
                           if (plan === 'prime') locSubtotal += additional * 3;
@@ -1556,7 +1556,7 @@ export default function CalculadoraPage() {
                       {/* LOC Additional Contracts */}
                       {(product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
-                        const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                        const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                         const additional = Math.max(0, metrics.contractsUnderManagement - included);
                         const totalCost = (() => {
                           if (plan === 'prime') return additional * 3;
@@ -1856,7 +1856,7 @@ export default function CalculadoraPage() {
                         // Additional Contracts (Loc)
                         if (product === 'loc' || product === 'both') {
                           const plan = locPlan;
-                          const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 250);
@@ -2077,7 +2077,7 @@ export default function CalculadoraPage() {
                               }
                               if (product === 'loc' || product === 'both') {
                                 const plan = locPlan;
-                                const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                                const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                                 const additional = Math.max(0, metrics.contractsUnderManagement - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 3;
@@ -2194,7 +2194,7 @@ export default function CalculadoraPage() {
                         }
                         if (product === 'loc' || product === 'both') {
                           const plan = locPlan;
-                          const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 3;
@@ -2520,7 +2520,7 @@ export default function CalculadoraPage() {
                 // Additional Contracts (Loc)
                 if (product === 'loc' || product === 'both') {
                   const plan = locPlan;
-                  const included = plan === 'prime' ? 100 : plan === 'k' ? 250 : 500;
+                  const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                   const additional = Math.max(0, metrics.contractsUnderManagement - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 250);

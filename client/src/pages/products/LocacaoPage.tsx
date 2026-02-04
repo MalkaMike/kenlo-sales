@@ -29,7 +29,7 @@ const pricingData = {
         {
           feature: "Contratos inclusos",
           type: "text",
-          values: ["100", "250", "500"],
+          values: ["100", "200", "500"],
         },
       ],
     },
@@ -399,7 +399,7 @@ export default function LocacaoPage() {
             <div className="mt-6 p-4 bg-muted/30 rounded-lg">
               <p className="text-sm text-muted-foreground">
                 <strong>Exemplo de cálculo (Plano K):</strong> Se a administradora tiver 300 contratos adicionais, 
-                paga 250 × R$ 3,00 + 50 × R$ 2,50 = <strong>R$ 875/mês</strong> em contratos adicionais.
+                paga 200 × R$ 3,00 + 100 × R$ 2,50 = <strong>R$ 850/mês</strong> em contratos adicionais.
               </p>
             </div>
           </div>

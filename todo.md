@@ -738,3 +738,7 @@
 
 ### Corrigir Preço Boleto/Split Prime LOC
 - [x] Verificar e corrigir: Prime LOC Boleto/Split já estava correto em R$4
+
+
+## Bug Fix - Contratos Inclusos LOC (Fev 2026)
+- [x] Corrigir contratos inclusos plano K: 250 → 200 (conforme documento oficial)
