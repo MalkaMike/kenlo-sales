@@ -18,6 +18,7 @@ import SegurosPage from "./pages/addons/SegurosPage";
 import CashPage from "./pages/addons/CashPage";
 import KombosPage from "./pages/KombosPage";
 import CalculadoraPage from "./pages/CalculadoraPage";
+import HistoricoPage from "./pages/HistoricoPage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -39,6 +40,8 @@ function Router() {
         {/* Calculator / Orçamento */}
         <Route path="/calculadora" component={CalculadoraPage} />
         <Route path="/orcamento" component={CalculadoraPage} />
+        {/* Histórico */}
+        <Route path="/historico" component={HistoricoPage} />
         {/* Fallback */}
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />

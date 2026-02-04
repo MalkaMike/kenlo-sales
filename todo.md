@@ -353,3 +353,16 @@
 
 ## Correção de Alinhamento do Menu
 - [x] Corrigir alinhamento vertical do item "Orçamento" no menu de navegação
+
+## Sistema de Histórico de Orçamentos
+- [x] Criar tabela 'quotes' no banco de dados com campos:
+  - id, createdAt, product, imobPlan, locPlan, frequency
+  - addons (JSON), metrics (JSON), totals (JSON)
+  - action (link_copied | pdf_exported), shareableUrl
+- [x] Criar procedimento tRPC para salvar orçamento
+- [x] Criar procedimento tRPC para listar orçamentos
+- [x] Integrar salvamento automático ao copiar link
+- [x] Integrar salvamento automático ao exportar PDF
+- [x] Criar página /historico para consultar orçamentos salvos
+- [x] Adicionar link para histórico no menu ou na calculadora
+- [x] Testar fluxo completo de salvamento e consulta

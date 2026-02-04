@@ -276,6 +276,9 @@ export default function CalculadoraPage() {
     return `${baseUrl}?${params.toString()}`;
   }, [product, imobPlan, locPlan, frequency, addons, metrics]);
 
+  // Mutation to save quote to database
+  const saveQuoteMutation = trpc.quotes.save.useMutation();
+
   /**
    * Copy shareable URL to clipboard
    */
@@ -1985,7 +1988,41 @@ export default function CalculadoraPage() {
                     variant="outline" 
                     size="lg" 
                     className="min-h-[50px] sm:flex-1"
-                    onClick={copyShareableLink}
+                    onClick={async () => {
+                      // First copy the link
+                      await copyShareableLink();
+                      
+                      // Then save to database
+                      try {
+                        const items = getLineItems();
+                        const totalMonthly = items.reduce((sum: number, item: any) => sum + (activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo), 0);
+                        const totalAnnual = totalMonthly * 12;
+                        const implantationFee = calculateTotalImplementation(activeKombo !== "none");
+                        const postPaidTotal = 0; // Simplified - full calculation in export dialog
+                        
+                        await saveQuoteMutation.mutateAsync({
+                          action: "link_copied",
+                          product: product,
+                          imobPlan: product !== "loc" ? imobPlan : undefined,
+                          locPlan: product !== "imob" ? locPlan : undefined,
+                          frequency: frequency,
+                          addons: JSON.stringify(addons),
+                          metrics: JSON.stringify(metrics),
+                          totals: JSON.stringify({
+                            monthly: totalMonthly,
+                            annual: totalAnnual,
+                            implantation: implantationFee,
+                            postPaid: postPaidTotal,
+                          }),
+                          komboId: activeKombo !== "none" ? activeKombo : undefined,
+                          komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
+                          komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
+                          shareableUrl: generateShareableURL(),
+                        });
+                      } catch (error) {
+                        console.error('Failed to save quote:', error);
+                      }
+                    }}
                   >
                     <Copy className="w-4 h-4 mr-2" />
                     Copiar Link para Cliente
@@ -2171,8 +2208,34 @@ export default function CalculadoraPage() {
               document.body.removeChild(a);
               URL.revokeObjectURL(url);
 
-              // Save to database
+              // Save to proposals database
               await createProposal.mutateAsync(proposalData);
+              
+              // Also save to quotes database for tracking
+              try {
+                await saveQuoteMutation.mutateAsync({
+                  action: "pdf_exported",
+                  product: product,
+                  imobPlan: product !== "loc" ? imobPlan : undefined,
+                  locPlan: product !== "imob" ? locPlan : undefined,
+                  frequency: frequency,
+                  addons: JSON.stringify(addons),
+                  metrics: JSON.stringify(metrics),
+                  totals: JSON.stringify({
+                    monthly: totalMonthly,
+                    annual: totalAnnual,
+                    implantation: implantationFee,
+                    postPaid: postPaidTotal,
+                    firstYear: firstYearTotal,
+                  }),
+                  komboId: activeKombo !== "none" ? activeKombo : undefined,
+                  komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
+                  komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
+                  clientName: clientName,
+                });
+              } catch (quoteError) {
+                console.error('Failed to save quote:', quoteError);
+              }
               
               toast.dismiss();
               toast.success("Proposta gerada e salva com sucesso!");

@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
+import { saveQuote, getQuotes, getQuoteStats } from "./quotes";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -18,6 +19,57 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  quotes: router({
+    save: publicProcedure
+      .input(z.object({
+        action: z.enum(["link_copied", "pdf_exported"]),
+        product: z.string(),
+        imobPlan: z.string().optional(),
+        locPlan: z.string().optional(),
+        frequency: z.string(),
+        addons: z.string(), // JSON string
+        metrics: z.string(), // JSON string
+        totals: z.string(), // JSON string
+        komboId: z.string().optional(),
+        komboName: z.string().optional(),
+        komboDiscount: z.number().optional(),
+        shareableUrl: z.string().optional(),
+        clientName: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const quoteId = await saveQuote({
+          action: input.action,
+          product: input.product,
+          imobPlan: input.imobPlan,
+          locPlan: input.locPlan,
+          frequency: input.frequency,
+          addons: input.addons,
+          metrics: input.metrics,
+          totals: input.totals,
+          komboId: input.komboId,
+          komboName: input.komboName,
+          komboDiscount: input.komboDiscount,
+          shareableUrl: input.shareableUrl,
+          clientName: input.clientName,
+        });
+        return { success: true, quoteId };
+      }),
+    
+    list: publicProcedure
+      .input(z.object({
+        limit: z.number().optional().default(100),
+      }).optional())
+      .query(async ({ input }) => {
+        const quotes = await getQuotes(input?.limit ?? 100);
+        return quotes;
+      }),
+    
+    stats: publicProcedure
+      .query(async () => {
+        return await getQuoteStats();
+      }),
   }),
 
   proposals: router({

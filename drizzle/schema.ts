@@ -94,3 +94,46 @@ export const proposals = mysqlTable("proposals", {
 
 export type Proposal = typeof proposals.$inferSelect;
 export type InsertProposal = typeof proposals.$inferInsert;
+
+/**
+ * Quotes table - tracks when proposals are shared (link copied) or exported (PDF)
+ */
+export const quotes = mysqlTable("quotes", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  /** Action that triggered the save */
+  action: mysqlEnum("action", ["link_copied", "pdf_exported"]).notNull(),
+  
+  /** Product selection */
+  product: varchar("product", { length: 20 }).notNull(), // "imob", "loc", "both"
+  imobPlan: varchar("imobPlan", { length: 20 }), // "prime", "k", "k2"
+  locPlan: varchar("locPlan", { length: 20 }), // "prime", "k", "k2"
+  
+  /** Payment frequency */
+  frequency: varchar("frequency", { length: 20 }).notNull(), // "monthly", "semestral", "annual", "biennial"
+  
+  /** Add-ons as JSON string */
+  addons: text("addons").notNull(), // JSON: {leads: true, inteligencia: false, ...}
+  
+  /** Business metrics as JSON string */
+  metrics: text("metrics").notNull(), // JSON with all metrics
+  
+  /** Calculated totals as JSON string */
+  totals: text("totals").notNull(), // JSON: {monthly, annual, implantation, postPaid, kenloEffect}
+  
+  /** Kombo information */
+  komboId: varchar("komboId", { length: 50 }), // "elite", "imob_start", etc
+  komboName: varchar("komboName", { length: 100 }),
+  komboDiscount: int("komboDiscount"), // percentage
+  
+  /** Shareable URL for link_copied actions */
+  shareableUrl: text("shareableUrl"),
+  
+  /** Client name if provided */
+  clientName: varchar("clientName", { length: 255 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Quote = typeof quotes.$inferSelect;
+export type InsertQuote = typeof quotes.$inferInsert;

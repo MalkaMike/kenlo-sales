@@ -151,6 +151,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
+
+              {/* Histórico */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/historico"
+                    className={cn(
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/historico" && "bg-accent"
+                    )}
+                  >
+                    Histórico
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
@@ -206,6 +221,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
                 >
                   Orçamento
+                </Link>
+                <Link
+                  href="/historico"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
+                >
+                  Histórico
                 </Link>
               </nav>
             </SheetContent>
