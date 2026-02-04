@@ -613,26 +613,24 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
    * Always shows values even when Kombo is not available (for comparison)
    */
   const getCellValue = (rowKey: string, column: KomboColumnData): React.ReactNode => {
-    // Helper to render price with optional discount styling
-    const renderPrice = (price: number | null, hasDiscount: boolean = false) => {
+    // Helper to render price - all values in normal gray/black color
+    const renderPrice = (price: number | null) => {
       if (price === null) return <span className="text-gray-300">—</span>;
       const priceStr = `R$ ${formatCurrency(price)}`;
-      return hasDiscount && column.discount > 0 
-        ? <span className="font-semibold text-primary">{priceStr}</span>
-        : <span className="font-medium">{priceStr}</span>;
+      return <span className="font-medium text-gray-700">{priceStr}</span>;
     };
 
     switch (rowKey) {
       case "imob":
-        return renderPrice(column.imobPrice, column.id !== "none");
+        return renderPrice(column.imobPrice);
       case "loc":
-        return renderPrice(column.locPrice, column.id !== "none");
+        return renderPrice(column.locPrice);
       case "leads":
-        return renderPrice(column.leadsPrice, column.id !== "none");
+        return renderPrice(column.leadsPrice);
       case "inteligencia":
-        return renderPrice(column.inteligenciaPrice, column.id !== "none");
+        return renderPrice(column.inteligenciaPrice);
       case "assinatura":
-        return renderPrice(column.assinaturaPrice, column.id !== "none");
+        return renderPrice(column.assinaturaPrice);
       case "pay":
         return column.payPrice || <span className="text-gray-300">—</span>;
       case "seguros":
