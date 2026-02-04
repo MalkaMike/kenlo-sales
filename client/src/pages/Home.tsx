@@ -103,11 +103,11 @@ const addons = [
 ];
 
 const stats = [
-  { value: "8.500+", numericValue: 8500, label: "Imobiliárias", icon: Building2, suffix: "+" },
-  { value: "40.000+", numericValue: 40000, label: "Corretores ativos", icon: Users, suffix: "+" },
-  { value: "R$40B+", numericValue: 40, label: "Em vendas", icon: TrendingUp, prefix: "R$", suffix: "B+" },
-  { value: "10M+", numericValue: 10, label: "Visitantes únicos/mês", icon: Eye, suffix: "M+" },
-  { value: "R$1,2B+", numericValue: 1.2, label: "Gestão de locação", icon: HomeIcon, prefix: "R$", suffix: "B+" },
+  { value: "8.500+", numericValue: 8500, label: "Imobiliárias", icon: Building2, suffix: "+", color: "text-blue-600", bgColor: "bg-blue-600/10" },
+  { value: "40.000+", numericValue: 40000, label: "Corretores ativos", icon: Users, suffix: "+", color: "text-purple-600", bgColor: "bg-purple-600/10" },
+  { value: "R$40B+", numericValue: 40, label: "Em vendas", icon: TrendingUp, prefix: "R$", suffix: "B+", color: "text-green-600", bgColor: "bg-green-600/10" },
+  { value: "10M+", numericValue: 10, label: "Visitantes únicos/mês", icon: Eye, suffix: "M+", color: "text-orange-600", bgColor: "bg-orange-600/10" },
+  { value: "R$1,2B+", numericValue: 1.2, label: "Gestão de locação", icon: HomeIcon, prefix: "R$", suffix: "B+", color: "text-pink-600", bgColor: "bg-pink-600/10" },
 ];
 
 const benefits = [
@@ -194,6 +194,8 @@ export default function Home() {
                 label={stat.label}
                 prefix={stat.prefix}
                 suffix={stat.suffix}
+                color={stat.color}
+                bgColor={stat.bgColor}
               />
             ))}
           </div>

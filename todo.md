@@ -560,3 +560,9 @@
 - [x] Adicionar efeito glow (brilho) nos cards ao hover com box-shadow colorido
 - [x] Implementar transições suaves para os efeitos (duration 300-400ms)
 - [x] Testar efeitos em todos os cards (produtos e add-ons)
+
+## Ajustar Tamanho de Fonte e Cores das Estatísticas
+- [x] Reduzir tamanho da fonte dos números (de text-4xl/5xl para text-3xl/4xl)
+- [x] Adicionar cores diferentes para cada estatística (azul, roxo, verde, laranja, rosa)
+- [x] Manter cores nos ícones correspondentes
+- [x] Testar legibilidade e contraste visual

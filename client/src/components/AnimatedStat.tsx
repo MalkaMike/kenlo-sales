@@ -7,9 +7,11 @@ interface AnimatedStatProps {
   label: string;
   prefix?: string;
   suffix?: string;
+  color?: string;
+  bgColor?: string;
 }
 
-export function AnimatedStat({ icon: Icon, numericValue, label, prefix = "", suffix = "" }: AnimatedStatProps) {
+export function AnimatedStat({ icon: Icon, numericValue, label, prefix = "", suffix = "", color = "text-primary", bgColor = "bg-primary/10" }: AnimatedStatProps) {
   const { count, elementRef } = useCountUp({ end: numericValue, duration: 2000 });
 
   // Formatar o número com separador de milhares
@@ -24,10 +26,10 @@ export function AnimatedStat({ icon: Icon, numericValue, label, prefix = "", suf
 
   return (
     <div ref={elementRef} className="text-center group">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition-transform">
+      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${bgColor} ${color} mb-4 group-hover:scale-110 transition-transform`}>
         <Icon className="w-8 h-8" />
       </div>
-      <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+      <div className={`text-3xl md:text-4xl font-bold ${color} mb-2`}>
         {prefix}{formatNumber(count)}{suffix}
       </div>
       <div className="text-sm text-muted-foreground font-medium">{label}</div>
