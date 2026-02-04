@@ -511,3 +511,10 @@
 - [x] Adicionar seção "Add-ons Compartilhados (IMOB e LOC)" na calculadora
 - [x] Incluir Assinatura Digital nesta seção
 - [x] Posicionar entre IMOB Add-ons e LOC Add-ons
+
+## Implementar Recomendação Automática de Plano
+- [x] Criar função que calcula custo total (mensalidade + add-ons) para cada plano (Prime, K, K2)
+- [x] Implementar lógica de seleção automática baseada em capacidade (não custo)
+- [x] Aplicar para IMOB: Prime (até 7), K (8-15), K2 (16+)
+- [x] Aplicar para LOC: Prime (até 200), K (201-500), K2 (501+)
+- [x] Testar cenário: 20 usuários IMOB deve recomendar K2

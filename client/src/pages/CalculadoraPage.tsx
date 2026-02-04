@@ -497,27 +497,24 @@ export default function CalculadoraPage() {
     return baseCost + additionalCost;
   };
 
-  // Auto-recommend plans based on TOTAL COST (mensalidade + adicionais)
-  // Selects the cheapest plan considering the user's volume
+  // Auto-recommend plans based on CAPACITY (número de usuários/contratos)
+  // Regra: Número de usuários ou contratos define o nível mínimo do plano
   useEffect(() => {
     if (product === "imob" || product === "both") {
       const users = metrics.imobUsers;
       
-      // Calculate total cost for each plan
-      const primeCost = calculateImobPlanCost('prime', users);
-      const kCost = calculateImobPlanCost('k', users);
-      const k2Cost = calculateImobPlanCost('k2', users);
-      
-      // Select cheapest plan
+      // IMOB: Baseado em capacidade incluída
+      // Prime: 2 incluídos (até 7 usuários total)
+      // K: 7 incluídos (8 a 15 usuários total)
+      // K2: 15 incluídos (16+ usuários total)
       let recommendedPlan: PlanTier = 'prime';
-      let minCost = primeCost;
       
-      if (kCost < minCost) {
-        recommendedPlan = 'k';
-        minCost = kCost;
-      }
-      if (k2Cost < minCost) {
+      if (users >= 16) {
         recommendedPlan = 'k2';
+      } else if (users >= 8) {
+        recommendedPlan = 'k';
+      } else {
+        recommendedPlan = 'prime';
       }
       
       setImobPlan(recommendedPlan);
@@ -526,21 +523,18 @@ export default function CalculadoraPage() {
     if (product === "loc" || product === "both") {
       const contracts = metrics.contractsUnderManagement;
       
-      // Calculate total cost for each plan
-      const primeCost = calculateLocPlanCost('prime', contracts);
-      const kCost = calculateLocPlanCost('k', contracts);
-      const k2Cost = calculateLocPlanCost('k2', contracts);
-      
-      // Select cheapest plan
+      // LOC: Baseado em capacidade incluída
+      // Prime: 100 incluídos (até 200 contratos total)
+      // K: 200 incluídos (201 a 500 contratos total)
+      // K2: 500 incluídos (501+ contratos total)
       let recommendedPlan: PlanTier = 'prime';
-      let minCost = primeCost;
       
-      if (kCost < minCost) {
-        recommendedPlan = 'k';
-        minCost = kCost;
-      }
-      if (k2Cost < minCost) {
+      if (contracts >= 501) {
         recommendedPlan = 'k2';
+      } else if (contracts >= 201) {
+        recommendedPlan = 'k';
+      } else {
+        recommendedPlan = 'prime';
       }
       
       setLocPlan(recommendedPlan);
