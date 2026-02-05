@@ -1135,3 +1135,16 @@
   - [x] Cobra split do proprietário: deselecionado
   - [x] Quanto cobra split: 0
 - [x] Testar valores padrão no navegador
+
+
+## Botão Resetar na Calculadora (Fev 2026)
+
+- [x] Adicionar botão "Resetar" na calculadora
+- [x] Ao clicar, voltar todos os campos aos valores padrão:
+  - [x] Produto: IMOB só
+  - [x] Add-ons: todos deselecionados
+  - [x] Métricas IMOB: 1 usuário, 1 fechamento, 0 leads
+  - [x] Métricas LOC: 1 contrato, 1 novo, cobranças desabilitadas
+  - [x] Frequência: Anual
+  - [x] Plano selecionado: nenhum
+- [x] Testar funcionalidade no navegador

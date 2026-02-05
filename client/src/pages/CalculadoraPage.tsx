@@ -26,6 +26,7 @@ import {
   Key,
   CheckCircle2,
   Zap,
+  RotateCcw,
 } from "lucide-react";
 
 // Types
@@ -238,6 +239,55 @@ export default function CalculadoraPage() {
   // Recommended plans
   const [imobPlan, setImobPlan] = useState<PlanTier>("k");
   const [locPlan, setLocPlan] = useState<PlanTier>("k");
+
+  // Reset all fields to default values
+  const handleReset = useCallback(() => {
+    // Reset product selection
+    setProduct("imob");
+    
+    // Reset all add-ons to disabled
+    setAddons({
+      leads: false,
+      inteligencia: false,
+      assinatura: false,
+      pay: false,
+      seguros: false,
+      cash: false,
+    });
+    
+    // Reset metrics to minimal defaults
+    setMetrics({
+      imobUsers: 1,
+      closingsPerMonth: 1,
+      leadsPerMonth: 0,
+      usesExternalAI: false,
+      wantsWhatsApp: false,
+      imobVipSupport: false,
+      imobDedicatedCS: false,
+      contractsUnderManagement: 1,
+      newContractsPerMonth: 1,
+      locVipSupport: false,
+      locDedicatedCS: false,
+      chargesBoletoToTenant: false,
+      boletoChargeAmount: 0,
+      chargesSplitToOwner: false,
+      splitChargeAmount: 0,
+    });
+    
+    // Reset frequency to annual
+    setFrequency("annual");
+    
+    // Reset pre-payment options
+    setPrepayAdditionalUsers(false);
+    setPrepayAdditionalContracts(false);
+    
+    // Reset selected plan
+    setSelectedPlan(null);
+    
+    // Reset recommended plans
+    setImobPlan("k");
+    setLocPlan("k");
+  }, []);
 
   // URL search params for shareable links
   const searchString = useSearch();
@@ -952,6 +1002,15 @@ export default function CalculadoraPage() {
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
               Configure a solução ideal para sua imobiliária e veja o investimento em tempo real
             </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="mt-4 gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Resetar
+            </Button>
           </div>
 
           {/* Main Calculator Card */}
