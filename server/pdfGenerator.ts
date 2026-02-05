@@ -23,6 +23,12 @@ interface ProposalData {
   revenueFromBoletos?: number;
   revenueFromInsurance?: number;
   netGain?: number;
+  // Pre-payment fields
+  prepayAdditionalUsers?: boolean;
+  prepayAdditionalContracts?: boolean;
+  prepaymentUsersAmount?: number;
+  prepaymentContractsAmount?: number;
+  prepaymentMonths?: number; // 12 for annual, 24 for biennial
 }
 
 export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
@@ -226,14 +232,34 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     y += 22;
 
     // Table rows
-    const rows = [
+    const rows: { label: string; value: string; highlight?: boolean }[] = [
       { label: `Mensalidade (${paymentLabels[data.paymentPlan] || data.paymentPlan})`, value: formatCurrency(data.totalMonthly) },
       { label: "Total Anual (12x mensalidade)", value: formatCurrency(data.totalAnnual) },
       { label: "Implantação (única vez)", value: formatCurrency(data.implantationFee) },
     ];
 
-    rows.forEach((row, i) => {
-      doc.font("Helvetica").fontSize(9).fillColor(darkText)
+    // Add prepayment rows if applicable
+    if (data.prepayAdditionalUsers && data.prepaymentUsersAmount && data.prepaymentUsersAmount > 0) {
+      rows.push({
+        label: `Usuários Adicionais Pré-pagos (${data.prepaymentMonths} meses)`,
+        value: formatCurrency(data.prepaymentUsersAmount),
+        highlight: true
+      });
+    }
+    if (data.prepayAdditionalContracts && data.prepaymentContractsAmount && data.prepaymentContractsAmount > 0) {
+      rows.push({
+        label: `Contratos Adicionais Pré-pagos (${data.prepaymentMonths} meses)`,
+        value: formatCurrency(data.prepaymentContractsAmount),
+        highlight: true
+      });
+    }
+
+    rows.forEach((row) => {
+      // Highlight prepayment rows with light pink background
+      if (row.highlight) {
+        doc.rect(margin, y, contentWidth, 22).fill("#fdf2f4");
+      }
+      doc.font(row.highlight ? "Helvetica-Bold" : "Helvetica").fontSize(9).fillColor(row.highlight ? kenloPink : darkText)
          .text(row.label, margin + 10, y + 6)
          .text(row.value, pageWidth - margin - 80, y + 6);
       y += 22;

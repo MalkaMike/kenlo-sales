@@ -384,6 +384,12 @@ export const appRouter = router({
         revenueFromBoletos: z.number().optional(),
         revenueFromInsurance: z.number().optional(),
         netGain: z.number().optional(),
+        // Pre-payment fields
+        prepayAdditionalUsers: z.boolean().optional(),
+        prepayAdditionalContracts: z.boolean().optional(),
+        prepaymentUsersAmount: z.number().optional(),
+        prepaymentContractsAmount: z.number().optional(),
+        prepaymentMonths: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user is an authorized salesperson

@@ -880,3 +880,19 @@
 - [x] Lista de vendedores: 11 vendedores ativos no banco de dados
 - [x] Master admin pode fazer tudo
 - [x] 88 testes passando
+
+
+## Pré-Pagamento de Usuários/Contratos Adicionais (Fev 2026)
+
+### Funcionalidade
+- [x] Mostrar checkbox de pré-pagamento nas linhas de usuários adicionais (IMOB) e contratos adicionais (LOC)
+- [x] Checkbox só aparece quando plano é Anual ou Bienal
+- [x] Calcular valor upfront: preço pós-pago × 12 (Anual) ou × 24 (Bienal)
+- [x] Incluir valor no primeiro pagamento (implantação + pré-pagamento)
+- [x] Remover itens pré-pagos do cálculo de pós-pago mensal
+
+### PDF
+- [x] Mostrar claramente que usuários/contratos foram pré-pagos (linhas destacadas em rosa)
+- [x] Mostrar lógica de cálculo (preço mensal × número de meses)
+- [x] Mostrar período coberto (12 ou 24 meses)
+- [x] Mostrar valor total incluído no pagamento antecipado

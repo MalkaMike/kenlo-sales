@@ -205,7 +205,9 @@ export default function CalculadoraPage() {
   // Step 4: Payment frequency (default: annual)
   const [frequency, setFrequency] = useState<PaymentFrequency>("annual");
 
-
+  // Step 5: Pre-payment options for additional users/contracts (only for Annual/Biennial)
+  const [prepayAdditionalUsers, setPrepayAdditionalUsers] = useState(false);
+  const [prepayAdditionalContracts, setPrepayAdditionalContracts] = useState(false);
   
   // Quote info dialog state
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
@@ -805,11 +807,74 @@ export default function CalculadoraPage() {
     return subtotal;
   };
 
-  // Calculate first year total (recurring * 12 + implementation)
+  /**
+   * Calculate prepayment amount for additional users (IMOB) and contracts (LOC)
+   * Only applies to Annual (12 months) and Biennial (24 months) plans
+   */
+  const calculatePrepaymentAmount = (): { users: number; contracts: number; total: number } => {
+    const months = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
+    if (months === 0) return { users: 0, contracts: 0, total: 0 };
+
+    let usersPrepayment = 0;
+    let contractsPrepayment = 0;
+
+    // Calculate additional users cost (IMOB)
+    if ((product === 'imob' || product === 'both') && prepayAdditionalUsers) {
+      const plan = imobPlan;
+      const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+      const additional = Math.max(0, metrics.imobUsers - included);
+      if (additional > 0) {
+        let monthlyCost = 0;
+        if (plan === 'prime') monthlyCost = additional * 57;
+        else if (plan === 'k') {
+          const tier1 = Math.min(additional, 10);
+          const tier2 = Math.max(0, additional - 10);
+          monthlyCost = (tier1 * 47) + (tier2 * 37);
+        } else {
+          const tier1 = Math.min(additional, 10);
+          const tier2 = Math.min(Math.max(0, additional - 10), 40);
+          const tier3 = Math.max(0, additional - 50);
+          monthlyCost = (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+        }
+        usersPrepayment = monthlyCost * months;
+      }
+    }
+
+    // Calculate additional contracts cost (LOC)
+    if ((product === 'loc' || product === 'both') && prepayAdditionalContracts) {
+      const plan = locPlan;
+      const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+      const additional = Math.max(0, metrics.contractsUnderManagement - included);
+      if (additional > 0) {
+        let monthlyCost = 0;
+        if (plan === 'prime') monthlyCost = additional * 3;
+        else if (plan === 'k') {
+          const tier1 = Math.min(additional, 250);
+          const tier2 = Math.max(0, additional - 250);
+          monthlyCost = (tier1 * 3) + (tier2 * 2.5);
+        } else {
+          const tier1 = Math.min(additional, 250);
+          const tier2 = Math.min(Math.max(0, additional - 250), 250);
+          const tier3 = Math.max(0, additional - 500);
+          monthlyCost = (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
+        }
+        contractsPrepayment = monthlyCost * months;
+      }
+    }
+
+    return {
+      users: usersPrepayment,
+      contracts: contractsPrepayment,
+      total: usersPrepayment + contractsPrepayment
+    };
+  };
+
+  // Calculate first year total (recurring * 12 + implementation + prepayment)
   const calculateFirstYearTotal = (withKombo: boolean = false) => {
     const monthlyRecurring = calculateMonthlyRecurring(withKombo);
     const implementation = calculateTotalImplementation(withKombo);
-    return (monthlyRecurring * 12) + implementation;
+    const prepayment = calculatePrepaymentAmount();
+    return (monthlyRecurring * 12) + implementation + prepayment.total;
   };
 
   // Calculate post-pago for Pay
@@ -1410,6 +1475,11 @@ export default function CalculadoraPage() {
                         })();
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
+                        // Calculate prepayment amount if applicable
+                        const months = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
+                        const prepaymentAmount = prepayAdditionalUsers && months > 0 ? totalCost * months : 0;
+                        const showPrepayOption = (frequency === 'annual' || frequency === 'biennial') && additional > 0;
+
                         return (
                           <div className="flex justify-between items-start py-4 border-b border-gray-200">
                             <div className="flex flex-col">
@@ -1417,14 +1487,32 @@ export default function CalculadoraPage() {
                               <span className="text-xs text-gray-500 italic">
                                 Incluídos: {included} | Adicionais: {additional}
                               </span>
+                              {showPrepayOption && (
+                                <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={prepayAdditionalUsers}
+                                    onChange={(e) => setPrepayAdditionalUsers(e.target.checked)}
+                                    className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
+                                  />
+                                  <span className="text-xs text-pink-600 font-medium">
+                                    Pré-pagar {months} meses ({formatCurrency(prepaymentAmount)})
+                                  </span>
+                                </label>
+                              )}
                             </div>
                             <div className="flex flex-col items-end">
                               <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
-                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                                {additional > 0 ? (prepayAdditionalUsers && months > 0 ? 'Pré-pago' : formatCurrency(totalCost)) : 'Incluído no plano'}
                               </span>
-                              {additional > 0 && (
+                              {additional > 0 && !prepayAdditionalUsers && (
                                 <span className="text-xs text-gray-500 italic">
                                   {formatCurrency(pricePerUnit, 2)}/usuário
+                                </span>
+                              )}
+                              {prepayAdditionalUsers && months > 0 && additional > 0 && (
+                                <span className="text-xs text-green-600 font-medium">
+                                  {formatCurrency(prepaymentAmount)} antecipado
                                 </span>
                               )}
                             </div>
@@ -1563,6 +1651,11 @@ export default function CalculadoraPage() {
                         })();
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
+                        // Calculate prepayment amount if applicable
+                        const months = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
+                        const prepaymentAmount = prepayAdditionalContracts && months > 0 ? totalCost * months : 0;
+                        const showPrepayOption = (frequency === 'annual' || frequency === 'biennial') && additional > 0;
+
                         return (
                           <div className="flex justify-between items-start py-4 border-b border-gray-200">
                             <div className="flex flex-col">
@@ -1570,14 +1663,32 @@ export default function CalculadoraPage() {
                               <span className="text-xs text-gray-500 italic">
                                 Incluídos: {included} | Adicionais: {additional}
                               </span>
+                              {showPrepayOption && (
+                                <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={prepayAdditionalContracts}
+                                    onChange={(e) => setPrepayAdditionalContracts(e.target.checked)}
+                                    className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
+                                  />
+                                  <span className="text-xs text-pink-600 font-medium">
+                                    Pré-pagar {months} meses ({formatCurrency(prepaymentAmount)})
+                                  </span>
+                                </label>
+                              )}
                             </div>
                             <div className="flex flex-col items-end">
                               <span className={additional > 0 ? "text-sm font-semibold text-gray-900" : "text-sm text-green-600"}>
-                                {additional > 0 ? formatCurrency(totalCost) : 'Incluído no plano'}
+                                {additional > 0 ? (prepayAdditionalContracts && months > 0 ? 'Pré-pago' : formatCurrency(totalCost)) : 'Incluído no plano'}
                               </span>
-                              {additional > 0 && (
+                              {additional > 0 && !prepayAdditionalContracts && (
                                 <span className="text-xs text-gray-500 italic">
                                   {formatCurrency(pricePerUnit, 2)}/contrato
+                                </span>
+                              )}
+                              {prepayAdditionalContracts && months > 0 && additional > 0 && (
+                                <span className="text-xs text-green-600 font-medium">
+                                  {formatCurrency(prepaymentAmount)} antecipado
                                 </span>
                               )}
                             </div>
@@ -2604,6 +2715,10 @@ export default function CalculadoraPage() {
                   : 0;
                 const netGain = revenueFromBoletos + revenueFromInsurance - totalMonthly - (postPaidTotal || 0);
 
+                // Calculate prepayment amounts
+                const prepayment = calculatePrepaymentAmount();
+                const prepaymentMonths = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
+
                 const proposalData = {
                   salesPersonName: quoteInfo.vendorName,
                   vendorEmail: quoteInfo.vendorEmail,
@@ -2640,6 +2755,12 @@ export default function CalculadoraPage() {
                   revenueFromBoletos,
                   revenueFromInsurance,
                   netGain,
+                  // Pre-payment fields
+                  prepayAdditionalUsers: prepayAdditionalUsers,
+                  prepayAdditionalContracts: prepayAdditionalContracts,
+                  prepaymentUsersAmount: prepayment.users,
+                  prepaymentContractsAmount: prepayment.contracts,
+                  prepaymentMonths: prepaymentMonths,
                 };
 
                 // Generate PDF
