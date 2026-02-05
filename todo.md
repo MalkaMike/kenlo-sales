@@ -825,3 +825,16 @@
 - [x] Remover import de useAuth não utilizado em Home.tsx
 - [x] Todos os 88 testes passando
 - [x] Código limpo e profissional
+
+
+## Filtros Rápidos e Ranking por MRR Pré-Pago (Fev 2026)
+
+### Filtros Rápidos de Período
+- [x] Adicionar botões "Hoje", "Esta semana", "Este mês", "Todo período"
+- [x] Aplicar filtro automaticamente ao clicar
+- [x] Manter filtro de vendedor funcionando junto
+
+### Ranking por MRR Pré-Pago
+- [x] Ordenar ranking de vendedores por MRR sem pós-pago (pré-pago)
+- [x] Manter visível: volume de propostas, MRR pré-pago, MRR total (pré+pós)
+- [x] Destacar MRR pré-pago como métrica principal de ordenação

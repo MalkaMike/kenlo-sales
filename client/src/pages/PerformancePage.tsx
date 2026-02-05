@@ -61,7 +61,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { format } from "date-fns";
+import { format, startOfDay, startOfWeek, startOfMonth, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as XLSX from 'xlsx';
 import {
@@ -196,6 +196,32 @@ export default function PerformancePage() {
   const [filterKombo, setFilterKombo] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"team" | "individual">("team");
+  const [quickPeriod, setQuickPeriod] = useState<"today" | "week" | "month" | "all">("all");
+
+  // Quick period filter helper
+  const applyQuickPeriod = (period: "today" | "week" | "month" | "all") => {
+    setQuickPeriod(period);
+    const today = new Date();
+    
+    switch (period) {
+      case "today":
+        setFilterDateFrom(format(startOfDay(today), "yyyy-MM-dd"));
+        setFilterDateTo(format(today, "yyyy-MM-dd"));
+        break;
+      case "week":
+        setFilterDateFrom(format(startOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd"));
+        setFilterDateTo(format(today, "yyyy-MM-dd"));
+        break;
+      case "month":
+        setFilterDateFrom(format(startOfMonth(today), "yyyy-MM-dd"));
+        setFilterDateTo(format(today, "yyyy-MM-dd"));
+        break;
+      case "all":
+        setFilterDateFrom("");
+        setFilterDateTo("");
+        break;
+    }
+  };
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
 
@@ -436,7 +462,7 @@ export default function PerformancePage() {
         ...data,
         ticketMedio: data.count > 0 ? data.mrrWithPostPaid / data.count : 0,
       }))
-      .sort((a, b) => b.mrrWithPostPaid - a.mrrWithPostPaid);
+      .sort((a, b) => b.mrrWithoutPostPaid - a.mrrWithoutPostPaid);
   };
 
   const vendorRanking = calculateVendorRanking();
@@ -666,6 +692,42 @@ export default function PerformancePage() {
               </SelectContent>
             </Select>
           )}
+
+          {/* Quick Period Filters */}
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+            <Button
+              variant={quickPeriod === "today" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => applyQuickPeriod("today")}
+              className="text-xs px-3"
+            >
+              Hoje
+            </Button>
+            <Button
+              variant={quickPeriod === "week" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => applyQuickPeriod("week")}
+              className="text-xs px-3"
+            >
+              Esta semana
+            </Button>
+            <Button
+              variant={quickPeriod === "month" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => applyQuickPeriod("month")}
+              className="text-xs px-3"
+            >
+              Este mês
+            </Button>
+            <Button
+              variant={quickPeriod === "all" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => applyQuickPeriod("all")}
+              className="text-xs px-3"
+            >
+              Todo período
+            </Button>
+          </div>
 
           <div className="flex-1" />
 
@@ -1020,7 +1082,7 @@ export default function PerformancePage() {
               <Trophy className="w-5 h-5 text-yellow-500" />
               Ranking de Vendedores
             </CardTitle>
-            <CardDescription>Performance por vendedor ordenado por MRR total</CardDescription>
+            <CardDescription>Performance por vendedor ordenado por MRR pré-pago (mensalidade fixa)</CardDescription>
           </CardHeader>
           <CardContent>
             {vendorRanking.length > 0 ? (
@@ -1052,8 +1114,8 @@ export default function PerformancePage() {
                       </TableCell>
                       <TableCell className="font-medium">{vendor.vendorName}</TableCell>
                       <TableCell className="text-right">{vendor.count}</TableCell>
-                      <TableCell className="text-right text-blue-600">{formatCurrency(vendor.mrrWithoutPostPaid)}</TableCell>
-                      <TableCell className="text-right text-green-600 font-medium">{formatCurrency(vendor.mrrWithPostPaid)}</TableCell>
+                      <TableCell className="text-right text-primary font-bold">{formatCurrency(vendor.mrrWithoutPostPaid)}</TableCell>
+                      <TableCell className="text-right text-muted-foreground">{formatCurrency(vendor.mrrWithPostPaid)}</TableCell>
                       <TableCell className="text-right text-amber-600">{formatCurrency(vendor.implantationValue)}</TableCell>
                       <TableCell className="text-right text-purple-600">{formatCurrency(vendor.ticketMedio)}</TableCell>
                     </TableRow>
