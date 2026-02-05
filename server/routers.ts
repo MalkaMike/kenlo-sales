@@ -392,9 +392,18 @@ export const appRouter = router({
         prepaymentMonths: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Check if user is an authorized salesperson
-        const currentUser = await getSalespersonFromContext(ctx);
-        if (!currentUser) {
+        // Check if user is authorized (either via salesperson login or Manus OAuth)
+        const salesperson = await getSalespersonFromContext(ctx);
+        const manusUser = ctx.user; // Manus OAuth user from context
+        
+        // Allow access if:
+        // 1. User is logged in via salesperson system, OR
+        // 2. User is logged in via Manus OAuth with @kenlo.com.br or @i-value.com.br email
+        const isAuthorized = salesperson || 
+          (manusUser && manusUser.email && 
+           (manusUser.email.endsWith('@kenlo.com.br') || manusUser.email.endsWith('@i-value.com.br')));
+        
+        if (!isAuthorized) {
           throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar PDFs");
         }
         const pdfBuffer = await generateProposalPDF(input);

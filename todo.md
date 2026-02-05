@@ -896,3 +896,9 @@
 - [x] Mostrar lógica de cálculo (preço mensal × número de meses)
 - [x] Mostrar período coberto (12 ou 24 meses)
 - [x] Mostrar valor total incluído no pagamento antecipado
+
+
+## Correção de Acesso PDF para Manus OAuth (Fev 2026)
+- [x] Atualizar endpoint generatePDF para aceitar usuários autenticados via Manus OAuth
+- [x] Verificar domínio de email (@kenlo.com.br ou @i-value.com.br) para autorizar geração de PDF
+- [x] Manter compatibilidade com login antigo de vendedores
