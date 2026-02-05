@@ -975,3 +975,8 @@
 - [x] Gerar cotação de teste para validar visualmente a nova tabela
 - [x] Ajustar larguras das colunas (proporções adequadas)
 - [x] Adicionar nota explicativa com descontos de cada frequência (legenda centralizada abaixo da tabela)
+
+
+## Correções na Página de Login (Fev 2026)
+- [x] Adicionar menu de navegação (header) na página de login para permitir voltar ao site
+- [x] Restaurar botão de login com Google (Manus OAuth) que estava funcionando antes
