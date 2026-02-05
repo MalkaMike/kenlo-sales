@@ -1117,3 +1117,21 @@
 - [x] Opções para Plano Bienal: À vista, 2x, 3x, 4x, 5x, 6x
 - [x] Atualizar PDF para exibir parcelamento: "Total: R$ XX.XXX,00 | Parcelamento: Nx de R$ X.XXX,00"
 - [x] Testar com planos Anual e Bienal
+
+
+## Valores Padrão na Calculadora (Fev 2026)
+
+- [x] Por padrão ao carregar: IMOB selecionado (Imob só)
+- [x] Todos os add-ons deselecionados por padrão
+- [x] IMOB - Informações do Negócio padrão:
+  - [x] Número de usuários: 1
+  - [x] Fechamentos por mês: 1
+  - [x] Leads recebidos por mês: vazio/0
+- [x] LOC - Informações do Negócio padrão (quando LOC selecionado):
+  - [x] Contratos sob gestão: 1
+  - [x] Novos contratos por mês: 1
+  - [x] Cobra boleto do inquilino: deselecionado
+  - [x] Quanto cobra boleto: 0
+  - [x] Cobra split do proprietário: deselecionado
+  - [x] Quanto cobra split: 0
+- [x] Testar valores padrão no navegador

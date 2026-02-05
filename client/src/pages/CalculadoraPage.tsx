@@ -182,41 +182,41 @@ export default function CalculadoraPage() {
   // Both salesperson login (Master/Vendor) AND OAuth users with authorized domains can export
   const canExportPDF = isSalespersonAuth || isAuthorizedEmail(oauthUser?.email)
   
-  // Step 1: Product selection
-  const [product, setProduct] = useState<ProductSelection>("both");
+  // Step 1: Product selection - Default: IMOB only
+  const [product, setProduct] = useState<ProductSelection>("imob");
   
-  // Step 2: Add-ons (all 6 add-ons) - All enabled by default
+  // Step 2: Add-ons (all 6 add-ons) - All DISABLED by default
   const [addons, setAddons] = useState({
-    leads: true,
-    inteligencia: true, // BI/Analytics
-    assinatura: true, // Digital signature
-    pay: true,
-    seguros: true,
-    cash: true,
+    leads: false,
+    inteligencia: false, // BI/Analytics
+    assinatura: false, // Digital signature
+    pay: false,
+    seguros: false,
+    cash: false,
   });
 
-  // Step 3: Metrics (conditional based on product) - Updated defaults per user request
+  // Step 3: Metrics (conditional based on product) - Minimal defaults
   const [metrics, setMetrics] = useState({
-    // Imob metrics - defaults: 18 users, 300 leads, 3 closings, WhatsApp enabled
-    imobUsers: 18,
-    closingsPerMonth: 3,
-    leadsPerMonth: 300,  // Number of leads received per month for WhatsApp calculation
+    // Imob metrics - defaults: 1 user, 1 closing, 0 leads
+    imobUsers: 1,
+    closingsPerMonth: 1,
+    leadsPerMonth: 0,  // Number of leads received per month for WhatsApp calculation
     usesExternalAI: false,
-    wantsWhatsApp: true,  // WhatsApp enabled by default
+    wantsWhatsApp: false,  // WhatsApp disabled by default
     imobVipSupport: false,  // VIP Support for IMOB
     imobDedicatedCS: false, // Dedicated CS for IMOB
     
-    // Loc metrics - defaults: 550 contracts, 15 new contracts
-    contractsUnderManagement: 550,
-    newContractsPerMonth: 15,
+    // Loc metrics - defaults: 1 contract, 1 new contract
+    contractsUnderManagement: 1,
+    newContractsPerMonth: 1,
     locVipSupport: false,   // VIP Support for LOC
     locDedicatedCS: false,  // Dedicated CS for LOC
     
-    // Kenlo Pay billing - defaults: R$5 boleto, R$5 split, both enabled
-    chargesBoletoToTenant: true,
-    boletoChargeAmount: 5,  // Amount charged to tenant for boleto
-    chargesSplitToOwner: true,
-    splitChargeAmount: 5,   // Amount charged to owner for split
+    // Kenlo Pay billing - defaults: disabled, R$0
+    chargesBoletoToTenant: false,
+    boletoChargeAmount: 0,  // Amount charged to tenant for boleto
+    chargesSplitToOwner: false,
+    splitChargeAmount: 0,   // Amount charged to owner for split
   });
 
   // Step 4: Payment frequency (default: annual)
