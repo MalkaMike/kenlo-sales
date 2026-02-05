@@ -67,7 +67,7 @@ export default function CashPage() {
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                  Criar Cotação
+                  Simular Cotação
                 </Button>
               </Link>
               <Link href="/produtos/locacao">
@@ -161,7 +161,7 @@ export default function CashPage() {
                 </div>
                 <Link href="/calculadora" className="block pt-4">
                   <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                    Criar Cotação
+                    Simular Cotação
                   </Button>
                 </Link>
               </CardContent>
@@ -183,7 +183,7 @@ export default function CashPage() {
             </p>
             <Link href="/calculadora">
               <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
-                Criar Cotação
+                Simular Cotação
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>

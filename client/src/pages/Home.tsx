@@ -164,7 +164,7 @@ export default function Home() {
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all" asChild>
                 <Link href="/calculadora">
                   <Rocket className="w-6 h-6" />
-                  Criar Cotação Agora
+                  Simular Cotação
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 gap-3 border-2 hover:bg-accent" asChild>
@@ -444,7 +444,7 @@ export default function Home() {
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 gap-3 shadow-lg shadow-primary/25" asChild>
               <Link href="/calculadora">
                 <Rocket className="w-6 h-6" />
-                Criar Cotação Agora
+                Simular Cotação
               </Link>
             </Button>
           </div>

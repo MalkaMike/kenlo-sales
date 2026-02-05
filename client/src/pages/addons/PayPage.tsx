@@ -205,7 +205,7 @@ export default function PayPage() {
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
                   <Calculator className="w-5 h-5" />
-                  Criar Cotação
+                  Simular Cotação
                 </Button>
               </Link>
               <Link href="/kombos">
@@ -490,7 +490,7 @@ export default function PayPage() {
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
                   <Calculator className="w-5 h-5" />
-                  Criar Cotação
+                  Simular Cotação
                 </Button>
               </Link>
             </div>
