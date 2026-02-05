@@ -1057,3 +1057,28 @@
 - [x] Atualizada lógica de permissão no backend (routers.ts - generatePDF) - aceita OAuth users
 - [x] Atualizado QuoteInfoDialog para usar dados do usuário OAuth quando não há salesperson
 - [x] Testado com usuário OAuth (mickael@laik.com.br) - PDF gerado com sucesso para Emerson Moraes
+
+
+## Bug Reportado pela Cassia: Erro ao gerar proposta (Fev 2026)
+- [ ] Investigar erro ao gerar proposta Imob Prime - Anual com 2 usuários
+- [ ] Dados do cliente: Home Invest Imóveis / Ana Paula / (19) 97107-1120
+- [ ] Site: https://www.homeinvestimoveis.com.br/
+- [ ] Reproduzir cenário e verificar logs do servidor
+- [ ] Identificar e corrigir a causa do erro
+- [ ] Testar a correção
+
+
+## Melhoria UX: Botão Exportar PDF Sempre Visível (Fev 2026)
+- [ ] Botão "Exportar Cotação (PDF)" sempre visível na calculadora
+- [ ] Ao clicar sem selecionar plano → toast "Selecione um plano ou Kombo antes de exportar"
+- [ ] Ao clicar sem preencher campos obrigatórios → feedback indicando quais campos faltam
+- [ ] Melhorar descoberta da funcionalidade e guiar o usuário
+
+
+## Melhoria de UX - Botão Exportar PDF Sempre Visível
+
+- [x] Botão "Exportar Cotação (PDF)" sempre visível na tela
+- [x] Mensagem de validação inline (azul) quando nenhum plano está selecionado: "Selecione um plano ou Kombo na tabela acima para exportar a cotação."
+- [x] Mensagem de validação inline (amarela) quando usuário não está logado: "Para exportar cotações, faça login como vendedor autorizado."
+- [x] Mensagem de confirmação inline (verde) quando plano está selecionado: "Plano selecionado! Agora você pode exportar a proposta."
+- [x] Removidos console.logs de debug

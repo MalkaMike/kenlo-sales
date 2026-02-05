@@ -2558,34 +2558,54 @@ export default function CalculadoraPage() {
                   </div>
                 </div>
 
-                {/* Actions - Only show when a plan is selected */}
-                {selectedPlan && (
-                  <div className="flex flex-col gap-3 mt-6 mb-24">
-                    {canExportPDF ? (
-                      <>
-                        <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                          <CheckCircle2 className="w-5 h-5 text-green-600" />
-                          <span className="text-sm font-medium text-green-900">
-                            Plano selecionado! Agora você pode exportar a proposta.
-                          </span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowQuoteInfoDialog(true)}>
-                            <Download className="w-4 h-4 mr-2" />
-                            Exportar Cotação (PDF)
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <Key className="w-5 h-5 text-amber-600" />
-                        <span className="text-sm font-medium text-amber-900">
-                          Para exportar cotações, faça login como vendedor autorizado.
-                        </span>
-                      </div>
-                    )}
+                {/* Actions - Always visible with validation feedback */}
+                <div className="flex flex-col gap-3 mt-6 mb-24">
+                  {selectedPlan && canExportPDF && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                      <span className="text-sm font-medium text-green-900">
+                        Plano selecionado! Agora você pode exportar a proposta.
+                      </span>
+                    </div>
+                  )}
+                  {canExportPDF && !selectedPlan && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <Zap className="w-5 h-5 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-900">
+                        Selecione um plano ou Kombo na tabela acima para exportar a cotação.
+                      </span>
+                    </div>
+                  )}
+                  {!canExportPDF && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <Key className="w-5 h-5 text-amber-600" />
+                      <span className="text-sm font-medium text-amber-900">
+                        Para exportar cotações, faça login como vendedor autorizado.
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      className="flex-1 min-h-[50px]" 
+                      size="lg" 
+                      onClick={() => {
+                        if (!canExportPDF) {
+                          toast.error("Faça login como vendedor autorizado para exportar cotações.");
+                          return;
+                        }
+                        if (!selectedPlan) {
+                          toast.error("Selecione um plano ou Kombo antes de exportar a cotação.");
+                          return;
+                        }
+                        setShowQuoteInfoDialog(true);
+                      }}
+                      variant={selectedPlan && canExportPDF ? "default" : "outline"}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Exportar Cotação (PDF)
+                    </Button>
                   </div>
-                )}
+                </div>
 
             </CardContent>
           </Card>
