@@ -3,7 +3,7 @@
  * Streamlined tool for sales team with smart filters and dynamic questions
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useSalesperson } from "@/hooks/useSalesperson";
@@ -231,6 +231,8 @@ export default function CalculadoraPage() {
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
+  const [animateMetrics, setAnimateMetrics] = useState(false);
+  const prevProductRef = useRef<ProductSelection>(product);
   
   // tRPC mutations for PDF generation and proposal creation
   const generatePDF = trpc.proposals.generatePDF.useMutation();
@@ -1197,7 +1199,7 @@ export default function CalculadoraPage() {
                             }}
                             min="1"
                             disabled={product !== "imob" && product !== "both"}
-                            className="mt-1"
+                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
                           />
                         </div>
                         <div>
@@ -1212,7 +1214,7 @@ export default function CalculadoraPage() {
                             }}
                             min="0"
                             disabled={product !== "imob" && product !== "both"}
-                            className="mt-1"
+                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
                           />
                         </div>
                       </div>
@@ -1331,7 +1333,7 @@ export default function CalculadoraPage() {
                             }}
                             min="1"
                             disabled={product !== "loc" && product !== "both"}
-                            className="mt-1"
+                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
                           />
                         </div>
                         <div>
@@ -1346,7 +1348,7 @@ export default function CalculadoraPage() {
                             }}
                             min="0"
                             disabled={product !== "loc" && product !== "both"}
-                            className="mt-1"
+                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
                           />
                         </div>
                       </div>
@@ -1473,16 +1475,19 @@ export default function CalculadoraPage() {
                   setSelectedPlan(planId);
                   // Auto-adjust product selection based on Kombo
                   if (planId) {
-                    if (planId === 'imob_start' || planId === 'imob_pro') {
-                      // IMOB only Kombos
-                      setProduct('imob');
-                    } else if (planId === 'locacao_pro') {
-                      // LOC only Kombo
-                      setProduct('loc');
-                    } else if (planId === 'core_gestao' || planId === 'elite') {
-                      // Both IMOB + LOC Kombos
-                      setProduct('both');
+                    const newProduct: ProductSelection = 
+                      (planId === 'imob_start' || planId === 'imob_pro') ? 'imob' :
+                      (planId === 'locacao_pro') ? 'loc' :
+                      'both';
+                    
+                    // Trigger animation if product changed
+                    if (newProduct !== prevProductRef.current) {
+                      setAnimateMetrics(true);
+                      setTimeout(() => setAnimateMetrics(false), 1200);
                     }
+                    
+                    prevProductRef.current = newProduct;
+                    setProduct(newProduct);
                   }
                 }}
                 onFrequencyChange={setFrequency}

@@ -412,3 +412,26 @@ html {
   transform: translateY(-8px);
   animation: card-glow 2s ease-in-out infinite;
 }
+
+
+/* Metric Fields Highlight Animation */
+@keyframes metric-field-highlight {
+  0% {
+    background-color: oklch(0.96 0.001 260);
+    border-color: oklch(0.92 0.004 260);
+  }
+  50% {
+    background-color: oklch(0.98 0.12 15 / 0.15);
+    border-color: oklch(0.62 0.24 15 / 0.4);
+    box-shadow: 0 0 0 3px oklch(0.62 0.24 15 / 0.1);
+  }
+  100% {
+    background-color: oklch(1 0 0);
+    border-color: oklch(0.92 0.004 260);
+    box-shadow: none;
+  }
+}
+
+.metric-field-animated {
+  animation: metric-field-highlight 1.2s ease-in-out;
+}

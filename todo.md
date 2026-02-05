@@ -1165,3 +1165,12 @@
   - [x] Pay, Seguros, Cash: apenas com LOC
   - [x] Inteligência, Assinatura: ambos IMOB e LOC
 - [x] Testar todos os cenários no navegador
+
+
+## Animação de Destaque nos Campos de Métricas (Fev 2026)
+
+- [x] Adicionar animação suave quando o produto muda automaticamente
+- [x] Destacar visualmente os campos de métricas que foram habilitados/desabilitados
+- [x] Usar animação de pulse ou fade-in para os campos habilitados
+- [x] Usar animação de fade-out para os campos desabilitados
+- [x] Testar a animação no navegador
