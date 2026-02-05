@@ -57,7 +57,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
             <img 
-              src="/kenlo-logo-traced.svg" 
+              src="/kenlo-logo-final.svg" 
               alt="Kenlo" 
               className="h-10 mx-auto"
             />

@@ -934,10 +934,11 @@
 
 ### Logos
 - [x] Extrair cor exata do vermelho Kenlo (#F82E52)
-- [x] Criar versão SVG vetorial do logo completo "Kenlo" (vermelho) - kenlo-logo-traced.svg
+- [x] Criar versão SVG vetorial do logo completo "Kenlo" (vermelho) - kenlo-logo-final.svg (letras vermelhas, fundo transparente)
 - [x] Criar versão SVG vetorial do logo "K" (vermelho com fundo, e apenas K branco) - kenlo-k-icon.svg
 - [x] Criar versões brancas dos logos para fundos escuros - kenlo-logo-white-traced.svg
-- [x] Aplicar logos em: header, footer, favicon, PDF
+- [x] Aplicar logos em: header, footer, login, favicon, PDF
+- [x] Corrigir logo para usar letras vermelhas com fundo transparente (não inverso)
 
 ### Fonte Manrope
 - [x] Verificar se Manrope está sendo usada em todo o site (Google Fonts CDN)

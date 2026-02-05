@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 35" width="120" height="35">
+  <!-- Kenlo Logo - Red text #F82E52 on transparent background -->
+  <defs>
+    <style>
+      .kenlo-text { fill: #F82E52; font-family: 'Manrope', sans-serif; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- Using path for the K with diagonal cut characteristic of Kenlo -->
+  <g fill="#F82E52">
+    <!-- K with diagonal cut -->
+    <path d="M0 2 L0 33 L6 33 L6 19 L8 17 L20 33 L28 33 L13 14 L26 2 L18 2 L6 14 L6 2 Z"/>
+    <!-- e -->
+    <path d="M38 10 C32 10 28 14 28 21 C28 28 32 33 39 33 C44 33 47 30 48 27 L43 27 C42 29 41 30 39 30 C36 30 34 28 34 24 L48 24 L48 21 C48 14 44 10 38 10 Z M34 21 C34 17 36 13 38 13 C41 13 43 16 43 21 L34 21 Z"/>
+    <!-- n -->
+    <path d="M51 11 L51 33 L57 33 L57 20 C57 16 59 13 63 13 C66 13 68 15 68 20 L68 33 L74 33 L74 18 C74 13 71 10 65 10 C61 10 58 12 56 15 L56 11 L51 11 Z"/>
+    <!-- l -->
+    <path d="M78 2 L78 33 L84 33 L84 2 L78 2 Z"/>
+    <!-- o with dot -->
+    <path d="M96 10 C89 10 85 15 85 21.5 C85 28 89 33 96 33 C103 33 107 28 107 21.5 C107 15 103 10 96 10 Z M96 13 C100 13 101 17 101 21.5 C101 26 100 30 96 30 C92 30 91 26 91 21.5 C91 17 92 13 96 13 Z"/>
+    <!-- Dot above o -->
+    <circle cx="96" cy="4" r="3"/>
+  </g>
+</svg>

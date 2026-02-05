@@ -50,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img 
-              src="/kenlo-logo-traced.svg" 
+              src="/kenlo-logo-final.svg" 
               alt="Kenlo" 
               className="h-7 w-auto"
             />
@@ -228,7 +228,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="col-span-2 md:col-span-1">
               <Link href="/" className="flex items-center">
                 <img 
-                  src="/kenlo-logo-traced.svg" 
+                  src="/kenlo-logo-final.svg" 
                   alt="Kenlo" 
                   className="h-6 w-auto"
                 />
