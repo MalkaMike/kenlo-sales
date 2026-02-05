@@ -1239,19 +1239,19 @@
 - [ ] 5. Investimento: Hero number + composição
   - [ ] Valor total grande e destacado
   - [ ] Composição em fonte menor/itálico (licença pré-paga, usuários adicionais, implantação)
-- [ ] 6. Condições de Pagamento
-  - [ ] Parcelamento (se houver)
-  - [ ] Equivalente mensal como texto auxiliar
-- [ ] 7. Estimativas Pós-pagas: Seção separada visualmente
-  - [ ] Explicar que são estimativas
-  - [ ] Valores médios esperados
-  - [ ] Nunca misturar com valores contratados
-- [ ] 8. The Kenlo Effect: ROI positivo no final
-  - [ ] Potenciais receitas
-  - [ ] Ganho líquido estimado
-  - [ ] Disclaimer discreto
-- [ ] Testar PDF com diferentes cenários (Kombos, produtos, add-ons)
-- [ ] Validar hierarquia visual e clareza
+- [x] 6. Condições de Pagamento
+  - [x] Parcelamento (se houver)
+  - [x] Equivalente mensal como texto auxiliar
+- [x] 7. Estimativas Pós-pagas: Seção separada visualmente
+  - [x] Explicar que são estimativas
+  - [x] Valores médios esperados
+  - [x] Nunca misturar com valores contratados
+- [x] 8. The Kenlo Effect: ROI positivo no final
+  - [x] Potenciais receitas
+  - [x] Ganho líquido estimado
+  - [x] Disclaimer discreto
+- [x] Testar PDF com diferentes cenários (Kombos, produtos, add-ons)
+- [x] Validar hierarquia visual e clareza
 
 
 ## Validação e Captura Completa para PDF (Fev 2026)
@@ -1266,4 +1266,51 @@
   - [x] Bloqueia geração de PDF se houver incompatibilidades
 - [x] Adicionar log de debug mostrando dados capturados vs dados enviados
 - [ ] Criar modal de confirmação mostrando resumo antes de gerar PDF (opcional)
-- [ ] Testar com diferentes cenários para garantir zero discrepâncias
+- [x] Testar com diferentes cenários para garantir zero discrepâncias
+
+
+## Comprehensive PDF Testing (Fev 2026)
+
+- [x] Create automated vitest tests for PDF data validation:
+  - [x] Test IMOB only with different add-ons combinations
+  - [x] Test LOC only with different add-ons combinations
+  - [x] Test IMOB+LOC with all Kombos
+  - [x] Verify all metrics are correctly captured and sent
+  - [x] Verify add-on compatibility validation works
+  - [x] Verify Premium Services pricing (included vs paid)
+  - [x] Verify all calculated values match (monthly, annual, implementation)
+- [x] Manual testing scenarios:
+  - [x] Scenario 1: IMOB Prime + Leads + Inteligência (Kombo Imob Pro)
+  - [x] Scenario 2: LOC K + Pay + Seguros + Cash
+  - [x] Scenario 3: IMOB+LOC K2 (Kombo Core Gestão)
+  - [x] Scenario 4: IMOB+LOC with all add-ons (Kombo Elite)
+  - [x] Scenario 5: IMOB only without add-ons
+- [x] Verify PDF content matches calculator for each scenario:
+  - [x] Business Snapshot metrics
+  - [x] Products and plans selected
+  - [x] Add-ons with correct ✓/✗ marks
+  - [x] Premium Services status
+  - [x] All pricing values
+  - [x] Payment frequency and conditions
+
+
+## Testes Completos de PDF - Todos os Cenários (Fev 2026)
+
+### Kombos a testar:
+- [x] Cenário 1: Kombo Imob Start (IMOB + Leads + Assinatura) - 10% OFF ✓
+- [x] Cenário 2: Kombo Imob Pro (IMOB + Leads + Inteligência + Assinatura) - 15% OFF ✓
+- [x] Cenário 3: Kombo Locação Pro (LOC + Inteligência + Assinatura) - 10% OFF ✓
+- [x] Cenário 4: Kombo Core Gestão (IMOB + LOC sem add-ons) ✓
+- [x] Cenário 5: Kombo Elite (IMOB + LOC + TODOS add-ons) - 20% OFF ✓
+
+### Casos especiais a testar:
+- [x] Cenário 6: IMOB só sem Kombo (plano avulso) ✓
+- [ ] Cenário 7: LOC só sem Kombo (plano avulso)
+- [ ] Cenário 8: IMOB + LOC sem Kombo (sem add-ons suficientes)
+- [x] Cenário 9: Com WhatsApp ativo (requer Leads ou IA Externa) ✓
+- [x] Cenário 10: Com IA Externa ativa ✓
+- [x] Cenário 11: Com Serviços Premium pagos (não Kombo) ✓
+- [x] Cenário 12: Parcelamento 2x ✓
+- [ ] Cenário 13: Parcelamento 3x
+- [x] Cenário 14: Plano K (não Prime) ✓
+- [x] Cenário 15: Plano K2 (não Prime) ✓

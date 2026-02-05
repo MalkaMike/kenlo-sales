@@ -1473,21 +1473,58 @@ export default function CalculadoraPage() {
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
                 onPlanSelected={(planId) => {
                   setSelectedPlan(planId);
-                  // Auto-adjust product selection based on Kombo
-                  if (planId) {
-                    const newProduct: ProductSelection = 
-                      (planId === 'imob_start' || planId === 'imob_pro') ? 'imob' :
-                      (planId === 'locacao_pro') ? 'loc' :
-                      'both';
-                    
-                    // Trigger animation if product changed
-                    if (newProduct !== prevProductRef.current) {
-                      setAnimateMetrics(true);
-                      setTimeout(() => setAnimateMetrics(false), 1200);
+                  // Auto-adjust product selection AND add-ons based on Kombo
+                  if (planId && planId !== 'none') {
+                    const kombo = KOMBOS[planId as keyof typeof KOMBOS];
+                    if (kombo) {
+                      // Set product based on Kombo requirements
+                      const newProduct: ProductSelection = 
+                        (planId === 'imob_start' || planId === 'imob_pro') ? 'imob' :
+                        (planId === 'locacao_pro') ? 'loc' :
+                        'both';
+                      
+                      // Trigger animation if product changed
+                      if (newProduct !== prevProductRef.current) {
+                        setAnimateMetrics(true);
+                        setTimeout(() => setAnimateMetrics(false), 1200);
+                      }
+                      
+                      prevProductRef.current = newProduct;
+                      setProduct(newProduct);
+                      
+                      // AUTO-ACTIVATE required add-ons for this Kombo
+                      const requiredAddons = (kombo.requiredAddons || []) as string[];
+                      const forbiddenAddons = ((kombo as any).forbiddenAddons || []) as string[];
+                      const maxAddons = (kombo as any).maxAddons;
+                      
+                      // Build new addons state
+                      const newAddons = {
+                        leads: requiredAddons.includes('leads') && !forbiddenAddons.includes('leads'),
+                        inteligencia: requiredAddons.includes('inteligencia') && !forbiddenAddons.includes('inteligencia'),
+                        assinatura: requiredAddons.includes('assinatura') && !forbiddenAddons.includes('assinatura'),
+                        pay: requiredAddons.includes('pay') && !forbiddenAddons.includes('pay'),
+                        seguros: requiredAddons.includes('seguros') && !forbiddenAddons.includes('seguros'),
+                        cash: requiredAddons.includes('cash') && !forbiddenAddons.includes('cash'),
+                      };
+                      
+                      // For Core Gestão (maxAddons = 0), disable all add-ons
+                      if (maxAddons === 0) {
+                        setAddons({
+                          leads: false,
+                          inteligencia: false,
+                          assinatura: false,
+                          pay: false,
+                          seguros: false,
+                          cash: false,
+                        });
+                      } else {
+                        setAddons(newAddons);
+                      }
+                      
+                      console.log('[Kombo Selection] Selected:', planId);
+                      console.log('[Kombo Selection] Required add-ons:', requiredAddons);
+                      console.log('[Kombo Selection] New add-ons state:', maxAddons === 0 ? 'all disabled' : newAddons);
                     }
-                    
-                    prevProductRef.current = newProduct;
-                    setProduct(newProduct);
                   }
                 }}
                 onFrequencyChange={setFrequency}
@@ -2920,8 +2957,10 @@ export default function CalculadoraPage() {
                 }
                 
                 // Validate Premium Services logic
+                // ALL Kombos include Premium Services (VIP + CS Dedicado) for free
                 const hasPremiumIncluded = 
-                  (komboInfo?.name === 'Kombo Core Gestão' || 
+                  (komboInfo?.name === 'Kombo Imob Start' ||
+                   komboInfo?.name === 'Kombo Core Gestão' || 
                    komboInfo?.name === 'Kombo Elite' ||
                    komboInfo?.name === 'Kombo Imob Pro' ||
                    komboInfo?.name === 'Kombo Locação Pro');
@@ -2966,9 +3005,10 @@ export default function CalculadoraPage() {
                   prepaymentUsersAmount: prepayment.users,
                   prepaymentContractsAmount: prepayment.contracts,
                   prepaymentMonths: prepaymentMonths,
-                  // Premium services
-                  hasPremiumServices: (metrics.imobVipSupport || metrics.locVipSupport) && 
-                    (metrics.imobDedicatedCS || metrics.locDedicatedCS),
+                  // Premium services - ALL Kombos include Premium Services for free
+                  hasPremiumServices: hasPremiumIncluded || 
+                    ((metrics.imobVipSupport || metrics.locVipSupport) && 
+                    (metrics.imobDedicatedCS || metrics.locDedicatedCS)),
                   premiumServicesPrice: premiumServicesPrice,
                   // Installment options (from QuoteInfoDialog)
                   installments: quoteInfo.installments,
