@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <!-- Kenlo Favicon - Red #F82E52 background with white K -->
-  <rect x="0" y="0" width="100" height="100" rx="20" ry="20" fill="#F82E52"/>
-  <path fill="#FFFFFF" d="M28 15 L28 85 L38 85 L38 55 L42 51 L68 85 L82 85 L50 45 L78 15 L64 15 L38 43 L38 15 Z"/>
+  <!-- Kenlo Favicon - Red K #F82E52 centered on transparent background -->
+  <path fill="#F82E52" d="M20 8 L20 92 L35 92 L35 58 L40 52 L72 92 L92 92 L52 42 L88 8 L68 8 L35 42 L35 8 Z"/>
 </svg>
