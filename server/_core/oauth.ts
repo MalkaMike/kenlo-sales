@@ -4,6 +4,18 @@ import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 
+/** Allowed email domains for access */
+const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br"];
+
+/**
+ * Check if an email belongs to an allowed domain
+ */
+function isAllowedDomain(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const domain = email.toLowerCase().split("@")[1];
+  return ALLOWED_DOMAINS.includes(domain);
+}
+
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
   return typeof value === "string" ? value : undefined;
@@ -25,6 +37,13 @@ export function registerOAuthRoutes(app: Express) {
 
       if (!userInfo.openId) {
         res.status(400).json({ error: "openId missing from user info" });
+        return;
+      }
+
+      // Validate email domain
+      if (!isAllowedDomain(userInfo.email)) {
+        console.warn(`[OAuth] Access denied for email: ${userInfo.email}`);
+        res.redirect(302, "/acesso-negado");
         return;
       }
 

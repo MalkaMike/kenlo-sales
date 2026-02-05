@@ -23,6 +23,7 @@ import CalculadoraPage from "./pages/CalculadoraPage";
 import HistoricoPage from "./pages/HistoricoPage";
 import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";
+import AcessoNegado from "./pages/AcessoNegado";
 
 // Protected Calculadora wrapper
 function ProtectedCalculadora() {
@@ -56,6 +57,9 @@ function Router() {
     <Switch>
       {/* Login page - no layout */}
       <Route path="/login" component={LoginPage} />
+      
+      {/* Access denied page - no layout */}
+      <Route path="/acesso-negado" component={AcessoNegado} />
       
       {/* All other pages with layout */}
       <Route>

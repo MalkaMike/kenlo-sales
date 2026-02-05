@@ -865,3 +865,18 @@
 - [x] robots.txt criado com Disallow: /
 - [x] meta noindex, nofollow adicionado em index.html
 - [x] Site não será indexado por motores de busca
+
+
+## Google SSO e Controle de Acesso (Fev 2026)
+
+### Google OAuth
+- [x] Usar Manus OAuth existente (suporta Google SSO nativamente)
+- [x] Validar domínio de email (@kenlo.com.br e @i-value.com.br) no callback
+- [x] Criar página /acesso-negado para domínios não autorizados
+- [x] Qualquer pessoa desses domínios pode acessar o site
+
+### Controle de Permissões
+- [x] Apenas vendedores da lista podem gerar PDFs (verificação no endpoint generatePDF)
+- [x] Lista de vendedores: 11 vendedores ativos no banco de dados
+- [x] Master admin pode fazer tudo
+- [x] 88 testes passando

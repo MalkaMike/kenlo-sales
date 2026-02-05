@@ -1,0 +1,76 @@
+{
+  "query": "SELECT id, name, email, isActive FROM salespeople;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, name, email, isActive FROM salespeople;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Amanda Matos",
+      "email": "amanda.matos@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "2",
+      "name": "Bruno Silva",
+      "email": "bruno.silva@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "3",
+      "name": "Cassia Barbosa",
+      "email": "cassia.barbosa@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "4",
+      "name": "Emerson Moraes",
+      "email": "emerson.moraes@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "5",
+      "name": "Ivan Codo",
+      "email": "ivan.codo@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "6",
+      "name": "Jaqueline Granelli",
+      "email": "jaqueline.granelli@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "7",
+      "name": "Larissa Favi",
+      "email": "larissa.favi@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "8",
+      "name": "Marina Yokoo",
+      "email": "marina.yokoo@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "9",
+      "name": "Munyr Gasperin",
+      "email": "munyr.gasperin@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "10",
+      "name": "Roberta Azevedo",
+      "email": "roberta.azevedo@kenlo.com.br",
+      "isActive": "1"
+    },
+    {
+      "id": "11",
+      "name": "Tatiane Guelfi",
+      "email": "tatiane.guelfi@kenlo.com.br",
+      "isActive": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tisActive\n1\tAmanda Matos\tamanda.matos@kenlo.com.br\t1\n2\tBruno Silva\tbruno.silva@kenlo.com.br\t1\n3\tCassia Barbosa\tcassia.barbosa@kenlo.com.br\t1\n4\tEmerson Moraes\temerson.moraes@kenlo.com.br\t1\n5\tIvan Codo\tivan.codo@kenlo.com.br\t1\n6\tJaqueline Granelli\tjaqueline.granelli@kenlo.com.br\t1\n7\tLarissa Favi\tlarissa.favi@kenlo.com.br\t1\n8\tMarina Yokoo\tmarina.yokoo@kenlo.com.br\t1\n9\tMunyr Gasperin\tmunyr.gasperin@kenlo.com.br\t1\n10\tRoberta Azevedo\troberta.azevedo@kenlo.com.br\t1\n11\tTatiane Guelfi\ttatiane.guelfi@kenlo.com.br\t1\n",
+  "stderr": "",
+  "execution_time_ms": 752
+}

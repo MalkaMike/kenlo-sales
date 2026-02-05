@@ -360,7 +360,7 @@ export const appRouter = router({
         return { success: true, proposalId: proposal };
       }),
     
-    generatePDF: protectedProcedure
+    generatePDF: publicProcedure
       .input(z.object({
         salesPersonName: z.string(),
         vendorEmail: z.string().optional(),
@@ -385,7 +385,12 @@ export const appRouter = router({
         revenueFromInsurance: z.number().optional(),
         netGain: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        // Check if user is an authorized salesperson
+        const currentUser = await getSalespersonFromContext(ctx);
+        if (!currentUser) {
+          throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar PDFs");
+        }
         const pdfBuffer = await generateProposalPDF(input);
         // Return PDF as base64 so it can be downloaded in the browser
         return {
