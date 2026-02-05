@@ -960,3 +960,12 @@
 
 ## Remoção de Seção do PDF (Fev 2026)
 - [x] Remover seção "Benefícios Incluídos no Seu Plano" do PDF gerado
+
+
+## Refazer Tabela de Investimento do PDF (Fev 2026)
+- [x] Criar layout com colunas: Mensal | Anual | Semestral/Bienal
+- [x] Destacar a coluna da frequência selecionada pelo usuário (fundo rosa claro + texto vermelho)
+- [x] Adicionar linhas de pré-pago: Licenças, Usuários, Contratos
+- [x] Adicionar linha Total Pré-Pago com soma
+- [x] Adicionar linha de Implantação
+- [x] Adicionar linha de Estimação Pós-Pago mensal
