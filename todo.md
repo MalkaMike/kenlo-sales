@@ -980,3 +980,10 @@
 ## Correções na Página de Login (Fev 2026)
 - [x] Adicionar menu de navegação (header) na página de login para permitir voltar ao site
 - [x] Restaurar botão de login com Google (Manus OAuth) que estava funcionando antes
+
+
+## Simplificação da Tabela de Investimento do PDF (Fev 2026)
+- [x] Remover comparação de frequências (Mensal/Anual/Bienal lado a lado)
+- [x] Mostrar apenas a frequência escolhida pelo usuário
+- [x] Adicionar coluna de equivalente mensal para cada item
+- [x] Manter estrutura: Licenças, Usuários pré-pagos, Contratos pré-pagos, Total Pré-Pago, Implantação, Pós-Pago

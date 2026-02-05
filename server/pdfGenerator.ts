@@ -28,7 +28,7 @@ interface ProposalData {
   prepayAdditionalContracts?: boolean;
   prepaymentUsersAmount?: number;
   prepaymentContractsAmount?: number;
-  prepaymentMonths?: number; // 12 for annual, 24 for biennial
+  prepaymentMonths?: number; // 6 for semestral, 12 for annual, 24 for biennial
   // Monthly base values for table calculations
   monthlyLicenseBase?: number; // Monthly license cost at selected plan
 }
@@ -53,7 +53,6 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const lightText = "#666666";
     const lightGray = "#f8f8f8";
     const highlightBg = "#1e3a5f"; // Dark blue for header
-    const highlightCell = "#fff0f3"; // Light pink for selected column
 
     const pageWidth = 595.28;
     const margin = 40;
@@ -68,6 +67,24 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         maximumFractionDigits: 0,
       }).format(value);
     };
+
+    // Get payment plan label and period
+    const getPaymentPlanInfo = () => {
+      switch (data.paymentPlan) {
+        case "monthly":
+          return { label: "Mensal", months: 1, discount: "+25%" };
+        case "semestral":
+          return { label: "Semestral", months: 6, discount: "-15%" };
+        case "annual":
+          return { label: "Anual", months: 12, discount: "0% (Referência)" };
+        case "biennial":
+          return { label: "Bienal", months: 24, discount: "-25%" };
+        default:
+          return { label: "Anual", months: 12, discount: "0% (Referência)" };
+      }
+    };
+
+    const planInfo = getPaymentPlanInfo();
 
     // ============================================
     // HEADER - Pink banner
@@ -191,188 +208,130 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     y += 10;
 
     // ============================================
-    // NEW PRICING TABLE - Multi-column layout
+    // SIMPLIFIED PRICING TABLE - Only selected frequency
     // ============================================
     doc.font("Helvetica-Bold").fontSize(10).fillColor(kenloPink)
        .text("INVESTIMENTO", margin, y);
-    y += 18;
+    y += 5;
+    
+    // Payment plan badge
+    doc.font("Helvetica").fontSize(9).fillColor(lightText)
+       .text(`Pagamento: ${planInfo.label} (${planInfo.discount})`, margin, y + 12);
+    y += 28;
 
-    // Table dimensions
-    const labelColWidth = 180;
-    const valueColWidth = (contentWidth - labelColWidth) / 3;
-    const rowHeight = 22;
+    // Table dimensions - 3 columns: Description, Total, Equiv. Mensal
+    const col1Width = 240; // Description
+    const col2Width = 135; // Total
+    const col3Width = 140; // Equiv. Mensal
+    const rowHeight = 24;
     
-    // Determine which columns to show based on payment plan
-    const isMonthly = data.paymentPlan === "monthly";
-    const isSemestral = data.paymentPlan === "semestral";
-    const isAnnual = data.paymentPlan === "annual";
-    const isBiennial = data.paymentPlan === "biennial";
-    
-    // Column headers
-    const col1Label = "Mensal";
-    const col2Label = "Anual";
-    const col3Label = isSemestral ? "Semestral (-15%)" : "Bienal (-25%)";
-    
-    // Determine which column is selected
-    const selectedCol = isMonthly ? 1 : isAnnual ? 2 : 3;
-    
-    // Calculate values for each column
-    // Monthly base (no discount)
-    const monthlyBase = data.totalMonthly / (
-      isMonthly ? 1 : 
-      isSemestral ? 0.85 : 
-      isAnnual ? 0.80 : 
-      0.75
-    );
-    
-    const monthlyValue = monthlyBase;
-    const annualValue = monthlyBase * 0.80; // 20% discount
-    const thirdColValue = isSemestral ? monthlyBase * 0.85 : monthlyBase * 0.75; // 15% or 25% discount
+    const col1X = margin;
+    const col2X = margin + col1Width;
+    const col3X = col2X + col2Width;
     
     // Draw table header
     doc.rect(margin, y, contentWidth, rowHeight).fill(highlightBg);
     
-    // Header labels
-    doc.font("Helvetica-Bold").fontSize(8).fillColor("#ffffff")
-       .text("", margin + 10, y + 7);
-    
-    const col1X = margin + labelColWidth;
-    const col2X = col1X + valueColWidth;
-    const col3X = col2X + valueColWidth;
-    
-    // Highlight selected column header
-    if (selectedCol === 1) {
-      doc.rect(col1X, y, valueColWidth, rowHeight).fill(kenloPink);
-    } else if (selectedCol === 2) {
-      doc.rect(col2X, y, valueColWidth, rowHeight).fill(kenloPink);
-    } else {
-      doc.rect(col3X, y, valueColWidth, rowHeight).fill(kenloPink);
-    }
-    
-    doc.font("Helvetica-Bold").fontSize(8).fillColor("#ffffff")
-       .text(col1Label, col1X + 5, y + 7, { width: valueColWidth - 10, align: "center" })
-       .text(col2Label, col2X + 5, y + 7, { width: valueColWidth - 10, align: "center" })
-       .text(col3Label, col3X + 5, y + 7, { width: valueColWidth - 10, align: "center" });
+    doc.font("Helvetica-Bold").fontSize(9).fillColor("#ffffff")
+       .text("Descrição", col1X + 10, y + 7)
+       .text("Valor Total", col2X + 10, y + 7, { width: col2Width - 20, align: "center" })
+       .text("Equiv. Mensal", col3X + 10, y + 7, { width: col3Width - 20, align: "center" });
     
     y += rowHeight;
     
     // Helper to draw a table row
-    const drawRow = (label: string, val1: string, val2: string, val3: string, isTotalRow = false) => {
-      const bgColor = isTotalRow ? lightGray : "#ffffff";
+    const drawRow = (label: string, total: string, monthly: string, isTotalRow = false, isSection = false) => {
+      const bgColor = isTotalRow ? "#fff0f3" : isSection ? lightGray : "#ffffff";
       doc.rect(margin, y, contentWidth, rowHeight).fill(bgColor);
-      
-      // Highlight selected column
-      if (selectedCol === 1) {
-        doc.rect(col1X, y, valueColWidth, rowHeight).fill(highlightCell);
-      } else if (selectedCol === 2) {
-        doc.rect(col2X, y, valueColWidth, rowHeight).fill(highlightCell);
-      } else {
-        doc.rect(col3X, y, valueColWidth, rowHeight).fill(highlightCell);
-      }
       
       // Draw borders
       doc.strokeColor("#e0e0e0").lineWidth(0.5);
       doc.rect(margin, y, contentWidth, rowHeight).stroke();
-      doc.moveTo(col1X, y).lineTo(col1X, y + rowHeight).stroke();
       doc.moveTo(col2X, y).lineTo(col2X, y + rowHeight).stroke();
       doc.moveTo(col3X, y).lineTo(col3X, y + rowHeight).stroke();
       
       // Draw text
-      const fontStyle = isTotalRow ? "Helvetica-Bold" : "Helvetica";
-      doc.font(fontStyle).fontSize(8).fillColor(darkText)
-         .text(label, margin + 5, y + 7, { width: labelColWidth - 10 });
+      const fontStyle = isTotalRow || isSection ? "Helvetica-Bold" : "Helvetica";
+      const textColor = isTotalRow ? kenloPink : darkText;
       
-      doc.font(fontStyle).fontSize(8).fillColor(selectedCol === 1 ? kenloPink : darkText)
-         .text(val1, col1X + 5, y + 7, { width: valueColWidth - 10, align: "center" });
-      doc.font(fontStyle).fontSize(8).fillColor(selectedCol === 2 ? kenloPink : darkText)
-         .text(val2, col2X + 5, y + 7, { width: valueColWidth - 10, align: "center" });
-      doc.font(fontStyle).fontSize(8).fillColor(selectedCol === 3 ? kenloPink : darkText)
-         .text(val3, col3X + 5, y + 7, { width: valueColWidth - 10, align: "center" });
+      doc.font(fontStyle).fontSize(9).fillColor(textColor)
+         .text(label, col1X + 10, y + 7, { width: col1Width - 20 });
+      
+      doc.font(fontStyle).fontSize(9).fillColor(textColor)
+         .text(total, col2X + 10, y + 7, { width: col2Width - 20, align: "center" });
+      
+      doc.font(fontStyle).fontSize(9).fillColor(textColor)
+         .text(monthly, col3X + 10, y + 7, { width: col3Width - 20, align: "center" });
       
       y += rowHeight;
     };
     
+    // Calculate values based on selected payment plan
+    const licenseTotal = data.totalMonthly * planInfo.months;
+    const licenseMonthly = data.totalMonthly;
+    
     // PRE-PAID SECTION
-    doc.font("Helvetica-Bold").fontSize(8).fillColor(kenloPink)
-       .text("LICENÇAS PRÉ-PAGAS", margin + 5, y + 7);
-    y += 18;
+    drawRow("PRÉ-PAGO", "", "", false, true);
     
     // Licenses pre-paid row
-    const licensesMonthly = formatCurrency(monthlyValue * 12);
-    const licensesAnnual = formatCurrency(annualValue * 12);
-    const licensesThird = isSemestral 
-      ? formatCurrency(thirdColValue * 6)
-      : formatCurrency(thirdColValue * 24);
-    
-    drawRow("Licenças Pré-pagas", licensesMonthly, licensesAnnual, licensesThird);
+    drawRow(
+      `Licenças (${planInfo.months} meses)`,
+      formatCurrency(licenseTotal),
+      formatCurrency(licenseMonthly) + "/mês"
+    );
     
     // Users pre-paid (if applicable)
+    let totalPrePaid = licenseTotal;
+    let totalMonthlyEquiv = licenseMonthly;
+    
     if (data.prepayAdditionalUsers && data.prepaymentUsersAmount && data.prepaymentUsersAmount > 0) {
-      const usersValue = formatCurrency(data.prepaymentUsersAmount);
-      drawRow("Usuários Pré-pagos", usersValue, usersValue, usersValue);
+      const usersMonthly = data.prepaymentUsersAmount / (data.prepaymentMonths || planInfo.months);
+      totalPrePaid += data.prepaymentUsersAmount;
+      totalMonthlyEquiv += usersMonthly;
+      drawRow(
+        `Usuários Adicionais Pré-pagos (${data.prepaymentMonths || planInfo.months} meses)`,
+        formatCurrency(data.prepaymentUsersAmount),
+        formatCurrency(usersMonthly) + "/mês"
+      );
     }
     
     // Contracts pre-paid (if applicable)
     if (data.prepayAdditionalContracts && data.prepaymentContractsAmount && data.prepaymentContractsAmount > 0) {
-      const contractsValue = formatCurrency(data.prepaymentContractsAmount);
-      drawRow("Contratos Pré-pagos", contractsValue, contractsValue, contractsValue);
-    }
-    
-    // Total Pre-Paid row
-    let totalPrePaidMonthly = monthlyValue * 12;
-    let totalPrePaidAnnual = annualValue * 12;
-    let totalPrePaidThird = isSemestral ? thirdColValue * 6 : thirdColValue * 24;
-    
-    if (data.prepayAdditionalUsers && data.prepaymentUsersAmount) {
-      totalPrePaidMonthly += data.prepaymentUsersAmount;
-      totalPrePaidAnnual += data.prepaymentUsersAmount;
-      totalPrePaidThird += data.prepaymentUsersAmount;
-    }
-    if (data.prepayAdditionalContracts && data.prepaymentContractsAmount) {
-      totalPrePaidMonthly += data.prepaymentContractsAmount;
-      totalPrePaidAnnual += data.prepaymentContractsAmount;
-      totalPrePaidThird += data.prepaymentContractsAmount;
-    }
-    
-    drawRow("Total Pré-Pago", 
-      formatCurrency(totalPrePaidMonthly), 
-      formatCurrency(totalPrePaidAnnual), 
-      formatCurrency(totalPrePaidThird),
-      true
-    );
-    
-    y += 10;
-    
-    // IMPLANTATION ROW
-    drawRow("Implantação (única vez)", 
-      formatCurrency(data.implantationFee), 
-      formatCurrency(data.implantationFee), 
-      formatCurrency(data.implantationFee)
-    );
-    
-    y += 10;
-    
-    // POST-PAID SECTION
-    if (data.postPaidTotal !== undefined && data.postPaidTotal > 0) {
-      doc.font("Helvetica-Bold").fontSize(8).fillColor(lightText)
-         .text("ESTIMAÇÃO PÓS-PAGO (MENSAL)", margin + 5, y + 2);
-      y += 14;
-      
-      drawRow("Custos Variáveis Estimados", 
-        formatCurrency(data.postPaidTotal) + "/mês", 
-        formatCurrency(data.postPaidTotal) + "/mês", 
-        formatCurrency(data.postPaidTotal) + "/mês"
+      const contractsMonthly = data.prepaymentContractsAmount / (data.prepaymentMonths || planInfo.months);
+      totalPrePaid += data.prepaymentContractsAmount;
+      totalMonthlyEquiv += contractsMonthly;
+      drawRow(
+        `Contratos Adicionais Pré-pagos (${data.prepaymentMonths || planInfo.months} meses)`,
+        formatCurrency(data.prepaymentContractsAmount),
+        formatCurrency(contractsMonthly) + "/mês"
       );
     }
     
-    y += 10;
-
-    // ============================================
-    // DISCOUNT LEGEND
-    // ============================================
-    doc.font("Helvetica").fontSize(7).fillColor(lightText)
-       .text("Descontos: Mensal (+25% sobre referência) | Anual (0% - Referência) | Semestral (-15%) | Bienal (-25%)", margin, y, { width: contentWidth, align: "center" });
+    // Total Pre-Paid row
+    drawRow(
+      "TOTAL PRÉ-PAGO",
+      formatCurrency(totalPrePaid),
+      formatCurrency(totalMonthlyEquiv) + "/mês",
+      true
+    );
     
+    y += 5;
+    
+    // IMPLANTATION ROW
+    drawRow("IMPLANTAÇÃO (única vez)", formatCurrency(data.implantationFee), "-");
+    
+    y += 5;
+    
+    // POST-PAID SECTION
+    if (data.postPaidTotal !== undefined && data.postPaidTotal > 0) {
+      drawRow("PÓS-PAGO (estimado)", "", "", false, true);
+      drawRow(
+        "Custos Variáveis (uso excedente)",
+        "-",
+        formatCurrency(data.postPaidTotal) + "/mês"
+      );
+    }
+
     y += 15;
 
     // ============================================
