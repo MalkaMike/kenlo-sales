@@ -171,9 +171,16 @@ export default function CalculadoraPage() {
   const { salesperson, isAuthenticated: isSalespersonAuth } = useSalesperson();
   const { user: oauthUser } = useAuth();
   
-  // Check if user can export PDF (only Master and registered Vendors)
-  // OAuth users with @kenlo.com.br or @i-value.com.br can VIEW but NOT export
-  const canExportPDF = isSalespersonAuth; // Only salesperson login (Master or Vendor) can export
+  // Helper function to check if email is from authorized domain
+  const isAuthorizedEmail = (email: string | null | undefined): boolean => {
+    if (!email) return false;
+    const authorizedDomains = ['@kenlo.com.br', '@i-value.com.br', '@laik.com.br'];
+    return authorizedDomains.some(domain => email.toLowerCase().endsWith(domain));
+  };
+  
+  // Check if user can export PDF
+  // Both salesperson login (Master/Vendor) AND OAuth users with authorized domains can export
+  const canExportPDF = isSalespersonAuth || isAuthorizedEmail(oauthUser?.email)
   
   // Step 1: Product selection
   const [product, setProduct] = useState<ProductSelection>("both");

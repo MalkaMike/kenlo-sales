@@ -1049,3 +1049,11 @@
 - [x] Master Admin pode apagar qualquer cotação
 - [x] Vendedores só podem apagar suas próprias cotações
 - [x] Testado: seleção de todos os 46 itens funciona, botão aparece automaticamente
+
+
+## Bug: Usuários OAuth não conseguem exportar PDF (Fev 2026)
+- [x] Usuários com email @kenlo.com.br, @i-value.com.br ou @laik.com.br via Google OAuth podem exportar PDF
+- [x] Atualizada lógica de permissão no frontend (CalculadoraPage.tsx) - canExportPDF verifica OAuth user
+- [x] Atualizada lógica de permissão no backend (routers.ts - generatePDF) - aceita OAuth users
+- [x] Atualizado QuoteInfoDialog para usar dados do usuário OAuth quando não há salesperson
+- [x] Testado com usuário OAuth (mickael@laik.com.br) - PDF gerado com sucesso para Emerson Moraes

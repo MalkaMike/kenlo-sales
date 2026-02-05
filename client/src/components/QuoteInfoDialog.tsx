@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSalesperson } from "@/hooks/useSalesperson";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { User, Mail, Phone, Briefcase } from "lucide-react";
 
 export interface QuoteInfo {
@@ -30,6 +31,7 @@ interface QuoteInfoDialogProps {
 
 export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialogProps) {
   const { salesperson } = useSalesperson();
+  const { user: oauthUser } = useAuth();
   
   const [agencyName, setAgencyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
@@ -38,6 +40,27 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
   const [hasWebsite, setHasWebsite] = useState<"yes" | "no">("yes");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Determine the current user info (salesperson takes priority over OAuth user)
+  const currentUser = salesperson 
+    ? {
+        name: salesperson.name,
+        email: salesperson.email,
+        phone: salesperson.phone,
+        role: "Executivo(a) de Vendas",
+        id: salesperson.id,
+        source: "salesperson" as const,
+      }
+    : oauthUser
+    ? {
+        name: oauthUser.name || oauthUser.email?.split("@")[0] || "Usuário Kenlo",
+        email: oauthUser.email || "",
+        phone: "",
+        role: "Colaborador Kenlo",
+        id: undefined,
+        source: "oauth" as const,
+      }
+    : null;
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -74,13 +97,13 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
       return;
     }
 
-    // Use logged-in salesperson data automatically
+    // Use logged-in user data (salesperson or OAuth user)
     onSubmit({
-      vendorName: salesperson?.name || "",
-      vendorEmail: salesperson?.email || "",
-      vendorPhone: salesperson?.phone || "",
-      vendorRole: "Executivo(a) de Vendas",
-      salespersonId: salesperson?.id,
+      vendorName: currentUser?.name || "",
+      vendorEmail: currentUser?.email || "",
+      vendorPhone: currentUser?.phone || "",
+      vendorRole: currentUser?.role || "Colaborador Kenlo",
+      salespersonId: currentUser?.source === "salesperson" ? currentUser.id : undefined,
       agencyName: agencyName.trim(),
       ownerName: ownerName.trim(),
       cellPhone: cellPhone.trim(),
@@ -112,25 +135,29 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Logged-in Salesperson Info (auto-filled, read-only display) */}
-          {salesperson && (
+          {/* Logged-in User Info (auto-filled, read-only display) */}
+          {currentUser && (
             <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-2">
-              <p className="text-xs font-medium text-primary uppercase tracking-wide mb-2">Vendedor Responsável</p>
+              <p className="text-xs font-medium text-primary uppercase tracking-wide mb-2">
+                {currentUser.source === "salesperson" ? "Vendedor Responsável" : "Colaborador Responsável"}
+              </p>
               <div className="flex items-center gap-2 text-sm">
                 <User className="w-4 h-4 text-primary" />
-                <span className="font-medium">{salesperson.name}</span>
+                <span className="font-medium">{currentUser.name}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{salesperson.email}</span>
+                <span className="text-muted-foreground">{currentUser.email}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{salesperson.phone}</span>
-              </div>
+              {currentUser.phone && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">{currentUser.phone}</span>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-sm">
                 <Briefcase className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Executivo(a) de Vendas</span>
+                <span className="text-muted-foreground">{currentUser.role}</span>
               </div>
             </div>
           )}

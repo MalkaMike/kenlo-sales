@@ -411,13 +411,24 @@ export const appRouter = router({
         hasPremiumServices: z.boolean().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Check if user is authorized via salesperson login ONLY
-        // OAuth users with @kenlo.com.br can VIEW the calculator but NOT export PDFs
+        // Check if user is authorized via salesperson login OR OAuth with authorized domain
         const salesperson = await getSalespersonFromContext(ctx);
+        const oauthUser = ctx.user; // OAuth user from Manus auth
         
-        // Only allow PDF generation for logged-in salespeople (Master or registered Vendors)
-        if (!salesperson) {
-          throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar orçamentos. Faça login como vendedor.");
+        // Helper function to check if email is from authorized domain
+        const isAuthorizedEmail = (email: string | null | undefined): boolean => {
+          if (!email) return false;
+          const authorizedDomains = ['@kenlo.com.br', '@i-value.com.br', '@laik.com.br'];
+          return authorizedDomains.some(domain => email.toLowerCase().endsWith(domain));
+        };
+        
+        // Allow PDF generation for:
+        // 1. Logged-in salespeople (Master or registered Vendors)
+        // 2. OAuth users with authorized email domains (@kenlo.com.br, @i-value.com.br, @laik.com.br)
+        const canExport = salesperson || isAuthorizedEmail(oauthUser?.email);
+        
+        if (!canExport) {
+          throw new Error("Acesso negado: Apenas usuários Kenlo podem gerar orçamentos. Faça login com sua conta Google corporativa.");
         }
         const pdfBuffer = await generateProposalPDF(input);
         // Return PDF as base64 so it can be downloaded in the browser
