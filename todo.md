@@ -943,3 +943,9 @@
 - [x] Verificar se Manrope está sendo usada em todo o site (Google Fonts CDN)
 - [x] CSS usa Manrope como fonte principal (font-family: 'Manrope', sans-serif)
 - [x] PDF usa Helvetica (padrão PDFKit, Manrope não disponível em PDF)
+
+
+## Animação Hover nos Links de Navegação (Fev 2026)
+- [x] Adicionar animação sutil de hover nos links do menu desktop (underline animado + cor)
+- [x] Adicionar animação sutil de hover nos links do menu mobile (slide + background)
+- [x] Adicionar animação sutil de hover nos links do footer (translateX + cor)

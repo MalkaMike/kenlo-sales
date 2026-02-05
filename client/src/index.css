@@ -176,6 +176,54 @@
     background: linear-gradient(135deg, oklch(0.62 0.24 15) 0%, oklch(0.7 0.2 15) 100%);
   }
   
+  /* Navigation link hover animations */
+  .nav-link-hover {
+    position: relative;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .nav-link-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: oklch(0.62 0.24 15);
+    transition: width 0.3s ease, left 0.3s ease;
+    border-radius: 1px;
+  }
+  
+  .nav-link-hover:hover::after {
+    width: 100%;
+    left: 0;
+  }
+  
+  .nav-link-hover:hover {
+    color: oklch(0.62 0.24 15);
+  }
+  
+  /* Footer link hover animation */
+  .footer-link-hover {
+    position: relative;
+    transition: color 0.2s ease, transform 0.15s ease;
+  }
+  
+  .footer-link-hover:hover {
+    color: oklch(0.62 0.24 15);
+    transform: translateX(3px);
+  }
+  
+  /* Mobile menu link hover */
+  .mobile-link-hover {
+    transition: background-color 0.2s ease, transform 0.15s ease, padding-left 0.2s ease;
+  }
+  
+  .mobile-link-hover:hover {
+    padding-left: 1rem;
+    background-color: oklch(0.96 0.001 260);
+  }
+  
   .kenlo-dark-section {
     background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
   }

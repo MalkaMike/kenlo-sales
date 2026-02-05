@@ -130,8 +130,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Link
                     href="/kombos"
                     className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-                      location === "/kombos" && "bg-accent"
+                      "nav-link-hover group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/kombos" && "bg-accent text-primary"
                     )}
                   >
                     Kombos
@@ -145,8 +145,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Link
                     href="/calculadora"
                     className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-                      location === "/calculadora" && "bg-accent"
+                      "nav-link-hover group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/calculadora" && "bg-accent text-primary"
                     )}
                   >
                     Cotação
@@ -176,7 +176,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       key={product.href}
                       href={product.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 px-3 rounded-md hover:bg-accent"
+                      className="mobile-link-hover block py-2 px-3 rounded-md"
                     >
                       <span className="font-medium">{product.title}</span>
                       <p className="text-sm text-muted-foreground">{product.description}</p>
@@ -190,7 +190,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       key={addon.href}
                       href={addon.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 px-3 rounded-md hover:bg-accent"
+                      className="mobile-link-hover block py-2 px-3 rounded-md"
                     >
                       <span className="font-medium">{addon.title}</span>
                     </Link>
@@ -199,14 +199,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link
                   href="/kombos"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
+                  className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
                 >
                   Kombos
                 </Link>
                 <Link
                   href="/calculadora"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-3 rounded-md hover:bg-accent font-medium"
+                  className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
                 >
                   Cotação
                 </Link>
@@ -240,8 +240,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="font-semibold mb-4">Produtos</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/produtos/imob" className="hover:text-foreground transition-colors">Kenlo Imob</Link></li>
-                <li><Link href="/produtos/locacao" className="hover:text-foreground transition-colors">Kenlo Locação</Link></li>
+                <li><Link href="/produtos/imob" className="footer-link-hover inline-block">Kenlo Imob</Link></li>
+                <li><Link href="/produtos/locacao" className="footer-link-hover inline-block">Kenlo Locação</Link></li>
               </ul>
             </div>
             <div>
@@ -249,7 +249,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {addons.slice(0, 4).map((addon) => (
                   <li key={addon.href}>
-                    <Link href={addon.href} className="hover:text-foreground transition-colors">{addon.title}</Link>
+                    <Link href={addon.href} className="footer-link-hover inline-block">{addon.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -257,9 +257,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="font-semibold mb-4">Ferramentas</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/kombos" className="hover:text-foreground transition-colors">Kombos</Link></li>
-                <li><Link href="/calculadora" className="hover:text-foreground transition-colors">Cotação</Link></li>
-                <li><Link href="/performance" className="hover:text-foreground transition-colors">Performance</Link></li>
+                <li><Link href="/kombos" className="footer-link-hover inline-block">Kombos</Link></li>
+                <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
+                <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
               </ul>
             </div>
           </div>
