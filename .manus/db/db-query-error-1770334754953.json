@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, agencyName, ownerName, selectedPlan, frequency, installments, pdfUrl, createdAt FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, agencyName, ownerName, selectedPlan, frequency, installments, pdfUrl, createdAt FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'ownername' in 'field list'"
+  ]
+}

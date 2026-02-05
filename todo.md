@@ -1314,3 +1314,45 @@
 - [ ] Cenário 13: Parcelamento 3x
 - [x] Cenário 14: Plano K (não Prime) ✓
 - [x] Cenário 15: Plano K2 (não Prime) ✓
+
+
+## Verificação Completa de Parcelamento (Fev 2026)
+
+- [x] Verificar todas as opções de parcelamento implementadas:
+  - [x] À vista (sem parcelamento)
+  - [x] 2x (parcelamento em 2 vezes)
+  - [x] 3x (parcelamento em 3 vezes)
+  - [x] 4x (parcelamento em 4 vezes - BIENAL)
+  - [x] 5x (parcelamento em 5 vezes - BIENAL)
+  - [x] 6x (parcelamento em 6 vezes - BIENAL)
+- [x] Verificar parcelamento para planos ANUAIS:
+  - [x] À vista - 12 meses
+  - [x] 2x - 12 meses dividido em 2 parcelas
+  - [x] 3x - 12 meses dividido em 3 parcelas
+- [x] Verificar parcelamento para planos BIENAIS:
+  - [x] À vista - 24 meses
+  - [x] 2x - 24 meses dividido em 2 parcelas
+  - [x] 3x - 24 meses dividido em 3 parcelas
+  - [x] 4x - 24 meses dividido em 4 parcelas
+  - [x] 5x - 24 meses dividido em 5 parcelas
+  - [x] 6x - 24 meses dividido em 6 parcelas
+- [x] Testar todas as combinações:
+  - [x] Anual + À vista
+  - [x] Anual + 2x
+  - [x] Anual + 3x
+  - [x] Bienal + À vista
+  - [x] Bienal + 2x
+  - [x] Bienal + 3x
+  - [x] Bienal + 4x
+  - [x] Bienal + 5x
+  - [x] Bienal + 6x
+- [x] Verificar se o PDF mostra corretamente:
+  - [x] Número de parcelas
+  - [x] Valor de cada parcela
+  - [x] Valor total (deve ser o mesmo independente do parcelamento)
+  - [x] Nota explicativa sobre equivalente mensal
+- [x] Testes realizados com sucesso:
+  - [x] Bienal + 6x: PDF mostra "6x de R$ 2.793,50" (Total: R$ 16.761,00)
+  - [x] Anual + 3x: PDF mostra "3x de R$ 4.207,00" (Total: R$ 12.621,00)
+  - [x] Cálculos das parcelas corretos
+  - [x] Modal exibe opções corretas baseadas no período

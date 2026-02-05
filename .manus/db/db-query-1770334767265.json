@@ -1,0 +1,34 @@
+{
+  "query": "SELECT * FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT * FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "rows": [
+    {
+      "id": "630015",
+      "action": "pdf_exported",
+      "product": "imob",
+      "imobPlan": "prime",
+      "locPlan": "NULL",
+      "frequency": "biennial",
+      "addons": "{\"leads\":true,\"inteligencia\":false,\"assinatura\":true,\"pay\":false,\"seguros\":false,\"cash\":false}",
+      "metrics": "{\"imobUsers\":1,\"closingsPerMonth\":1,\"leadsPerMonth\":0,\"usesExternalAI\":false,\"wantsWhatsApp\":false,\"imobVipSupport\":false,\"imobDedicatedCS\":false,\"contractsUnderManagement\":1,\"newContractsPerMonth\":1,\"locVipSupport\":false,\"locDedicatedCS\":false,\"chargesBoletoToTenant\":false,\"boletoChargeAmount\":0,\"chargesSplitToOwner\":false,\"splitChargeAmount\":0}",
+      "totals": "{\"monthly\":636,\"annual\":7632,\"implantation\":1497,\"postPaid\":0,\"firstYear\":9129}",
+      "komboId": "imob_start",
+      "komboName": "Kombo Imob Start",
+      "komboDiscount": "10",
+      "shareableUrl": "NULL",
+      "clientName": "João Silva",
+      "createdAt": "2026-02-05 23:38:21",
+      "vendorName": "Updated Name Test",
+      "agencyName": "Teste Imobiliária Bienal 6x",
+      "cellPhone": "(11) 98765-4321",
+      "landlinePhone": "",
+      "websiteUrl": "Cliente não tem site ainda",
+      "salespersonId": "NULL",
+      "deletedAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\taction\tproduct\timobPlan\tlocPlan\tfrequency\taddons\tmetrics\ttotals\tkomboId\tkomboName\tkomboDiscount\tshareableUrl\tclientName\tcreatedAt\tvendorName\tagencyName\tcellPhone\tlandlinePhone\twebsiteUrl\tsalespersonId\tdeletedAt\n630015\tpdf_exported\timob\tprime\tNULL\tbiennial\t{\"leads\":true,\"inteligencia\":false,\"assinatura\":true,\"pay\":false,\"seguros\":false,\"cash\":false}\t{\"imobUsers\":1,\"closingsPerMonth\":1,\"leadsPerMonth\":0,\"usesExternalAI\":false,\"wantsWhatsApp\":false,\"imobVipSupport\":false,\"imobDedicatedCS\":false,\"contractsUnderManagement\":1,\"newContractsPerMonth\":1,\"locVipSupport\":false,\"locDedicatedCS\":false,\"chargesBoletoToTenant\":false,\"boletoChargeAmount\":0,\"chargesSplitToOwner\":false,\"splitChargeAmount\":0}\t{\"monthly\":636,\"annual\":7632,\"implantation\":1497,\"postPaid\":0,\"firstYear\":9129}\timob_start\tKombo Imob Start\t10\tNULL\tJoão Silva\t2026-02-05 23:38:21\tUpdated Name Test\tTeste Imobiliária Bienal 6x\t(11) 98765-4321\t\tCliente não tem site ainda\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
