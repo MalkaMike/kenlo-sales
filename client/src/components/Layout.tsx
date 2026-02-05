@@ -10,8 +10,18 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, FileText, Package, Layers } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu, FileText, Package, Layers, User, LogOut } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { cn } from "@/lib/utils";
 
 const products = [
@@ -157,8 +167,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </NavigationMenuList>
           </NavigationMenu>
 
-          {/* Spacer for alignment */}
-          <div className="hidden lg:flex" />
+          {/* User Profile / Login Button */}
+          <UserProfileButton />
 
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -269,5 +279,51 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+// User Profile Button Component
+function UserProfileButton() {
+  const { user, isAuthenticated, loading, logout } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        asChild
+        className="hidden lg:flex"
+      >
+        <a href={getLoginUrl()}>Login</a>
+      </Button>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="hidden lg:flex gap-2">
+          <User className="w-4 h-4" />
+          {user.name}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout} className="cursor-pointer">
+          <LogOut className="w-4 h-4 mr-2" />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

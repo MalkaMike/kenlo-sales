@@ -1174,3 +1174,15 @@
 - [x] Usar animação de pulse ou fade-in para os campos habilitados
 - [x] Usar animação de fade-out para os campos desabilitados
 - [x] Testar a animação no navegador
+
+
+## Botão de Perfil no Header (Fev 2026)
+
+- [x] Adicionar botão de perfil no canto superior direito do header
+- [x] Quando não logado: mostrar botão "Login"
+- [x] Quando logado: mostrar nome do usuário com dropdown
+- [x] Dropdown deve incluir:
+  - [x] Nome e email do usuário
+  - [x] Opção "Logout" com ícone
+- [x] Implementar em todas as páginas (Home, Produtos, Kombos, Calculadora)
+- [x] Testar funcionalidade de login/logout
