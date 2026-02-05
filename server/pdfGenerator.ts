@@ -365,6 +365,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       );
     }
     
+    y += 10;
+
+    // ============================================
+    // DISCOUNT LEGEND
+    // ============================================
+    doc.font("Helvetica").fontSize(7).fillColor(lightText)
+       .text("Descontos: Mensal (+25% sobre referência) | Anual (0% - Referência) | Semestral (-15%) | Bienal (-25%)", margin, y, { width: contentWidth, align: "center" });
+    
     y += 15;
 
     // ============================================

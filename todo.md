@@ -969,3 +969,9 @@
 - [x] Adicionar linha Total Pré-Pago com soma
 - [x] Adicionar linha de Implantação
 - [x] Adicionar linha de Estimação Pós-Pago mensal
+
+
+## Validação e Ajustes do PDF (Fev 2026)
+- [x] Gerar cotação de teste para validar visualmente a nova tabela
+- [x] Ajustar larguras das colunas (proporções adequadas)
+- [x] Adicionar nota explicativa com descontos de cada frequência (legenda centralizada abaixo da tabela)
