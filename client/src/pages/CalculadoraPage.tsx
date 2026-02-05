@@ -1411,11 +1411,11 @@ export default function CalculadoraPage() {
                         // Calculate IMOB subtotal
                         let imobSubtotal = 0;
                         
-                        // Additional Users
+                        // Additional Users (only if NOT prepaid)
                         const plan = imobPlan;
                         const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                         const additional = Math.max(0, metrics.imobUsers - included);
-                        if (additional > 0) {
+                        if (additional > 0 && !prepayAdditionalUsers) {
                           if (plan === 'prime') imobSubtotal += additional * 57;
                           else if (plan === 'k') {
                             const tier1 = Math.min(additional, 10);
@@ -1562,11 +1562,11 @@ export default function CalculadoraPage() {
                         // Calculate LOC subtotal
                         let locSubtotal = 0;
                         
-                        // Additional Contracts
+                        // Additional Contracts (only if NOT prepaid)
                         const plan = locPlan;
                         const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                         const additional = Math.max(0, metrics.contractsUnderManagement - included);
-                        if (additional > 0) {
+                        if (additional > 0 && !prepayAdditionalContracts) {
                           if (plan === 'prime') locSubtotal += additional * 3;
                           else if (plan === 'k') {
                             const tier1 = Math.min(additional, 250);

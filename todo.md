@@ -911,10 +911,10 @@
 
 
 ## Dedução de Pós-Pago quando Pré-Pago (Fev 2026)
-- [ ] Quando usuários adicionais são pré-pagos, remover do total de pós-pago mensal
-- [ ] Quando contratos adicionais são pré-pagos, remover do total de pós-pago mensal
-- [ ] Mostrar claramente na página que itens pré-pagos não serão cobrados mensalmente
-- [ ] Atualizar PDF para refletir a dedução de pós-pago
+- [x] Quando usuários adicionais são pré-pagos, remover do total de pós-pago mensal
+- [x] Quando contratos adicionais são pré-pagos, remover do total de pós-pago mensal
+- [x] Mostrar claramente na página que itens pré-pagos não serão cobrados mensalmente
+- [x] Atualizar PDF para refletir a dedução de pós-pago
 
 
 ## Dedução de Pós-Pago quando Pré-Pago (Fev 2026)
