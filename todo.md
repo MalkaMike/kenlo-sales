@@ -902,3 +902,9 @@
 - [x] Atualizar endpoint generatePDF para aceitar usuários autenticados via Manus OAuth
 - [x] Verificar domínio de email (@kenlo.com.br ou @i-value.com.br) para autorizar geração de PDF
 - [x] Manter compatibilidade com login antigo de vendedores
+
+
+## Correção Sincronização Frequência Bienal (Fev 2026)
+- [x] Corrigir bug onde checkbox de pré-pagamento mostrava "12 meses" mesmo com Bienal selecionado
+- [x] Sincronizar frequência entre KomboComparisonTable e CalculadoraPage via callback onFrequencyChange
+- [x] Agora mostra corretamente "24 meses" quando Bienal é selecionado

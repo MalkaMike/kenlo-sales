@@ -50,6 +50,8 @@ interface KomboComparisonProps {
   dedicatedCS: boolean;
   // Callback when user selects a plan
   onPlanSelected?: (planId: KomboId | null) => void;
+  // Callback when user changes frequency in the comparison table
+  onFrequencyChange?: (frequency: PaymentFrequency) => void;
 }
 
 type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite";
@@ -638,11 +640,17 @@ const createUnavailableColumn = (
 // ============================================================================
 
 export function KomboComparisonTable(props: KomboComparisonProps) {
-  // Default to annual as reference (0%)
-  const [viewMode, setViewMode] = useState<ViewMode>("annual");
+  // Initialize viewMode from props.frequency to stay in sync
+  const [viewMode, setViewMode] = useState<ViewMode>(props.frequency);
   
   // Selected Plan for export (user confirms their choice)
   const [selectedPlan, setSelectedPlan] = useState<KomboId | null>(null);
+
+  // Handle frequency change - update local state AND notify parent
+  const handleFrequencyChange = (newFrequency: ViewMode) => {
+    setViewMode(newFrequency);
+    props.onFrequencyChange?.(newFrequency as PaymentFrequency);
+  };
 
   // Notify parent when plan selection changes
   const handlePlanSelect = (planId: KomboId) => {
@@ -758,7 +766,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             {FREQUENCY_OPTIONS.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setViewMode(option.id)}
+                onClick={() => handleFrequencyChange(option.id)}
                 className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
                   viewMode === option.id
                     ? "bg-pink-50 border-primary text-primary"

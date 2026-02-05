@@ -1393,6 +1393,7 @@ export default function CalculadoraPage() {
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
                 onPlanSelected={setSelectedPlan}
+                onFrequencyChange={setFrequency}
               />
 
 
