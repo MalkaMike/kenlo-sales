@@ -987,3 +987,17 @@
 - [x] Mostrar apenas a frequência escolhida pelo usuário
 - [x] Adicionar coluna de equivalente mensal para cada item
 - [x] Manter estrutura: Licenças, Usuários pré-pagos, Contratos pré-pagos, Total Pré-Pago, Implantação, Pós-Pago
+
+
+## Reformulação Completa do PDF de Orçamento (Fev 2026)
+- [x] Design lean e moderno usando logos e cores Kenlo (#F82E52)
+- [x] Validade de 3 dias (não 30)
+- [x] Tabela de investimento redesenhada - mais bonita e sem repetições
+- [x] Coluna com nome da frequência (ex: "Anual" em vez de "Valor Total")
+- [x] Solução contratada com nome do Kombo + produtos e add-ons incluídos
+- [x] Métricas essenciais (usuários, contratos) escritas de forma clara
+- [x] Corrigir typo de caracteres especiais quebrados
+- [x] Renomear "The Kenlo Effect" para "Kenlo Receitas Extra"
+- [x] Footer com slogan oficial "Quem usa, lidera"
+- [x] Header e footer modernos e lean
+- [x] PDF agora tem apenas 1 página (antes tinha 4 páginas com conteúdo espalhado)
