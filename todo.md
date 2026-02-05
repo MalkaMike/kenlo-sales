@@ -1082,3 +1082,10 @@
 - [x] Mensagem de validação inline (amarela) quando usuário não está logado: "Para exportar cotações, faça login como vendedor autorizado."
 - [x] Mensagem de confirmação inline (verde) quando plano está selecionado: "Plano selecionado! Agora você pode exportar a proposta."
 - [x] Removidos console.logs de debug
+
+
+## Scroll Automático para Tabela de Kombos
+
+- [x] Adicionar ID à seção de Kombos para permitir scroll
+- [x] Implementar scroll automático quando usuário clicar em Exportar sem plano selecionado
+- [x] Testar funcionalidade no navegador

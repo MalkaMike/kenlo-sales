@@ -1401,6 +1401,7 @@ export default function CalculadoraPage() {
               </div>
 
               {/* Section 4 bis: Kombo Comparison Table */}
+              <div id="kombo-comparison-section">
               <KomboComparisonTable
                 product={product}
                 imobPlan={imobPlan}
@@ -1412,6 +1413,7 @@ export default function CalculadoraPage() {
                 onPlanSelected={setSelectedPlan}
                 onFrequencyChange={setFrequency}
               />
+              </div>
 
 
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
@@ -2595,6 +2597,11 @@ export default function CalculadoraPage() {
                         }
                         if (!selectedPlan) {
                           toast.error("Selecione um plano ou Kombo antes de exportar a cotação.");
+                          // Scroll to Kombo comparison section
+                          const komboSection = document.getElementById('kombo-comparison-section');
+                          if (komboSection) {
+                            komboSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
                           return;
                         }
                         setShowQuoteInfoDialog(true);
