@@ -7,15 +7,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, LogIn, AlertCircle, Chrome } from "lucide-react";
 import { useSalesperson } from "@/hooks/useSalesperson";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+
+/** Allowed email domains for access */
+const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
+
+function isAllowedDomain(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const domain = email.toLowerCase().split("@")[1];
+  return ALLOWED_DOMAINS.includes(domain);
+}
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
-  const { login, isLoading: isCheckingAuth, isAuthenticated } = useSalesperson();
+  const { login, isLoading: isCheckingSalesperson, isAuthenticated: isSalespersonAuth } = useSalesperson();
+  const { user: oauthUser, loading: isCheckingOAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if user is authenticated via OAuth with allowed domain
+  const isOAuthAuthenticated = oauthUser && isAllowedDomain(oauthUser.email);
+  const isAuthenticated = isSalespersonAuth || isOAuthAuthenticated;
+  const isCheckingAuth = isCheckingSalesperson || isCheckingOAuth;
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -197,7 +213,7 @@ export default function LoginPage() {
             </form>
 
             <p className="text-xs text-muted-foreground text-center">
-              Acesso restrito a vendedores Kenlo autorizados.
+              Acesso restrito a colaboradores Kenlo.
               <br />
               Use seu email @kenlo.com.br ou @i-value.com.br
             </p>

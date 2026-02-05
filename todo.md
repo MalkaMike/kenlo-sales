@@ -1015,3 +1015,11 @@
 - [x] 9. Footnote sobre impostos na seção de receitas extra
 - [x] 10. Header no topo e footer no rodapé da página (posição fixa, não no meio)
 - [x] PDF agora tem apenas 1 página (antes tinha 2-4)
+
+
+## Controle de Acesso por Domínio de Email (Fev 2026)
+- [x] Permitir login para qualquer email @kenlo.com.br, @i-value.com.br ou @laik.com.br
+- [x] Permitir acesso à calculadora e página de performance para todos os emails Kenlo/i-value/Laik
+- [x] Restringir geração de orçamento (PDF) apenas para Master e Vendedores cadastrados
+- [x] Testar login com email @laik.com.br via Google OAuth (testado com mickael@laik.com.br)
+- [x] Mensagem de restrição "Para exportar cotações, faça login como vendedor autorizado" aparece para usuários OAuth

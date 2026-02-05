@@ -6,6 +6,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
+import { useSalesperson } from "@/hooks/useSalesperson";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
@@ -165,6 +167,14 @@ const roundToEndIn7 = (price: number): number => {
 };
 
 export default function CalculadoraPage() {
+  // Authentication hooks
+  const { salesperson, isAuthenticated: isSalespersonAuth } = useSalesperson();
+  const { user: oauthUser } = useAuth();
+  
+  // Check if user can export PDF (only Master and registered Vendors)
+  // OAuth users with @kenlo.com.br or @i-value.com.br can VIEW but NOT export
+  const canExportPDF = isSalespersonAuth; // Only salesperson login (Master or Vendor) can export
+  
   // Step 1: Product selection
   const [product, setProduct] = useState<ProductSelection>("both");
   
@@ -2544,18 +2554,29 @@ export default function CalculadoraPage() {
                 {/* Actions - Only show when a plan is selected */}
                 {selectedPlan && (
                   <div className="flex flex-col gap-3 mt-6 mb-24">
-                    <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                      <CheckCircle2 className="w-5 h-5 text-green-600" />
-                      <span className="text-sm font-medium text-green-900">
-                        Plano selecionado! Agora você pode exportar a proposta.
-                      </span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowQuoteInfoDialog(true)}>
-                        <Download className="w-4 h-4 mr-2" />
-                        Exportar Cotação (PDF)
-                      </Button>
-                    </div>
+                    {canExportPDF ? (
+                      <>
+                        <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <span className="text-sm font-medium text-green-900">
+                            Plano selecionado! Agora você pode exportar a proposta.
+                          </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Button className="flex-1 min-h-[50px]" size="lg" onClick={() => setShowQuoteInfoDialog(true)}>
+                            <Download className="w-4 h-4 mr-2" />
+                            Exportar Cotação (PDF)
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <Key className="w-5 h-5 text-amber-600" />
+                        <span className="text-sm font-medium text-amber-900">
+                          Para exportar cotações, faça login como vendedor autorizado.
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -394,19 +394,13 @@ export const appRouter = router({
         hasPremiumServices: z.boolean().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Check if user is authorized (either via salesperson login or Manus OAuth)
+        // Check if user is authorized via salesperson login ONLY
+        // OAuth users with @kenlo.com.br can VIEW the calculator but NOT export PDFs
         const salesperson = await getSalespersonFromContext(ctx);
-        const manusUser = ctx.user; // Manus OAuth user from context
         
-        // Allow access if:
-        // 1. User is logged in via salesperson system, OR
-        // 2. User is logged in via Manus OAuth with @kenlo.com.br or @i-value.com.br email
-        const isAuthorized = salesperson || 
-          (manusUser && manusUser.email && 
-           (manusUser.email.endsWith('@kenlo.com.br') || manusUser.email.endsWith('@i-value.com.br') || manusUser.email.endsWith('@laik.com.br')));
-        
-        if (!isAuthorized) {
-          throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar PDFs");
+        // Only allow PDF generation for logged-in salespeople (Master or registered Vendors)
+        if (!salesperson) {
+          throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar orçamentos. Faça login como vendedor.");
         }
         const pdfBuffer = await generateProposalPDF(input);
         // Return PDF as base64 so it can be downloaded in the browser
