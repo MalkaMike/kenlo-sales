@@ -2624,6 +2624,7 @@ export default function CalculadoraPage() {
         <QuoteInfoDialog
           open={showQuoteInfoDialog}
           onOpenChange={setShowQuoteInfoDialog}
+          paymentFrequency={frequency}
           onSubmit={async (quoteInfo) => {
             setPendingQuoteInfo(quoteInfo);
             setShowQuoteInfoDialog(false);
@@ -2829,6 +2830,8 @@ export default function CalculadoraPage() {
                     // Check if services are included (not paid separately)
                     ((product === 'imob' || product === 'both') && (imobPlan === 'k' || imobPlan === 'k2')) ||
                     ((product === 'loc' || product === 'both') && (locPlan === 'k' || locPlan === 'k2')),
+                  // Installment options (from QuoteInfoDialog)
+                  installments: quoteInfo.installments,
                 };
 
                 // Generate PDF

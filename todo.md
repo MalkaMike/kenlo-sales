@@ -1106,3 +1106,14 @@
 - [x] Se ambos: mostrar todas as métricas
 - [x] Filtrar add-ons para mostrar apenas os compatíveis com o produto selecionado
 - [x] Testar cenários: IMOB só, LOC só, IMOB+LOC
+
+
+## Nova Regra - Tela de Exportação de PDF (Parcelamento)
+
+- [x] Simplificar identificação do usuário: "Você está logado como [Nome]. Não é você? Clique aqui para deslogar."
+- [x] Reorganizar campo de site para aparecer imediatamente após o checkbox "Cliente tem site"
+- [x] Adicionar seleção de parcelamento ao final da tela
+- [x] Opções para Plano Anual: À vista, 2x, 3x
+- [x] Opções para Plano Bienal: À vista, 2x, 3x, 4x, 5x, 6x
+- [x] Atualizar PDF para exibir parcelamento: "Total: R$ XX.XXX,00 | Parcelamento: Nx de R$ X.XXX,00"
+- [x] Testar com planos Anual e Bienal

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { User, Mail, Phone, Briefcase } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export interface QuoteInfo {
   vendorName: string;
@@ -20,6 +20,7 @@ export interface QuoteInfo {
   landlinePhone: string;
   websiteUrl: string;
   hasWebsite: boolean;
+  installments: number; // Número de parcelas (1 = à vista)
 }
 
 interface QuoteInfoDialogProps {
@@ -27,11 +28,12 @@ interface QuoteInfoDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (info: QuoteInfo) => void;
   actionType?: "pdf";
+  paymentFrequency?: "monthly" | "semestral" | "annual" | "biennial";
 }
 
-export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialogProps) {
+export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency = "annual" }: QuoteInfoDialogProps) {
   const { salesperson } = useSalesperson();
-  const { user: oauthUser } = useAuth();
+  const { user: oauthUser, logout } = useAuth();
   
   const [agencyName, setAgencyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
@@ -39,6 +41,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
   const [landlinePhone, setLandlinePhone] = useState("");
   const [hasWebsite, setHasWebsite] = useState<"yes" | "no">("yes");
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [installments, setInstallments] = useState<number>(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Determine the current user info (salesperson takes priority over OAuth user)
@@ -62,10 +65,36 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
       }
     : null;
 
+  // Get installment options based on payment frequency
+  const getInstallmentOptions = () => {
+    if (paymentFrequency === "annual") {
+      return [
+        { value: 1, label: "À vista" },
+        { value: 2, label: "2x" },
+        { value: 3, label: "3x" },
+      ];
+    } else if (paymentFrequency === "biennial") {
+      return [
+        { value: 1, label: "À vista" },
+        { value: 2, label: "2x" },
+        { value: 3, label: "3x" },
+        { value: 4, label: "4x" },
+        { value: 5, label: "5x" },
+        { value: 6, label: "6x" },
+      ];
+    }
+    // Monthly and Semestral don't have installment options
+    return [];
+  };
+
+  const installmentOptions = getInstallmentOptions();
+  const showInstallmentOptions = installmentOptions.length > 0;
+
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       setErrors({});
+      setInstallments(1); // Reset to "À vista" when dialog opens
     }
   }, [open]);
 
@@ -110,6 +139,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
       landlinePhone: landlinePhone.trim(),
       websiteUrl: hasWebsite === "yes" ? websiteUrl.trim() : "Cliente não tem site ainda",
       hasWebsite: hasWebsite === "yes",
+      installments: installments,
     });
 
     // Reset form
@@ -119,7 +149,17 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
     setLandlinePhone("");
     setWebsiteUrl("");
     setHasWebsite("yes");
+    setInstallments(1);
     setErrors({});
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -135,30 +175,19 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Logged-in User Info (auto-filled, read-only display) */}
+          {/* Simplified User Identification */}
           {currentUser && (
-            <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-2">
-              <p className="text-xs font-medium text-primary uppercase tracking-wide mb-2">
-                {currentUser.source === "salesperson" ? "Vendedor Responsável" : "Colaborador Responsável"}
-              </p>
-              <div className="flex items-center gap-2 text-sm">
-                <User className="w-4 h-4 text-primary" />
-                <span className="font-medium">{currentUser.name}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{currentUser.email}</span>
-              </div>
-              {currentUser.phone && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{currentUser.phone}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-sm">
-                <Briefcase className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{currentUser.role}</span>
-              </div>
+            <div className="p-3 bg-muted/50 rounded-lg text-sm">
+              <span>Você está logado como </span>
+              <span className="font-semibold">{currentUser.name}</span>
+              <span>. </span>
+              <button 
+                onClick={handleLogout}
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                Não é você? Clique aqui para deslogar
+                <LogOut className="w-3 h-3" />
+              </button>
             </div>
           )}
 
@@ -230,7 +259,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
             </p>
           </div>
 
-          {/* Website */}
+          {/* Website - Checkbox first, then URL field */}
           <div className="space-y-2">
             <Label>
               Site Atual <span className="text-red-500">*</span>
@@ -242,6 +271,21 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
                   Cliente tem site
                 </Label>
               </div>
+              {/* URL field appears immediately after "Cliente tem site" checkbox */}
+              {hasWebsite === "yes" && (
+                <div className="ml-6 mt-2">
+                  <Input
+                    id="websiteUrl"
+                    value={websiteUrl}
+                    onChange={(e) => setWebsiteUrl(e.target.value)}
+                    placeholder="https://exemplo.com.br"
+                    className={errors.websiteUrl ? "border-red-500" : ""}
+                  />
+                  {errors.websiteUrl && (
+                    <p className="text-sm text-red-500 mt-1">{errors.websiteUrl}</p>
+                  )}
+                </div>
+              )}
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="has-website-no" />
                 <Label htmlFor="has-website-no" className="font-normal cursor-pointer">
@@ -249,20 +293,30 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit }: QuoteInfoDialo
                 </Label>
               </div>
             </RadioGroup>
-
-            {hasWebsite === "yes" && (
-              <Input
-                id="websiteUrl"
-                value={websiteUrl}
-                onChange={(e) => setWebsiteUrl(e.target.value)}
-                placeholder="https://exemplo.com.br"
-                className={errors.websiteUrl ? "border-red-500" : ""}
-              />
-            )}
-            {errors.websiteUrl && (
-              <p className="text-sm text-red-500">{errors.websiteUrl}</p>
-            )}
           </div>
+
+          {/* Installment Options - Only for Annual and Biennial */}
+          {showInstallmentOptions && (
+            <div className="space-y-3 pt-2 border-t">
+              <Label className="text-base font-medium">
+                Quer parcelar em quantas vezes?
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {installmentOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    type="button"
+                    variant={installments === option.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setInstallments(option.value)}
+                    className={installments === option.value ? "bg-primary hover:bg-primary/90" : ""}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter>

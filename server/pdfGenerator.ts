@@ -37,6 +37,8 @@ interface ProposalData {
   monthlyLicenseBase?: number;
   // Premium services
   hasPremiumServices?: boolean;
+  // Installment options
+  installments?: number;
 }
 
 export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
@@ -311,8 +313,16 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const totalNow = totalPrePaid + data.implantationFee;
     drawRow("TOTAL A PAGAR AGORA", formatCurrency(totalNow), true);
 
-    // Monthly equivalent - RIGHT BELOW total
+    // Installment info - RIGHT BELOW total (only for annual/biennial with installments > 1)
     y += 3;
+    if (data.installments && data.installments > 1) {
+      const installmentValue = totalNow / data.installments;
+      doc.font("Helvetica-Bold").fontSize(8).fillColor(kenloPink)
+         .text(`Parcelamento: ${data.installments}x de ${formatCurrency(installmentValue)}`, margin, y);
+      y += 12;
+    }
+
+    // Monthly equivalent - RIGHT BELOW total/installment
     doc.font("Helvetica").fontSize(7).fillColor(lightText)
        .text(`Equivalente mensal: ${formatCurrency(licenseMonthly)}/mes`, margin, y);
     y += 12;

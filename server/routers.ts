@@ -411,6 +411,8 @@ export const appRouter = router({
         prepaymentMonths: z.number().optional(),
         // Premium services
         hasPremiumServices: z.boolean().optional(),
+        // Installment options
+        installments: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user is authorized via salesperson login OR OAuth with authorized domain
