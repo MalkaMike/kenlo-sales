@@ -908,3 +908,23 @@
 - [x] Corrigir bug onde checkbox de pré-pagamento mostrava "12 meses" mesmo com Bienal selecionado
 - [x] Sincronizar frequência entre KomboComparisonTable e CalculadoraPage via callback onFrequencyChange
 - [x] Agora mostra corretamente "24 meses" quando Bienal é selecionado
+
+
+## Dedução de Pós-Pago quando Pré-Pago (Fev 2026)
+- [ ] Quando usuários adicionais são pré-pagos, remover do total de pós-pago mensal
+- [ ] Quando contratos adicionais são pré-pagos, remover do total de pós-pago mensal
+- [ ] Mostrar claramente na página que itens pré-pagos não serão cobrados mensalmente
+- [ ] Atualizar PDF para refletir a dedução de pós-pago
+
+
+## Dedução de Pós-Pago quando Pré-Pago (Fev 2026)
+
+### Página Calculadora
+- [x] Quando usuários adicionais são pré-pagos, não incluir no cálculo de pós-pago
+- [x] Quando contratos adicionais são pré-pagos, não incluir no cálculo de pós-pago
+- [x] Total de pós-pago reflete corretamente a dedução
+
+### PDF
+- [x] Mostrar nota quando itens foram pré-pagos
+- [x] Indicar período coberto (12 ou 24 meses)
+- [x] Pós-pago ajustado corretamente

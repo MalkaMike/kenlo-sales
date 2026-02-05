@@ -274,11 +274,34 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
        .text(formatCurrency(data.firstYearTotal), pageWidth - margin - 100, y + 9);
     y += 38;
 
-    // Post-paid costs (if any)
-    if (data.postPaidTotal && data.postPaidTotal > 0) {
-      doc.font("Helvetica").fontSize(8).fillColor(lightText)
-         .text(`Custos variáveis estimados (pós-pago): ${formatCurrency(data.postPaidTotal)}/mês`, margin, y);
-      y += 18;
+    // Post-paid costs (if any) - adjusted for prepayment
+    if (data.postPaidTotal !== undefined) {
+      // Calculate adjusted post-paid (excluding prepaid items)
+      let adjustedPostPaid = data.postPaidTotal;
+      let prepaidNote = "";
+      
+      if (data.prepayAdditionalUsers && data.prepaymentUsersAmount) {
+        // Users were prepaid, so they're not in post-paid anymore
+        prepaidNote += `Usuários adicionais pré-pagos (${data.prepaymentMonths || 12} meses). `;
+      }
+      if (data.prepayAdditionalContracts && data.prepaymentContractsAmount) {
+        // Contracts were prepaid, so they're not in post-paid anymore
+        prepaidNote += `Contratos adicionais pré-pagos (${data.prepaymentMonths || 12} meses). `;
+      }
+      
+      if (adjustedPostPaid > 0) {
+        doc.font("Helvetica").fontSize(8).fillColor(lightText)
+           .text(`Custos variáveis estimados (pós-pago): ${formatCurrency(adjustedPostPaid)}/mês`, margin, y);
+        y += 14;
+      }
+      
+      if (prepaidNote) {
+        doc.font("Helvetica-Oblique").fontSize(7).fillColor(kenloPink)
+           .text(prepaidNote.trim(), margin, y);
+        y += 14;
+      } else {
+        y += 4;
+      }
     }
 
     // ============================================

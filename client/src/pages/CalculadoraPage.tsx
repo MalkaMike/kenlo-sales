@@ -1935,7 +1935,8 @@ export default function CalculadoraPage() {
                         }
                         
                         // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
-                        if (product === 'imob' || product === 'both') {
+                        // Skip if prepaid
+                        if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
                           const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                           const additional = Math.max(0, metrics.imobUsers - included);
@@ -1956,7 +1957,8 @@ export default function CalculadoraPage() {
                         }
                         
                         // Additional Contracts (Loc)
-                        if (product === 'loc' || product === 'both') {
+                        // Skip if prepaid
+                        if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
                           const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
@@ -2159,7 +2161,8 @@ export default function CalculadoraPage() {
                           <span className="text-sm font-semibold text-red-600">-
                             {formatCurrency((() => {
                               let totalPostPaid = 0;
-                              if (product === 'imob' || product === 'both') {
+                              // Skip if prepaid
+                              if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                                 const plan = imobPlan;
                                 const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                                 const additional = Math.max(0, metrics.imobUsers - included);
@@ -2177,7 +2180,8 @@ export default function CalculadoraPage() {
                                   }
                                 }
                               }
-                              if (product === 'loc' || product === 'both') {
+                              // Skip if prepaid
+                              if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                                 const plan = locPlan;
                                 const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                                 const additional = Math.max(0, metrics.contractsUnderManagement - included);
@@ -2276,7 +2280,8 @@ export default function CalculadoraPage() {
                       {(() => {
                         const recurring = calculateMonthlyRecurring(true);
                         let totalPostPaid = 0;
-                        if (product === 'imob' || product === 'both') {
+                        // Skip if prepaid
+                        if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
                           const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                           const additional = Math.max(0, metrics.imobUsers - included);
@@ -2294,7 +2299,8 @@ export default function CalculadoraPage() {
                             }
                           }
                         }
-                        if (product === 'loc' || product === 'both') {
+                        // Skip if prepaid
+                        if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
                           const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
@@ -2598,8 +2604,8 @@ export default function CalculadoraPage() {
                   if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 197;
                 }
                 
-                // Additional Users (Imob)
-                if (product === 'imob' || product === 'both') {
+                // Additional Users (Imob) - Skip if prepaid
+                if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                   const plan = imobPlan;
                   const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
                   const additional = Math.max(0, metrics.imobUsers - included);
@@ -2619,8 +2625,8 @@ export default function CalculadoraPage() {
                   }
                 }
                 
-                // Additional Contracts (Loc)
-                if (product === 'loc' || product === 'both') {
+                // Additional Contracts (Loc) - Skip if prepaid
+                if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                   const plan = locPlan;
                   const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
                   const additional = Math.max(0, metrics.contractsUnderManagement - included);
