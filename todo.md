@@ -1186,3 +1186,35 @@
   - [x] Opção "Logout" com ícone
 - [x] Implementar em todas as páginas (Home, Produtos, Kombos, Calculadora)
 - [x] Testar funcionalidade de login/logout
+
+
+## Página de Perfil do Usuário (Fev 2026)
+
+- [x] Estender schema do banco de dados para incluir campos de perfil:
+  - [x] Telefone
+  - [x] Avatar URL
+  - [x] Bio/Descrição
+- [x] Criar endpoints backend para:
+  - [x] Buscar dados do perfil do usuário
+  - [x] Atualizar informações do perfil
+  - [x] Upload de avatar para S3
+  - [x] Buscar histórico de propostas do usuário
+- [x] Criar página de perfil com duas abas:
+  - [x] Aba "Informações Pessoais":
+    - [x] Campo de upload de avatar com preview
+    - [x] Campo de nome (editável)
+    - [x] Campo de email (somente leitura)
+    - [x] Campo de telefone (editável)
+    - [x] Campo de bio/descrição (editável)
+    - [x] Botão "Salvar Alterações"
+  - [x] Aba "Histórico de Propostas":
+    - [x] Tabela com todas as propostas geradas
+    - [x] Colunas: Data, Cliente, Empresa, Kombo/Plano, Valor Total, Ações
+    - [ ] Filtros: Data, Kombo, Cliente (placeholder implementado)
+    - [x] Ordenação por data (mais recente primeiro)
+    - [x] Botão para visualizar/baixar PDF novamente (placeholder implementado)
+    - [ ] Indicador de status (enviado, aceito, etc.) (futuro)
+- [x] Adicionar link para página de perfil no dropdown do header
+- [x] Implementar validação de formulário
+- [x] Testar upload de avatar e edição de dados
+- [x] Testar visualização do histórico de propostas

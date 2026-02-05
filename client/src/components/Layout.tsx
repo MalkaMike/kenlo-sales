@@ -319,6 +319,12 @@ function UserProfileButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/perfil" className="flex items-center">
+            <User className="w-4 h-4 mr-2" />
+            Meu Perfil
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="w-4 h-4 mr-2" />
           Logout

@@ -146,3 +146,52 @@ export async function getAllSalespeople(): Promise<Salesperson[]> {
 
   return result;
 }
+
+/**
+ * Update user profile information
+ */
+export async function updateUserProfile(userId: number, data: {
+  name?: string;
+  phone?: string;
+  avatarUrl?: string;
+  bio?: string;
+}) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update user profile: database not available");
+    return undefined;
+  }
+
+  await db
+    .update(users)
+    .set(data)
+    .where(eq(users.id, userId));
+
+  // Return updated user
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get user by ID
+ */
+export async function getUserById(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user: database not available");
+    return undefined;
+  }
+
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}

@@ -1,4 +1,4 @@
-import { desc, eq, isNull, and, sql } from "drizzle-orm";
+import { eq, desc, isNull, and, inArray, sql, or } from "drizzle-orm";
 import { quotes, InsertQuote, Quote } from "../drizzle/schema";
 import { getDb } from "./db";
 
@@ -518,6 +518,53 @@ export async function getPerformanceMetrics(
     };
   } catch (error) {
     console.error("[Database] Failed to get performance metrics:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get quotes for a specific user (either OAuth user or salesperson)
+ * For OAuth users: match by vendorName (since they don't have salespersonId)
+ * For salespeople: match by salespersonId
+ */
+export async function getQuotesByUser(params: {
+  salespersonId?: number;
+  userName?: string;
+  limit?: number;
+}): Promise<Quote[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get quotes: database not available");
+    return [];
+  }
+
+  try {
+    // Build conditions
+    const conditions = [isNull(quotes.deletedAt)];
+    
+    const userConditions = [];
+    if (params.salespersonId) {
+      userConditions.push(eq(quotes.salespersonId, params.salespersonId));
+    }
+    if (params.userName) {
+      userConditions.push(eq(quotes.vendorName, params.userName));
+    }
+
+    // Apply user conditions with OR if any exist
+    if (userConditions.length > 0) {
+      conditions.push(or(...userConditions)!);
+    }
+
+    const result = await db
+      .select()
+      .from(quotes)
+      .where(and(...conditions))
+      .orderBy(desc(quotes.createdAt))
+      .limit(params.limit || 100);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get quotes by user:", error);
     throw error;
   }
 }

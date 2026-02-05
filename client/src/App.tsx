@@ -24,6 +24,7 @@ import HistoricoPage from "./pages/HistoricoPage";
 import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";
 import AcessoNegado from "./pages/AcessoNegado";
+import ProfilePage from "./pages/ProfilePage";
 
 // Protected Calculadora wrapper
 function ProtectedCalculadora() {
@@ -48,6 +49,15 @@ function ProtectedPerformance() {
   return (
     <ProtectedRoute>
       <PerformancePage />
+    </ProtectedRoute>
+  );
+}
+
+// Protected Profile wrapper
+function ProtectedProfile() {
+  return (
+    <ProtectedRoute>
+      <ProfilePage />
     </ProtectedRoute>
   );
 }
@@ -86,6 +96,8 @@ function Router() {
             <Route path="/historico" component={ProtectedHistorico} />
             {/* Performance - PROTECTED */}
             <Route path="/performance" component={ProtectedPerformance} />
+            {/* Profile - PROTECTED */}
+            <Route path="/perfil" component={ProtectedProfile} />
             {/* Fallback */}
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />

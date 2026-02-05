@@ -50,6 +50,13 @@
       "when": 1770248386223,
       "tag": "0006_awesome_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1770323117195,
+      "tag": "0007_smooth_butterfly",
+      "breakpoints": true
     }
   ]
 }

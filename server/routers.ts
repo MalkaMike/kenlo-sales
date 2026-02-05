@@ -4,8 +4,9 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
-import { saveQuote, getQuotes, getQuoteStats, deleteQuote, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics } from "./quotes";
-import { getSalespersonByEmail, getSalespersonById, getAllSalespeople } from "./db";
+import { saveQuote, getQuotes, getQuoteStats, deleteQuote, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics, getQuotesByUser } from "./quotes";
+import { getSalespersonByEmail, getSalespersonById, getAllSalespeople, updateUserProfile, getUserById } from "./db";
+import { storagePut } from "./storage";
 import { z } from "zod";
 import * as jose from "jose";
 
@@ -441,6 +442,74 @@ export const appRouter = router({
           pdf: pdfBuffer.toString("base64"),
           filename: `Cotacao_Kenlo_${input.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
         };
+      }),
+  }),
+
+  // Profile management
+  profile: router({
+    // Get current user's profile
+    me: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user?.id) {
+        throw new Error("User not authenticated");
+      }
+      const user = await getUserById(ctx.user.id);
+      return user;
+    }),
+
+    // Update profile
+    update: protectedProcedure
+      .input(z.object({
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        bio: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user?.id) {
+          throw new Error("User not authenticated");
+        }
+        const updatedUser = await updateUserProfile(ctx.user.id, input);
+        return updatedUser;
+      }),
+
+    // Upload avatar
+    uploadAvatar: protectedProcedure
+      .input(z.object({
+        fileData: z.string(), // base64 encoded image
+        fileName: z.string(),
+        mimeType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user?.id) {
+          throw new Error("User not authenticated");
+        }
+
+        // Decode base64 and upload to S3
+        const buffer = Buffer.from(input.fileData, 'base64');
+        const fileKey = `avatars/${ctx.user.id}/${Date.now()}-${input.fileName}`;
+        const { url } = await storagePut(fileKey, buffer, input.mimeType);
+
+        // Update user profile with avatar URL
+        const updatedUser = await updateUserProfile(ctx.user.id, { avatarUrl: url });
+        return { avatarUrl: url, user: updatedUser };
+      }),
+
+    // Get user's proposal history
+    getProposalHistory: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Get salesperson context if exists
+        const salesperson = await getSalespersonFromContext(ctx);
+        
+        // Get quotes by either salesperson ID or OAuth user name
+        const quotes = await getQuotesByUser({
+          salespersonId: salesperson?.id,
+          userName: ctx.user?.name || undefined,
+          limit: input.limit || 100,
+        });
+
+        return quotes;
       }),
   }),
 });
