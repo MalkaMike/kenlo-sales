@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0F172A"/>
-  <text x="4" y="23" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FF4B5C">K</text>
-  <circle cx="24" cy="20" r="3" fill="#00D4AA"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Kenlo Favicon - Red #F82E52 background with white K -->
+  <rect x="0" y="0" width="100" height="100" rx="20" ry="20" fill="#F82E52"/>
+  <path fill="#FFFFFF" d="M28 15 L28 85 L38 85 L38 55 L42 51 L68 85 L82 85 L50 45 L78 15 L64 15 L38 43 L38 15 Z"/>
 </svg>

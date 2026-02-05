@@ -48,10 +48,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 group">
-            <span className="text-2xl font-bold text-primary">kenlo</span>
-            <span className="text-2xl font-bold text-secondary">.</span>
-
+          <Link href="/" className="flex items-center group">
+            <img 
+              src="/kenlo-logo-traced.svg" 
+              alt="Kenlo" 
+              className="h-7 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -224,9 +226,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center gap-1">
-                <span className="text-xl font-bold text-primary">kenlo</span>
-                <span className="text-xl font-bold text-secondary">.</span>
+              <Link href="/" className="flex items-center">
+                <img 
+                  src="/kenlo-logo-traced.svg" 
+                  alt="Kenlo" 
+                  className="h-6 w-auto"
+                />
               </Link>
               <p className="mt-4 text-sm text-muted-foreground">
                 O sistema operacional de IA para o mercado imobiliário brasileiro.

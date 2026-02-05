@@ -928,3 +928,18 @@
 - [x] Mostrar nota quando itens foram pré-pagos
 - [x] Indicar período coberto (12 ou 24 meses)
 - [x] Pós-pago ajustado corretamente
+
+
+## Logos Kenlo e Fonte Manrope (Fev 2026)
+
+### Logos
+- [x] Extrair cor exata do vermelho Kenlo (#F82E52)
+- [x] Criar versão SVG vetorial do logo completo "Kenlo" (vermelho) - kenlo-logo-traced.svg
+- [x] Criar versão SVG vetorial do logo "K" (vermelho com fundo, e apenas K branco) - kenlo-k-icon.svg
+- [x] Criar versões brancas dos logos para fundos escuros - kenlo-logo-white-traced.svg
+- [x] Aplicar logos em: header, footer, favicon, PDF
+
+### Fonte Manrope
+- [x] Verificar se Manrope está sendo usada em todo o site (Google Fonts CDN)
+- [x] CSS usa Manrope como fonte principal (font-family: 'Manrope', sans-serif)
+- [x] PDF usa Helvetica (padrão PDFKit, Manrope não disponível em PDF)

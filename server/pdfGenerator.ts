@@ -70,8 +70,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
     doc.rect(0, 0, pageWidth, 100).fill(kenloPink);
     
+    // Logo text with Kenlo branding
     doc.font("Helvetica-Bold").fontSize(28).fillColor("#ffffff")
-       .text("kenlo.", margin, 30);
+       .text("Kenlo", margin, 30);
     
     doc.font("Helvetica").fontSize(12).fillColor("#ffffff")
        .text("ORÇAMENTO COMERCIAL", margin, 65);
