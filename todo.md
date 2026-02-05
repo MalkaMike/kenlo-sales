@@ -1148,3 +1148,20 @@
   - [x] Frequência: Anual
   - [x] Plano selecionado: nenhum
 - [x] Testar funcionalidade no navegador
+
+
+## Correção: Lógica de Seleção de Kombos (Fev 2026)
+
+- [x] Ao selecionar um Kombo, ajustar automaticamente o produto correspondente:
+  - [x] Imob Start/Pro → Ativar apenas IMOB, desativar LOC
+  - [x] Loc Pro → Ativar apenas LOC, desativar IMOB
+  - [x] Core Oestão/Elite → Ativar IMOB + LOC
+- [x] Habilitar campos de métricas baseado no produto ativo:
+  - [x] Se apenas IMOB: habilitar campos de IMOB, desabilitar campos de LOC
+  - [x] Se apenas LOC: habilitar campos de LOC, desabilitar campos de IMOB
+  - [x] Se ambos: habilitar todos os campos
+- [x] Atualizar add-ons disponíveis baseado no produto:
+  - [x] Leads: apenas com IMOB
+  - [x] Pay, Seguros, Cash: apenas com LOC
+  - [x] Inteligência, Assinatura: ambos IMOB e LOC
+- [x] Testar todos os cenários no navegador

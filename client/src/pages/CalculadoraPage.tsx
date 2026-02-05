@@ -1469,7 +1469,22 @@ export default function CalculadoraPage() {
                 frequency={frequency}
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
-                onPlanSelected={setSelectedPlan}
+                onPlanSelected={(planId) => {
+                  setSelectedPlan(planId);
+                  // Auto-adjust product selection based on Kombo
+                  if (planId) {
+                    if (planId === 'imob_start' || planId === 'imob_pro') {
+                      // IMOB only Kombos
+                      setProduct('imob');
+                    } else if (planId === 'locacao_pro') {
+                      // LOC only Kombo
+                      setProduct('loc');
+                    } else if (planId === 'core_gestao' || planId === 'elite') {
+                      // Both IMOB + LOC Kombos
+                      setProduct('both');
+                    }
+                  }
+                }}
                 onFrequencyChange={setFrequency}
               />
               </div>
