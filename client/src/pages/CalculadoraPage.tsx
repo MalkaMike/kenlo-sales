@@ -2768,6 +2768,12 @@ export default function CalculadoraPage() {
                   prepaymentUsersAmount: prepayment.users,
                   prepaymentContractsAmount: prepayment.contracts,
                   prepaymentMonths: prepaymentMonths,
+                  // Premium services included (for Kombos that include them)
+                  hasPremiumServices: (metrics.imobVipSupport || metrics.locVipSupport) && 
+                    (metrics.imobDedicatedCS || metrics.locDedicatedCS) &&
+                    // Check if services are included (not paid separately)
+                    ((product === 'imob' || product === 'both') && (imobPlan === 'k' || imobPlan === 'k2')) ||
+                    ((product === 'loc' || product === 'both') && (locPlan === 'k' || locPlan === 'k2')),
                 };
 
                 // Generate PDF

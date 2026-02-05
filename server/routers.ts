@@ -390,6 +390,8 @@ export const appRouter = router({
         prepaymentUsersAmount: z.number().optional(),
         prepaymentContractsAmount: z.number().optional(),
         prepaymentMonths: z.number().optional(),
+        // Premium services
+        hasPremiumServices: z.boolean().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user is authorized (either via salesperson login or Manus OAuth)

@@ -1001,3 +1001,17 @@
 - [x] Footer com slogan oficial "Quem usa, lidera"
 - [x] Header e footer modernos e lean
 - [x] PDF agora tem apenas 1 página (antes tinha 4 páginas com conteúdo espalhado)
+
+
+## Correções do PDF de Cotação - Feedback do Usuário (Fev 2026)
+- [x] 1. Usar logo real da Kenlo (imagem PNG/SVG), não texto
+- [x] 2. Títulos em preto/cinza escuro (não vermelho) - muito vermelho é feio
+- [x] 3. Métricas do negócio ANTES da solução contratada (ordem lógica)
+- [x] 4. Adicionar "Serviço Premium: Suporte VIP e CS Dedicado incluído" quando aplicável
+- [x] 5. Validade como "3 dias" (texto), não data específica
+- [x] 6. Remover palavra "Item" do header da tabela (agora é "Descrição")
+- [x] 7. "Licença pré-paga" (não "Licenças")
+- [x] 8. Equivalente mensal abaixo do "Total a pagar agora" (não abaixo do pós-pago)
+- [x] 9. Footnote sobre impostos na seção de receitas extra
+- [x] 10. Header no topo e footer no rodapé da página (posição fixa, não no meio)
+- [x] PDF agora tem apenas 1 página (antes tinha 2-4)
