@@ -1096,3 +1096,13 @@
 - [x] Identificar qual Kombo é o recomendado (melhor custo-benefício)
 - [x] Adicionar animação de pulse, ícone de estrela e borda destacada no botão "Selecionar" do Kombo recomendado
 - [x] Testar funcionalidade no navegador
+
+
+## Bug Fix: PDF mostrando métricas de produtos não selecionados
+
+- [x] Corrigir lógica de geração do PDF para mostrar apenas métricas do produto selecionado
+- [x] Se apenas IMOB: mostrar apenas usuários e fechamentos (sem contratos)
+- [x] Se apenas LOC: mostrar apenas contratos e novos contratos (sem usuários)
+- [x] Se ambos: mostrar todas as métricas
+- [x] Filtrar add-ons para mostrar apenas os compatíveis com o produto selecionado
+- [x] Testar cenários: IMOB só, LOC só, IMOB+LOC

@@ -14,7 +14,9 @@ interface ProposalData {
   imobPlan?: string;
   locPlan?: string;
   imobUsers?: number;
+  closings?: number;
   contracts?: number;
+  newContracts?: number;
   leadsPerMonth?: number;
   selectedAddons: string;
   paymentPlan: string;
@@ -144,8 +146,11 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
     // ============================================
     // METRICAS DO NEGOCIO - FIRST (logical order)
+    // Only show metrics relevant to the selected product
     // ============================================
-    const hasMetrics = data.imobUsers || data.contracts;
+    const hasImob = data.productType === "imob" || data.productType === "both";
+    const hasLoc = data.productType === "loc" || data.productType === "both";
+    const hasMetrics = (hasImob && data.imobUsers) || (hasLoc && data.contracts);
     
     if (hasMetrics) {
       // Title in DARK (not red)
@@ -154,11 +159,19 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       y += 12;
 
       const metrics: string[] = [];
-      if (data.imobUsers && data.imobUsers > 0) {
+      // Only show IMOB metrics if IMOB is selected
+      if (hasImob && data.imobUsers && data.imobUsers > 0) {
         metrics.push(`${data.imobUsers} usuarios`);
       }
-      if (data.contracts && data.contracts > 0) {
+      if (hasImob && data.closings && data.closings > 0) {
+        metrics.push(`${data.closings} fechamentos/mes`);
+      }
+      // Only show LOC metrics if LOC is selected
+      if (hasLoc && data.contracts && data.contracts > 0) {
         metrics.push(`${data.contracts} contratos`);
+      }
+      if (hasLoc && data.newContracts && data.newContracts > 0) {
+        metrics.push(`${data.newContracts} novos/mes`);
       }
 
       doc.font("Helvetica").fontSize(9).fillColor(mediumText)
