@@ -184,32 +184,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       y += 18;
     }
 
-    y += 5;
-
-    // ============================================
-    // BENEFÍCIOS INCLUÍDOS (new section)
-    // ============================================
-    doc.rect(margin, y, contentWidth, 55).fill("#f0fdf4");
-    doc.rect(margin, y, 4, 55).fill(kenloGreen);
-    
-    doc.font("Helvetica-Bold").fontSize(9).fillColor(kenloGreen)
-       .text("BENEFÍCIOS INCLUÍDOS NO SEU PLANO", margin + 15, y + 6);
-    
-    // First row of benefits
-    const benefits1 = ["Site Profissional (R$ 249/mês)", "Blog Integrado", "Landing Pages"];
-    doc.font("Helvetica").fontSize(8).fillColor(darkText)
-       .text("✓ " + benefits1.join("   ✓ "), margin + 15, y + 20);
-    
-    // Second row of benefits
-    const benefits2 = ["Hospedagem Ilimitada", "E-mails Corporativos", "App Kenlo"];
-    doc.font("Helvetica").fontSize(8).fillColor(darkText)
-       .text("✓ " + benefits2.join("   ✓ "), margin + 15, y + 32);
-    
-    // Third row
-    doc.font("Helvetica").fontSize(8).fillColor(darkText)
-       .text("✓ Radar de Parcerias da Comunidade   ✓ Treinamentos Online", margin + 15, y + 44);
-    
-    y += 65;
+    y += 10;
 
     // ============================================
     // PRICING TABLE (compact)

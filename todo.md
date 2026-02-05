@@ -956,3 +956,7 @@
 - [x] Criar versão SVG do ícone K vermelho (apenas a letra K) - kenlo-k-square.svg
 - [x] Aplicar como favicon do site - favicon.svg (K vermelho centralizado)
 - [x] Disponibilizar para uso em espaços compactos
+
+
+## Remoção de Seção do PDF (Fev 2026)
+- [x] Remover seção "Benefícios Incluídos no Seu Plano" do PDF gerado
