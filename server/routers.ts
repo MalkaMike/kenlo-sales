@@ -341,6 +341,7 @@ export const appRouter = router({
       .input(z.object({
         salesPersonName: z.string(),
         clientName: z.string(),
+        agencyName: z.string().optional(),
         productType: z.string(),
         imobPlan: z.string().optional(),
         locPlan: z.string().optional(),
@@ -385,6 +386,7 @@ export const appRouter = router({
         vendorPhone: z.string().optional(),
         vendorRole: z.string().optional(),
         clientName: z.string(),
+        agencyName: z.string().optional(),
         productType: z.string(),
         komboName: z.string().optional(),
         komboDiscount: z.number().optional(),
@@ -394,6 +396,10 @@ export const appRouter = router({
         closings: z.number().optional(),
         contracts: z.number().optional(),
         newContracts: z.number().optional(),
+        leadsPerMonth: z.number().optional(),
+        usesExternalAI: z.boolean().optional(),
+        wantsWhatsApp: z.boolean().optional(),
+        chargesSplitToOwner: z.boolean().optional(),
         selectedAddons: z.string(),
         paymentPlan: z.string(),
         totalMonthly: z.number(),
@@ -412,6 +418,7 @@ export const appRouter = router({
         prepaymentMonths: z.number().optional(),
         // Premium services
         hasPremiumServices: z.boolean().optional(),
+        premiumServicesPrice: z.number().optional(),
         // Installment options
         installments: z.number().optional(),
       }))

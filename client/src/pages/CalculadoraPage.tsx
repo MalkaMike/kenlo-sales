@@ -2861,12 +2861,82 @@ export default function CalculadoraPage() {
                 const prepayment = calculatePrepaymentAmount();
                 const prepaymentMonths = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
 
+                // ============================================
+                // VALIDATION: Verify add-ons compatibility
+                // ============================================
+                const compatibleAddons: string[] = [];
+                const incompatibleAddons: string[] = [];
+                
+                // Define which add-ons are compatible with each product
+                const imobCompatible = ['leads', 'inteligencia', 'assinatura'];
+                const locCompatible = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
+                
+                selectedAddons.forEach((addon: string) => {
+                  let isCompatible = false;
+                  
+                  if (product === 'imob') {
+                    isCompatible = imobCompatible.includes(addon);
+                  } else if (product === 'loc') {
+                    isCompatible = locCompatible.includes(addon);
+                  } else if (product === 'both') {
+                    isCompatible = true; // All add-ons compatible with both products
+                  }
+                  
+                  if (isCompatible) {
+                    compatibleAddons.push(addon);
+                  } else {
+                    incompatibleAddons.push(addon);
+                  }
+                });
+                
+                // Log validation results
+                console.log('[PDF Validation] Product:', product);
+                console.log('[PDF Validation] Selected add-ons:', selectedAddons);
+                console.log('[PDF Validation] Compatible add-ons:', compatibleAddons);
+                console.log('[PDF Validation] Incompatible add-ons:', incompatibleAddons);
+                
+                // Alert user if there are incompatible add-ons
+                if (incompatibleAddons.length > 0) {
+                  const addonNames: Record<string, string> = {
+                    leads: 'Leads',
+                    inteligencia: 'Inteligência',
+                    assinatura: 'Assinatura',
+                    pay: 'Pay',
+                    seguros: 'Seguros',
+                    cash: 'Cash',
+                  };
+                  const incompatibleNames = incompatibleAddons.map(a => addonNames[a] || a).join(', ');
+                  toast.error(
+                    `Add-ons incompatíveis detectados: ${incompatibleNames}. ` +
+                    `Estes add-ons não são compatíveis com o produto selecionado (${product.toUpperCase()}).`
+                  );
+                  return; // Stop PDF generation
+                }
+                
+                // Validate WhatsApp dependency
+                if (metrics.wantsWhatsApp && !addons.leads && !metrics.usesExternalAI) {
+                  toast.error('WhatsApp Integrado requer Leads ou IA SDR Externa ativa.');
+                  return;
+                }
+                
+                // Validate Premium Services logic
+                const hasPremiumIncluded = 
+                  (komboInfo?.name === 'Kombo Core Gestão' || 
+                   komboInfo?.name === 'Kombo Elite' ||
+                   komboInfo?.name === 'Kombo Imob Pro' ||
+                   komboInfo?.name === 'Kombo Locação Pro');
+                
+                const premiumServicesPrice = hasPremiumIncluded ? 0 : 
+                  ((metrics.imobVipSupport || metrics.locVipSupport) ? 97 : 0) +
+                  ((metrics.imobDedicatedCS || metrics.locDedicatedCS) ? 197 : 0);
+
                 const proposalData = {
                   salesPersonName: quoteInfo.vendorName,
                   vendorEmail: quoteInfo.vendorEmail,
                   vendorPhone: quoteInfo.vendorPhone,
                   vendorRole: quoteInfo.vendorRole,
                   clientName: quoteInfo.ownerName,
+                  agencyName: quoteInfo.agencyName,
                   productType: product,
                   komboName: komboInfo?.name,
                   komboDiscount: komboInfo ? Math.round(komboInfo.discount * 100) : undefined,
@@ -2874,20 +2944,13 @@ export default function CalculadoraPage() {
                   locPlan: (product === "loc" || product === "both") ? locPlan : undefined,
                   imobUsers: metrics.imobUsers,
                   closings: metrics.closingsPerMonth,
-                  leads: metrics.leadsPerMonth,
-                  externalAI: metrics.usesExternalAI ? 1 : 0,
-                  whatsapp: metrics.wantsWhatsApp ? 1 : 0,
-                  imobVipSupport: metrics.imobVipSupport ? 1 : 0,
-                  imobDedicatedCS: metrics.imobDedicatedCS ? 1 : 0,
                   contracts: metrics.contractsUnderManagement,
                   newContracts: metrics.newContractsPerMonth,
-                  locVipSupport: metrics.locVipSupport ? 1 : 0,
-                  locDedicatedCS: metrics.locDedicatedCS ? 1 : 0,
-                  chargesBoleto: metrics.chargesBoletoToTenant ? 1 : 0,
-                  boletoAmount: metrics.boletoChargeAmount,
-                  chargesSplit: metrics.chargesSplitToOwner ? 1 : 0,
-                  splitAmount: metrics.splitChargeAmount,
-                  selectedAddons: JSON.stringify(selectedAddons),
+                  leadsPerMonth: metrics.leadsPerMonth,
+                  usesExternalAI: metrics.usesExternalAI,
+                  wantsWhatsApp: metrics.wantsWhatsApp,
+                  chargesSplitToOwner: metrics.chargesSplitToOwner,
+                  selectedAddons: JSON.stringify(compatibleAddons), // Use validated compatible add-ons only
                   paymentPlan: frequency,
                   totalMonthly,
                   totalAnnual,
@@ -2903,12 +2966,10 @@ export default function CalculadoraPage() {
                   prepaymentUsersAmount: prepayment.users,
                   prepaymentContractsAmount: prepayment.contracts,
                   prepaymentMonths: prepaymentMonths,
-                  // Premium services included (for Kombos that include them)
+                  // Premium services
                   hasPremiumServices: (metrics.imobVipSupport || metrics.locVipSupport) && 
-                    (metrics.imobDedicatedCS || metrics.locDedicatedCS) &&
-                    // Check if services are included (not paid separately)
-                    ((product === 'imob' || product === 'both') && (imobPlan === 'k' || imobPlan === 'k2')) ||
-                    ((product === 'loc' || product === 'both') && (locPlan === 'k' || locPlan === 'k2')),
+                    (metrics.imobDedicatedCS || metrics.locDedicatedCS),
+                  premiumServicesPrice: premiumServicesPrice,
                   // Installment options (from QuoteInfoDialog)
                   installments: quoteInfo.installments,
                 };

@@ -1218,3 +1218,52 @@
 - [x] Implementar validação de formulário
 - [x] Testar upload de avatar e edição de dados
 - [x] Testar visualização do histórico de propostas
+
+
+## Redesign de PDF Premium B2B (Fev 2026)
+
+- [ ] Implementar nova estrutura de PDF seguindo diretrizes de design premium
+- [ ] 1. Cabeçalho: Logo, nome do cliente, data, validade, vendedor (discreto)
+- [ ] 2. Business Snapshot: Métricas do negócio em cards horizontais
+  - [ ] Métricas gerais: usuários, fechamentos/mês, contratos ativos, novos contratos/mês
+  - [ ] Métricas específicas por produto (IMOB: leads/mês, IA externa, WhatsApp | LOC: contratos, boletos/mês, split)
+  - [ ] Nunca exibir métricas de produto não contratado
+- [ ] 3. Solução Contratada: "O que exatamente estou comprando?"
+  - [ ] Nome do Kombo com destaque visual para desconto
+  - [ ] Produtos incluídos em lista clara
+  - [ ] TODOS os add-ons possíveis com ✅ selecionado / ❌ não selecionado
+  - [ ] Nunca mostrar add-ons incompatíveis
+- [ ] 4. Serviços Premium: Seção destacada (quando incluído no Kombo)
+  - [ ] Suporte VIP + CS dedicado como benefício
+  - [ ] Texto curto, sem misturar com preço
+- [ ] 5. Investimento: Hero number + composição
+  - [ ] Valor total grande e destacado
+  - [ ] Composição em fonte menor/itálico (licença pré-paga, usuários adicionais, implantação)
+- [ ] 6. Condições de Pagamento
+  - [ ] Parcelamento (se houver)
+  - [ ] Equivalente mensal como texto auxiliar
+- [ ] 7. Estimativas Pós-pagas: Seção separada visualmente
+  - [ ] Explicar que são estimativas
+  - [ ] Valores médios esperados
+  - [ ] Nunca misturar com valores contratados
+- [ ] 8. The Kenlo Effect: ROI positivo no final
+  - [ ] Potenciais receitas
+  - [ ] Ganho líquido estimado
+  - [ ] Disclaimer discreto
+- [ ] Testar PDF com diferentes cenários (Kombos, produtos, add-ons)
+- [ ] Validar hierarquia visual e clareza
+
+
+## Validação e Captura Completa para PDF (Fev 2026)
+
+- [x] Implementar função de validação pré-PDF que:
+  - [x] Captura TODOS os campos visíveis na calculadora
+  - [x] Valida consistência (ex: WhatsApp requer Leads ou IA Externa)
+  - [x] Verifica compatibilidade de add-ons com produtos selecionados
+  - [x] Confirma estado de todos os toggles e switches
+  - [x] Registra quais add-ons estão ativos/inativos
+  - [x] Valida se Serviços Premium são "incluídos" ou "pagos"
+  - [x] Bloqueia geração de PDF se houver incompatibilidades
+- [x] Adicionar log de debug mostrando dados capturados vs dados enviados
+- [ ] Criar modal de confirmação mostrando resumo antes de gerar PDF (opcional)
+- [ ] Testar com diferentes cenários para garantir zero discrepâncias

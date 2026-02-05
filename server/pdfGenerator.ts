@@ -8,16 +8,22 @@ interface ProposalData {
   vendorPhone?: string;
   vendorRole?: string;
   clientName: string;
+  agencyName?: string;
   productType: string;
   komboName?: string;
   komboDiscount?: number;
   imobPlan?: string;
   locPlan?: string;
+  // Business metrics
   imobUsers?: number;
   closings?: number;
   contracts?: number;
   newContracts?: number;
   leadsPerMonth?: number;
+  usesExternalAI?: boolean;
+  wantsWhatsApp?: boolean;
+  chargesSplitToOwner?: boolean;
+  // Add-ons and pricing
   selectedAddons: string;
   paymentPlan: string;
   totalMonthly: number;
@@ -37,6 +43,7 @@ interface ProposalData {
   monthlyLicenseBase?: number;
   // Premium services
   hasPremiumServices?: boolean;
+  premiumServicesPrice?: number;
   // Installment options
   installments?: number;
 }
@@ -45,9 +52,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ 
       size: "A4", 
-      margin: 40,
+      margin: 50,
       autoFirstPage: true,
-      bufferPages: true  // Enable buffer to control pages
+      bufferPages: true
     });
     const chunks: Buffer[] = [];
 
@@ -55,362 +62,459 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    // Colors - professional and subtle
-    const kenloPink = "#F82E52";
-    const kenloGreen = "#4ABD8D";
-    const darkText = "#1a1a1a";
-    const mediumText = "#333333";
-    const lightText = "#666666";
-    const veryLightGray = "#f8f8f8";
-    const borderColor = "#e0e0e0";
+    // ============================================
+    // DESIGN SYSTEM - Premium B2B
+    // ============================================
+    const colors = {
+      primary: "#F82E52",      // Kenlo Pink
+      secondary: "#4ABD8D",    // Kenlo Green
+      dark: "#1a1a1a",         // Títulos principais
+      medium: "#333333",       // Texto normal
+      light: "#666666",        // Texto auxiliar
+      veryLight: "#999999",    // Texto muito claro
+      bgLight: "#f8f8f8",      // Fundo claro
+      bgHighlight: "#fff0f3",  // Fundo destaque rosa
+      bgSuccess: "#f0fdf4",    // Fundo destaque verde
+      border: "#e0e0e0",       // Bordas
+    };
 
     const pageWidth = 595.28;
     const pageHeight = 841.89;
-    const margin = 40;
+    const margin = 50;
     const contentWidth = pageWidth - (margin * 2);
 
-    // Helper functions
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
     const formatCurrency = (value: number) => {
       return new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       }).format(value);
     };
 
-    // Get payment plan label and period
     const getPaymentPlanInfo = () => {
       switch (data.paymentPlan) {
-        case "monthly":
-          return { label: "Mensal", months: 1 };
-        case "semestral":
-          return { label: "Semestral", months: 6 };
-        case "annual":
-          return { label: "Anual", months: 12 };
-        case "biennial":
-          return { label: "Bienal", months: 24 };
-        default:
-          return { label: "Anual", months: 12 };
+        case "monthly": return { label: "Mensal", months: 1 };
+        case "semestral": return { label: "Semestral", months: 6 };
+        case "annual": return { label: "Anual", months: 12 };
+        case "biennial": return { label: "Bienal", months: 24 };
+        default: return { label: "Anual", months: 12 };
       }
     };
 
     const planInfo = getPaymentPlanInfo();
     const logoPath = path.join(process.cwd(), "client/public/KenloLogo.png");
     const today = new Date();
-    const dateStr = today.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const dateStr = today.toLocaleDateString("pt-BR");
+    const validityDate = new Date(today);
+    validityDate.setDate(validityDate.getDate() + 3);
+    const validityStr = validityDate.toLocaleDateString("pt-BR");
+
+    let y = margin;
 
     // ============================================
-    // HEADER - Logo + data/validade
+    // 1. CABEÇALHO - Logo, Cliente, Data, Validade, Vendedor
     // ============================================
     try {
       if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, margin, 30, { width: 90 });
+        doc.image(logoPath, margin, y, { width: 80 });
       } else {
-        doc.font("Helvetica-Bold").fontSize(24).fillColor(kenloPink)
-           .text("Kenlo", margin, 35);
+        doc.font("Helvetica-Bold").fontSize(20).fillColor(colors.primary)
+           .text("Kenlo", margin, y);
       }
     } catch (e) {
-      doc.font("Helvetica-Bold").fontSize(24).fillColor(kenloPink)
-         .text("Kenlo", margin, 35);
-    }
-    
-    // Date and validity on the right - "3 dias" as text
-    doc.font("Helvetica").fontSize(9).fillColor(lightText)
-       .text(`Data: ${dateStr}`, pageWidth - margin - 90, 35, { width: 90, align: "right" })
-       .text("Validade: 3 dias", pageWidth - margin - 90, 47, { width: 90, align: "right" });
-
-    // Thin line separator
-    doc.strokeColor(borderColor).lineWidth(0.5)
-       .moveTo(margin, 70).lineTo(pageWidth - margin, 70).stroke();
-
-    let y = 82;
-
-    // ============================================
-    // CLIENT & VENDOR - Side by side (compact)
-    // ============================================
-    doc.font("Helvetica").fontSize(7).fillColor(lightText)
-       .text("PARA", margin, y);
-    doc.font("Helvetica-Bold").fontSize(12).fillColor(darkText)
-       .text(data.clientName, margin, y + 9);
-
-    doc.font("Helvetica").fontSize(7).fillColor(lightText)
-       .text("VENDEDOR", pageWidth - margin - 140, y);
-    doc.font("Helvetica").fontSize(9).fillColor(darkText)
-       .text(data.salesPersonName, pageWidth - margin - 140, y + 9);
-    
-    if (data.vendorEmail) {
-      doc.font("Helvetica").fontSize(7).fillColor(lightText)
-         .text(data.vendorEmail, pageWidth - margin - 140, y + 20);
+      doc.font("Helvetica-Bold").fontSize(20).fillColor(colors.primary)
+         .text("Kenlo", margin, y);
     }
 
-    y += 40;
+    // Cliente (destaque)
+    doc.font("Helvetica-Bold").fontSize(16).fillColor(colors.dark)
+       .text(data.agencyName || data.clientName, margin + 100, y);
+
+    // Data e Validade (direita)
+    doc.font("Helvetica").fontSize(9).fillColor(colors.light)
+       .text(`Data: ${dateStr}`, pageWidth - margin - 100, y, { width: 100, align: "right" })
+       .text(`Validade: ${validityStr}`, pageWidth - margin - 100, y + 12, { width: 100, align: "right" });
+
+    // Vendedor (direita, abaixo)
+    doc.font("Helvetica").fontSize(8).fillColor(colors.veryLight)
+       .text("Vendedor", pageWidth - margin - 100, y + 28, { width: 100, align: "right" });
+    doc.font("Helvetica").fontSize(9).fillColor(colors.medium)
+       .text(data.salesPersonName, pageWidth - margin - 100, y + 38, { width: 100, align: "right" });
+
+    y += 70;
+
+    // Linha separadora
+    doc.strokeColor(colors.border).lineWidth(1)
+       .moveTo(margin, y).lineTo(pageWidth - margin, y).stroke();
+
+    y += 30;
 
     // ============================================
-    // METRICAS DO NEGOCIO - FIRST (logical order)
-    // Only show metrics relevant to the selected product
+    // 2. BUSINESS SNAPSHOT - Métricas do Negócio
     // ============================================
     const hasImob = data.productType === "imob" || data.productType === "both";
     const hasLoc = data.productType === "loc" || data.productType === "both";
-    const hasMetrics = (hasImob && data.imobUsers) || (hasLoc && data.contracts);
     
-    if (hasMetrics) {
-      // Title in DARK (not red)
-      doc.font("Helvetica-Bold").fontSize(9).fillColor(darkText)
-         .text("METRICAS DO NEGOCIO", margin, y);
-      y += 12;
+    // Coletar métricas
+    const metrics: Array<{label: string, value: string}> = [];
+    
+    // Métricas gerais
+    if (hasImob && data.imobUsers) {
+      metrics.push({ label: "Usuários", value: data.imobUsers.toString() });
+    }
+    if (hasImob && data.closings) {
+      metrics.push({ label: "Fechamentos/mês", value: data.closings.toString() });
+    }
+    if (hasLoc && data.contracts) {
+      metrics.push({ label: "Contratos ativos", value: data.contracts.toString() });
+    }
+    if (hasLoc && data.newContracts) {
+      metrics.push({ label: "Novos contratos/mês", value: data.newContracts.toString() });
+    }
 
-      const metrics: string[] = [];
-      // Only show IMOB metrics if IMOB is selected
-      if (hasImob && data.imobUsers && data.imobUsers > 0) {
-        metrics.push(`${data.imobUsers} usuarios`);
+    // Métricas específicas por produto
+    const specificMetrics: Array<{label: string, value: string}> = [];
+    
+    if (hasImob) {
+      if (data.leadsPerMonth) {
+        specificMetrics.push({ label: "Leads recebidos/mês", value: data.leadsPerMonth.toString() });
       }
-      if (hasImob && data.closings && data.closings > 0) {
-        metrics.push(`${data.closings} fechamentos/mes`);
+      if (data.usesExternalAI !== undefined) {
+        specificMetrics.push({ label: "IA externa em uso", value: data.usesExternalAI ? "✓" : "✗" });
       }
-      // Only show LOC metrics if LOC is selected
-      if (hasLoc && data.contracts && data.contracts > 0) {
-        metrics.push(`${data.contracts} contratos`);
+      if (data.wantsWhatsApp !== undefined) {
+        specificMetrics.push({ label: "WhatsApp integrado", value: data.wantsWhatsApp ? "✓" : "✗" });
       }
-      if (hasLoc && data.newContracts && data.newContracts > 0) {
-        metrics.push(`${data.newContracts} novos/mes`);
+    }
+    
+    if (hasLoc) {
+      if (data.contracts) {
+        const avgRent = 2500;
+        const boletosMes = data.contracts;
+        specificMetrics.push({ label: "Boletos/mês", value: boletosMes.toString() });
+      }
+      if (data.chargesSplitToOwner !== undefined) {
+        specificMetrics.push({ label: "Split proprietário ativo", value: data.chargesSplitToOwner ? "✓" : "✗" });
+      }
+    }
+
+    // Só mostrar seção se houver métricas
+    if (metrics.length > 0 || specificMetrics.length > 0) {
+      doc.font("Helvetica-Bold").fontSize(11).fillColor(colors.dark)
+         .text("Métricas do Negócio", margin, y);
+      y += 18;
+
+      // Cards horizontais com métricas gerais
+      if (metrics.length > 0) {
+        const cardWidth = (contentWidth - 20) / Math.min(metrics.length, 4);
+        let xPos = margin;
+        
+        metrics.forEach((metric, index) => {
+          if (index > 0 && index % 4 === 0) {
+            xPos = margin;
+            y += 50;
+          }
+          
+          // Card
+          doc.rect(xPos, y, cardWidth - 5, 45).fillAndStroke(colors.bgLight, colors.border);
+          
+          // Valor grande
+          doc.font("Helvetica-Bold").fontSize(18).fillColor(colors.primary)
+             .text(metric.value, xPos + 5, y + 8, { width: cardWidth - 15, align: "center" });
+          
+          // Label pequeno
+          doc.font("Helvetica").fontSize(8).fillColor(colors.light)
+             .text(metric.label, xPos + 5, y + 30, { width: cardWidth - 15, align: "center" });
+          
+          xPos += cardWidth;
+        });
+        
+        y += 50;
       }
 
-      doc.font("Helvetica").fontSize(9).fillColor(mediumText)
-         .text(metrics.join("  |  "), margin, y);
-      y += 16;
+      // Métricas específicas (texto corrido)
+      if (specificMetrics.length > 0) {
+        y += 5;
+        const metricsText = specificMetrics.map(m => `${m.label}: ${m.value}`).join("  •  ");
+        doc.font("Helvetica").fontSize(9).fillColor(colors.medium)
+           .text(metricsText, margin, y);
+        y += 14;
+      }
+
+      y += 20;
     }
 
     // ============================================
-    // SOLUCAO CONTRATADA - With Kombo and Premium Services
+    // 3. SOLUÇÃO CONTRATADA
     // ============================================
-    // Title in DARK (not red)
-    doc.font("Helvetica-Bold").fontSize(9).fillColor(darkText)
-       .text("SOLUCAO CONTRATADA", margin, y);
-    y += 12;
+    doc.font("Helvetica-Bold").fontSize(14).fillColor(colors.dark)
+       .text("Solução Contratada", margin, y);
+    y += 22;
 
-    // Kombo name (if applicable)
+    // 3.1 Kombo (se aplicável)
     if (data.komboName && data.komboName !== "Sem Kombo") {
-      doc.font("Helvetica-Bold").fontSize(11).fillColor(darkText)
+      doc.font("Helvetica-Bold").fontSize(12).fillColor(colors.dark)
          .text(data.komboName, margin, y, { continued: true });
-      doc.font("Helvetica").fontSize(9).fillColor(kenloGreen)
-         .text(`  (${data.komboDiscount}% OFF)`, { continued: false });
+      
+      if (data.komboDiscount && data.komboDiscount > 0) {
+        doc.font("Helvetica-Bold").fontSize(11).fillColor(colors.secondary)
+           .text(`  ${data.komboDiscount}% OFF`, { continued: false });
+      }
+      y += 18;
+    }
+
+    // 3.2 Produtos incluídos
+    doc.font("Helvetica").fontSize(10).fillColor(colors.medium)
+       .text("Produtos:", margin, y);
+    y += 14;
+
+    if (hasImob) {
+      doc.font("Helvetica").fontSize(10).fillColor(colors.dark)
+         .text(`• Kenlo IMOB ${data.imobPlan?.toUpperCase() || ""}`, margin + 10, y);
+      y += 14;
+    }
+    if (hasLoc) {
+      doc.font("Helvetica").fontSize(10).fillColor(colors.dark)
+         .text(`• Kenlo Locação ${data.locPlan?.toUpperCase() || ""}`, margin + 10, y);
       y += 14;
     }
 
-    // Products included
-    let productsText = "";
-    if (data.productType === "imob" || data.productType === "both") {
-      productsText += `Kenlo Imob ${data.imobPlan?.toUpperCase() || ""}`;
-    }
-    if (data.productType === "both") {
-      productsText += " + ";
-    }
-    if (data.productType === "loc" || data.productType === "both") {
-      productsText += `Kenlo Locacao ${data.locPlan?.toUpperCase() || ""}`;
-    }
+    y += 6;
+
+    // 3.3 Add-ons - TODOS os possíveis com ✓/✗
+    doc.font("Helvetica").fontSize(10).fillColor(colors.medium)
+       .text("Add-ons disponíveis:", margin, y);
+    y += 14;
+
+    const selectedAddons = JSON.parse(data.selectedAddons) as string[];
     
-    doc.font("Helvetica").fontSize(9).fillColor(mediumText)
-       .text(productsText, margin, y);
-    y += 12;
+    // Definir todos os add-ons possíveis por produto
+    const allAddons: Array<{id: string, name: string, products: string[]}> = [
+      { id: "leads", name: "Kenlo Leads", products: ["imob"] },
+      { id: "inteligencia", name: "Kenlo Inteligência (BI)", products: ["imob", "loc"] },
+      { id: "assinatura", name: "Kenlo Assinatura", products: ["imob", "loc"] },
+      { id: "pay", name: "Kenlo Pay", products: ["loc"] },
+      { id: "seguros", name: "Kenlo Seguros", products: ["loc"] },
+      { id: "cash", name: "Kenlo Cash", products: ["loc"] },
+    ];
 
-    // Add-ons included
-    const addons = JSON.parse(data.selectedAddons);
-    if (addons.length > 0) {
-      const addonLabels: Record<string, string> = {
-        leads: "Leads",
-        inteligencia: "Inteligencia",
-        assinatura: "Assinatura",
-        pay: "Pay",
-        seguros: "Seguros",
-        cash: "Cash",
-      };
-      const addonText = addons.map((a: string) => addonLabels[a] || a).join(", ");
+    // Filtrar add-ons compatíveis com os produtos selecionados
+    const compatibleAddons = allAddons.filter(addon => {
+      if (data.productType === "both") return true;
+      return addon.products.includes(data.productType);
+    });
+
+    // Mostrar em 2 colunas
+    const col1X = margin + 10;
+    const col2X = margin + (contentWidth / 2);
+    let currentCol = 1;
+    let colY = y;
+
+    compatibleAddons.forEach((addon, index) => {
+      const isSelected = selectedAddons.includes(addon.id);
+      const icon = isSelected ? "✓" : "✗";
+      const iconColor = isSelected ? colors.secondary : colors.light;
+      const textColor = isSelected ? colors.dark : colors.light;
       
-      doc.font("Helvetica").fontSize(8).fillColor(lightText)
-         .text(`Add-ons: ${addonText}`, margin, y);
-      y += 11;
-    }
+      const xPos = currentCol === 1 ? col1X : col2X;
+      
+      // Ícone
+      doc.font("Helvetica-Bold").fontSize(10).fillColor(iconColor)
+         .text(icon, xPos, colY, { continued: true });
+      
+      // Nome do add-on
+      doc.font("Helvetica").fontSize(9).fillColor(textColor)
+         .text(`  ${addon.name}`, { continued: false });
+      
+      // Alternar coluna
+      if (currentCol === 1) {
+        currentCol = 2;
+      } else {
+        currentCol = 1;
+        colY += 14;
+      }
+    });
 
-    // Premium Services included (if applicable)
-    if (data.hasPremiumServices) {
-      doc.font("Helvetica").fontSize(8).fillColor(kenloGreen)
-         .text("Servico Premium: Suporte VIP e CS Dedicado incluido", margin, y);
-      y += 11;
-    }
-
-    y += 8;
+    // Ajustar y para próxima seção
+    y = colY + (currentCol === 2 ? 14 : 0) + 10;
 
     // ============================================
-    // INVESTIMENTO - Clean table
+    // 4. SERVIÇOS PREMIUM (se incluído no Kombo)
     // ============================================
-    // Title in DARK (not red)
-    doc.font("Helvetica-Bold").fontSize(9).fillColor(darkText)
-       .text("INVESTIMENTO", margin, y);
-    y += 12;
+    if (data.hasPremiumServices && (!data.premiumServicesPrice || data.premiumServicesPrice === 0)) {
+      // Box destacado
+      doc.rect(margin, y, contentWidth, 50).fillAndStroke(colors.bgHighlight, colors.primary);
+      
+      doc.font("Helvetica-Bold").fontSize(11).fillColor(colors.primary)
+         .text("✓ Serviços Premium Incluídos", margin + 15, y + 12);
+      
+      doc.font("Helvetica").fontSize(9).fillColor(colors.medium)
+         .text("Suporte VIP e Customer Success Dedicado", margin + 15, y + 28);
+      
+      y += 60;
+    }
 
-    // Calculate values
+    // ============================================
+    // 5. INVESTIMENTO - Hero Number
+    // ============================================
+    doc.font("Helvetica-Bold").fontSize(14).fillColor(colors.dark)
+       .text("Investimento", margin, y);
+    y += 22;
+
+    // Calcular total
     const licenseTotal = data.totalMonthly * planInfo.months;
-    const licenseMonthly = data.totalMonthly;
-    
-    // Table with 2 columns - NO "Item" word
-    const col1Width = contentWidth * 0.65;
-    const col2Width = contentWidth * 0.35;
-    const rowHeight = 22;
-    
-    const col1X = margin;
-    const col2X = margin + col1Width;
-    
-    // Header row - just frequency name
-    doc.rect(margin, y, contentWidth, rowHeight).fill(kenloPink);
-    doc.font("Helvetica-Bold").fontSize(8).fillColor("#ffffff")
-       .text("Descricao", col1X + 8, y + 6)
-       .text(planInfo.label, col2X + 8, y + 6, { width: col2Width - 16, align: "right" });
-    y += rowHeight;
-
-    // Helper to draw a row
-    const drawRow = (label: string, value: string, isTotal = false, isGray = false) => {
-      const bgColor = isTotal ? "#fff0f3" : isGray ? veryLightGray : "#ffffff";
-      doc.rect(margin, y, contentWidth, rowHeight).fill(bgColor);
-      
-      // Border
-      doc.strokeColor(borderColor).lineWidth(0.5);
-      doc.rect(margin, y, contentWidth, rowHeight).stroke();
-      
-      const fontStyle = isTotal ? "Helvetica-Bold" : "Helvetica";
-      const textColor = isTotal ? kenloPink : darkText;
-      
-      doc.font(fontStyle).fontSize(8).fillColor(textColor)
-         .text(label, col1X + 8, y + 6, { width: col1Width - 16 });
-      
-      doc.font(fontStyle).fontSize(8).fillColor(textColor)
-         .text(value, col2X + 8, y + 6, { width: col2Width - 16, align: "right" });
-      
-      y += rowHeight;
-    };
-
-    // License row - "Licenca pre-paga"
-    drawRow(`Licenca pre-paga (${planInfo.months} ${planInfo.months === 1 ? "mes" : "meses"})`, formatCurrency(licenseTotal), false, true);
-
-    // Users pre-paid (if applicable)
     let totalPrePaid = licenseTotal;
     
-    if (data.prepayAdditionalUsers && data.prepaymentUsersAmount && data.prepaymentUsersAmount > 0) {
-      totalPrePaid += data.prepaymentUsersAmount;
-      drawRow(`Usuarios adicionais pre-pagos`, formatCurrency(data.prepaymentUsersAmount));
-    }
+    if (data.prepaymentUsersAmount) totalPrePaid += data.prepaymentUsersAmount;
+    if (data.prepaymentContractsAmount) totalPrePaid += data.prepaymentContractsAmount;
+    if (data.premiumServicesPrice) totalPrePaid += data.premiumServicesPrice;
     
-    // Contracts pre-paid (if applicable)
-    if (data.prepayAdditionalContracts && data.prepaymentContractsAmount && data.prepaymentContractsAmount > 0) {
-      totalPrePaid += data.prepaymentContractsAmount;
-      drawRow(`Contratos adicionais pre-pagos`, formatCurrency(data.prepaymentContractsAmount));
-    }
-
-    // Implantation
-    drawRow("Implantacao (unica vez)", formatCurrency(data.implantationFee), false, true);
-    
-    // Total to pay now
     const totalNow = totalPrePaid + data.implantationFee;
-    drawRow("TOTAL A PAGAR AGORA", formatCurrency(totalNow), true);
 
-    // Installment info - RIGHT BELOW total (only for annual/biennial with installments > 1)
-    y += 3;
-    if (data.installments && data.installments > 1) {
-      const installmentValue = totalNow / data.installments;
-      doc.font("Helvetica-Bold").fontSize(8).fillColor(kenloPink)
-         .text(`Parcelamento: ${data.installments}x de ${formatCurrency(installmentValue)}`, margin, y);
+    // Hero number - GRANDE E DESTACADO
+    doc.rect(margin, y, contentWidth, 60).fillAndStroke(colors.bgHighlight, colors.primary);
+    
+    doc.font("Helvetica").fontSize(10).fillColor(colors.light)
+       .text("Total a pagar agora", margin + 20, y + 12);
+    
+    doc.font("Helvetica-Bold").fontSize(28).fillColor(colors.primary)
+       .text(formatCurrency(totalNow), margin + 20, y + 26);
+    
+    y += 70;
+
+    // Composição do valor (fonte menor, itálico)
+    doc.font("Helvetica-Oblique").fontSize(9).fillColor(colors.light)
+       .text("Composição:", margin, y);
+    y += 14;
+
+    const composition: string[] = [];
+    composition.push(`• Licença pré-paga (${planInfo.label}): ${formatCurrency(licenseTotal)}`);
+    
+    if (data.prepaymentUsersAmount && data.prepaymentUsersAmount > 0) {
+      composition.push(`• Usuários adicionais pré-pagos: ${formatCurrency(data.prepaymentUsersAmount)}`);
+    }
+    if (data.prepaymentContractsAmount && data.prepaymentContractsAmount > 0) {
+      composition.push(`• Contratos adicionais pré-pagos: ${formatCurrency(data.prepaymentContractsAmount)}`);
+    }
+    if (data.premiumServicesPrice && data.premiumServicesPrice > 0) {
+      composition.push(`• Serviços Premium: ${formatCurrency(data.premiumServicesPrice)}`);
+    }
+    composition.push(`• Implantação (única vez): ${formatCurrency(data.implantationFee)}`);
+
+    composition.forEach(line => {
+      doc.font("Helvetica-Oblique").fontSize(8).fillColor(colors.light)
+         .text(line, margin + 5, y);
       y += 12;
-    }
-
-    // Monthly equivalent - RIGHT BELOW total/installment
-    doc.font("Helvetica").fontSize(7).fillColor(lightText)
-       .text(`Equivalente mensal: ${formatCurrency(licenseMonthly)}/mes`, margin, y);
-    y += 12;
-
-    // Post-paid estimate (if applicable) - AFTER monthly equivalent
-    if (data.postPaidTotal !== undefined && data.postPaidTotal > 0) {
-      doc.rect(margin, y, contentWidth, rowHeight).fill(veryLightGray);
-      doc.strokeColor(borderColor).lineWidth(0.5);
-      doc.rect(margin, y, contentWidth, rowHeight).stroke();
-      
-      doc.font("Helvetica").fontSize(8).fillColor(lightText)
-         .text("Estimativa pos-pago (uso excedente)", col1X + 8, y + 6, { width: col1Width - 16 });
-      doc.font("Helvetica").fontSize(8).fillColor(lightText)
-         .text(formatCurrency(data.postPaidTotal) + "/mes", col2X + 8, y + 6, { width: col2Width - 16, align: "right" });
-      y += rowHeight;
-    }
+    });
 
     y += 10;
 
     // ============================================
-    // KENLO RECEITAS EXTRA (if applicable)
+    // 6. CONDIÇÕES DE PAGAMENTO
     // ============================================
-    if (data.netGain !== undefined && (data.revenueFromBoletos || data.revenueFromInsurance)) {
-      doc.rect(margin, y, contentWidth, 50).fill("#f0fdf4");
-      doc.rect(margin, y, 3, 50).fill(kenloGreen);
+    if (data.installments && data.installments > 1) {
+      doc.font("Helvetica-Bold").fontSize(10).fillColor(colors.dark)
+         .text("Condições de Pagamento", margin, y);
+      y += 14;
+
+      const installmentValue = totalNow / data.installments;
+      doc.font("Helvetica").fontSize(10).fillColor(colors.medium)
+         .text(`${data.installments}x de ${formatCurrency(installmentValue)}`, margin, y);
+      y += 14;
+
+      doc.font("Helvetica-Oblique").fontSize(8).fillColor(colors.veryLight)
+         .text("(Equivalente mensal para referência, não é cobrança mensal real)", margin, y);
+      y += 20;
+    } else {
+      // Equivalente mensal
+      doc.font("Helvetica-Oblique").fontSize(9).fillColor(colors.veryLight)
+         .text(`Equivalente mensal: ${formatCurrency(data.totalMonthly)}/mês`, margin, y);
+      y += 20;
+    }
+
+    // ============================================
+    // 7. ESTIMATIVAS PÓS-PAGAS
+    // ============================================
+    if (data.postPaidTotal && data.postPaidTotal > 0) {
+      // Seção separada visualmente
+      doc.rect(margin, y, contentWidth, 60).fillAndStroke(colors.bgLight, colors.border);
       
-      // Title in GREEN (this one can stay green as it's a positive highlight)
-      doc.font("Helvetica-Bold").fontSize(9).fillColor(kenloGreen)
-         .text("KENLO RECEITAS EXTRA", margin + 10, y + 6);
+      doc.font("Helvetica-Bold").fontSize(10).fillColor(colors.dark)
+         .text("Estimativas Pós-pagas (Uso Excedente)", margin + 15, y + 12);
       
-      let revenueItems: string[] = [];
+      doc.font("Helvetica-Oblique").fontSize(8).fillColor(colors.light)
+         .text("Valores médios esperados com base no uso informado", margin + 15, y + 26);
+      
+      doc.font("Helvetica-Bold").fontSize(12).fillColor(colors.medium)
+         .text(`~${formatCurrency(data.postPaidTotal)}/mês`, margin + 15, y + 40);
+      
+      y += 70;
+    }
+
+    // ============================================
+    // 8. THE KENLO EFFECT - ROI Positivo
+    // ============================================
+    if (data.netGain && (data.revenueFromBoletos || data.revenueFromInsurance)) {
+      // Box verde com destaque
+      doc.rect(margin, y, contentWidth, 80).fillAndStroke(colors.bgSuccess, colors.secondary);
+      
+      doc.font("Helvetica-Bold").fontSize(12).fillColor(colors.secondary)
+         .text("The Kenlo Effect", margin + 15, y + 12);
+      
+      doc.font("Helvetica").fontSize(9).fillColor(colors.medium)
+         .text("Receitas extras estimadas com a plataforma Kenlo:", margin + 15, y + 28);
+      
+      const revenueItems: string[] = [];
       if (data.revenueFromBoletos && data.revenueFromBoletos > 0) {
-        revenueItems.push(`Boletos/Split: ${formatCurrency(data.revenueFromBoletos)}/mes`);
+        revenueItems.push(`• Boletos/Split: ${formatCurrency(data.revenueFromBoletos)}/mês`);
       }
       if (data.revenueFromInsurance && data.revenueFromInsurance > 0) {
-        revenueItems.push(`Seguros: ${formatCurrency(data.revenueFromInsurance)}/mes`);
+        revenueItems.push(`• Seguros: ${formatCurrency(data.revenueFromInsurance)}/mês`);
       }
       
-      doc.font("Helvetica").fontSize(8).fillColor(darkText)
-         .text(revenueItems.join("  |  "), margin + 10, y + 18);
+      let itemY = y + 42;
+      revenueItems.forEach(item => {
+        doc.font("Helvetica").fontSize(9).fillColor(colors.dark)
+           .text(item, margin + 15, itemY);
+        itemY += 12;
+      });
       
-      doc.font("Helvetica-Bold").fontSize(9).fillColor(kenloGreen)
-         .text(`Ganho liquido estimado: ${formatCurrency(data.netGain)}/mes`, margin + 10, y + 30);
+      doc.font("Helvetica-Bold").fontSize(11).fillColor(colors.secondary)
+         .text(`Ganho líquido estimado: ${formatCurrency(data.netGain)}/mês`, margin + 15, itemY + 4);
       
-      // Footnote about taxes
-      doc.font("Helvetica").fontSize(6).fillColor(lightText)
-         .text("* Valores estimados. Nao inclui impostos.", margin + 10, y + 42);
+      // Disclaimer
+      doc.font("Helvetica-Oblique").fontSize(7).fillColor(colors.veryLight)
+         .text("* Valores estimados. Não incluem impostos.", margin + 15, itemY + 20);
       
-      y += 55;
+      y += 90;
     }
 
     // ============================================
-    // FOOTER - FIXED AT ABSOLUTE BOTTOM OF PAGE 1
+    // FOOTER
     // ============================================
-    // Draw footer at fixed position at the bottom of the page
-    const footerY = pageHeight - 50;
+    const footerY = pageHeight - 60;
     
-    // Thin line
-    doc.strokeColor(borderColor).lineWidth(0.5)
+    doc.strokeColor(colors.border).lineWidth(0.5)
        .moveTo(margin, footerY).lineTo(pageWidth - margin, footerY).stroke();
     
-    // Logo at footer - use image only, no text fallback to avoid page creation
     try {
       if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, margin, footerY + 10, { width: 50 });
+        doc.image(logoPath, margin, footerY + 15, { width: 60 });
       }
     } catch (e) {
-      // Ignore logo errors
+      // Ignore
     }
     
-    // Slogan - centered below logo
-    doc.font("Helvetica").fontSize(8).fillColor(lightText);
-    doc.text("Quem usa, lidera.", margin + 55, footerY + 15, { 
-      lineBreak: false,
-      continued: false
-    });
+    doc.font("Helvetica").fontSize(8).fillColor(colors.light)
+       .text("Quem usa, lidera.", margin + 70, footerY + 22);
     
-    // Website - use absolute positioning to avoid page creation
-    // Draw directly without text() to avoid any page flow issues
-    doc.font("Helvetica").fontSize(7).fillColor(lightText);
-    const websiteText = "www.kenlo.com.br";
-    const websiteWidth = doc.widthOfString(websiteText);
-    doc.text(websiteText, pageWidth - margin - websiteWidth, footerY + 15, { 
-      lineBreak: false,
-      continued: false
-    });
+    doc.font("Helvetica").fontSize(8).fillColor(colors.light)
+       .text("www.kenlo.com.br", pageWidth - margin - 80, footerY + 22);
 
-    // End the document
     doc.end();
   });
 }
