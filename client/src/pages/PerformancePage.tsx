@@ -645,7 +645,7 @@ export default function PerformancePage() {
         </div>
 
         {/* View Mode Toggle */}
-        <div className="mb-6 flex items-center gap-4 flex-wrap">
+        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
             <Button
               variant={viewMode === "team" ? "default" : "ghost"}
@@ -694,12 +694,12 @@ export default function PerformancePage() {
           )}
 
           {/* Quick Period Filters */}
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 overflow-x-auto w-full sm:w-auto">
             <Button
               variant={quickPeriod === "today" ? "default" : "ghost"}
               size="sm"
               onClick={() => applyQuickPeriod("today")}
-              className="text-xs px-3"
+              className="text-xs px-2 sm:px-3 whitespace-nowrap"
             >
               Hoje
             </Button>
@@ -707,7 +707,7 @@ export default function PerformancePage() {
               variant={quickPeriod === "week" ? "default" : "ghost"}
               size="sm"
               onClick={() => applyQuickPeriod("week")}
-              className="text-xs px-3"
+              className="text-xs px-2 sm:px-3 whitespace-nowrap"
             >
               Esta semana
             </Button>
@@ -715,7 +715,7 @@ export default function PerformancePage() {
               variant={quickPeriod === "month" ? "default" : "ghost"}
               size="sm"
               onClick={() => applyQuickPeriod("month")}
-              className="text-xs px-3"
+              className="text-xs px-2 sm:px-3 whitespace-nowrap"
             >
               Este mês
             </Button>
@@ -723,7 +723,7 @@ export default function PerformancePage() {
               variant={quickPeriod === "all" ? "default" : "ghost"}
               size="sm"
               onClick={() => applyQuickPeriod("all")}
-              className="text-xs px-3"
+              className="text-xs px-2 sm:px-3 whitespace-nowrap"
             >
               Todo período
             </Button>
@@ -826,7 +826,7 @@ export default function PerformancePage() {
         )}
 
         {/* Main Metrics Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2 text-xs">
@@ -924,9 +924,9 @@ export default function PerformancePage() {
               </CardTitle>
               <CardDescription>Evolução do MRR ao longo do tempo</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={trendData}>
+            <CardContent className="-mx-2 sm:mx-0">
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={trendData} margin={{ left: 0, right: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                   <YAxis 
@@ -959,7 +959,7 @@ export default function PerformancePage() {
         )}
 
         {/* Kombo Breakdown */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -1084,9 +1084,9 @@ export default function PerformancePage() {
             </CardTitle>
             <CardDescription>Performance por vendedor ordenado por MRR pré-pago (mensalidade fixa)</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             {vendorRanking.length > 0 ? (
-              <Table>
+              <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-12">#</TableHead>
@@ -1129,7 +1129,7 @@ export default function PerformancePage() {
         </Card>
 
         {/* Frequency and Add-ons */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -1220,7 +1220,7 @@ export default function PerformancePage() {
               </div>
             ) : filteredQuotes && filteredQuotes.length > 0 ? (
               <div className="overflow-x-auto">
-                <Table>
+                <Table className="min-w-[800px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Data</TableHead>

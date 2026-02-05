@@ -183,7 +183,7 @@ export default function Home() {
       {/* Stats Section - Enhanced */}
       <section className="py-16 border-y border-border/40 bg-gradient-to-r from-card/50 to-card/30">
         <div className="container">
-          <div className="grid grid-cols-5 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {stats.map((stat, index) => (
               <AnimatedStat
                 key={index}

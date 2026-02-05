@@ -25,14 +25,14 @@ export function AnimatedStat({ icon: Icon, numericValue, label, prefix = "", suf
   };
 
   return (
-    <div ref={elementRef} className="text-center group">
-      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${bgColor} ${color} mb-4 group-hover:scale-110 transition-transform`}>
-        <Icon className="w-8 h-8" />
+    <div ref={elementRef} className="text-center group p-3 sm:p-4">
+      <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl ${bgColor} ${color} mb-2 sm:mb-4 group-hover:scale-110 transition-transform`}>
+        <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />
       </div>
-      <div className={`text-3xl md:text-4xl font-bold ${color} mb-2`}>
+      <div className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold ${color} mb-1 sm:mb-2 whitespace-nowrap`}>
         {prefix}{formatNumber(count)}{suffix}
       </div>
-      <div className="text-sm text-muted-foreground font-medium">{label}</div>
+      <div className="text-xs sm:text-sm text-muted-foreground font-medium leading-tight">{label}</div>
     </div>
   );
 }

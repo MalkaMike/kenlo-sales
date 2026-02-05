@@ -838,3 +838,30 @@
 - [x] Ordenar ranking de vendedores por MRR sem pós-pago (pré-pago)
 - [x] Manter visível: volume de propostas, MRR pré-pago, MRR total (pré+pós)
 - [x] Destacar MRR pré-pago como métrica principal de ordenação
+
+
+## Correção de Responsividade Mobile (Fev 2026)
+
+### Home Page
+- [x] Corrigir stats section - grid-cols-2 sm:grid-cols-3 lg:grid-cols-5
+- [x] Ajustar AnimatedStat para mobile (tamanhos responsivos)
+- [x] Cards de produtos já responsivos (grid sm:grid-cols-2 lg:grid-cols-3)
+
+### Calculadora
+- [x] Layout já responsivo (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3)
+- [x] Botões com min-h-[44px] para touch
+
+### Performance
+- [x] Filtros rápidos com flex-col sm:flex-row e overflow-x-auto
+- [x] Cards de métricas com grid-cols-2 sm:grid-cols-3 lg:grid-cols-6
+- [x] Tabelas com overflow-x-auto e min-w para scroll horizontal
+- [x] Ranking de vendedores com scroll horizontal
+
+### Geral
+- [x] Todas as páginas testadas
+- [x] 88 testes passando
+
+### Bloqueio de Indexação
+- [x] robots.txt criado com Disallow: /
+- [x] meta noindex, nofollow adicionado em index.html
+- [x] Site não será indexado por motores de busca
