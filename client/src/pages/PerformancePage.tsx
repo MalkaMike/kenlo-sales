@@ -61,6 +61,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format, startOfDay, startOfWeek, startOfMonth, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import * as XLSX from 'xlsx';
@@ -189,6 +190,20 @@ export default function PerformancePage() {
     },
   });
 
+  const deleteBatchMutation = trpc.quotes.deleteBatch.useMutation({
+    onSuccess: (result) => {
+      refetchQuotes();
+      utils.quotes.performance.invalidate();
+      setSelectedQuotes(new Set());
+      if (result.errors && result.errors.length > 0) {
+        alert(`${result.deletedCount} cotações apagadas. Erros: ${result.errors.join(", ")}`);
+      }
+    },
+  });
+
+  // Selection state for batch delete
+  const [selectedQuotes, setSelectedQuotes] = useState<Set<number>>(new Set());
+
   // Filter states
   const [filterVendor, setFilterVendor] = useState<string>("all");
   const [filterDateFrom, setFilterDateFrom] = useState("");
@@ -224,6 +239,43 @@ export default function PerformancePage() {
   };
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
+  const [batchDeleteDialogOpen, setBatchDeleteDialogOpen] = useState(false);
+
+  // Toggle single quote selection
+  const toggleQuoteSelection = (quoteId: number) => {
+    const newSelected = new Set(selectedQuotes);
+    if (newSelected.has(quoteId)) {
+      newSelected.delete(quoteId);
+    } else {
+      newSelected.add(quoteId);
+    }
+    setSelectedQuotes(newSelected);
+  };
+
+  // Toggle all quotes selection (only deletable ones)
+  const toggleSelectAll = () => {
+    if (!filteredQuotes || !salesperson) return;
+    
+    const deletableQuotes = filteredQuotes.filter(
+      (q) => salesperson.isMaster || q.salespersonId === salesperson.id
+    );
+    
+    if (selectedQuotes.size === deletableQuotes.length && deletableQuotes.length > 0) {
+      // Deselect all
+      setSelectedQuotes(new Set());
+    } else {
+      // Select all deletable
+      setSelectedQuotes(new Set(deletableQuotes.map((q) => q.id)));
+    }
+  };
+
+  // Handle batch delete
+  const handleBatchDeleteConfirm = async () => {
+    if (selectedQuotes.size > 0) {
+      await deleteBatchMutation.mutateAsync({ ids: Array.from(selectedQuotes) });
+    }
+    setBatchDeleteDialogOpen(false);
+  };
 
   // Set default filter to current user if not master
   useEffect(() => {
@@ -1204,14 +1256,33 @@ export default function PerformancePage() {
         {/* Recent Quotes Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Cotações Recentes
-            </CardTitle>
-            <CardDescription>
-              {filteredQuotes?.length || 0} cotações encontradas
-              {!salesperson.isMaster && " (você pode apagar apenas suas próprias cotações)"}
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Cotações Recentes
+                </CardTitle>
+                <CardDescription>
+                  {filteredQuotes?.length || 0} cotações encontradas
+                  {salesperson && !salesperson.isMaster && " (você pode apagar apenas suas próprias cotações)"}
+                </CardDescription>
+              </div>
+              {selectedQuotes.size > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setBatchDeleteDialogOpen(true)}
+                  disabled={deleteBatchMutation.isPending}
+                >
+                  {deleteBatchMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Trash2 className="w-4 h-4 mr-2" />
+                  )}
+                  Apagar {selectedQuotes.size} selecionada{selectedQuotes.size > 1 ? "s" : ""}
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -1220,9 +1291,21 @@ export default function PerformancePage() {
               </div>
             ) : filteredQuotes && filteredQuotes.length > 0 ? (
               <div className="overflow-x-auto">
-                <Table className="min-w-[800px]">
+                <Table className="min-w-[900px]">
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12">
+                        <Checkbox
+                          checked={(() => {
+                            if (!filteredQuotes || !salesperson) return false;
+                            const deletableQuotes = filteredQuotes.filter(
+                              (q) => salesperson.isMaster || q.salespersonId === salesperson.id
+                            );
+                            return deletableQuotes.length > 0 && selectedQuotes.size === deletableQuotes.length;
+                          })()}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </TableHead>
                       <TableHead>Data</TableHead>
                       <TableHead>Vendedor</TableHead>
                       <TableHead>Cliente</TableHead>
@@ -1240,7 +1323,15 @@ export default function PerformancePage() {
                       const canDelete = salesperson.isMaster || quote.salespersonId === salesperson.id;
                       
                       return (
-                        <TableRow key={quote.id}>
+                        <TableRow key={quote.id} className={selectedQuotes.has(quote.id) ? "bg-muted/50" : ""}>
+                          <TableCell>
+                            {canDelete && (
+                              <Checkbox
+                                checked={selectedQuotes.has(quote.id)}
+                                onCheckedChange={() => toggleQuoteSelection(quote.id)}
+                              />
+                            )}
+                          </TableCell>
                           <TableCell className="text-sm">
                             {format(new Date(quote.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}
                           </TableCell>
@@ -1327,6 +1418,35 @@ export default function PerformancePage() {
                   <Trash2 className="w-4 h-4 mr-2" />
                 )}
                 Apagar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Batch Delete Confirmation Dialog */}
+        <AlertDialog open={batchDeleteDialogOpen} onOpenChange={setBatchDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                Confirmar exclusão em lote
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja apagar <strong>{selectedQuotes.size}</strong> cotação{selectedQuotes.size > 1 ? "ões" : ""}? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleBatchDeleteConfirm}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleteBatchMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Trash2 className="w-4 h-4 mr-2" />
+                )}
+                Apagar {selectedQuotes.size} cotação{selectedQuotes.size > 1 ? "ões" : ""}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

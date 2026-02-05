@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { createProposal } from "./proposals";
 import { generateProposalPDF } from "./pdfGenerator";
-import { saveQuote, getQuotes, getQuoteStats, deleteQuote, softDeleteQuote, getPerformanceMetrics } from "./quotes";
+import { saveQuote, getQuotes, getQuoteStats, deleteQuote, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics } from "./quotes";
 import { getSalespersonByEmail, getSalespersonById, getAllSalespeople } from "./db";
 import { z } from "zod";
 import * as jose from "jose";
@@ -297,6 +297,23 @@ export const appRouter = router({
         
         // Soft delete with ownership check
         const result = await softDeleteQuote(input.id, currentUser.id, currentUser.isMaster);
+        return result;
+      }),
+
+    // Batch delete with ownership check
+    deleteBatch: publicProcedure
+      .input(z.object({
+        ids: z.array(z.number()),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get current salesperson from context
+        const currentUser = await getSalespersonFromContext(ctx);
+        if (!currentUser) {
+          return { success: false, deletedCount: 0, errors: ["Não autorizado"] };
+        }
+        
+        // Batch soft delete with ownership check
+        const result = await softDeleteQuotesBatch(input.ids, currentUser.id, currentUser.isMaster);
         return result;
       }),
 

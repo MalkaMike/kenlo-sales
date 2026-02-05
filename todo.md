@@ -1023,3 +1023,29 @@
 - [x] Restringir geração de orçamento (PDF) apenas para Master e Vendedores cadastrados
 - [x] Testar login com email @laik.com.br via Google OAuth (testado com mickael@laik.com.br)
 - [x] Mensagem de restrição "Para exportar cotações, faça login como vendedor autorizado" aparece para usuários OAuth
+
+
+## Atualização de Preços Kenlo IMOB (Fev 2026)
+- [x] K2: Usuários inclusos já estava 14 (verificado)
+- [x] Suporte VIP por plano:
+  - [x] Prime: desabilitado por padrão (cliente paga R$ 97 se quiser)
+  - [x] K: habilitado e INCLUÍDO no plano
+  - [x] K2: habilitado e incluído no plano
+- [x] CS Dedicado por plano:
+  - [x] Prime: desabilitado por padrão (cliente paga R$ 197 se quiser)
+  - [x] K: desabilitado por padrão (cliente paga R$ 197 se quiser)
+  - [x] K2: habilitado e incluído no plano
+- [x] Página de produtos Kenlo Imob já estava correta
+- [x] Lógica da calculadora já estava correta
+- [x] Todos os 88 testes passaram
+
+
+## Seleção Múltipla e Deleção em Lote de Cotações (Fev 2026)
+- [x] Adicionar coluna de checkbox na tabela de cotações
+- [x] Implementar seleção "selecionar todos" no header
+- [x] Criar endpoint de deleção em lote no backend (softDeleteQuotesBatch)
+- [x] Adicionar botão "Apagar X selecionadas" que aparece quando há itens selecionados
+- [x] Corrigir erro "Não autorizado" na deleção (era problema de cookie expirado)
+- [x] Master Admin pode apagar qualquer cotação
+- [x] Vendedores só podem apagar suas próprias cotações
+- [x] Testado: seleção de todos os 46 itens funciona, botão aparece automaticamente

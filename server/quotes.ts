@@ -108,6 +108,59 @@ export async function softDeleteQuote(
 }
 
 /**
+ * Soft delete multiple quotes in batch - only if salesperson owns them or is master
+ * Returns: { success: boolean, deletedCount: number, errors: string[] }
+ */
+export async function softDeleteQuotesBatch(
+  ids: number[], 
+  salespersonId: number, 
+  isMaster: boolean
+): Promise<{ success: boolean; deletedCount: number; errors: string[] }> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot delete quotes: database not available");
+    return { success: false, deletedCount: 0, errors: ["Database not available"] };
+  }
+
+  const errors: string[] = [];
+  let deletedCount = 0;
+
+  try {
+    for (const id of ids) {
+      // Get the quote to check ownership
+      const quote = await getQuoteById(id);
+      if (!quote) {
+        errors.push(`Cotação #${id} não encontrada`);
+        continue;
+      }
+
+      // Check ownership - master can delete any, others only their own
+      if (!isMaster && quote.salespersonId !== salespersonId) {
+        errors.push(`Cotação #${id}: Você só pode apagar suas próprias cotações`);
+        continue;
+      }
+
+      // Soft delete by setting deletedAt
+      await db
+        .update(quotes)
+        .set({ deletedAt: new Date() })
+        .where(eq(quotes.id, id));
+      
+      deletedCount++;
+    }
+
+    return { 
+      success: deletedCount > 0, 
+      deletedCount, 
+      errors 
+    };
+  } catch (error) {
+    console.error("[Database] Failed to delete quotes batch:", error);
+    throw error;
+  }
+}
+
+/**
  * Hard delete a quote (legacy - kept for compatibility)
  */
 export async function deleteQuote(id: number): Promise<boolean> {
