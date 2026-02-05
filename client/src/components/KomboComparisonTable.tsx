@@ -886,14 +886,25 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     }`}>
                       <Button
                         onClick={() => handlePlanSelect(col.id)}
-                        variant={selectedPlan === col.id ? "default" : "outline"}
-                        className={`w-full text-xs ${selectedPlan === col.id ? "bg-green-600 hover:bg-green-700" : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"}`}
+                        variant={selectedPlan === col.id ? "default" : col.isRecommended ? "default" : "outline"}
+                        className={`w-full text-xs transition-all duration-300 ${
+                          selectedPlan === col.id 
+                            ? "bg-green-600 hover:bg-green-700" 
+                            : col.isRecommended && !selectedPlan
+                            ? "bg-primary hover:bg-primary/90 text-white animate-pulse shadow-lg shadow-primary/30 ring-2 ring-primary/50 ring-offset-2"
+                            : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"
+                        }`}
                         size="sm"
                       >
                         {selectedPlan === col.id ? (
                           <>
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Selecionado
+                          </>
+                        ) : col.isRecommended && !selectedPlan ? (
+                          <>
+                            <Star className="w-3 h-3 mr-1 fill-current" />
+                            Selecionar
                           </>
                         ) : (
                           "Selecionar"

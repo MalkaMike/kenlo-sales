@@ -1089,3 +1089,10 @@
 - [x] Adicionar ID à seção de Kombos para permitir scroll
 - [x] Implementar scroll automático quando usuário clicar em Exportar sem plano selecionado
 - [x] Testar funcionalidade no navegador
+
+
+## Destaque Visual no Botão do Kombo Recomendado
+
+- [x] Identificar qual Kombo é o recomendado (melhor custo-benefício)
+- [x] Adicionar animação de pulse, ícone de estrela e borda destacada no botão "Selecionar" do Kombo recomendado
+- [x] Testar funcionalidade no navegador
