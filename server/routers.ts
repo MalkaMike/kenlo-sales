@@ -401,7 +401,7 @@ export const appRouter = router({
         // 2. User is logged in via Manus OAuth with @kenlo.com.br or @i-value.com.br email
         const isAuthorized = salesperson || 
           (manusUser && manusUser.email && 
-           (manusUser.email.endsWith('@kenlo.com.br') || manusUser.email.endsWith('@i-value.com.br')));
+           (manusUser.email.endsWith('@kenlo.com.br') || manusUser.email.endsWith('@i-value.com.br') || manusUser.email.endsWith('@laik.com.br')));
         
         if (!isAuthorized) {
           throw new Error("Acesso negado: Apenas vendedores autorizados podem gerar PDFs");

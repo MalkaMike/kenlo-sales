@@ -5,7 +5,7 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 
 /** Allowed email domains for access */
-const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br"];
+const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
 
 /**
  * Check if an email belongs to an allowed domain
