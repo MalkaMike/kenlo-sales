@@ -1069,25 +1069,71 @@ export default function CalculadoraPage() {
                 <div className="space-y-4">
                   {/* Business Type */}
                   <div>
-                    <Label className="text-sm font-semibold mb-2 block">Tipo de Negócio *</Label>
-                    <RadioGroup
-                      value={businessNature.businessType}
-                      onValueChange={(value) => setBusinessNature({ ...businessNature, businessType: value as BusinessType })}
-                      className="grid grid-cols-1 sm:grid-cols-3 gap-3"
-                    >
-                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
-                        <RadioGroupItem value="broker" id="broker" />
-                        <Label htmlFor="broker" className="cursor-pointer flex-1">Corretora</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
-                        <RadioGroupItem value="rental_admin" id="rental_admin" />
-                        <Label htmlFor="rental_admin" className="cursor-pointer flex-1">Administrador de Aluguel</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
-                        <RadioGroupItem value="both" id="business_both" />
-                        <Label htmlFor="business_both" className="cursor-pointer flex-1">Ambos</Label>
-                      </div>
-                    </RadioGroup>
+                    <Label className="text-sm font-semibold mb-4 block">Tipo de Negócio *</Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {/* Corretora Box */}
+                      <button
+                        type="button"
+                        onClick={() => setBusinessNature({ ...businessNature, businessType: "broker" })}
+                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                          businessNature.businessType === "broker"
+                            ? "border-primary bg-primary/5"
+                            : "border-border bg-background hover:border-primary/30"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <TrendingUp className={`w-6 h-6 flex-shrink-0 ${
+                            businessNature.businessType === "broker" ? "text-primary" : "text-muted-foreground"
+                          }`} />
+                          <div className="flex-1">
+                            <div className="font-semibold text-base mb-1">Corretora</div>
+                            <div className="text-sm text-muted-foreground">CRM + Site para vendas</div>
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* Administrador de Aluguel Box */}
+                      <button
+                        type="button"
+                        onClick={() => setBusinessNature({ ...businessNature, businessType: "rental_admin" })}
+                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                          businessNature.businessType === "rental_admin"
+                            ? "border-primary bg-primary/5"
+                            : "border-border bg-background hover:border-primary/30"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Key className={`w-6 h-6 flex-shrink-0 ${
+                            businessNature.businessType === "rental_admin" ? "text-primary" : "text-muted-foreground"
+                          }`} />
+                          <div className="flex-1">
+                            <div className="font-semibold text-base mb-1">Administrador de Aluguel</div>
+                            <div className="text-sm text-muted-foreground">Gestão de locações</div>
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* Ambos Box */}
+                      <button
+                        type="button"
+                        onClick={() => setBusinessNature({ ...businessNature, businessType: "both" })}
+                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                          businessNature.businessType === "both"
+                            ? "border-primary bg-primary/5"
+                            : "border-border bg-background hover:border-primary/30"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Zap className={`w-6 h-6 flex-shrink-0 ${
+                            businessNature.businessType === "both" ? "text-primary" : "text-muted-foreground"
+                          }`} />
+                          <div className="flex-1">
+                            <div className="font-semibold text-base mb-1">Imob + Loc</div>
+                            <div className="text-sm text-muted-foreground">Solução completa</div>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Company Information */}

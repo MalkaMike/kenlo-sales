@@ -1435,3 +1435,29 @@
   - [x] CRM: Dropdown CRM aparece à direita dos radio buttons ✓
   - [x] ERP: Dropdown ERP aparece à direita dos radio buttons ✓
   - [x] Layout aproveita melhor o espaço horizontal disponível ✓
+
+## Redesign Tipo de Negócio - Boxes Estilizadas (Fev 2026)
+
+- [x] Substituir radio buttons tradicionais por boxes estilizadas (igual seleção de produtos)
+- [x] Criar 3 boxes: "Corretora", "Administrador de Aluguel", "Ambos"
+- [x] Cada box deve ter:
+  - [x] Ícone representativo (TrendingUp, Key, Zap)
+  - [x] Título (ex: "Corretora")
+  - [x] Descrição curta (ex: "CRM + Site para vendas")
+  - [x] Borda e fundo que mudam quando selecionada
+- [x] Estilo da box selecionada:
+  - [x] Borda rosa/vermelha (#F82E52)
+  - [x] Fundo rosa claro
+- [x] Estilo da box não selecionada:
+  - [x] Borda cinza
+  - [x] Fundo branco
+- [x] Layout responsivo:
+  - [x] Desktop: 3 colunas lado a lado
+  - [x] Mobile: Empilhadas verticalmente
+- [x] Testar seleção e validação condicional de CRM/ERP ✓
+- [x] Testes realizados com sucesso:
+  - [x] Boxes estilizadas com ícone + título + descrição ✓
+  - [x] Box selecionada: borda rosa + fundo rosa claro ✓
+  - [x] Box não selecionada: borda cinza + fundo branco ✓
+  - [x] Seleção muda ao clicar em outra box ✓
+  - [x] Validação condicional CRM/ERP funcionando ✓
