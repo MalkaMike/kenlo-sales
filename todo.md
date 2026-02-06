@@ -1508,3 +1508,23 @@
 - [x] Cada coluna: label no topo, switch abaixo
 - [x] Visibilidade condicional mantida (CRM para Corretora/Ambos, ERP para Administrador/Ambos)
 - [x] Testar layout de 3 colunas com todos os tipos de negócio
+
+## PDF Export Redesign - One Page Professional Layout (Feb 2026)
+
+- [x] Analisar PDF de simulação do usuário (Book2.pdf) para entender layout desejado
+- [x] Redesenhar PDF para caber em uma única página com todas as informações
+- [x] Seguir mesmo design visual da página da calculadora (cores, boxes, switches)
+- [x] Adicionar header profissional: Logo Kenlo + "Proposta Comercial"
+- [x] Adicionar informações do cliente: Nome da imobiliária, proprietário, email, celular
+- [x] Adicionar data de emissão e validade da proposta (30 dias)
+- [x] Adicionar número da proposta (gerado automaticamente)
+- [x] Incluir todas as seções: Natureza do Negócio, Métricas, Solução, Add-ons, Frequência, Plano, Investimento
+- [ ] Adicionar "Ícones" nas boxes (TrendingUp, Home, Zap)
+- [ ] Adicionar switches visuais (toggles ON/OFF) em Métricas e Add-ons
+- [ ] Adicionar fundo rosa claro para items selecionados (não apenas borda)
+- [ ] Adicionar badge de desconto no Plano Selecionado
+- [ ] Adicionar "Kenlo Receita Extras" com valor destacado em verde
+- [x] Adicionar footer com informações de contato Kenlo
+- [x] Usar mesmas cores e estilo visual da calculadora (rosa para seleção, azul para headers)
+- [x] Testar geração de PDF e garantir que tudo cabe em uma página
+- [x] Validar que todas as regras de negócio estão sendo respeitadas
