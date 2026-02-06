@@ -80,7 +80,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       primary: "#EC4899",      // Pink for selection
       primaryLight: "#FDF2F8", // Light pink background
       dark: "#1E293B",         // Dark blue for headers
-      headerBg: "#E5E7EB",     // Gray background for header
+      kenloRed: "#E11D48",     // Kenlo brand red for header
+      headerBg: "#E5E7EB",     // Gray background for header (deprecated)
       text: "#1F2937",         // Main text
       textLight: "#6B7280",    // Light text
       border: "#D1D5DB",       // Borders
@@ -171,34 +172,35 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     };
 
     // ============================================
-    // PROFESSIONAL HEADER (Gray Background)
+    // HEADER with Kenlo Red Background
     // ============================================
-    const headerHeight = 70;
+    const headerHeight = 90;
     doc.rect(0, 0, pageWidth, headerHeight)
-       .fill(colors.headerBg);
+       .fill(colors.kenloRed);
     
-    // Header title
-    doc.fontSize(14).fillColor(colors.dark).font("Helvetica-Bold")
+    // Header title in white
+    doc.fontSize(14).fillColor(colors.white).font("Helvetica-Bold")
        .text("PROPOSTA COMERCIAL KENLO", margin, margin - 10);
     
-    // Date information
+    // Date information (left side, white text)
     const issueDate = new Date().toLocaleDateString("pt-BR");
-    const validUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("pt-BR");
+    const validityDays = 30; // Validity in days
     
-    doc.fontSize(7).fillColor(colors.textLight).font("Helvetica")
+    doc.fontSize(7).fillColor(colors.white).font("Helvetica")
        .text(`Emissão: ${issueDate}`, margin, margin + 10)
-       .text(`Validade: ${validUntil}`, margin, margin + 18);
+       .text(`Validade: ${validityDays} dias`, margin, margin + 18);
     
-    // Vendor information (right side)
-    doc.fontSize(7).fillColor(colors.textLight).font("Helvetica")
-       .text(`Vendedor: ${data.salesPersonName}`, margin + 200, margin + 10)
-       .text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, margin + 200, margin + 18)
-       .text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, margin + 200, margin + 26);
+    // Vendor information (right side, white text, right-aligned)
+    const vendorX = pageWidth - margin - 180; // Right-align vendor info
+    doc.fontSize(7).fillColor(colors.white).font("Helvetica")
+       .text(`Vendedor: ${data.salesPersonName}`, vendorX, margin + 10, { width: 180, align: "right" })
+       .text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vendorX, margin + 18, { width: 180, align: "right" })
+       .text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, vendorX, margin + 26, { width: 180, align: "right" });
     
-    // Client information (bottom of header)
-    doc.fontSize(7).fillColor(colors.dark).font("Helvetica-Bold")
+    // Client information (bottom of header, white text)
+    doc.fontSize(7).fillColor(colors.white).font("Helvetica-Bold")
        .text("CLIENTE:", margin, margin + 40);
-    doc.fontSize(7).fillColor(colors.text).font("Helvetica")
+    doc.fontSize(7).fillColor(colors.white).font("Helvetica")
        .text(`${data.agencyName || "Imobiliária"} | ${data.clientName}`, margin + 40, margin + 40);
     doc.text(`${data.email || ""} | ${data.cellphone || ""}`, margin + 40, margin + 48);
     

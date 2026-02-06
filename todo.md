@@ -1747,3 +1747,13 @@
 - [x] Remove preview state variables (pdfUrl, isPreviewOpen)
 - [x] Remove PDFPreviewDialog import and component usage
 - [x] Test direct PDF download works correctly
+
+## PDF Header Design Fixes (Feb 2026)
+
+- [x] **Change background to Kenlo red** (#E11D48 or brand red color)
+- [x] **Use white Kenlo logo** instead of current color
+- [x] **Change validity format** from date (08/03/2026) to days (e.g., "Validade: 30 dias")
+- [x] **Right-align vendor info** (Vendedor, Email, Telefone) to match left-aligned emission/validity
+- [x] **Extend background** to cover all header text (currently cuts off vendor info)
+- [x] **Verify perfect alignment** of all header elements
+- [x] Test PDF generation and verify header matches requirements
