@@ -1395,3 +1395,24 @@
 - [x] Dados salvos corretamente no banco de dados (verificado quote ID 690001)
 - [x] Campos da seção "Natureza do Negócio" funcionando perfeitamente
 - [x] Modal de exportação simplificado (apenas vendedor + parcelamento)
+
+## Validação Condicional CRM/ERP e Pré-visualização (Fev 2026)
+
+- [x] Implementar validação condicional de campos CRM/ERP:
+  - [x] Mostrar "Já usa CRM?" apenas quando businessType = "broker" (Corretora) ou "both" (Ambos)
+  - [x] Mostrar "Já usa ERP?" apenas quando businessType = "rental_admin" (Administrador de Aluguel) ou "both" (Ambos)
+  - [x] Ocultar campos condicionalmente usando renderização condicional
+- [x] Criar componente PreviewDataDialog:
+  - [x] Seção "Natureza do Negócio" com todos os campos preenchidos
+  - [x] Seção "Configuração de Produtos" com plano/kombo selecionado
+  - [x] Seção "Add-ons" com lista de add-ons ativos
+  - [x] Seção "Totais" com valores calculados
+  - [x] Botão "Editar" que fecha o modal e volta para a calculadora
+  - [x] Botão "Confirmar e Exportar" que abre o modal de parcelamento
+- [x] Adicionar botão "Pré-visualizar Dados" antes do botão "Exportar Cotação (PDF)"
+- [x] Testar fluxo completo: preencher → pré-visualizar → exportar ✓
+- [x] Testes realizados com sucesso:
+  - [x] Corretora: apenas CRM visível ✓
+  - [x] Administrador de Aluguel: apenas ERP visível ✓
+  - [x] Ambos: CRM e ERP visíveis ✓
+  - [x] Modal de pré-visualização exibe todos os dados corretamente ✓

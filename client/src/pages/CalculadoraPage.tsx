@@ -12,6 +12,7 @@ import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/cons
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
+import { PreviewDataDialog } from "@/components/PreviewDataDialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +31,7 @@ import {
   CheckCircle2,
   Zap,
   RotateCcw,
+  Eye,
 } from "lucide-react";
 
 // Types
@@ -251,6 +253,7 @@ export default function CalculadoraPage() {
   
   // Quote info dialog state
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   const [animateMetrics, setAnimateMetrics] = useState(false);
@@ -1168,8 +1171,9 @@ export default function CalculadoraPage() {
                     )}
                   </div>
 
-                  {/* CRM System */}
-                  <div>
+                  {/* CRM System - Only show for Corretora or Ambos */}
+                  {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
+                    <div>
                     <Label className="text-sm font-semibold mb-2 block">Já usa CRM? (para Corretagem)</Label>
                     <RadioGroup
                       value={businessNature.hasCRM ? "yes" : "no"}
@@ -1209,10 +1213,12 @@ export default function CalculadoraPage() {
                         )}
                       </div>
                     )}
-                  </div>
+                    </div>
+                  )}
 
-                  {/* ERP System */}
-                  <div>
+                  {/* ERP System - Only show for Administrador de Aluguel or Ambos */}
+                  {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
+                    <div>
                     <Label className="text-sm font-semibold mb-2 block">Já usa ERP? (para Locação)</Label>
                     <RadioGroup
                       value={businessNature.hasERP ? "yes" : "no"}
@@ -1252,7 +1258,8 @@ export default function CalculadoraPage() {
                         )}
                       </div>
                     )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -2946,12 +2953,34 @@ export default function CalculadoraPage() {
                       size="lg" 
                       onClick={() => {
                         if (!canExportPDF) {
+                          toast.error("Faça login como vendedor autorizado para pré-visualizar.");
+                          return;
+                        }
+                        if (!selectedPlan) {
+                          toast.error("Selecione um plano ou Kombo antes de pré-visualizar.");
+                          const komboSection = document.getElementById('kombo-comparison-section');
+                          if (komboSection) {
+                            komboSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
+                          return;
+                        }
+                        setShowPreviewDialog(true);
+                      }}
+                      variant="outline"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Pré-visualizar Dados
+                    </Button>
+                    <Button 
+                      className="flex-1 min-h-[50px]" 
+                      size="lg" 
+                      onClick={() => {
+                        if (!canExportPDF) {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
                           return;
                         }
                         if (!selectedPlan) {
                           toast.error("Selecione um plano ou Kombo antes de exportar a cotação.");
-                          // Scroll to Kombo comparison section
                           const komboSection = document.getElementById('kombo-comparison-section');
                           if (komboSection) {
                             komboSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2974,6 +3003,33 @@ export default function CalculadoraPage() {
 
 
         
+        {/* Preview Data Dialog */}
+        <PreviewDataDialog
+          open={showPreviewDialog}
+          onOpenChange={setShowPreviewDialog}
+          data={{
+            businessNature,
+            product,
+            imobPlan,
+            locPlan,
+            komboName: activeKombo !== "none" ? KOMBOS[activeKombo].name : undefined,
+            komboDiscount: activeKombo !== "none" ? KOMBOS[activeKombo].discount : undefined,
+            frequency,
+            addons,
+            totals: {
+              monthly: calculateMonthlyRecurring(activeKombo !== "none"),
+              annual: calculateMonthlyRecurring(activeKombo !== "none") * 12,
+              implantation: calculateTotalImplementation(activeKombo !== "none"),
+              postPaid: calculatePayPostPago(),
+              firstYear: calculateFirstYearTotal(activeKombo !== "none"),
+            },
+          }}
+          onConfirm={() => {
+            setShowPreviewDialog(false);
+            setShowQuoteInfoDialog(true);
+          }}
+        />
+
         {/* Quote Info Dialog */}
         <QuoteInfoDialog
           open={showQuoteInfoDialog}
