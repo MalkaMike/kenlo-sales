@@ -1789,3 +1789,13 @@
 - [x] Ensure sample data triggers all validation rules correctly
 - [x] Test Generate Example button and verify all fields populate correctly
 - [x] Test PDF generation from example data and verify output quality
+
+### PDF Layout Fix - Critical Bug (Feb 2026)
+- [x] Investigate PDF generation code to identify overlapping text issues
+- [x] Fix vertical spacing and positioning in PDF layout
+- [x] Ensure all sections have proper margins and padding
+- [x] Fix header positioning and prevent overlap with content
+- [x] Fix product/add-on sections layout
+- [x] Fix pricing table alignment and spacing
+- [x] Test PDF generation with example data and verify all text is readable
+- [x] Verify no overlapping elements in final PDF output

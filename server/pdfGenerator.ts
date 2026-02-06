@@ -241,7 +241,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(`${type.icon} ${type.label}`, x + 8, yPos + 8, { width: boxWidth - 16, align: "left" });
     });
     
-    yPos += 10;
+    yPos += 38;
 
     // ============================================
     // 2. MÉTRICAS DO NEGÓCIO
@@ -249,7 +249,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Métricas do Negócio", margin, yPos);
     
-    yPos += 10;
+    yPos += 18;
     
     const showImob = data.productType === "imob" || data.productType === "both";
     const showLoc = data.productType === "loc" || data.productType === "both";
@@ -382,7 +382,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(prod.desc, x + 8, yPos + 18, { width: boxWidth - 16 });
     });
     
-    yPos += 12;
+    yPos += 48;
 
     // ============================================
     // 4. ADD-ONS OPCIONAIS
@@ -399,7 +399,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
        .text("Add-ons selecionados destacados em rosa. Combine produtos e add-ons para formar Kombos com desconto.", 
              margin + 8, yPos + 6, { width: calloutWidth - 16 });
     
-    yPos += 10;
+    yPos += 30;
     
     // Add-ons grid (2 rows x 3 columns)
     const addons = [
@@ -457,7 +457,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(freq.modifier, x + 8, yPos + 16, { width: freqBoxWidth - 16, align: "center" });
     });
     
-    yPos += 12;
+    yPos += 48;
 
     // ============================================
     // 6. PLANO SELECIONADO
@@ -496,7 +496,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          });
     });
     
-    yPos += 14;
+    yPos += 52;
 
     // ============================================
     // 7. INVESTIMENTO (CRITICAL MATH SECTION)
