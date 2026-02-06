@@ -189,6 +189,30 @@ export default function CalculadoraPage() {
   // Both salesperson login (Master/Vendor) AND OAuth users with authorized domains can export
   const canExportPDF = isSalespersonAuth || isAuthorizedEmail(oauthUser?.email)
   
+  // Validate that all mandatory business nature questions are answered
+  const isBusinessNatureComplete = (): boolean => {
+    // Website is always mandatory
+    if (!businessNature.hasWebsite && businessNature.websiteUrl === "") {
+      return false;
+    }
+    
+    // CRM is mandatory for Corretora or Ambos
+    if (businessNature.businessType === "broker" || businessNature.businessType === "both") {
+      if (!businessNature.hasCRM && businessNature.crmSystem === "") {
+        return false;
+      }
+    }
+    
+    // ERP is mandatory for Administrador de Aluguel or Ambos
+    if (businessNature.businessType === "rental_admin" || businessNature.businessType === "both") {
+      if (!businessNature.hasERP && businessNature.erpSystem === "") {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
   // Step 0: Business Nature (NEW SECTION)
   const [businessNature, setBusinessNature] = useState({
     businessType: "broker" as BusinessType,
@@ -1062,7 +1086,7 @@ export default function CalculadoraPage() {
           <Card className="shadow-xl">
             <CardContent className="p-4 sm:p-6">
               {/* Step 0: Business Nature */}
-              <div className="mb-6 sm:mb-8">
+              <div id="business-nature-section" className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
                   1. Natureza do Negócio
                 </h2>
@@ -1207,7 +1231,7 @@ export default function CalculadoraPage() {
                     {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <Label htmlFor="hasCRM" className="text-sm font-medium">Já usa CRM?</Label>
+                          <Label htmlFor="hasCRM" className="text-sm font-medium">Já usa CRM? *</Label>
                           <Switch
                             id="hasCRM"
                             checked={businessNature.hasCRM}
@@ -1246,7 +1270,7 @@ export default function CalculadoraPage() {
                     {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <Label htmlFor="hasERP" className="text-sm font-medium">Já usa ERP?</Label>
+                          <Label htmlFor="hasERP" className="text-sm font-medium">Já usa ERP? *</Label>
                           <Switch
                             id="hasERP"
                             checked={businessNature.hasERP}
@@ -2998,6 +3022,14 @@ export default function CalculadoraPage() {
                       onClick={() => {
                         if (!canExportPDF) {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
+                          return;
+                        }
+                        if (!isBusinessNatureComplete()) {
+                          toast.error("Por favor, responda todas as perguntas obrigatórias sobre a natureza do negócio (Tem site? Já usa CRM? Já usa ERP?).");
+                          const businessNatureSection = document.getElementById('business-nature-section');
+                          if (businessNatureSection) {
+                            businessNatureSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
                           return;
                         }
                         if (!selectedPlan) {

@@ -1539,3 +1539,14 @@
 - [x] Corrigir regras para LOC: Prime (1-100 contratos), K (101-200 contratos), K2 (201+ contratos) - baseado em CONTRATOS
 - [x] Cliente não escolhe plano - sistema determina automaticamente baseado em usuários/contratos
 - [x] Testar determinação de plano com diferentes combinações de usuários e contratos
+
+## Switch Layout and Mandatory Validation (Feb 2026)
+
+- [x] Mover switches para ficarem ao lado direito das perguntas (layout inline horizontal)
+- [x] Remover layout de 3 colunas e usar flex row com justify-between
+- [x] Tornar "Tem site?" obrigatória - adicionar asterisco e validação
+- [x] Tornar "Já usa CRM?" obrigatória quando visível - adicionar asterisco e validação
+- [x] Tornar "Já usa ERP?" obrigatória quando visível - adicionar asterisco e validação
+- [x] Bloquear exportação de proposta se alguma pergunta obrigatória não for respondida
+- [x] Adicionar mensagem de erro visual quando tentar exportar sem responder
+- [x] Testar validação com todos os tipos de negócio (Corretora, Administrador, Ambos)
