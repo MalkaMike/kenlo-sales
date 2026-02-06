@@ -178,9 +178,21 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.rect(0, 0, pageWidth, headerHeight)
        .fill(colors.kenloRed);
     
-    // Header title in white
+    // Add white Kenlo logo (top-left corner)
+    // Use absolute path from project root
+    const projectRoot = process.cwd();
+    const logoPath = path.join(projectRoot, "client/public/kenlo-logo-white.png");
+    if (fs.existsSync(logoPath)) {
+      try {
+        doc.image(logoPath, margin, margin - 15, { height: 35 });
+      } catch (error) {
+        console.error("Failed to load logo:", error);
+      }
+    }
+    
+    // Header title in white (moved to the right to avoid logo overlap)
     doc.fontSize(14).fillColor(colors.white).font("Helvetica-Bold")
-       .text("PROPOSTA COMERCIAL KENLO", margin, margin - 10);
+       .text("PROPOSTA COMERCIAL KENLO", margin + 100, margin - 10);
     
     // Date information (left side, white text)
     const issueDate = new Date().toLocaleDateString("pt-BR");

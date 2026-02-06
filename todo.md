@@ -1757,3 +1757,11 @@
 - [x] **Extend background** to cover all header text (currently cuts off vendor info)
 - [x] **Verify perfect alignment** of all header elements
 - [x] Test PDF generation and verify header matches requirements
+
+## Add White Kenlo Logo to PDF Header (Feb 2026)
+
+- [x] Locate Kenlo logo file in project (SVG or PNG format)
+- [x] Add white version of Kenlo logo to PDF header top-left corner
+- [x] Position logo appropriately (size ~30-40px height, aligned with header text)
+- [x] Test PDF generation and verify logo displays correctly in white
+- [x] Ensure logo doesn't overlap with "PROPOSTA COMERCIAL KENLO" text
