@@ -1799,3 +1799,34 @@
 - [x] Fix pricing table alignment and spacing
 - [x] Test PDF generation with example data and verify all text is readable
 - [x] Verify no overlapping elements in final PDF output
+
+## PDF Complete Overlap Fix - CRITICAL (Feb 2026)
+
+- [ ] Re-examine the generated PDF page 1 to identify ALL overlapping sections
+- [ ] Analyze yPos tracking through entire PDF generation flow
+- [ ] Fix IMOB metrics card content positioning (users, closings, leads text overlapping)
+- [ ] Fix LOC metrics card content positioning (contracts, checkboxes overlapping)
+- [ ] Ensure proper yPos reset after metrics cards (both IMOB and LOC)
+- [ ] Fix "Solução em análise" section spacing from metrics
+- [ ] Fix Add-ons grid vertical spacing and card heights
+- [ ] Fix Frequência section spacing
+- [ ] Fix Plano Selecionado (Kombos) section spacing
+- [ ] Fix Investimento section line spacing and table rows
+- [ ] Add proper spacing after each text line in investment breakdown
+- [ ] Verify yPos increments account for actual text height + line spacing
+- [ ] Test with Generate Example and verify ZERO overlapping text
+- [ ] Verify all sections are clearly separated with white space
+
+## PDF Complete Overlap Fix (Feb 2026)
+- [x] Analyze exact overlap locations in current PDF
+- [x] Document all overlapping sections (metrics cards, solution boxes, add-ons, etc.)
+- [x] Identify root cause: yPos not advancing past section heights
+- [x] Fix metrics cards section: calculate proper yPos after both IMOB and LOC cards
+- [x] Fix solution boxes section spacing
+- [x] Fix add-ons section spacing
+- [x] Fix frequencies section spacing
+- [x] Fix kombos section spacing
+- [x] Fix investment section line spacing
+- [x] Test PDF generation with example data
+- [x] Verify ZERO overlapping text in final PDF
+- [x] Confirm 2-page layout maintained

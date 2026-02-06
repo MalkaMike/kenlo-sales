@@ -302,61 +302,68 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       drawCheckbox(metricsX + 80, yPos, data.wantsWhatsApp || false);
       doc.text("Whatsapp", metricsX + 95, yPos);
       
-      yPos = metricsStartY + cardHeight + 10;
+      yPos += 12; // Move down after checkboxes
       metricsX += metricsWidth + 15;
     }
     
     if (showLoc) {
       // LOC metrics card
-      yPos = metricsStartY;
+      if (!showImob) yPos = metricsStartY; // Only reset if IMOB wasn't shown
+      else yPos = metricsStartY; // Align with IMOB card top
       const cardHeight = 70;
-      drawBox(showImob ? metricsX : margin, yPos, metricsWidth, cardHeight, { fill: colors.white, stroke: colors.border });
+      const locX = showImob ? metricsX : margin;
+      drawBox(locX, yPos, metricsWidth, cardHeight, { fill: colors.white, stroke: colors.border });
       
       // Dark header (darker blue-gray)
-      doc.roundedRect(showImob ? metricsX : margin, yPos, metricsWidth, 18, 6)
+      doc.roundedRect(locX, yPos, metricsWidth, 18, 6)
          .fill("#1E293B"); // Slate-800 - darker than before
        doc.fontSize(8).fillColor(colors.white).font("Helvetica-Bold")
-          .text("LOCAÇÃO", (showImob ? metricsX : margin) + 8, yPos + 5);
+          .text("LOCAÇÃO", locX + 8, yPos + 5);
       
       // Metrics content
       yPos += 12;
       doc.fontSize(7).fillColor(colors.text).font("Helvetica");
       
        // Contracts
-       doc.font("Helvetica-Bold").text(`${data.contracts || 0}`, (showImob ? metricsX : margin) + 10, yPos);
-       doc.font("Helvetica").text("Contratos sob", (showImob ? metricsX : margin) + 30, yPos);
+       doc.font("Helvetica-Bold").text(`${data.contracts || 0}`, locX + 10, yPos);
+       doc.font("Helvetica").text("Contratos sob", locX + 30, yPos);
       
       yPos += 8;
-      doc.text("gestão", (showImob ? metricsX : margin) + 40, yPos);
+      doc.text("gestão", locX + 40, yPos);
       yPos -= 8;
       
       // New contracts
-      doc.font("Helvetica-Bold").text(`${data.newContracts || 0}`, (showImob ? metricsX : margin) + 120, yPos);
-      doc.font("Helvetica").text("novos contratos", (showImob ? metricsX : margin) + 140, yPos);
+      doc.font("Helvetica-Bold").text(`${data.newContracts || 0}`, locX + 120, yPos);
+       doc.font("Helvetica").text("novos contratos", locX + 140, yPos);
       
       yPos += 8;
-      doc.text("por mês", (showImob ? metricsX : margin) + 140, yPos);
+      doc.text("por mês", locX + 140, yPos);
       yPos -= 8;
       
       yPos += 10;
       
       // Checkboxes
-      drawCheckbox((showImob ? metricsX : margin) + 10, yPos, false);
+      drawCheckbox(locX + 10, yPos, false);
       doc.fontSize(7).fillColor(colors.text).font("Helvetica")
-         .text("Cobra Inquilino (Boleto)", (showImob ? metricsX : margin) + 25, yPos);
+         .text("Cobra Inquilino (Boleto)", locX + 25, yPos);
       
       yPos += 10;
-      drawCheckbox((showImob ? metricsX : margin) + 10, yPos, data.chargesSplitToOwner || false);
-      doc.text("Cobra Proprietário (Split)", (showImob ? metricsX : margin) + 25, yPos);
+      drawCheckbox(locX + 10, yPos, data.chargesSplitToOwner || false);
+      doc.text("Cobra Proprietário (Split)", locX + 25, yPos);
       if (data.chargesSplitToOwner) {
         doc.fontSize(7).fillColor(colors.success).font("Helvetica-Bold")
-           .text("R$5,00", (showImob ? metricsX : margin) + 140, yPos);
+           .text("R$5,00", locX + 140, yPos);
       }
       
-      yPos = metricsStartY + cardHeight + 10;
+      yPos += 12; // Move down after LOC card content
     }
     
-    if (!showImob && !showLoc) yPos += 10;
+    // CRITICAL FIX: After drawing metrics cards, move yPos past the tallest card
+    if (showImob || showLoc) {
+      yPos = metricsStartY + 70 + 20; // cardHeight (70) + spacing (20)
+    } else {
+      yPos += 10;
+    }
 
     // ============================================
     // 3. SOLUÇÃO EM ANÁLISE
@@ -528,14 +535,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     
     doc.fontSize(7).fillColor(colors.text).font("Helvetica");
     investmentData.forEach((item, i) => {
-      doc.text(item.label, margin + 10, yPos + (i * 10))
-         .text(formatCurrency(item.value), margin + contentWidth - 80, yPos + (i * 10), { 
+      doc.text(item.label, margin + 10, yPos + (i * 14))
+         .text(formatCurrency(item.value), margin + contentWidth - 80, yPos + (i * 14), { 
            width: 70, 
            align: "right" 
          });
     });
     
-    yPos += 16;
+    yPos += (investmentData.length * 14) + 8;
     
     // Total
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
@@ -599,14 +606,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     
     doc.fontSize(7).fillColor(colors.text).font("Helvetica");
     comparisonData.forEach((item, i) => {
-      doc.text(item.label, margin + 20, yPos + (i * 10))
-         .text(formatCurrency(item.value), margin + contentWidth - 80, yPos + (i * 10), { 
+      doc.text(item.label, margin + 20, yPos + (i * 14))
+         .text(formatCurrency(item.value), margin + contentWidth - 80, yPos + (i * 14), { 
            width: 70, 
            align: "right" 
          });
     });
     
-    yPos += 12;
+    yPos += (comparisonData.length * 14) + 8;
     
     // Post-paid estimates
     if (data.postPaidTotal && data.postPaidTotal > 0) {
