@@ -1739,3 +1739,11 @@
 - [ ] **Known Issue:** PDF rendering in iframe/embed is browser-dependent (blob URLs may not display in preview); Download button works correctly
 - [x] Add loading state while PDF is being generated
 - [x] Add error handling if PDF generation fails
+
+## Remove PDF Preview Modal (Feb 2026)
+
+- [x] Remove PDFPreviewDialog component (Chrome blocks blob URLs in iframes)
+- [x] Restore direct PDF download functionality in CalculadoraPage
+- [x] Remove preview state variables (pdfUrl, isPreviewOpen)
+- [x] Remove PDFPreviewDialog import and component usage
+- [x] Test direct PDF download works correctly
