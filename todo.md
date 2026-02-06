@@ -1572,3 +1572,22 @@
 - [x] Usar símbolos Unicode para ícones simples quando possível
 - [x] Testar geração de PDF e validar que todas as melhorias visuais estão presentes
 - [x] Comparar PDF gerado com Book2.pdf para garantir correspondência visual
+
+## UI/UX Improvements - Feb 2026
+
+- [ ] **Serviços Premium compartilhados**: Se cliente tem VIP/CS Dedicado para IMOB (por plano ou Kombo), automaticamente ganha para LOC também (e vice-versa)
+- [ ] **Reduzir tamanho das boxes de Tipo de Negócio** para ser homogêneo com outras seções
+- [ ] **Remover recomendação automática de plano** - deixar usuário escolher livremente (remover badges "Recomendado")
+- [ ] **Verificar homogeneidade de font-size** em toda a página da calculadora
+- [ ] **Adicionar boxes visuais** em torno de cada Kombo na tabela 4 bis para destacar melhor cada opção
+- [ ] **Remover botão "Pré-visualizar Dados"**
+
+## UI/UX Improvements - Feb 2026
+
+- [x] **Serviços Premium compartilhados**: Se VIP/CS Dedicado ativo para IMOB, ativar para LOC também (e vice-versa)
+- [x] **Reduzir tamanho das boxes** de Tipo de Negócio para ser homogêneo com outras seções (já implementado)
+- [x] **Remover recomendação automática de plano** - deixar usuário escolher livremente
+- [x] **Verificar homogeneidade de font-size** em toda a página (já homogêneo)
+- [x] **Adicionar boxes visuais** em torno de cada Kombo na tabela para destacar melhor (já implementado)
+- [x] **Remover botão "Pré-visualizar Dados""
+- [x] Testar todas as mudanças no navegador

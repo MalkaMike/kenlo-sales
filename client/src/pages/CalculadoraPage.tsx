@@ -851,11 +851,12 @@ export default function CalculadoraPage() {
   // Rules:
   // - Suporte VIP: Default ON for K and K2 (included), Default OFF for Prime (optional paid)
   // - CS Dedicado: Default ON for K2 (included), Default OFF for Prime and K (optional paid)
+  // - SHARED: If VIP/CS is enabled for IMOB (by plan or manually), it's automatically enabled for LOC (and vice-versa)
   useEffect(() => {
     setMetrics(prev => {
       const newMetrics = { ...prev };
       
-      // IMOB: Set default values based on plan, user can manually override later
+      // IMOB: Set default values based on plan
       if (product === "imob" || product === "both") {
         // Suporte VIP: Included in K and K2, optional for Prime
         const shouldEnableImobVip = imobPlan === "k" || imobPlan === "k2";
@@ -881,6 +882,19 @@ export default function CalculadoraPage() {
         // If LOC is not selected, reset to false
         newMetrics.locVipSupport = false;
         newMetrics.locDedicatedCS = false;
+      }
+      
+      // SHARED PREMIUM SERVICES: If VIP/CS is enabled for one product, enable for the other
+      // VIP Support: If enabled for IMOB, enable for LOC (and vice-versa)
+      if (newMetrics.imobVipSupport || newMetrics.locVipSupport) {
+        newMetrics.imobVipSupport = true;
+        newMetrics.locVipSupport = true;
+      }
+      
+      // CS Dedicado: If enabled for IMOB, enable for LOC (and vice-versa)
+      if (newMetrics.imobDedicatedCS || newMetrics.locDedicatedCS) {
+        newMetrics.imobDedicatedCS = true;
+        newMetrics.locDedicatedCS = true;
       }
       
       return newMetrics;
@@ -1574,7 +1588,11 @@ export default function CalculadoraPage() {
                             <Switch
                               id="imobVipSupport"
                               checked={metrics.imobVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobVipSupport: checked })}
+                              onCheckedChange={(checked) => setMetrics({ 
+                                ...metrics, 
+                                imobVipSupport: checked,
+                                locVipSupport: checked // Share with LOC
+                              })}
                               disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
@@ -1590,7 +1608,11 @@ export default function CalculadoraPage() {
                             <Switch
                               id="imobDedicatedCS"
                               checked={metrics.imobDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, imobDedicatedCS: checked })}
+                              onCheckedChange={(checked) => setMetrics({ 
+                                ...metrics, 
+                                imobDedicatedCS: checked,
+                                locDedicatedCS: checked // Share with LOC
+                              })}
                               disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
@@ -1723,7 +1745,11 @@ export default function CalculadoraPage() {
                             <Switch
                               id="locVipSupport"
                               checked={metrics.locVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, locVipSupport: checked })}
+                              onCheckedChange={(checked) => setMetrics({ 
+                                ...metrics, 
+                                locVipSupport: checked,
+                                imobVipSupport: checked // Share with IMOB
+                              })}
                               disabled={product !== "loc" && product !== "both"}
                             />
                           </div>
@@ -1739,7 +1765,11 @@ export default function CalculadoraPage() {
                             <Switch
                               id="locDedicatedCS"
                               checked={metrics.locDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, locDedicatedCS: checked })}
+                              onCheckedChange={(checked) => setMetrics({ 
+                                ...metrics, 
+                                locDedicatedCS: checked,
+                                imobDedicatedCS: checked // Share with IMOB
+                              })}
                               disabled={product !== "loc" && product !== "both"}
                             />
                           </div>
@@ -2897,24 +2927,10 @@ export default function CalculadoraPage() {
               )}
             </div>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
-                            {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
-                            {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
-                            {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
-                          </div>
-                          <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                            ✓ Recomendado
-                            {product === "imob" && metrics.imobUsers > 0 && (
-                              <span className="ml-1">para {metrics.imobUsers} usuários</span>
-                            )}
-                            {product === "loc" && metrics.contractsUnderManagement > 0 && (
-                              <span className="ml-1">para {metrics.contractsUnderManagement} contratos</span>
-                            )}
-                            {product === "both" && (
-                              <span className="ml-1">para seu volume</span>
-                            )}
-                          </div>
+                        <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
+                          {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
+                          {product === "loc" && `Loc-${locPlan.toUpperCase()}`}
+                          {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
                         </div>
                       )}
 
@@ -2998,29 +3014,6 @@ export default function CalculadoraPage() {
                       size="lg" 
                       onClick={() => {
                         if (!canExportPDF) {
-                          toast.error("Faça login como vendedor autorizado para pré-visualizar.");
-                          return;
-                        }
-                        if (!selectedPlan) {
-                          toast.error("Selecione um plano ou Kombo antes de pré-visualizar.");
-                          const komboSection = document.getElementById('kombo-comparison-section');
-                          if (komboSection) {
-                            komboSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }
-                          return;
-                        }
-                        setShowPreviewDialog(true);
-                      }}
-                      variant="outline"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Pré-visualizar Dados
-                    </Button>
-                    <Button 
-                      className="flex-1 min-h-[50px]" 
-                      size="lg" 
-                      onClick={() => {
-                        if (!canExportPDF) {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
                           return;
                         }
@@ -3056,32 +3049,7 @@ export default function CalculadoraPage() {
 
 
         
-        {/* Preview Data Dialog */}
-        <PreviewDataDialog
-          open={showPreviewDialog}
-          onOpenChange={setShowPreviewDialog}
-          data={{
-            businessNature,
-            product,
-            imobPlan,
-            locPlan,
-            komboName: activeKombo !== "none" ? KOMBOS[activeKombo].name : undefined,
-            komboDiscount: activeKombo !== "none" ? KOMBOS[activeKombo].discount : undefined,
-            frequency,
-            addons,
-            totals: {
-              monthly: calculateMonthlyRecurring(activeKombo !== "none"),
-              annual: calculateMonthlyRecurring(activeKombo !== "none") * 12,
-              implantation: calculateTotalImplementation(activeKombo !== "none"),
-              postPaid: calculatePayPostPago(),
-              firstYear: calculateFirstYearTotal(activeKombo !== "none"),
-            },
-          }}
-          onConfirm={() => {
-            setShowPreviewDialog(false);
-            setShowQuoteInfoDialog(true);
-          }}
-        />
+
 
         {/* Quote Info Dialog */}
         <QuoteInfoDialog
