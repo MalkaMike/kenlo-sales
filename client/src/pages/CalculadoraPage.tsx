@@ -358,6 +358,79 @@ export default function CalculadoraPage() {
     setLocPlan("k");
   }, []);
 
+  // Generate example data for quick PDF preview
+  const handleGenerateExample = useCallback(() => {
+    // Fill business nature with realistic sample data
+    setBusinessNature({
+      businessType: "both",
+      companyName: "Imobiliária Exemplo Ltda",
+      ownerName: "João Silva",
+      email: "joao@exemploimo.com.br",
+      cellphone: "(11) 98765-4321",
+      landline: "(11) 3456-7890",
+      hasWebsite: true,
+      websiteUrl: "www.exemploimo.com.br",
+      hasCRM: true,
+      crmSystem: "Outro",
+      crmOther: "Sistema Legado",
+      hasERP: true,
+      erpSystem: "Outro",
+      erpOther: "Sistema Interno",
+    });
+    
+    // Select both products (IMOB + LOC)
+    setProduct("both");
+    
+    // Enable multiple add-ons for a comprehensive example
+    setAddons({
+      leads: true,
+      inteligencia: true,
+      assinatura: true,
+      pay: true,
+      seguros: true,
+      cash: true,
+    });
+    
+    // Set realistic metrics
+    setMetrics({
+      // IMOB metrics
+      imobUsers: 12,
+      closingsPerMonth: 8,
+      leadsPerMonth: 250,
+      usesExternalAI: false,
+      wantsWhatsApp: true,
+      imobVipSupport: false, // Will be included in Elite Kombo
+      imobDedicatedCS: false, // Will be included in Elite Kombo
+      
+      // LOC metrics
+      contractsUnderManagement: 350,
+      newContractsPerMonth: 15,
+      locVipSupport: false, // Will be included in Elite Kombo
+      locDedicatedCS: false, // Will be included in Elite Kombo
+      
+      // Kenlo Pay billing
+      chargesBoletoToTenant: true,
+      boletoChargeAmount: 8.50,
+      chargesSplitToOwner: true,
+      splitChargeAmount: 12.00,
+    });
+    
+    // Set frequency to annual (most common)
+    setFrequency("annual");
+    
+    // Disable pre-payment options
+    setPrepayAdditionalUsers(false);
+    setPrepayAdditionalContracts(false);
+    
+    // This configuration will trigger Elite Kombo (IMOB + LOC + all add-ons)
+    // The table will auto-select Elite as recommended
+    
+    toast.success("Exemplo gerado! Configuração Elite Kombo carregada.");
+    
+    // Scroll to top to see the filled data
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // URL search params for shareable links
   const searchString = useSearch();
 
@@ -3025,6 +3098,15 @@ export default function CalculadoraPage() {
                     </div>
                   )}
                   <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      className="flex-1 min-h-[50px]" 
+                      size="lg" 
+                      onClick={handleGenerateExample}
+                      variant="outline"
+                    >
+                      <Zap className="w-4 h-4 mr-2" />
+                      Gerar Exemplo
+                    </Button>
                     <Button 
                       className="flex-1 min-h-[50px]" 
                       size="lg" 

@@ -1779,3 +1779,13 @@
 - [x] Ensure Page 2 (Receita Extras) only appears when netGain > 0
 - [x] Remove footer loop that was creating extra blank pages
 - [x] Test PDF generation and verify output is exactly 2 pages (or 1 page when no revenue data)
+
+## Generate Example Feature (Feb 2026)
+
+- [x] Add "Gerar Exemplo" button to calculator page (prominent placement near Export button)
+- [x] Create sample data object with realistic values (IMOB users, contracts, closings, leads, etc.)
+- [x] Implement auto-fill function that populates all calculator fields with sample data
+- [x] Include sample selections for products (IMOB + LOC), add-ons, Kombo, and payment frequency
+- [x] Ensure sample data triggers all validation rules correctly
+- [x] Test Generate Example button and verify all fields populate correctly
+- [x] Test PDF generation from example data and verify output quality
