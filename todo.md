@@ -1845,3 +1845,23 @@
 - [ ] Change title from "PROPOSTA COMERCIAL KENLO" to "Orçamento Comercial"
 - [ ] Fix Emissão/Validade text overlap with logo
 - [ ] Test PDF generation and verify clean header with no overlaps
+
+## 3 Random Examples Feature (Feb 2026)
+- [ ] Modify handleGenerateExample to generate 3 completely random examples
+- [ ] Randomize business type (Corretora, Admin Aluguel, Ambos)
+- [ ] Randomize products (Imob, Loc, Imob+Loc)
+- [ ] Randomize all add-ons (each on/off randomly)
+- [ ] Randomize metrics values (users, closings, leads, contracts)
+- [ ] Randomize payment frequency (Mensal, Semestral, Anual, Bienal)
+- [ ] Randomize Kombo plan selection
+- [ ] Auto-select plan and auto-export PDF for each example
+- [ ] Ensure each of the 3 examples produces a unique PDF
+- [ ] Test and verify 3 different PDFs are generated
+
+## 3 Random Examples - Completed (Feb 2026)
+- [x] Replace single Gerar Exemplo with Gerar 3 Exemplos button
+- [x] Implement fully random data generation (company, owner, products, addons, metrics, frequency, plan)
+- [x] Auto-generate and download 3 PDFs directly without UI interaction
+- [x] Add loading spinner and disabled state during generation
+- [x] Test 3 PDFs generated with different random configs
+- [x] Verify zero overlapping text in all generated PDFs

@@ -32,6 +32,8 @@ import {
   Zap,
   RotateCcw,
   Eye,
+  Shuffle,
+  Loader2,
 } from "lucide-react";
 
 // Types
@@ -281,6 +283,7 @@ export default function CalculadoraPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   const [animateMetrics, setAnimateMetrics] = useState(false);
+  const [isGeneratingExamples, setIsGeneratingExamples] = useState(false);
   const prevProductRef = useRef<ProductSelection>(product);
   
   // tRPC mutations for PDF generation and proposal creation
@@ -358,78 +361,191 @@ export default function CalculadoraPage() {
     setLocPlan("k");
   }, []);
 
-  // Generate example data for quick PDF preview
-  const handleGenerateExample = useCallback(() => {
-    // Fill business nature with realistic sample data
-    setBusinessNature({
-      businessType: "both",
-      companyName: "Imobiliária Exemplo Ltda",
-      ownerName: "João Silva",
-      email: "joao@exemploimo.com.br",
-      cellphone: "(11) 98765-4321",
-      landline: "(11) 3456-7890",
-      hasWebsite: true,
-      websiteUrl: "www.exemploimo.com.br",
-      hasCRM: true,
-      crmSystem: "Outro",
-      crmOther: "Sistema Legado",
-      hasERP: true,
-      erpSystem: "Outro",
-      erpOther: "Sistema Interno",
-    });
+  // Generate 3 random example PDFs directly (bypasses UI state, calls API directly)
+  const handleGenerate3Examples = useCallback(async () => {
+    if (!canExportPDF) {
+      toast.error("Faça login como vendedor autorizado para gerar exemplos.");
+      return;
+    }
     
-    // Select both products (IMOB + LOC)
-    setProduct("both");
+    setIsGeneratingExamples(true);
+    toast.loading("Gerando 3 exemplos aleatórios...");
     
-    // Enable multiple add-ons for a comprehensive example
-    setAddons({
-      leads: true,
-      inteligencia: true,
-      assinatura: true,
-      pay: true,
-      seguros: true,
-      cash: true,
-    });
+    const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+    const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const randBool = () => Math.random() > 0.5;
     
-    // Set realistic metrics
-    setMetrics({
-      // IMOB metrics
-      imobUsers: 12,
-      closingsPerMonth: 8,
-      leadsPerMonth: 250,
-      usesExternalAI: false,
-      wantsWhatsApp: true,
-      imobVipSupport: false, // Will be included in Elite Kombo
-      imobDedicatedCS: false, // Will be included in Elite Kombo
-      
-      // LOC metrics
-      contractsUnderManagement: 350,
-      newContractsPerMonth: 15,
-      locVipSupport: false, // Will be included in Elite Kombo
-      locDedicatedCS: false, // Will be included in Elite Kombo
-      
-      // Kenlo Pay billing
-      chargesBoletoToTenant: true,
-      boletoChargeAmount: 8.50,
-      chargesSplitToOwner: true,
-      splitChargeAmount: 12.00,
-    });
+    const companyNames = [
+      "Imobiliária Sol Nascente", "Rede Imóveis Premium", "Casa & Lar Imóveis",
+      "Horizonte Imobiliária", "Ponto Certo Imóveis", "Alpha Gestão Imobiliária",
+      "Morada Real Imóveis", "Viva Imóveis", "Central Imobiliária", "Top House Imóveis",
+    ];
+    const ownerNames = [
+      "Carlos Mendes", "Ana Beatriz Costa", "Roberto Almeida",
+      "Fernanda Oliveira", "Marcos Pereira", "Juliana Santos",
+      "Pedro Henrique Lima", "Camila Rodrigues", "Lucas Ferreira",
+    ];
+    const frequencies: PaymentFrequency[] = ["monthly", "semestral", "annual", "biennial"];
+    const plans: PlanTier[] = ["prime", "k", "k2"];
     
-    // Set frequency to annual (most common)
-    setFrequency("annual");
+    // Define possible kombo configurations
+    const komboConfigs = [
+      { product: "imob" as ProductSelection, addons: ["leads", "assinatura"], komboId: "imob_start", komboName: "Kombo Imob Start", discount: 10 },
+      { product: "imob" as ProductSelection, addons: ["leads", "inteligencia", "assinatura"], komboId: "imob_pro", komboName: "Kombo Imob Pro", discount: 15 },
+      { product: "loc" as ProductSelection, addons: ["inteligencia", "assinatura"], komboId: "locacao_pro", komboName: "Kombo Locação Pro", discount: 10 },
+      { product: "both" as ProductSelection, addons: [] as string[], komboId: "core_gestao", komboName: "Kombo Core Gestão", discount: 0 },
+      { product: "both" as ProductSelection, addons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], komboId: "elite", komboName: "Kombo Elite", discount: 20 },
+      // No kombo scenarios
+      { product: "imob" as ProductSelection, addons: ["leads"], komboId: null, komboName: undefined, discount: 0 },
+      { product: "loc" as ProductSelection, addons: ["pay", "seguros"], komboId: null, komboName: undefined, discount: 0 },
+      { product: "both" as ProductSelection, addons: ["leads", "assinatura", "pay"], komboId: null, komboName: undefined, discount: 0 },
+    ];
     
-    // Disable pre-payment options
-    setPrepayAdditionalUsers(false);
-    setPrepayAdditionalContracts(false);
+    let successCount = 0;
     
-    // This configuration will trigger Elite Kombo (IMOB + LOC + all add-ons)
-    // The table will auto-select Elite as recommended
+    for (let i = 0; i < 3; i++) {
+      try {
+        const config = pick(komboConfigs);
+        const freq = pick(frequencies);
+        const iplan = pick(plans);
+        const lplan = pick(plans);
+        const company = pick(companyNames);
+        const owner = pick(ownerNames);
+        
+        // Random metrics
+        const imobUsers = randInt(2, 30);
+        const closings = randInt(2, 20);
+        const leadsMonth = randInt(50, 500);
+        const contracts = randInt(50, 800);
+        const newContracts = randInt(2, 25);
+        const wantsWA = config.addons.includes("leads") ? randBool() : false;
+        const chargesBoleto = config.addons.includes("pay") ? randBool() : false;
+        const chargesSplit = config.addons.includes("pay") ? randBool() : false;
+        const boletoAmt = chargesBoleto ? pick([5, 7.5, 8.5, 10, 12]) : 0;
+        const splitAmt = chargesSplit ? pick([5, 8, 10, 12, 15]) : 0;
+        
+        // Calculate prices
+        const freqMult = PAYMENT_FREQUENCY_MULTIPLIERS[freq];
+        const discountMult = config.komboId ? (1 - config.discount / 100) : 1;
+        
+        let totalMonthly = 0;
+        
+        // IMOB plan price
+        if (config.product === "imob" || config.product === "both") {
+          const basePrice = PLAN_ANNUAL_PRICES[iplan];
+          totalMonthly += roundToEndIn7(basePrice * freqMult * discountMult);
+        }
+        // LOC plan price
+        if (config.product === "loc" || config.product === "both") {
+          const basePrice = PLAN_ANNUAL_PRICES[lplan];
+          totalMonthly += roundToEndIn7(basePrice * freqMult * discountMult);
+        }
+        // Add-on prices
+        for (const addon of config.addons) {
+          const addonPrice = ADDON_ANNUAL_PRICES[addon as keyof typeof ADDON_ANNUAL_PRICES] || 0;
+          if (addonPrice > 0) {
+            totalMonthly += roundToEndIn7(addonPrice * freqMult * discountMult);
+          }
+        }
+        
+        const totalAnnual = totalMonthly * 12;
+        const implantationFee = config.komboId ? 1497 : (
+          (config.product === "imob" || config.product === "both" ? 1497 : 0) +
+          (config.product === "loc" || config.product === "both" ? 1497 : 0)
+        );
+        const firstYearTotal = totalAnnual + implantationFee;
+        
+        // Post-paid estimate
+        let postPaidTotal = randInt(0, 500);
+        
+        // Revenue
+        const revenueFromBoletos = (chargesBoleto || chargesSplit) && (config.product === "loc" || config.product === "both")
+          ? contracts * (boletoAmt + splitAmt)
+          : 0;
+        const revenueFromInsurance = config.addons.includes("seguros") && (config.product === "loc" || config.product === "both")
+          ? contracts * 10
+          : 0;
+        const netGain = revenueFromBoletos + revenueFromInsurance - totalMonthly - postPaidTotal;
+        
+        const installments = pick([1, 2, 3]);
+        
+        const proposalData = {
+          salesPersonName: "Vendedor Exemplo",
+          vendorEmail: "vendedor@kenlo.com.br",
+          vendorPhone: "(11) 99999-0000",
+          vendorRole: "Executivo(a) de Vendas",
+          clientName: owner,
+          agencyName: company,
+          productType: config.product,
+          komboName: config.komboName,
+          komboDiscount: config.discount > 0 ? config.discount : undefined,
+          imobPlan: (config.product === "imob" || config.product === "both") ? iplan : undefined,
+          locPlan: (config.product === "loc" || config.product === "both") ? lplan : undefined,
+          imobUsers,
+          closings,
+          contracts,
+          newContracts,
+          leadsPerMonth: leadsMonth,
+          usesExternalAI: false,
+          wantsWhatsApp: wantsWA,
+          chargesSplitToOwner: chargesSplit,
+          selectedAddons: JSON.stringify(config.addons),
+          paymentPlan: freq,
+          totalMonthly,
+          totalAnnual,
+          implantationFee,
+          firstYearTotal,
+          postPaidTotal,
+          revenueFromBoletos,
+          revenueFromInsurance,
+          netGain,
+          prepayAdditionalUsers: false,
+          prepayAdditionalContracts: false,
+          prepaymentUsersAmount: 0,
+          prepaymentContractsAmount: 0,
+          prepaymentMonths: 0,
+          hasPremiumServices: !!config.komboId,
+          premiumServicesPrice: 0,
+          installments,
+        };
+        
+        const pdfResult = await generatePDF.mutateAsync(proposalData);
+        
+        if (pdfResult.success && pdfResult.pdf) {
+          const pdfBlob = new Blob(
+            [Uint8Array.from(atob(pdfResult.pdf), (c) => c.charCodeAt(0))],
+            { type: "application/pdf" }
+          );
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `Exemplo_${i + 1}_${company.replace(/\s+/g, "_")}_${config.komboId || "sem_kombo"}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          successCount++;
+        }
+        
+        // Small delay between downloads so browser doesn't block them
+        if (i < 2) await new Promise(r => setTimeout(r, 1500));
+        
+      } catch (error) {
+        console.error(`Erro ao gerar exemplo ${i + 1}:`, error);
+      }
+    }
     
-    toast.success("Exemplo gerado! Configuração Elite Kombo carregada.");
+    toast.dismiss();
+    setIsGeneratingExamples(false);
     
-    // Scroll to top to see the filled data
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    if (successCount === 3) {
+      toast.success(`${successCount} PDFs de exemplo gerados com sucesso!`);
+    } else if (successCount > 0) {
+      toast.success(`${successCount} de 3 PDFs gerados. Alguns falharam.`);
+    } else {
+      toast.error("Falha ao gerar exemplos. Verifique o login.");
+    }
+  }, [canExportPDF, generatePDF]);
 
   // URL search params for shareable links
   const searchString = useSearch();
@@ -3101,11 +3217,16 @@ export default function CalculadoraPage() {
                     <Button 
                       className="flex-1 min-h-[50px]" 
                       size="lg" 
-                      onClick={handleGenerateExample}
+                      onClick={handleGenerate3Examples}
                       variant="outline"
+                      disabled={isGeneratingExamples}
                     >
-                      <Zap className="w-4 h-4 mr-2" />
-                      Gerar Exemplo
+                      {isGeneratingExamples ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Shuffle className="w-4 h-4 mr-2" />
+                      )}
+                      {isGeneratingExamples ? "Gerando..." : "Gerar 3 Exemplos"}
                     </Button>
                     <Button 
                       className="flex-1 min-h-[50px]" 
