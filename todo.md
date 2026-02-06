@@ -1487,3 +1487,9 @@
 - [x] Aplicar mesmo padrão visual das boxes de produto (borda rosa quando selecionado)
 - [x] Manter visibilidade condicional: CRM para Corretora/Ambos, ERP para Administrador/Ambos
 - [x] Testar comportamento completo com todos os tipos de negócio
+
+## Visual Consistency Fix - Business Type Boxes (Feb 2026)
+
+- [x] Ajustar tamanho das boxes de Tipo de Negócio para corresponder às boxes de produto ("Imob só")
+- [x] Usar mesmo font-size e padding das boxes de produto
+- [x] Garantir homogeneidade visual entre todas as boxes de seleção

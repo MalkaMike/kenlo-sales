@@ -1070,22 +1070,22 @@ export default function CalculadoraPage() {
                   {/* Business Type */}
                   <div>
                     <Label className="text-sm font-semibold mb-4 block">Tipo de Negócio *</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
                       {/* Corretora Box */}
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "broker" })}
-                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
                           businessNature.businessType === "broker"
-                            ? "border-primary bg-primary/5"
-                            : "border-border bg-background hover:border-primary/30"
+                            ? "border-primary bg-primary/5 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
                         }`}
                       >
-                        <div className="flex flex-col items-center gap-2">
-                          <TrendingUp className={`w-5 h-5 ${
-                            businessNature.businessType === "broker" ? "text-primary" : "text-muted-foreground"
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className={`w-5 h-5 sm:w-4 sm:h-4 ${
+                            businessNature.businessType === "broker" ? "text-primary" : "text-gray-400"
                           }`} />
-                          <div className="font-semibold text-sm">Corretora</div>
+                          <div className="font-semibold text-sm sm:text-xs">Corretora</div>
                         </div>
                       </button>
 
@@ -1093,17 +1093,17 @@ export default function CalculadoraPage() {
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "rental_admin" })}
-                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
                           businessNature.businessType === "rental_admin"
-                            ? "border-primary bg-primary/5"
-                            : "border-border bg-background hover:border-primary/30"
+                            ? "border-primary bg-primary/5 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
                         }`}
                       >
-                        <div className="flex flex-col items-center gap-2">
-                          <Key className={`w-5 h-5 ${
-                            businessNature.businessType === "rental_admin" ? "text-primary" : "text-muted-foreground"
+                        <div className="flex items-center gap-2">
+                          <Key className={`w-5 h-5 sm:w-4 sm:h-4 ${
+                            businessNature.businessType === "rental_admin" ? "text-primary" : "text-gray-400"
                           }`} />
-                          <div className="font-semibold text-sm">Administrador de Aluguel</div>
+                          <div className="font-semibold text-sm sm:text-xs">Administrador de Aluguel</div>
                         </div>
                       </button>
 
@@ -1111,17 +1111,17 @@ export default function CalculadoraPage() {
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "both" })}
-                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
                           businessNature.businessType === "both"
-                            ? "border-primary bg-primary/5"
-                            : "border-border bg-background hover:border-primary/30"
+                            ? "border-primary bg-primary/5 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
                         }`}
                       >
-                        <div className="flex flex-col items-center gap-2">
-                          <Zap className={`w-5 h-5 ${
-                            businessNature.businessType === "both" ? "text-primary" : "text-muted-foreground"
+                        <div className="flex items-center gap-2">
+                          <Zap className={`w-5 h-5 sm:w-4 sm:h-4 ${
+                            businessNature.businessType === "both" ? "text-primary" : "text-gray-400"
                           }`} />
-                          <div className="font-semibold text-sm">Ambos</div>
+                          <div className="font-semibold text-sm sm:text-xs">Ambos</div>
                         </div>
                       </button>
                     </div>
