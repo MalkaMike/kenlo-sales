@@ -1765,3 +1765,17 @@
 - [x] Position logo appropriately (size ~30-40px height, aligned with header text)
 - [x] Test PDF generation and verify logo displays correctly in white
 - [x] Ensure logo doesn't overlap with "PROPOSTA COMERCIAL KENLO" text
+
+## Reduce PDF Page Count from 4 to 2 (Feb 2026)
+
+- [x] Analyze current PDF to identify why it generates 4 pages instead of 2
+- [x] Identify excessive vertical spacing between sections
+- [x] Identify unnecessary page breaks
+- [x] Reduce header height if too large
+- [x] Reduce spacing between metrics cards and solution section
+- [x] Reduce spacing between add-ons grid and investment section
+- [x] Reduce spacing between investment breakdown items
+- [x] Optimize Kombos table to use less vertical space
+- [x] Ensure Page 2 (Receita Extras) only appears when netGain > 0
+- [x] Remove footer loop that was creating extra blank pages
+- [x] Test PDF generation and verify output is exactly 2 pages (or 1 page when no revenue data)

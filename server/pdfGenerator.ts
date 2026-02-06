@@ -61,9 +61,9 @@ interface ProposalData {
 
 export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ 
-      size: "A4", 
-      margin: 40,
+  const doc = new PDFDocument({ 
+    size: "A4", 
+    margin: 30,
       autoFirstPage: true,
       bufferPages: true
     });
@@ -92,7 +92,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
     const pageWidth = 595.28;
     const pageHeight = 841.89;
-    const margin = 40;
+    const margin = 30;
     const contentWidth = pageWidth - (margin * 2);
     let yPos = margin;
 
@@ -174,7 +174,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
     // HEADER with Kenlo Red Background
     // ============================================
-    const headerHeight = 90;
+    const headerHeight = 75;
     doc.rect(0, 0, pageWidth, headerHeight)
        .fill(colors.kenloRed);
     
@@ -216,7 +216,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
        .text(`${data.agencyName || "Imobiliária"} | ${data.clientName}`, margin + 40, margin + 40);
     doc.text(`${data.email || ""} | ${data.cellphone || ""}`, margin + 40, margin + 48);
     
-    yPos = headerHeight + 20;
+    yPos = headerHeight + 12;
 
     // ============================================
     // 1. NATUREZA DO NEGÓCIO
@@ -224,7 +224,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Natureza do negócio", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     const businessTypes = [
       { key: "broker", label: "Corretora", icon: "" },
@@ -241,7 +241,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(`${type.icon} ${type.label}`, x + 8, yPos + 8, { width: boxWidth - 16, align: "left" });
     });
     
-    yPos += 32;
+    yPos += 10;
 
     // ============================================
     // 2. MÉTRICAS DO NEGÓCIO
@@ -249,7 +249,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Métricas do Negócio", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     const showImob = data.productType === "imob" || data.productType === "both";
     const showLoc = data.productType === "loc" || data.productType === "both";
@@ -270,7 +270,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
           .text("IMOB", metricsX + 8, yPos + 5);
       
       // Metrics content
-      yPos += 24;
+      yPos += 16;
       doc.fontSize(7).fillColor(colors.text).font("Helvetica");
       
        // Users
@@ -291,7 +291,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
        doc.font("Helvetica-Bold").text(`${data.leadsPerMonth || 0}`, metricsX + 10, yPos);
        doc.font("Helvetica").text("Leads / mês", metricsX + 30, yPos);
       
-      yPos += 14;
+      yPos += 10;
       
       // IA SDR checkbox
       drawCheckbox(metricsX + 10, yPos, data.usesExternalAI || false);
@@ -319,7 +319,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
           .text("LOCAÇÃO", (showImob ? metricsX : margin) + 8, yPos + 5);
       
       // Metrics content
-      yPos += 24;
+      yPos += 12;
       doc.fontSize(7).fillColor(colors.text).font("Helvetica");
       
        // Contracts
@@ -338,7 +338,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.text("por mês", (showImob ? metricsX : margin) + 140, yPos);
       yPos -= 8;
       
-      yPos += 20;
+      yPos += 10;
       
       // Checkboxes
       drawCheckbox((showImob ? metricsX : margin) + 10, yPos, false);
@@ -364,7 +364,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Solução em análise de contratação", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     const products = [
        { key: "imob", label: "Imob só", desc: "CRM + Site para vendas", icon: "" },
@@ -382,7 +382,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(prod.desc, x + 8, yPos + 18, { width: boxWidth - 16 });
     });
     
-    yPos += 40;
+    yPos += 12;
 
     // ============================================
     // 4. ADD-ONS OPCIONAIS
@@ -390,7 +390,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Add-ons Opcionais", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     // Blue callout box with proper Portuguese text
     const calloutWidth = contentWidth * 0.6;
@@ -399,7 +399,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
        .text("Add-ons selecionados destacados em rosa. Combine produtos e add-ons para formar Kombos com desconto.", 
              margin + 8, yPos + 6, { width: calloutWidth - 16 });
     
-    yPos += 28;
+    yPos += 10;
     
     // Add-ons grid (2 rows x 3 columns)
     const addons = [
@@ -437,7 +437,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Frequência de pagamento selecionada", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     const frequencies = [
       { key: "monthly", label: "Mensal", modifier: "+25%" },
@@ -457,7 +457,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          .text(freq.modifier, x + 8, yPos + 16, { width: freqBoxWidth - 16, align: "center" });
     });
     
-    yPos += 36;
+    yPos += 12;
 
     // ============================================
     // 6. PLANO SELECIONADO
@@ -465,7 +465,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Plano Selecionado", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     const kombos = [
       { key: "none", label: "Sem Kombo", discount: null },
@@ -496,7 +496,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          });
     });
     
-    yPos += 42;
+    yPos += 14;
 
     // ============================================
     // 7. INVESTIMENTO (CRITICAL MATH SECTION)
@@ -504,7 +504,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
        .text("Investimento", margin, yPos);
     
-    yPos += 14;
+    yPos += 10;
     
     // Calculate components
     // License prepaid: For annual/biennial, this is the total annual license cost
@@ -535,7 +535,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          });
     });
     
-    yPos += 45;
+    yPos += 16;
     
     // Total
     doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
@@ -570,7 +570,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          align: "right" 
        });
     
-    yPos += 18;
+    yPos += 14;
     
     // CRITICAL: Comparison table
     doc.fontSize(8).fillColor(colors.dark).font("Helvetica-Bold")
@@ -606,7 +606,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          });
     });
     
-    yPos += 35;
+    yPos += 12;
     
     // Post-paid estimates
     if (data.postPaidTotal && data.postPaidTotal > 0) {
@@ -625,19 +625,19 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
     if (data.netGain && data.netGain > 0) {
       doc.addPage();
-      yPos = margin + 60;
+      yPos = margin + 40;
       
       // Title
       doc.fontSize(16).fillColor(colors.dark).font("Helvetica-Bold")
          .text("Kenlo Receita Extras", margin, yPos, { align: "center", width: contentWidth });
       
-      yPos += 40;
+      yPos += 12;
       
       // Subtitle
       doc.fontSize(9).fillColor(colors.textLight).font("Helvetica")
          .text("Potencial de receita adicional com serviços Kenlo", margin, yPos, { align: "center", width: contentWidth });
       
-      yPos += 40;
+      yPos += 12;
       
       // Revenue breakdown
       const revenueItems = [];
@@ -664,12 +664,12 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.fontSize(10).fillColor(colors.dark).font("Helvetica-Bold")
          .text("Ganho Líquido Mensal Estimado", margin, yPos, { align: "center", width: contentWidth });
       
-      yPos += 20;
+      yPos += 16;
       
       doc.fontSize(42).fillColor(colors.success).font("Helvetica-Bold")
          .text(formatCurrency(data.netGain), margin, yPos, { align: "center", width: contentWidth });
       
-      yPos += 70;
+      yPos += 20;
       
       // Slogan box
       const sloganBoxHeight = 50;
@@ -681,20 +681,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
          });
     }
 
-    // ============================================
-    // FOOTER (on all pages)
-    // ============================================
-    const range = doc.bufferedPageRange();
-    for (let i = range.start; i < range.start + range.count; i++) {
-      doc.switchToPage(i);
-      const footerY = pageHeight - 30;
-      doc.fontSize(6).fillColor(colors.textLight).font("Helvetica")
-         .text("Kenlo | www.kenlo.com.br | contato@kenlo.com.br | (11) 1234-5678", 
-               margin, footerY, {
-                 width: contentWidth,
-                 align: "center"
-               });
-    }
+    // Footer removed to reduce page count
 
     doc.end();
   });
