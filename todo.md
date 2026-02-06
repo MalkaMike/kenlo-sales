@@ -1934,3 +1934,23 @@
 - [x] Fix businessType not passed in generatePDF schema
 - [x] Fix kombo name matching (handle "Kombo " prefix)
 - [x] Test with 3 random examples - all verified clean
+
+## PDF V7 Comments - 7 Fixes (Feb 2026)
+- [x] C1: Review section titles for clarity, add more vertical space between sections
+- [x] C2: Single product card should be half-width (not full page width)
+- [x] C3a: License monthly value must NOT be zero - calculate actual value
+- [x] C3b: A plan must ALWAYS be selected in random examples
+- [x] C3c: Custo mensal recorrente must NOT be zero
+- [x] C3d: Remove "/mês" from frequency comparison values, align numbers across page
+- [x] C3e: Estimativa pós-pago: show breakdown with price per unit like calculadora
+- [x] C4: First payment rule: implantação + first period (month/semester) when monthly/semestral
+- [x] C5: Align IMOB and LOCAÇÃO cards properly, move boleto/split values closer to left
+- [x] C6: Page 2 title "Fonte de Receita Mensal", remove "/mês" below values
+- [x] C7: Show total monthly investimento in financial summary, use "investimento" not "cost"
+
+## PDF Page Overflow Fix (Feb 2026)
+- [x] Fix PDF generating 4 pages instead of max 2 - reduced SECTION_GAP from 24 to 18
+- [x] Optimize element heights (cards, addons, frequency boxes, kombo boxes)
+- [x] Add page boundary check for Pós-Pago section
+- [x] Verify all 3 random examples generate correct page count (1 or 2 pages max)
+- [x] Add comprehensive vitest tests for PDF generator (13 tests, all passing)
