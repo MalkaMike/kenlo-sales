@@ -1699,3 +1699,23 @@
 - [x] Verify PDF generator receives and displays metrics cards correctly
 - [x] Test PDF generation from calculator with real data to confirm metrics cards appear
 - [x] Fix any missing data mapping between frontend and PDF generator
+
+## CRITICAL: PDF Encoding Issues - Fix Weird Characters (Feb 2026)
+
+- [x] **Replace ALL emoji icons with ASCII text**
+  - [x] Remove 👤 (user icon) → use "Usuários:" text
+  - [x] Remove 🏠 (house icon) → use "Fechamentos:" text
+  - [x] Remove 📱 (phone icon) → use "Leads:" text
+  - [x] Remove 📋 (clipboard icon) → use "Contratos:" text
+  - [x] Remove 📊 (chart icon) from IMOB header
+  - [x] Remove 🔑 (key icon) from LOCAÇÃO header
+- [x] **Fix checkbox rendering**
+  - [x] Replace ☐ (unchecked) with pdfkit drawing or "[ ]" text
+  - [x] Replace ☑ (checked) with pdfkit drawing or "[X]" text
+- [x] **Fix "Natureza do negócio" icons**
+  - [x] Remove all emoji from business type boxes
+  - [x] Use simple text labels only
+- [x] **Test PDF generation**
+  - [x] Generate test PDF and verify NO weird characters (Ø=ÜÊ, Ø=Ÿ, &₁, etc.)
+  - [x] Verify all text is readable and professional
+  - [x] Compare with Book3.pdf for visual quality

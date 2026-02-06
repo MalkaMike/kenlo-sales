@@ -140,8 +140,15 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       
       // Draw checkmark if checked
       if (checked) {
-        doc.fontSize(9).fillColor(colors.dark).font("Helvetica-Bold")
-           .text("✓", x, y - 1); // Unicode checkmark
+        // Draw an X using lines instead of Unicode
+        doc.lineWidth(1.5)
+           .strokeColor(colors.dark)
+           .moveTo(x + 2, y + 2)
+           .lineTo(x + size - 2, y + size - 2)
+           .stroke()
+           .moveTo(x + size - 2, y + 2)
+           .lineTo(x + 2, y + size - 2)
+           .stroke();
       }
     };
 
@@ -206,9 +213,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     yPos += 14;
     
     const businessTypes = [
-      { key: "broker", label: "Corretora", icon: "📈" },
-      { key: "rental_admin", label: "Administrador de Aluguel", icon: "🔑" },
-      { key: "both", label: "Ambos", icon: "⚡" }
+      { key: "broker", label: "Corretora", icon: "" },
+      { key: "rental_admin", label: "Administrador de Aluguel", icon: "" },
+      { key: "both", label: "Ambos", icon: "" }
     ];
     
     const boxWidth = (contentWidth - 20) / 3;
@@ -245,20 +252,20 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       // Dark header (darker blue-gray)
       doc.roundedRect(metricsX, yPos, metricsWidth, 18, 6)
          .fill("#1E293B"); // Slate-800 - darker than before
-      doc.fontSize(8).fillColor(colors.white).font("Helvetica-Bold")
-         .text("📊 IMOB", metricsX + 8, yPos + 5);
+       doc.fontSize(8).fillColor(colors.white).font("Helvetica-Bold")
+          .text("IMOB", metricsX + 8, yPos + 5);
       
       // Metrics content
       yPos += 24;
       doc.fontSize(7).fillColor(colors.text).font("Helvetica");
       
-      // Users with icon
-      doc.font("Helvetica-Bold").text(`👤 ${data.imobUsers || 0}`, metricsX + 10, yPos);
-      doc.font("Helvetica").text("Usuários", metricsX + 40, yPos);
+       // Users
+       doc.font("Helvetica-Bold").text(`${data.imobUsers || 0}`, metricsX + 10, yPos);
+       doc.font("Helvetica").text("Usuários", metricsX + 30, yPos);
       
-      // Closures with icon
-      doc.font("Helvetica-Bold").text(`🏠 ${data.closings || 0}`, metricsX + 100, yPos);
-      doc.font("Helvetica").text("fechamentos /", metricsX + 130, yPos);
+       // Closures
+       doc.font("Helvetica-Bold").text(`${data.closings || 0}`, metricsX + 100, yPos);
+       doc.font("Helvetica").text("fechamentos /", metricsX + 120, yPos);
       
       yPos += 8;
       doc.text("mês", metricsX + 120, yPos);
@@ -266,9 +273,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       
       yPos += 12;
       
-      // Leads with icon
-      doc.font("Helvetica-Bold").text(`📱 ${data.leadsPerMonth || 0}`, metricsX + 10, yPos);
-      doc.font("Helvetica").text("Leads / mês", metricsX + 45, yPos);
+       // Leads
+       doc.font("Helvetica-Bold").text(`${data.leadsPerMonth || 0}`, metricsX + 10, yPos);
+       doc.font("Helvetica").text("Leads / mês", metricsX + 30, yPos);
       
       yPos += 14;
       
@@ -294,16 +301,16 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       // Dark header (darker blue-gray)
       doc.roundedRect(showImob ? metricsX : margin, yPos, metricsWidth, 18, 6)
          .fill("#1E293B"); // Slate-800 - darker than before
-      doc.fontSize(8).fillColor(colors.white).font("Helvetica-Bold")
-         .text("🔑 LOCAÇÃO", (showImob ? metricsX : margin) + 8, yPos + 5);
+       doc.fontSize(8).fillColor(colors.white).font("Helvetica-Bold")
+          .text("LOCAÇÃO", (showImob ? metricsX : margin) + 8, yPos + 5);
       
       // Metrics content
       yPos += 24;
       doc.fontSize(7).fillColor(colors.text).font("Helvetica");
       
-      // Contracts with icon
-      doc.font("Helvetica-Bold").text(`📋 ${data.contracts || 0}`, (showImob ? metricsX : margin) + 10, yPos);
-      doc.font("Helvetica").text("Contratos sob", (showImob ? metricsX : margin) + 50, yPos);
+       // Contracts
+       doc.font("Helvetica-Bold").text(`${data.contracts || 0}`, (showImob ? metricsX : margin) + 10, yPos);
+       doc.font("Helvetica").text("Contratos sob", (showImob ? metricsX : margin) + 30, yPos);
       
       yPos += 8;
       doc.text("gestão", (showImob ? metricsX : margin) + 40, yPos);
@@ -346,9 +353,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     yPos += 14;
     
     const products = [
-      { key: "imob", label: "Imob só", desc: "CRM + Site para vendas", icon: "📈" },
-      { key: "loc", label: "Loc só", desc: "Gestão de locações", icon: "🔑" },
-      { key: "both", label: "Imob + Loc", desc: "Solução completa", icon: "⚡" }
+       { key: "imob", label: "Imob só", desc: "CRM + Site para vendas", icon: "" },
+       { key: "loc", label: "Loc só", desc: "Gestão de locações", icon: "" },
+       { key: "both", label: "Imob + Loc", desc: "Solução completa", icon: "" }
     ];
     
     products.forEach((prod, i) => {
