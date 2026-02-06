@@ -1865,3 +1865,29 @@
 - [x] Add loading spinner and disabled state during generation
 - [x] Test 3 PDFs generated with different random configs
 - [x] Verify zero overlapping text in all generated PDFs
+
+## PDF Comments Fix - Complete Overhaul (Feb 2026)
+- [ ] Comment 1: More space between CLIENTE line and header banner
+- [ ] Comment 1: Make client name font bigger
+- [ ] Comment 1: Highlight selected "Natureza do negócio" box in pink (matching user selection)
+- [ ] Comment 2: Modernize metrics cards - numbers closer to labels, better alignment
+- [ ] Comment 2: Fix checkboxes alignment - modern look, not 80s style
+- [ ] Comment 2: Make numbers more prominent/highlighted
+- [ ] Comment 3: Use "Solução em análise" pink highlight style as reference for ALL selections
+- [ ] Comment 4: Remove blue callout box from Add-ons section
+- [ ] Comment 4: Highlight all selected add-ons in pink (same style as Solução)
+- [ ] Comment 5: Frequency section already perfect - maintain as is
+- [ ] Fix frequency comparison: calculate monthly equivalent for each frequency using same metrics
+- [ ] Ensure ALL user selections are reflected/highlighted in the PDF
+
+## PDF Comments Applied - All 5 Fixed (Feb 2026)
+- [x] Comment 1: More space between header and CLIENTE, bigger client font, highlight business type
+- [x] Comment 2: Modernize metrics cards - numbers prominent, modern checkboxes (not 80s)
+- [x] Comment 3: Product selection highlighted in pink (reference style)
+- [x] Comment 4: Remove blue callout box, highlight selected add-ons in pink
+- [x] Comment 5: Frequency section maintained as-is (already good)
+- [x] Frequency comparison: Calculate monthly equivalent for all frequencies
+- [x] Fix businessType not being passed through generatePDF tRPC schema
+- [x] Fix selectedAddons JSON array parsing
+- [x] Fix biennial/biannual key mismatch
+- [x] Test with 3 random examples - all highlighting verified

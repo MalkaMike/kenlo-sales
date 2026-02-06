@@ -86,13 +86,16 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       red: "#E11D48",
       pink: "#EC4899",
       pinkLight: "#FDF2F8",
+      pinkBorder: "#F9A8D4",
       dark: "#1E293B",
       text: "#1F2937",
       textLight: "#6B7280",
-      border: "#D1D5DB",
+      border: "#E5E7EB",
+      borderLight: "#F3F4F6",
       white: "#FFFFFF",
       green: "#10B981",
       blue: "#3B82F6",
+      bgLight: "#F9FAFB",
     };
 
     const fmt = (v: number) =>
@@ -103,7 +106,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       }).format(v);
 
     // ============================================
-    // HELPER: draw rounded rect
+    // HELPER: draw rounded rect (selected = pink highlight)
     // ============================================
     const box = (
       x: number,
@@ -121,16 +124,24 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     };
 
     // ============================================
-    // HELPER: draw checkbox
+    // HELPER: modern toggle/checkbox (filled circle with checkmark)
     // ============================================
-    const checkbox = (x: number, y: number, checked: boolean) => {
-      doc.rect(x, y, 9, 9).lineWidth(0.5).stroke(C.border);
+    const modernCheck = (x: number, y: number, checked: boolean, label: string) => {
+      const size = 10;
+      const cx = x + size / 2;
+      const cy = y + size / 2;
       if (checked) {
-        doc.save().lineWidth(1.5).strokeColor(C.dark);
-        doc.moveTo(x + 2, y + 2).lineTo(x + 7, y + 7).stroke();
-        doc.moveTo(x + 7, y + 2).lineTo(x + 2, y + 7).stroke();
+        // Filled pink circle with white checkmark
+        doc.circle(cx, cy, size / 2).fill(C.pink);
+        doc.save().lineWidth(1.2).strokeColor(C.white);
+        doc.moveTo(cx - 2.5, cy).lineTo(cx - 0.5, cy + 2.5).lineTo(cx + 3, cy - 2).stroke();
         doc.restore();
+      } else {
+        // Empty circle border
+        doc.circle(cx, cy, size / 2).lineWidth(0.8).stroke(C.border);
       }
+      doc.fontSize(7).fillColor(checked ? C.pink : C.text).font(checked ? "Helvetica-Bold" : "Helvetica")
+        .text(label, x + size + 5, y + 1);
     };
 
     // ============================================
@@ -138,7 +149,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
     const sectionTitle = (label: string, y: number) => {
       doc.fontSize(10).fillColor(C.dark).font("Helvetica-Bold").text(label, M, y);
-      return y + 16; // returns next yPos after title
+      return y + 18;
     };
 
     // ============================================
@@ -149,7 +160,16 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.fontSize(7.5).fillColor(C.text).font(opts.bold ? "Helvetica-Bold" : "Helvetica").text(label, M + indent, y);
       doc.fontSize(7.5).fillColor(opts.valueColor ?? C.text).font(opts.bold ? "Helvetica-Bold" : "Helvetica")
         .text(value, M + CW - 90, y, { width: 90, align: "right" });
-      return y + 13; // returns next yPos
+      return y + 13;
+    };
+
+    // ============================================
+    // HELPER: metric stat (big number + small label, tightly coupled)
+    // ============================================
+    const metricStat = (x: number, y: number, value: string, label: string) => {
+      doc.fontSize(14).fillColor(C.dark).font("Helvetica-Bold").text(value, x, y);
+      const numW = doc.widthOfString(value);
+      doc.fontSize(6.5).fillColor(C.textLight).font("Helvetica").text(label, x + numW + 4, y + 5);
     };
 
     // ============================================
@@ -157,40 +177,45 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
 
     // --- HEADER (red band) ---
-    const HDR_H = 80;
+    const HDR_H = 72;
     doc.rect(0, 0, PAGE_W, HDR_H).fill(C.red);
 
     // Logo (left) - real Kenlo logo, white version
     const logoPath = path.join(process.cwd(), "client/public/kenlo-logo-white.png");
     if (fs.existsSync(logoPath)) {
-      try { doc.image(logoPath, M, 10, { height: 28 }); } catch (_) {}
+      try { doc.image(logoPath, M, 12, { height: 24 }); } catch (_) {}
     }
 
-    // Title (right of logo, vertically centered in top portion of header)
+    // Title (right of logo)
     doc.fontSize(14).fillColor(C.white).font("Helvetica-Bold")
-      .text("Orçamento Comercial", M + 120, 16);
+      .text("Orçamento Comercial", M + 115, 16);
 
-    // Date line (bottom of header, left - well below logo)
+    // Date line (bottom of header)
     const issueDate = new Date().toLocaleDateString("pt-BR");
-    doc.fontSize(7).fillColor(C.white).font("Helvetica")
-      .text(`Emissão: ${issueDate}  |  Validade: 30 dias`, M, HDR_H - 16);
+    doc.fontSize(6.5).fillColor("rgba(255,255,255,0.85)").font("Helvetica")
+      .text(`Emissão: ${issueDate}  |  Validade: 30 dias`, M, HDR_H - 14);
 
-    // Vendor info (right side, top)
-    doc.fontSize(7).fillColor(C.white).font("Helvetica");
+    // Vendor info (right side)
+    doc.fontSize(6.5).fillColor(C.white).font("Helvetica");
     const vX = PAGE_W - M - 170;
     doc.text(`Vendedor: ${data.salesPersonName}`, vX, 14, { width: 170, align: "right" });
-    doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 26, { width: 170, align: "right" });
-    doc.text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, vX, 38, { width: 170, align: "right" });
+    doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 25, { width: 170, align: "right" });
+    doc.text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, vX, 36, { width: 170, align: "right" });
 
-    // Client bar (just below header)
-    let Y = HDR_H + 6;
-    doc.fontSize(7.5).fillColor(C.red).font("Helvetica-Bold").text("CLIENTE:", M, Y);
-    doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
-      .text(`${data.agencyName || "Imobiliária"} | ${data.clientName} | ${data.email || ""} | ${data.cellphone || ""}`, M + 50, Y);
+    // --- CLIENT BAR (Comment 1: more space, bigger font) ---
+    let Y = HDR_H + 14;
+    doc.fontSize(8).fillColor(C.red).font("Helvetica-Bold").text("CLIENTE:", M, Y);
+    doc.fontSize(9).fillColor(C.dark).font("Helvetica-Bold")
+      .text(`${data.agencyName || "Imobiliária"}  |  ${data.clientName}`, M + 55, Y);
+    // Contact info on second line
+    Y += 14;
+    const contactParts = [data.email, data.cellphone].filter(Boolean).join("  |  ");
+    if (contactParts) {
+      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text(contactParts, M + 55, Y);
+    }
+    Y += 16;
 
-    Y += 18;
-
-    // --- 1. NATUREZA DO NEGÓCIO ---
+    // --- 1. NATUREZA DO NEGÓCIO (Comment 1: highlight selected in pink) ---
     Y = sectionTitle("Natureza do negócio", Y);
     const bizTypes = [
       { key: "broker", label: "Corretora" },
@@ -200,79 +225,71 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     bizTypes.forEach((t, i) => {
       const x = M + i * (COL3_W + 8);
       const sel = data.businessType === t.key;
-      box(x, Y, COL3_W, 22, { selected: sel });
-      doc.fontSize(7.5).fillColor(sel ? C.pink : C.text).font("Helvetica").text(t.label, x + 8, Y + 7);
+      box(x, Y, COL3_W, 24, { selected: sel });
+      doc.fontSize(7.5).fillColor(sel ? C.pink : C.text).font(sel ? "Helvetica-Bold" : "Helvetica").text(t.label, x + 10, Y + 8);
     });
-    Y += 32;
+    Y += 34;
 
-    // --- 2. MÉTRICAS DO NEGÓCIO ---
+    // --- 2. MÉTRICAS DO NEGÓCIO (Comment 2: modern, numbers prominent, aligned) ---
     Y = sectionTitle("Métricas do Negócio", Y);
     const showImob = data.productType === "imob" || data.productType === "both";
     const showLoc = data.productType === "loc" || data.productType === "both";
 
-    const CARD_H = 80;
+    const CARD_H = 82;
     const cardW = showImob && showLoc ? COL2_W : CW;
 
     if (showImob) {
       const cx = M;
-      // Card outline
-      box(cx, Y, cardW, CARD_H);
-      // Dark header bar
+      // Card with subtle background
+      box(cx, Y, cardW, CARD_H, { fill: C.bgLight, stroke: C.border });
+      // Accent bar at top
       doc.roundedRect(cx, Y, cardW, 18, 4).fill(C.dark);
-      doc.fontSize(8).fillColor(C.white).font("Helvetica-Bold").text("IMOB", cx + 10, Y + 5);
+      doc.rect(cx, Y + 8, cardW, 10).fill(C.dark); // square off bottom corners
+      doc.fontSize(8).fillColor(C.white).font("Helvetica-Bold").text("IMOB", cx + 12, Y + 5);
 
-      // Row 1: Users + Closings
-      const r1 = Y + 24;
-      doc.fontSize(8).fillColor(C.text).font("Helvetica-Bold").text(`${data.imobUsers || 0}`, cx + 10, r1);
-      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text("Usuários", cx + 35, r1 + 1);
-      doc.fontSize(8).fillColor(C.text).font("Helvetica-Bold").text(`${data.closings || 0}`, cx + cardW / 2, r1);
-      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text("Fechamentos / mês", cx + cardW / 2 + 20, r1 + 1);
+      // Row 1: Users + Closings (big numbers tight with labels)
+      const r1 = Y + 26;
+      metricStat(cx + 12, r1, `${data.imobUsers || 0}`, "Usuários");
+      metricStat(cx + cardW / 2 + 5, r1, `${data.closings || 0}`, "Fechamentos / mês");
 
       // Row 2: Leads
-      const r2 = r1 + 16;
-      doc.fontSize(8).fillColor(C.text).font("Helvetica-Bold").text(`${data.leadsPerMonth || 0}`, cx + 10, r2);
-      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text("Leads / mês", cx + 35, r2 + 1);
+      const r2 = r1 + 20;
+      metricStat(cx + 12, r2, `${data.leadsPerMonth || 0}`, "Leads / mês");
 
-      // Row 3: Checkboxes
-      const r3 = r2 + 16;
-      checkbox(cx + 10, r3, data.usesExternalAI || false);
-      doc.fontSize(7).fillColor(C.text).font("Helvetica").text("IA SDR", cx + 24, r3 + 1);
-      checkbox(cx + cardW / 2, r3, data.wantsWhatsApp || false);
-      doc.fontSize(7).fillColor(C.text).font("Helvetica").text("Whatsapp", cx + cardW / 2 + 14, r3 + 1);
+      // Row 3: Modern toggles (not 80s checkboxes)
+      const r3 = r2 + 20;
+      modernCheck(cx + 12, r3, data.usesExternalAI || false, "IA SDR");
+      modernCheck(cx + cardW / 2 + 5, r3, data.wantsWhatsApp || false, "WhatsApp");
     }
 
     if (showLoc) {
       const cx = showImob ? M + cardW + 8 : M;
-      // Card outline
-      box(cx, Y, cardW, CARD_H);
-      // Dark header bar
-      doc.roundedRect(cx, Y, cardW, 18, 4).fill(C.dark);
-      doc.fontSize(8).fillColor(C.white).font("Helvetica-Bold").text("LOCAÇÃO", cx + 10, Y + 5);
+      const locCardW = showImob ? cardW : CW;
+      box(cx, Y, locCardW, CARD_H, { fill: C.bgLight, stroke: C.border });
+      // Accent bar
+      doc.roundedRect(cx, Y, locCardW, 18, 4).fill(C.dark);
+      doc.rect(cx, Y + 8, locCardW, 10).fill(C.dark);
+      doc.fontSize(8).fillColor(C.white).font("Helvetica-Bold").text("LOCAÇÃO", cx + 12, Y + 5);
 
       // Row 1: Contracts + New contracts
-      const r1 = Y + 24;
-      doc.fontSize(8).fillColor(C.text).font("Helvetica-Bold").text(`${data.contracts || 0}`, cx + 10, r1);
-      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text("Contratos sob gestão", cx + 35, r1 + 1);
-      doc.fontSize(8).fillColor(C.text).font("Helvetica-Bold").text(`${data.newContracts || 0}`, cx + cardW / 2, r1);
-      doc.fontSize(7).fillColor(C.textLight).font("Helvetica").text("Novos contratos / mês", cx + cardW / 2 + 20, r1 + 1);
+      const r1 = Y + 26;
+      metricStat(cx + 12, r1, `${data.contracts || 0}`, "Contratos sob gestão");
+      metricStat(cx + locCardW / 2 + 5, r1, `${data.newContracts || 0}`, "Novos contratos / mês");
 
-      // Row 2: Boleto checkbox
-      const r2 = r1 + 18;
-      checkbox(cx + 10, r2, false);
-      doc.fontSize(7).fillColor(C.text).font("Helvetica").text("Cobra Inquilino (Boleto)", cx + 24, r2 + 1);
+      // Row 2-3: Modern toggles
+      const r2 = r1 + 22;
+      modernCheck(cx + 12, r2, false, "Cobra Inquilino (Boleto)");
 
-      // Row 3: Split checkbox
-      const r3 = r2 + 14;
-      checkbox(cx + 10, r3, data.chargesSplitToOwner || false);
-      doc.fontSize(7).fillColor(C.text).font("Helvetica").text("Cobra Proprietário (Split)", cx + 24, r3 + 1);
+      const r3 = r2 + 16;
+      modernCheck(cx + 12, r3, data.chargesSplitToOwner || false, "Cobra Proprietário (Split)");
       if (data.chargesSplitToOwner) {
-        doc.fontSize(7).fillColor(C.green).font("Helvetica-Bold").text("R$5,00", cx + cardW - 50, r3 + 1);
+        doc.fontSize(7.5).fillColor(C.green).font("Helvetica-Bold").text("R$5,00", cx + locCardW - 55, r3 + 1);
       }
     }
 
-    Y += CARD_H + 12; // ALWAYS advance past the cards
+    Y += CARD_H + 14;
 
-    // --- 3. SOLUÇÃO EM ANÁLISE ---
+    // --- 3. SOLUÇÃO EM ANÁLISE (Comment 3: REFERENCE style - perfect as is) ---
     Y = sectionTitle("Solução em análise de contratação", Y);
     const prods = [
       { key: "imob", label: "Imob só", desc: "CRM + Site para vendas" },
@@ -283,20 +300,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const x = M + i * (COL3_W + 8);
       const sel = data.productType === p.key;
       box(x, Y, COL3_W, 28, { selected: sel });
-      doc.fontSize(7.5).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold").text(p.label, x + 8, Y + 5);
-      doc.fontSize(6).fillColor(C.textLight).font("Helvetica").text(p.desc, x + 8, Y + 16);
+      doc.fontSize(7.5).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold").text(p.label, x + 10, Y + 5);
+      doc.fontSize(6).fillColor(sel ? C.pink : C.textLight).font("Helvetica").text(p.desc, x + 10, Y + 16);
     });
     Y += 38;
 
-    // --- 4. ADD-ONS ---
+    // --- 4. ADD-ONS (Comment 4: NO blue callout, highlight selected in pink) ---
     Y = sectionTitle("Add-ons Opcionais", Y);
-
-    // Blue callout
-    const callW = CW * 0.65;
-    box(M, Y, callW, 16, { fill: C.blue, stroke: C.blue });
-    doc.fontSize(5.5).fillColor(C.white).font("Helvetica")
-      .text("Add-ons selecionados destacados em rosa. Combine produtos e add-ons para formar Kombos com desconto.", M + 6, Y + 4, { width: callW - 12 });
-    Y += 22;
+    // NO blue callout box - removed per Comment 4
 
     const addons = [
       { key: "leads", label: "Leads", desc: "Gestão automatizada de leads" },
@@ -306,7 +317,18 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       { key: "seguros", label: "Seguros", desc: "Seguros embutido no boleto" },
       { key: "cash", label: "Cash", desc: "Financie proprietários até 24 meses" },
     ];
-    const selAddons = data.selectedAddons.split(",").map((a) => a.trim().toLowerCase());
+    // Parse selectedAddons - handle both JSON array and comma-separated string
+    let selAddons: string[] = [];
+    try {
+      const parsed = JSON.parse(data.selectedAddons);
+      if (Array.isArray(parsed)) {
+        selAddons = parsed.map((a: string) => a.trim().toLowerCase());
+      } else {
+        selAddons = data.selectedAddons.split(",").map((a) => a.trim().toLowerCase());
+      }
+    } catch {
+      selAddons = data.selectedAddons.split(",").map((a) => a.trim().toLowerCase());
+    }
     const ADDON_H = 28;
     addons.forEach((a, i) => {
       const row = Math.floor(i / 3);
@@ -315,28 +337,33 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const y = Y + row * (ADDON_H + 6);
       const sel = selAddons.includes(a.key);
       box(x, y, COL3_W, ADDON_H, { selected: sel });
-      doc.fontSize(7).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold").text(a.label, x + 8, y + 5);
-      doc.fontSize(5.5).fillColor(C.textLight).font("Helvetica").text(a.desc, x + 8, y + 15);
+      doc.fontSize(7).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold").text(a.label, x + 10, y + 5);
+      doc.fontSize(5.5).fillColor(sel ? C.pink : C.textLight).font("Helvetica").text(a.desc, x + 10, y + 16);
     });
-    Y += ADDON_H * 2 + 6 + 12; // 2 rows + gap + spacing
+    Y += ADDON_H * 2 + 6 + 14;
 
-    // --- 5. FREQUÊNCIA DE PAGAMENTO ---
+    // --- 5. FREQUÊNCIA DE PAGAMENTO (Comment 5: perfect - maintain) ---
     Y = sectionTitle("Frequência de pagamento selecionada", Y);
     const freqs = [
       { key: "monthly", label: "Mensal", mod: "+25%" },
       { key: "semestral", label: "Semestral", mod: "+10%" },
       { key: "annual", label: "Anual", mod: "0% - Referência" },
       { key: "biannual", label: "Bienal", mod: "-10%" },
+      { key: "biennial", label: "Bienal", mod: "-10%" }, // alias
     ];
     const FREQ_W = (CW - 24) / 4;
-    freqs.forEach((f, i) => {
-      const x = M + i * (FREQ_W + 8);
-      const sel = data.paymentPlan === f.key;
-      box(x, Y, FREQ_W, 26, { selected: sel });
+    // Filter out alias duplicates for display (only show 4 boxes)
+    const freqsDisplay = freqs.filter(f => f.key !== "biennial");
+    const FREQ_W_ACTUAL = (CW - 24) / freqsDisplay.length;
+    freqsDisplay.forEach((f, i) => {
+      const x = M + i * (FREQ_W_ACTUAL + 8);
+      // Match both biannual and biennial
+      const sel = data.paymentPlan === f.key || (f.key === "biannual" && data.paymentPlan === "biennial");
+      box(x, Y, FREQ_W_ACTUAL, 26, { selected: sel });
       doc.fontSize(7).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold")
-        .text(f.label, x, Y + 5, { width: FREQ_W, align: "center" });
-      doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
-        .text(f.mod, x, Y + 15, { width: FREQ_W, align: "center" });
+        .text(f.label, x, Y + 5, { width: FREQ_W_ACTUAL, align: "center" });
+      doc.fontSize(6).fillColor(sel ? C.pink : C.textLight).font("Helvetica")
+        .text(f.mod, x, Y + 15, { width: FREQ_W_ACTUAL, align: "center" });
     });
     Y += 38;
 
@@ -376,7 +403,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // --- 7. INVESTIMENTO ---
     Y = sectionTitle("Investimento", Y);
 
-    const isAnnualOrBiennial = data.paymentPlan === "annual" || data.paymentPlan === "biennial";
+    const isAnnualOrBiennial = data.paymentPlan === "annual" || data.paymentPlan === "biennial" || data.paymentPlan === "biannual";
     const licensePrepaid = isAnnualOrBiennial ? (data.totalAnnual || 0) : 0;
     const additionalUsersPrepaid = data.prepaymentUsersAmount || 0;
     const additionalContractsPrepaid = data.prepaymentContractsAmount || 0;
@@ -404,20 +431,47 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const monthlyEquivalent = totalInvestment / 12;
     Y = labelRow("Equivalente mensal", fmt(monthlyEquivalent), Y, { bold: true });
 
-    Y += 4;
+    Y += 6;
 
-    // Comparison table
-    doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold").text("Comparação com outras Frequências de Pagamentos", M + 10, Y);
+    // --- FREQUENCY COMPARISON (User request: compare apples to apples) ---
+    // Calculate the BASE annual value (at annual/0% rate) from whatever frequency was selected
+    // Then show what the user would pay as monthly equivalent under each frequency
+    doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+      .text("Comparação: Equivalente Mensal por Frequência", M + 10, Y);
     Y += 14;
 
-    let baseAnnualValue = data.totalAnnual;
+    // Derive the base annual value (at 0% / annual reference)
+    // Frequency multipliers: monthly=1.25, semestral=1.10, annual=1.0, biannual=0.90
+    let baseAnnualValue = data.totalAnnual || 0;
     if (data.paymentPlan === "monthly") baseAnnualValue = baseAnnualValue / 1.25;
-    else if (data.paymentPlan === "semestral") baseAnnualValue = baseAnnualValue / 1.111;
-    else if (data.paymentPlan === "biannual") baseAnnualValue = baseAnnualValue / 0.9;
+    else if (data.paymentPlan === "semestral") baseAnnualValue = baseAnnualValue / 1.10;
+    else if (data.paymentPlan === "biannual" || data.paymentPlan === "biennial") baseAnnualValue = baseAnnualValue / 0.90;
+    // annual = base, no adjustment needed
 
-    Y = labelRow("Mensal", fmt(baseAnnualValue * 1.25), Y, { indent: 20 });
-    Y = labelRow("Semestral", fmt(baseAnnualValue * 1.111), Y, { indent: 20 });
-    Y = labelRow("Bi-Annual", fmt(baseAnnualValue * 0.9), Y, { indent: 20 });
+    // Now calculate total annual cost for each frequency and show monthly equivalent
+    const freqComps = [
+      { label: "Mensal (+25%)", mult: 1.25 },
+      { label: "Semestral (+10%)", mult: 1.10 },
+      { label: "Anual (Referência)", mult: 1.0 },
+      { label: "Bienal (-10%)", mult: 0.90 },
+    ];
+    freqComps.forEach((fc) => {
+      const annualAtFreq = baseAnnualValue * fc.mult;
+      const monthlyAtFreq = annualAtFreq / 12;
+      // Show: "Frequency label" → "R$ X,XX / mês"
+      const isCurrent = (
+        (fc.mult === 1.25 && data.paymentPlan === "monthly") ||
+        (fc.mult === 1.10 && data.paymentPlan === "semestral") ||
+        (fc.mult === 1.0 && data.paymentPlan === "annual") ||
+        (fc.mult === 0.90 && (data.paymentPlan === "biannual" || data.paymentPlan === "biennial"))
+      );
+      Y = labelRow(
+        fc.label + (isCurrent ? "  ← selecionado" : ""),
+        `${fmt(monthlyAtFreq)} / mês`,
+        Y,
+        { indent: 20, bold: isCurrent, valueColor: isCurrent ? C.pink : C.text }
+      );
+    });
 
     Y += 4;
 

@@ -439,6 +439,9 @@ export const appRouter = router({
         premiumServicesPrice: z.number().optional(),
         // Installment options
         installments: z.number().optional(),
+        // Business nature
+        businessType: z.string().optional(),
+        monthlyLicenseBase: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user is authorized via salesperson login OR OAuth with authorized domain

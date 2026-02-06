@@ -386,6 +386,7 @@ export default function CalculadoraPage() {
       "Pedro Henrique Lima", "Camila Rodrigues", "Lucas Ferreira",
     ];
     const frequencies: PaymentFrequency[] = ["monthly", "semestral", "annual", "biennial"];
+    const businessTypes = ["broker", "rental_admin", "both"] as const;
     const plans: PlanTier[] = ["prime", "k", "k2"];
     
     // Define possible kombo configurations
@@ -411,6 +412,7 @@ export default function CalculadoraPage() {
         const lplan = pick(plans);
         const company = pick(companyNames);
         const owner = pick(ownerNames);
+        const bizType = pick([...businessTypes]);
         
         // Random metrics
         const imobUsers = randInt(2, 30);
@@ -507,6 +509,7 @@ export default function CalculadoraPage() {
           hasPremiumServices: !!config.komboId,
           premiumServicesPrice: 0,
           installments,
+          businessType: bizType,
         };
         
         const pdfResult = await generatePDF.mutateAsync(proposalData);
