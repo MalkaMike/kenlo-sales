@@ -1726,3 +1726,16 @@
 - [x] Test PDF generation from actual calculator with real metrics values
 - [x] Confirm metrics cards show correct numbers (not zeros)
 - [x] Verify IA SDR and WhatsApp checkboxes reflect actual state
+
+## PDF Preview Modal Implementation (Feb 2026)
+
+- [x] Create PDFPreviewDialog component with embedded PDF viewer
+- [x] Add preview state management (pdfUrl, isPreviewOpen)
+- [x] Replace direct download with preview modal flow
+- [x] Add Download button in preview modal
+- [x] Add Close/Cancel button in preview modal
+- [x] Handle PDF blob URL creation and cleanup
+- [x] Test preview modal with different PDF sizes
+- [ ] **Known Issue:** PDF rendering in iframe/embed is browser-dependent (blob URLs may not display in preview); Download button works correctly
+- [x] Add loading state while PDF is being generated
+- [x] Add error handling if PDF generation fails

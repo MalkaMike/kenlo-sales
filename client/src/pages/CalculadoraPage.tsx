@@ -13,6 +13,7 @@ import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/cons
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
 import { PreviewDataDialog } from "@/components/PreviewDataDialog";
+import { PDFPreviewDialog } from "@/components/PDFPreviewDialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -280,6 +281,12 @@ export default function CalculadoraPage() {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
+  
+  // PDF preview state
+  const [showPdfPreview, setShowPdfPreview] = useState(false);
+  const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
+  const [pdfFilename, setPdfFilename] = useState<string>("");
+  const [pdfBlobForDownload, setPdfBlobForDownload] = useState<Blob | null>(null);
   const [animateMetrics, setAnimateMetrics] = useState(false);
   const prevProductRef = useRef<ProductSelection>(product);
   
@@ -3349,19 +3356,21 @@ export default function CalculadoraPage() {
                 const pdfResult = await generatePDF.mutateAsync(proposalData);
                 
                 if (pdfResult.success && pdfResult.pdf) {
-                  // Download PDF
+                  // Create PDF blob for preview
                   const pdfBlob = new Blob(
                     [Uint8Array.from(atob(pdfResult.pdf), c => c.charCodeAt(0))],
                     { type: "application/pdf" }
                   );
                   const url = URL.createObjectURL(pdfBlob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = pdfResult.filename;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  URL.revokeObjectURL(url);
+                  
+                  // Store PDF data for preview and download
+                  setPdfPreviewUrl(url);
+                  setPdfFilename(pdfResult.filename);
+                  setPdfBlobForDownload(pdfBlob);
+                  setShowPdfPreview(true);
+                  
+                  toast.dismiss();
+                  toast.success("PDF gerado! Revise antes de baixar.");
 
                   // Save to proposals database
                   await createProposal.mutateAsync(proposalData);
@@ -3415,6 +3424,36 @@ export default function CalculadoraPage() {
                 toast.error("Erro ao gerar proposta. Tente novamente.");
                 console.error("Error generating proposal:", error);
               }
+            }
+          }}
+        />
+
+        {/* PDF Preview Dialog */}
+        <PDFPreviewDialog
+          open={showPdfPreview}
+          onOpenChange={(open) => {
+            setShowPdfPreview(open);
+            if (!open && pdfPreviewUrl) {
+              URL.revokeObjectURL(pdfPreviewUrl);
+              setPdfPreviewUrl(null);
+              setPdfBlobForDownload(null);
+            }
+          }}
+          pdfUrl={pdfPreviewUrl}
+          filename={pdfFilename}
+          onDownload={() => {
+            if (pdfBlobForDownload && pdfFilename) {
+              const url = URL.createObjectURL(pdfBlobForDownload);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = pdfFilename;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              
+              toast.success("PDF baixado com sucesso!");
+              setShowPdfPreview(false);
             }
           }}
         />
