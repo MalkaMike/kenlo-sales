@@ -8,6 +8,7 @@ import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/constants/systems";
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
@@ -18,6 +19,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import {
   Calculator,
@@ -34,6 +37,7 @@ type ProductSelection = "imob" | "loc" | "both";
 type PlanTier = "prime" | "k" | "k2";
 type PaymentFrequency = "monthly" | "semestral" | "annual" | "biennial";
 type KomboType = "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite" | "none";
+type BusinessType = "broker" | "rental_admin" | "both";
 
 // Kombo definitions
 /**
@@ -183,6 +187,24 @@ export default function CalculadoraPage() {
   // Both salesperson login (Master/Vendor) AND OAuth users with authorized domains can export
   const canExportPDF = isSalespersonAuth || isAuthorizedEmail(oauthUser?.email)
   
+  // Step 0: Business Nature (NEW SECTION)
+  const [businessNature, setBusinessNature] = useState({
+    businessType: "broker" as BusinessType,
+    companyName: "",
+    ownerName: "",
+    email: "",
+    cellphone: "",
+    landline: "",
+    hasWebsite: false,
+    websiteUrl: "",
+    hasCRM: false,
+    crmSystem: "" as CRMSystem | "",
+    crmOther: "",
+    hasERP: false,
+    erpSystem: "" as ERPSystem | "",
+    erpOther: "",
+  });
+  
   // Step 1: Product selection - Default: IMOB only
   const [product, setProduct] = useState<ProductSelection>("imob");
   
@@ -244,6 +266,24 @@ export default function CalculadoraPage() {
 
   // Reset all fields to default values
   const handleReset = useCallback(() => {
+    // Reset business nature
+    setBusinessNature({
+      businessType: "broker",
+      companyName: "",
+      ownerName: "",
+      email: "",
+      cellphone: "",
+      landline: "",
+      hasWebsite: false,
+      websiteUrl: "",
+      hasCRM: false,
+      crmSystem: "",
+      crmOther: "",
+      hasERP: false,
+      erpSystem: "",
+      erpOther: "",
+    });
+    
     // Reset product selection
     setProduct("imob");
     
@@ -1018,10 +1058,208 @@ export default function CalculadoraPage() {
           {/* Main Calculator Card */}
           <Card className="shadow-xl">
             <CardContent className="p-4 sm:p-6">
+              {/* Step 0: Business Nature */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+                  1. Natureza do Negócio
+                </h2>
+                <div className="space-y-4">
+                  {/* Business Type */}
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Tipo de Negócio *</Label>
+                    <RadioGroup
+                      value={businessNature.businessType}
+                      onValueChange={(value) => setBusinessNature({ ...businessNature, businessType: value as BusinessType })}
+                      className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+                    >
+                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
+                        <RadioGroupItem value="broker" id="broker" />
+                        <Label htmlFor="broker" className="cursor-pointer flex-1">Corretora</Label>
+                      </div>
+                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
+                        <RadioGroupItem value="rental_admin" id="rental_admin" />
+                        <Label htmlFor="rental_admin" className="cursor-pointer flex-1">Administrador de Aluguel</Label>
+                      </div>
+                      <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-gray-50">
+                        <RadioGroupItem value="both" id="business_both" />
+                        <Label htmlFor="business_both" className="cursor-pointer flex-1">Ambos</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Company Information */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="companyName" className="text-sm font-semibold mb-2 block">Nome da Imobiliária *</Label>
+                      <Input
+                        id="companyName"
+                        value={businessNature.companyName}
+                        onChange={(e) => setBusinessNature({ ...businessNature, companyName: e.target.value })}
+                        placeholder="Ex: Imobiliária XYZ"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="ownerName" className="text-sm font-semibold mb-2 block">Nome do Proprietário *</Label>
+                      <Input
+                        id="ownerName"
+                        value={businessNature.ownerName}
+                        onChange={(e) => setBusinessNature({ ...businessNature, ownerName: e.target.value })}
+                        placeholder="Ex: João Silva"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="email" className="text-sm font-semibold mb-2 block">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={businessNature.email}
+                        onChange={(e) => setBusinessNature({ ...businessNature, email: e.target.value })}
+                        placeholder="contato@imobiliaria.com"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cellphone" className="text-sm font-semibold mb-2 block">Celular *</Label>
+                      <Input
+                        id="cellphone"
+                        value={businessNature.cellphone}
+                        onChange={(e) => setBusinessNature({ ...businessNature, cellphone: e.target.value })}
+                        placeholder="(11) 98765-4321"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="landline" className="text-sm font-semibold mb-2 block">Telefone Fixo</Label>
+                      <Input
+                        id="landline"
+                        value={businessNature.landline}
+                        onChange={(e) => setBusinessNature({ ...businessNature, landline: e.target.value })}
+                        placeholder="(11) 3456-7890"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Website */}
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Tem site? *</Label>
+                    <RadioGroup
+                      value={businessNature.hasWebsite ? "yes" : "no"}
+                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasWebsite: value === "yes", websiteUrl: value === "no" ? "" : businessNature.websiteUrl })}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="has_website_yes" />
+                        <Label htmlFor="has_website_yes" className="cursor-pointer">Sim</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="has_website_no" />
+                        <Label htmlFor="has_website_no" className="cursor-pointer">Não</Label>
+                      </div>
+                    </RadioGroup>
+                    {businessNature.hasWebsite && (
+                      <Input
+                        className="mt-2"
+                        value={businessNature.websiteUrl}
+                        onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
+                        placeholder="https://www.imobiliaria.com.br"
+                      />
+                    )}
+                  </div>
+
+                  {/* CRM System */}
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Já usa CRM? (para Corretagem)</Label>
+                    <RadioGroup
+                      value={businessNature.hasCRM ? "yes" : "no"}
+                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasCRM: value === "yes", crmSystem: value === "no" ? "" : businessNature.crmSystem, crmOther: value === "no" ? "" : businessNature.crmOther })}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="has_crm_yes" />
+                        <Label htmlFor="has_crm_yes" className="cursor-pointer">Sim</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="has_crm_no" />
+                        <Label htmlFor="has_crm_no" className="cursor-pointer">Não</Label>
+                      </div>
+                    </RadioGroup>
+                    {businessNature.hasCRM && (
+                      <div className="mt-2 space-y-2">
+                        <Select
+                          value={businessNature.crmSystem}
+                          onValueChange={(value) => setBusinessNature({ ...businessNature, crmSystem: value as CRMSystem, crmOther: value !== "Outro" ? "" : businessNature.crmOther })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o CRM" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {CRM_SYSTEMS.map((crm) => (
+                              <SelectItem key={crm} value={crm}>{crm}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {businessNature.crmSystem === "Outro" && (
+                          <Input
+                            value={businessNature.crmOther}
+                            onChange={(e) => setBusinessNature({ ...businessNature, crmOther: e.target.value })}
+                            placeholder="Digite o nome do CRM"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ERP System */}
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Já usa ERP? (para Locação)</Label>
+                    <RadioGroup
+                      value={businessNature.hasERP ? "yes" : "no"}
+                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasERP: value === "yes", erpSystem: value === "no" ? "" : businessNature.erpSystem, erpOther: value === "no" ? "" : businessNature.erpOther })}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="has_erp_yes" />
+                        <Label htmlFor="has_erp_yes" className="cursor-pointer">Sim</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="has_erp_no" />
+                        <Label htmlFor="has_erp_no" className="cursor-pointer">Não</Label>
+                      </div>
+                    </RadioGroup>
+                    {businessNature.hasERP && (
+                      <div className="mt-2 space-y-2">
+                        <Select
+                          value={businessNature.erpSystem}
+                          onValueChange={(value) => setBusinessNature({ ...businessNature, erpSystem: value as ERPSystem, erpOther: value !== "Outro" ? "" : businessNature.erpOther })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o ERP" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ERP_SYSTEMS.map((erp) => (
+                              <SelectItem key={erp} value={erp}>{erp}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {businessNature.erpSystem === "Outro" && (
+                          <Input
+                            value={businessNature.erpOther}
+                            onChange={(e) => setBusinessNature({ ...businessNature, erpOther: e.target.value })}
+                            placeholder="Digite o nome do ERP"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Step 1: Product Selection */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  1. Escolha o Produto
+                  2. Escolha o Produto
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
                   {[
@@ -1052,7 +1290,7 @@ export default function CalculadoraPage() {
               <div className="mb-6 sm:mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                   <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    2. Add-ons Opcionais
+                    3. Add-ons Opcionais
                   </h2>
                   <div className="flex gap-2">
                     <button
@@ -1171,7 +1409,7 @@ export default function CalculadoraPage() {
                       {/* Step 3: Business Info */}
               <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
-                  3. Informações do Negócio
+                  4. Informações do Negócio
                 </h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -2974,8 +3212,8 @@ export default function CalculadoraPage() {
                   vendorEmail: quoteInfo.vendorEmail,
                   vendorPhone: quoteInfo.vendorPhone,
                   vendorRole: quoteInfo.vendorRole,
-                  clientName: quoteInfo.ownerName,
-                  agencyName: quoteInfo.agencyName,
+                  clientName: businessNature.ownerName,
+                  agencyName: businessNature.companyName,
                   productType: product,
                   komboName: komboInfo?.name,
                   komboDiscount: komboInfo ? Math.round(komboInfo.discount * 100) : undefined,
@@ -3055,13 +3293,22 @@ export default function CalculadoraPage() {
                       komboId: activeKombo !== "none" ? activeKombo : undefined,
                       komboName: activeKombo !== "none" ? KOMBOS[activeKombo]?.name : undefined,
                       komboDiscount: activeKombo !== "none" ? Math.round((KOMBOS[activeKombo]?.discount || 0) * 100) : undefined,
-                      clientName: quoteInfo.ownerName,
+                      clientName: businessNature.ownerName,
                       vendorName: quoteInfo.vendorName,
                       salespersonId: quoteInfo.salespersonId,
-                      agencyName: quoteInfo.agencyName,
-                      cellPhone: quoteInfo.cellPhone,
-                      landlinePhone: quoteInfo.landlinePhone,
-                      websiteUrl: quoteInfo.websiteUrl,
+                      agencyName: businessNature.companyName,
+                      cellPhone: businessNature.cellphone,
+                      landlinePhone: businessNature.landline,
+                      websiteUrl: businessNature.hasWebsite ? businessNature.websiteUrl : "Cliente não tem site ainda",
+                      // Business Nature fields
+                      businessType: businessNature.businessType,
+                      email: businessNature.email,
+                      hasCRM: businessNature.hasCRM ? 1 : 0,
+                      crmSystem: businessNature.hasCRM ? businessNature.crmSystem : undefined,
+                      crmOther: businessNature.hasCRM && businessNature.crmSystem === "Outro" ? businessNature.crmOther : undefined,
+                      hasERP: businessNature.hasERP ? 1 : 0,
+                      erpSystem: businessNature.hasERP ? businessNature.erpSystem : undefined,
+                      erpOther: businessNature.hasERP && businessNature.erpSystem === "Outro" ? businessNature.erpOther : undefined,
                     });
                   } catch (quoteError) {
                     console.error('Failed to save quote:', quoteError);

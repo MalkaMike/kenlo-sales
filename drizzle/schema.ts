@@ -142,6 +142,16 @@ export const quotes = mysqlTable("quotes", {
   landlinePhone: varchar("landlinePhone", { length: 50 }),
   websiteUrl: text("websiteUrl"),
   
+  /** Business Nature Information */
+  businessType: varchar("businessType", { length: 50 }), // "broker", "rental_admin", "both"
+  email: varchar("email", { length: 320 }),
+  hasCRM: int("hasCRM").default(0), // 0 = false, 1 = true
+  crmSystem: varchar("crmSystem", { length: 255 }),
+  crmOther: varchar("crmOther", { length: 255 }),
+  hasERP: int("hasERP").default(0), // 0 = false, 1 = true
+  erpSystem: varchar("erpSystem", { length: 255 }),
+  erpOther: varchar("erpOther", { length: 255 }),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   /** Soft delete timestamp - null means active, set means deleted */
   deletedAt: timestamp("deletedAt"),

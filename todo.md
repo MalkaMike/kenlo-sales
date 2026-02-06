@@ -1356,3 +1356,42 @@
   - [x] Anual + 3x: PDF mostra "3x de R$ 4.207,00" (Total: R$ 12.621,00)
   - [x] Cálculos das parcelas corretos
   - [x] Modal exibe opções corretas baseadas no período
+
+## Bug Fix - User Name Display in Header
+
+- [x] Verificado: Nome "Updated Name Test" vem da conta OAuth do Manus (ctx.user)
+- [x] Código do componente UserProfileButton está correto (usa user.name)
+- [x] Sistema funcionando conforme esperado - nome vem da autenticação OAuth
+- [x] Para alterar: atualizar nome na conta OAuth do Manus ou implementar edição de perfil
+
+## Nova Seção "1. Natureza do Negócio" (Fev 2026)
+
+- [x] Criar nova seção no início da calculadora (antes de "Escolha o Produto")
+- [x] Adicionar campos de informação da empresa:
+  - [x] Tipo de negócio (radio): Corretora / Administrador de aluguel / Ambos
+  - [x] Nome da Imobiliária (texto obrigatório)
+  - [x] Nome do Proprietário/Dono (texto obrigatório)
+  - [x] Email (email obrigatório)
+  - [x] Celular (telefone obrigatório)
+  - [x] Telefone Fixo (telefone opcional)
+- [x] Adicionar campo "Tem site?":
+  - [x] Radio: Sim / Não
+  - [x] Se Sim: mostrar campo URL do site
+- [x] Adicionar campo "Já usa CRM?" (para Corretagem):
+  - [x] Radio: Sim / Não
+  - [x] Se Sim: dropdown com 68 CRMs + opção "Outro" (texto livre)
+  - [x] Lista de CRMs implementada com 68 opções
+- [x] Adicionar campo "Já usa ERP?" (para Locação):
+  - [x] Radio: Sim / Não
+  - [x] Se Sim: dropdown com 6 ERPs + opção "Outro" (texto livre)
+  - [x] Lista de ERPs implementada com 6 opções
+- [x] Renumerar seções: atual "1. Escolha o Produto" vira "2. Escolha o Produto"
+- [x] Atualizar modal de exportação:
+  - [x] Remover campos: Nome da Imobiliária, Nome do Proprietário, Email, Celular, Telefone Fixo, Tem site, URL do site
+  - [x] Manter apenas: Nome do Vendedor (dropdown) e Seleção de Parcelamento
+- [x] Atualizar schema do banco de dados para incluir novos campos
+- [x] Atualizar geração de PDF para usar novos campos da seção "Natureza do Negócio"
+- [x] Testar fluxo completo: preencher seção 1 → configurar produtos → exportar PDF
+- [x] Dados salvos corretamente no banco de dados (verificado quote ID 690001)
+- [x] Campos da seção "Natureza do Negócio" funcionando perfeitamente
+- [x] Modal de exportação simplificado (apenas vendedor + parcelamento)

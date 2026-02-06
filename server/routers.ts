@@ -244,6 +244,15 @@ export const appRouter = router({
         cellPhone: z.string().optional(),
         landlinePhone: z.string().optional(),
         websiteUrl: z.string().optional(),
+        // Business Nature fields
+        businessType: z.string().optional(),
+        email: z.string().optional(),
+        hasCRM: z.number().optional(),
+        crmSystem: z.string().optional(),
+        crmOther: z.string().optional(),
+        hasERP: z.number().optional(),
+        erpSystem: z.string().optional(),
+        erpOther: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const quoteId = await saveQuote({
@@ -266,6 +275,15 @@ export const appRouter = router({
           cellPhone: input.cellPhone,
           landlinePhone: input.landlinePhone,
           websiteUrl: input.websiteUrl,
+          // Business Nature fields
+          businessType: input.businessType,
+          email: input.email,
+          hasCRM: input.hasCRM,
+          crmSystem: input.crmSystem,
+          crmOther: input.crmOther,
+          hasERP: input.hasERP,
+          erpSystem: input.erpSystem,
+          erpOther: input.erpOther,
         });
         return { success: true, quoteId };
       }),

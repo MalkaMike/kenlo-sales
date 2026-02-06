@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LogOut } from "lucide-react";
@@ -14,12 +13,6 @@ export interface QuoteInfo {
   vendorPhone: string;
   vendorRole: string;
   salespersonId?: number;
-  agencyName: string;
-  ownerName: string;
-  cellPhone: string;
-  landlinePhone: string;
-  websiteUrl: string;
-  hasWebsite: boolean;
   installments: number; // Número de parcelas (1 = à vista)
 }
 
@@ -35,14 +28,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
   const { salesperson } = useSalesperson();
   const { user: oauthUser, logout } = useAuth();
   
-  const [agencyName, setAgencyName] = useState("");
-  const [ownerName, setOwnerName] = useState("");
-  const [cellPhone, setCellPhone] = useState("");
-  const [landlinePhone, setLandlinePhone] = useState("");
-  const [hasWebsite, setHasWebsite] = useState<"yes" | "no">("yes");
-  const [websiteUrl, setWebsiteUrl] = useState("");
   const [installments, setInstallments] = useState<number>(1);
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Determine the current user info (salesperson takes priority over OAuth user)
   const currentUser = salesperson 
@@ -93,39 +79,11 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      setErrors({});
       setInstallments(1); // Reset to "À vista" when dialog opens
     }
   }, [open]);
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!agencyName.trim()) {
-      newErrors.agencyName = "Nome da imobiliária é obrigatório";
-    }
-
-    if (!ownerName.trim()) {
-      newErrors.ownerName = "Nome do proprietário é obrigatório";
-    }
-
-    if (!cellPhone.trim() && !landlinePhone.trim()) {
-      newErrors.phone = "Pelo menos um telefone (celular ou fixo) é obrigatório";
-    }
-
-    if (hasWebsite === "yes" && !websiteUrl.trim()) {
-      newErrors.websiteUrl = "URL do site é obrigatória";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = () => {
-    if (!validateForm()) {
-      return;
-    }
-
     // Use logged-in user data (salesperson or OAuth user)
     onSubmit({
       vendorName: currentUser?.name || "",
@@ -133,24 +91,11 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
       vendorPhone: currentUser?.phone || "",
       vendorRole: currentUser?.role || "Colaborador Kenlo",
       salespersonId: currentUser?.source === "salesperson" ? currentUser.id : undefined,
-      agencyName: agencyName.trim(),
-      ownerName: ownerName.trim(),
-      cellPhone: cellPhone.trim(),
-      landlinePhone: landlinePhone.trim(),
-      websiteUrl: hasWebsite === "yes" ? websiteUrl.trim() : "Cliente não tem site ainda",
-      hasWebsite: hasWebsite === "yes",
       installments: installments,
     });
 
     // Reset form
-    setAgencyName("");
-    setOwnerName("");
-    setCellPhone("");
-    setLandlinePhone("");
-    setWebsiteUrl("");
-    setHasWebsite("yes");
     setInstallments(1);
-    setErrors({});
   };
 
   const handleLogout = async () => {
@@ -167,10 +112,10 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Informações do Cliente
+            Exportar Cotação
           </DialogTitle>
           <DialogDescription>
-            Preencha as informações abaixo antes de exportar a cotação.
+            Confirme as informações abaixo antes de exportar a cotação.
           </DialogDescription>
         </DialogHeader>
 
@@ -191,130 +136,46 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
             </div>
           )}
 
-          {/* Agency Name */}
-          <div className="space-y-2">
-            <Label htmlFor="agencyName">
-              Nome da Imobiliária <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="agencyName"
-              value={agencyName}
-              onChange={(e) => setAgencyName(e.target.value)}
-              placeholder="Digite o nome da imobiliária"
-              className={errors.agencyName ? "border-red-500" : ""}
-            />
-            {errors.agencyName && (
-              <p className="text-sm text-red-500">{errors.agencyName}</p>
-            )}
-          </div>
-
-          {/* Owner Name */}
-          <div className="space-y-2">
-            <Label htmlFor="ownerName">
-              Nome do Proprietário <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="ownerName"
-              value={ownerName}
-              onChange={(e) => setOwnerName(e.target.value)}
-              placeholder="Digite o nome do proprietário"
-              className={errors.ownerName ? "border-red-500" : ""}
-            />
-            {errors.ownerName && (
-              <p className="text-sm text-red-500">{errors.ownerName}</p>
-            )}
-          </div>
-
-          {/* Cell Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="cellPhone">
-              Celular
-            </Label>
-            <Input
-              id="cellPhone"
-              value={cellPhone}
-              onChange={(e) => setCellPhone(e.target.value)}
-              placeholder="(00) 00000-0000"
-              className={errors.phone ? "border-red-500" : ""}
-            />
-          </div>
-
-          {/* Landline Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="landlinePhone">
-              Telefone Fixo
-            </Label>
-            <Input
-              id="landlinePhone"
-              value={landlinePhone}
-              onChange={(e) => setLandlinePhone(e.target.value)}
-              placeholder="(00) 0000-0000"
-              className={errors.phone ? "border-red-500" : ""}
-            />
-            {errors.phone && (
-              <p className="text-sm text-red-500">{errors.phone}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              * Pelo menos um telefone é obrigatório
-            </p>
-          </div>
-
-          {/* Website - Checkbox first, then URL field */}
-          <div className="space-y-2">
-            <Label>
-              Site Atual <span className="text-red-500">*</span>
-            </Label>
-            <RadioGroup value={hasWebsite} onValueChange={(v) => setHasWebsite(v as "yes" | "no")}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="has-website-yes" />
-                <Label htmlFor="has-website-yes" className="font-normal cursor-pointer">
-                  Cliente tem site
-                </Label>
-              </div>
-              {/* URL field appears immediately after "Cliente tem site" checkbox */}
-              {hasWebsite === "yes" && (
-                <div className="ml-6 mt-2">
-                  <Input
-                    id="websiteUrl"
-                    value={websiteUrl}
-                    onChange={(e) => setWebsiteUrl(e.target.value)}
-                    placeholder="https://exemplo.com.br"
-                    className={errors.websiteUrl ? "border-red-500" : ""}
-                  />
-                  {errors.websiteUrl && (
-                    <p className="text-sm text-red-500 mt-1">{errors.websiteUrl}</p>
-                  )}
-                </div>
-              )}
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="has-website-no" />
-                <Label htmlFor="has-website-no" className="font-normal cursor-pointer">
-                  Cliente não tem site ainda
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Installment Options - Only for Annual and Biennial */}
+          {/* Installment Selection */}
           {showInstallmentOptions && (
-            <div className="space-y-3 pt-2 border-t">
-              <Label className="text-base font-medium">
-                Quer parcelar em quantas vezes?
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold">
+                Forma de Pagamento
               </Label>
-              <div className="flex flex-wrap gap-2">
+              <RadioGroup
+                value={installments.toString()}
+                onValueChange={(value) => setInstallments(parseInt(value))}
+                className="grid grid-cols-3 gap-3"
+              >
                 {installmentOptions.map((option) => (
-                  <Button
+                  <div
                     key={option.value}
-                    type="button"
-                    variant={installments === option.value ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setInstallments(option.value)}
-                    className={installments === option.value ? "bg-primary hover:bg-primary/90" : ""}
+                    className={`relative flex items-center justify-center rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                      installments === option.value
+                        ? "border-primary bg-primary/5"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
                   >
-                    {option.label}
-                  </Button>
+                    <RadioGroupItem
+                      value={option.value.toString()}
+                      id={`installment-${option.value}`}
+                      className="sr-only"
+                    />
+                    <Label
+                      htmlFor={`installment-${option.value}`}
+                      className="cursor-pointer font-medium text-sm"
+                    >
+                      {option.label}
+                    </Label>
+                  </div>
                 ))}
-              </div>
+              </RadioGroup>
+            </div>
+          )}
+
+          {!showInstallmentOptions && (
+            <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-900">
+              Para planos mensais e semestrais, o pagamento é realizado à vista.
             </div>
           )}
         </div>

@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, agencyName, clientName, email, cellPhone, businessType, hasCRM, hasERP, websiteUrl, createdAt FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, agencyName, clientName, email, cellPhone, businessType, hasCRM, hasERP, websiteUrl, createdAt FROM quotes ORDER BY createdAt DESC LIMIT 1;",
+  "rows": [
+    {
+      "id": "690001",
+      "agencyName": "Imobiliária Teste Natureza",
+      "clientName": "Carlos Teste",
+      "email": "carlos@teste.com",
+      "cellPhone": "(11) 99999-8888",
+      "businessType": "broker",
+      "hasCRM": "0",
+      "hasERP": "0",
+      "websiteUrl": "Cliente não tem site ainda",
+      "createdAt": "2026-02-06 01:01:02"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tagencyName\tclientName\temail\tcellPhone\tbusinessType\thasCRM\thasERP\twebsiteUrl\tcreatedAt\n690001\tImobiliária Teste Natureza\tCarlos Teste\tcarlos@teste.com\t(11) 99999-8888\tbroker\t0\t0\tCliente não tem site ainda\t2026-02-06 01:01:02\n",
+  "stderr": "",
+  "execution_time_ms": 126
+}
