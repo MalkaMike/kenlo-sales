@@ -1830,3 +1830,11 @@
 - [x] Test PDF generation with example data
 - [x] Verify ZERO overlapping text in final PDF
 - [x] Confirm 2-page layout maintained
+
+## PDF COMPLETE REWRITE - HTML approach (Feb 2026)
+- [ ] Rewrite PDF generator using HTML-to-PDF for pixel-perfect layout
+- [ ] Fix header: logo, title, date, vendor info - no overlaps
+- [ ] Fix metrics cards: IMOB and LOC properly laid out
+- [ ] Fix all sections: proper spacing, no text on top of text
+- [ ] Test with example data and verify ZERO overlaps
+- [ ] Verify all text is readable
