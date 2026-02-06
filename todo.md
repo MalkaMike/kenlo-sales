@@ -1891,3 +1891,25 @@
 - [x] Fix selectedAddons JSON array parsing
 - [x] Fix biennial/biannual key mismatch
 - [x] Test with 3 random examples - all highlighting verified
+
+## PDF Page 2 - Receita Extras (Feb 2026)
+- [ ] Read current PDF generator to understand existing Page 2 code
+- [ ] Design Page 2 layout matching Page 1 modern style
+- [ ] Add Receita Extras section with revenue from boletos, insurance, etc.
+- [ ] Add Ganho Líquido Mensal Estimado with prominent green number
+- [ ] Highlight relevant user selections on Page 2
+- [ ] Add pink callout/CTA box at bottom
+- [ ] Test with 3 random examples and verify Page 2 layout
+- [ ] Ensure Page 2 only appears when revenue data exists
+
+## Page 2 Receita Extras - COMPLETED (Feb 2026)
+- [x] Read current Page 2 code and understand data flow
+- [x] Redesign Page 2 with matching red header band
+- [x] Add revenue source cards (Kenlo Pay + Kenlo Seguros) with pink highlighting
+- [x] Add Resumo Financeiro Mensal table with green revenue / red costs
+- [x] Add prominent Ganho Líquido Mensal card with green text
+- [x] Add ROI indicators (ROI %, Payback months, Annual gain)
+- [x] Add CTA slogan box at bottom
+- [x] Page 2 only appears when revenue data exists
+- [x] Test with 3 random examples - verified all layouts correct
+- [x] Zero overlapping text on both pages confirmed

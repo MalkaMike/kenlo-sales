@@ -481,41 +481,211 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     }
 
     // ============================================
-    // PAGE 2: RECEITA EXTRAS (only if revenue exists)
+    // PAGE 2: RECEITA EXTRAS (only if revenue data exists)
     // ============================================
-    if (data.netGain && data.netGain > 0) {
+    const hasRevenue = (data.revenueFromBoletos && data.revenueFromBoletos > 0) ||
+      (data.revenueFromInsurance && data.revenueFromInsurance > 0);
+
+    if (hasRevenue) {
       doc.addPage();
-      Y = M + 30;
 
-      doc.fontSize(16).fillColor(C.dark).font("Helvetica-Bold")
-        .text("Kenlo Receita Extras", M, Y, { align: "center", width: CW });
-      Y += 20;
+      // --- PAGE 2 HEADER (matching Page 1 red band) ---
+      doc.rect(0, 0, PAGE_W, HDR_H).fill(C.red);
+      if (fs.existsSync(logoPath)) {
+        try { doc.image(logoPath, M, 12, { height: 24 }); } catch (_) {}
+      }
+      doc.fontSize(14).fillColor(C.white).font("Helvetica-Bold")
+        .text("Receita Extras", M + 115, 16);
+      doc.fontSize(6.5).fillColor("rgba(255,255,255,0.85)").font("Helvetica")
+        .text(`${data.agencyName || "Imobiliária"}  |  ${data.clientName}`, M, HDR_H - 14);
+      // Vendor info right
+      doc.fontSize(6.5).fillColor(C.white).font("Helvetica");
+      doc.text(`Vendedor: ${data.salesPersonName}`, vX, 14, { width: 170, align: "right" });
+      doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 25, { width: 170, align: "right" });
 
+      Y = HDR_H + 20;
+
+      // --- SUBTITLE ---
       doc.fontSize(9).fillColor(C.textLight).font("Helvetica")
-        .text("Potencial de receita adicional com serviços Kenlo", M, Y, { align: "center", width: CW });
-      Y += 20;
+        .text("Potencial de receita adicional com os serviços Kenlo contratados", M, Y, { width: CW });
+      Y += 22;
 
-      if (data.revenueFromBoletos && data.revenueFromBoletos > 0) {
-        Y = labelRow("Receita de Boletos (Kenlo Pay)", fmt(data.revenueFromBoletos), Y, { indent: 30 });
+      // --- REVENUE SOURCE CARDS ---
+      Y = sectionTitle("Fontes de Receita", Y);
+
+      const revSources = [
+        {
+          key: "pay",
+          label: "Kenlo Pay",
+          desc: "Receita de boletos e split digital",
+          detail: data.chargesSplitToOwner ? "Cobra Proprietário (Split) ativo" : "Cobrança de boletos ativa",
+          value: data.revenueFromBoletos || 0,
+          active: (data.revenueFromBoletos || 0) > 0,
+          formula: `${data.contracts || 0} contratos × valor por contrato`,
+        },
+        {
+          key: "seguros",
+          label: "Kenlo Seguros",
+          desc: "Seguros embutido no boleto de locação",
+          detail: "R$10,00 por contrato/mês",
+          value: data.revenueFromInsurance || 0,
+          active: (data.revenueFromInsurance || 0) > 0,
+          formula: `${data.contracts || 0} contratos × R$10,00`,
+        },
+      ];
+
+      const REV_CARD_W = COL2_W;
+      const REV_CARD_H = 80;
+      revSources.forEach((rs, i) => {
+        const x = M + i * (REV_CARD_W + 8);
+        box(x, Y, REV_CARD_W, REV_CARD_H, { selected: rs.active });
+
+        // Icon area (small colored dot)
+        const dotColor = rs.active ? C.pink : C.border;
+        doc.circle(x + 16, Y + 16, 5).fill(dotColor);
+        doc.fontSize(6).fillColor(C.white).font("Helvetica-Bold")
+          .text(rs.active ? "✓" : "–", x + 13, Y + 13);
+
+        // Title and description
+        doc.fontSize(9).fillColor(rs.active ? C.pink : C.text).font("Helvetica-Bold")
+          .text(rs.label, x + 28, Y + 10);
+        doc.fontSize(6.5).fillColor(rs.active ? C.pink : C.textLight).font("Helvetica")
+          .text(rs.desc, x + 28, Y + 22);
+
+        // Divider line
+        doc.moveTo(x + 12, Y + 36).lineTo(x + REV_CARD_W - 12, Y + 36)
+          .lineWidth(0.3).strokeColor(rs.active ? C.pinkBorder : C.border).stroke();
+
+        // Formula / detail
+        doc.fontSize(6.5).fillColor(C.textLight).font("Helvetica")
+          .text(rs.formula, x + 12, Y + 42);
+        doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
+          .text(rs.detail, x + 12, Y + 53);
+
+        // Value (bottom right, prominent)
+        doc.fontSize(12).fillColor(rs.active ? C.green : C.textLight).font("Helvetica-Bold")
+          .text(fmt(rs.value), x + 12, Y + 62, { width: REV_CARD_W - 24, align: "right" });
+        doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
+          .text("/ mês", x + REV_CARD_W - 32, Y + 67);
+      });
+      Y += REV_CARD_H + 20;
+
+      // --- TOTAL RECEITA MENSAL ---
+      const totalRevenue = (data.revenueFromBoletos || 0) + (data.revenueFromInsurance || 0);
+      Y = sectionTitle("Resumo Financeiro Mensal", Y);
+
+      // Summary table with light background
+      const TABLE_H = 110;
+      box(M, Y, CW, TABLE_H, { fill: C.bgLight, stroke: C.border });
+
+      let tY = Y + 12;
+      // Revenue lines
+      doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
+        .text("Receita Kenlo Pay", M + 16, tY);
+      doc.fontSize(7.5).fillColor(C.green).font("Helvetica-Bold")
+        .text(`+ ${fmt(data.revenueFromBoletos || 0)}`, M + CW - 106, tY, { width: 90, align: "right" });
+      tY += 14;
+
+      doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
+        .text("Receita Kenlo Seguros", M + 16, tY);
+      doc.fontSize(7.5).fillColor(C.green).font("Helvetica-Bold")
+        .text(`+ ${fmt(data.revenueFromInsurance || 0)}`, M + CW - 106, tY, { width: 90, align: "right" });
+      tY += 14;
+
+      // Divider
+      doc.moveTo(M + 12, tY).lineTo(M + CW - 12, tY)
+        .lineWidth(0.3).strokeColor(C.border).stroke();
+      tY += 8;
+
+      // Total revenue
+      doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+        .text("Total Receita Mensal", M + 16, tY);
+      doc.fontSize(8).fillColor(C.green).font("Helvetica-Bold")
+        .text(fmt(totalRevenue), M + CW - 106, tY, { width: 90, align: "right" });
+      tY += 16;
+
+      // Cost line
+      doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
+        .text("Custo Mensal Kenlo (Equivalente)", M + 16, tY);
+      const monthlyCost = (data.totalAnnual || 0) / 12;
+      doc.fontSize(7.5).fillColor(C.red).font("Helvetica-Bold")
+        .text(`- ${fmt(monthlyCost)}`, M + CW - 106, tY, { width: 90, align: "right" });
+      tY += 14;
+
+      // Post-paid
+      if (data.postPaidTotal && data.postPaidTotal > 0) {
+        doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
+          .text("Estimativa Pós-pagos (Excedente)", M + 16, tY);
+        doc.fontSize(7.5).fillColor(C.red).font("Helvetica-Bold")
+          .text(`- ${fmt(data.postPaidTotal)}`, M + CW - 106, tY, { width: 90, align: "right" });
       }
-      if (data.revenueFromInsurance && data.revenueFromInsurance > 0) {
-        Y = labelRow("Receita de Seguros", fmt(data.revenueFromInsurance), Y, { indent: 30 });
+
+      Y += TABLE_H + 16;
+
+      // --- GANHO LÍQUIDO MENSAL ESTIMADO (big green card) ---
+      const netGain = data.netGain || (totalRevenue - monthlyCost - (data.postPaidTotal || 0));
+      const isPositive = netGain > 0;
+
+      const NET_CARD_H = 80;
+      const greenBg = isPositive ? "#ECFDF5" : "#FEF2F2";
+      const greenBorder = isPositive ? "#6EE7B7" : "#FCA5A5";
+      const greenText = isPositive ? C.green : C.red;
+
+      box(M, Y, CW, NET_CARD_H, { fill: greenBg, stroke: greenBorder, lw: 1.5 });
+
+      doc.fontSize(9).fillColor(C.dark).font("Helvetica-Bold")
+        .text("Ganho Líquido Mensal Estimado", M, Y + 12, { width: CW, align: "center" });
+
+      doc.fontSize(28).fillColor(greenText).font("Helvetica-Bold")
+        .text(fmt(netGain), M, Y + 30, { width: CW, align: "center" });
+
+      doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+        .text(isPositive ? "Receita extras supera o custo da plataforma" : "Custo da plataforma supera receita extras", M, Y + 60, { width: CW, align: "center" });
+
+      Y += NET_CARD_H + 20;
+
+      // --- ROI HIGHLIGHT (if positive) ---
+      if (isPositive && monthlyCost > 0) {
+        const roiPercent = ((totalRevenue / monthlyCost) * 100 - 100).toFixed(0);
+        const paybackMonths = monthlyCost > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
+
+        Y = sectionTitle("Indicadores de Retorno", Y);
+
+        const INDICATOR_W = (CW - 16) / 3;
+        const INDICATOR_H = 50;
+
+        // ROI %
+        box(M, Y, INDICATOR_W, INDICATOR_H, { fill: C.bgLight, stroke: C.border });
+        doc.fontSize(18).fillColor(C.green).font("Helvetica-Bold")
+          .text(`${roiPercent}%`, M, Y + 8, { width: INDICATOR_W, align: "center" });
+        doc.fontSize(6.5).fillColor(C.textLight).font("Helvetica")
+          .text("ROI Receita vs Custo", M, Y + 32, { width: INDICATOR_W, align: "center" });
+
+        // Payback
+        box(M + INDICATOR_W + 8, Y, INDICATOR_W, INDICATOR_H, { fill: C.bgLight, stroke: C.border });
+        doc.fontSize(18).fillColor(C.blue).font("Helvetica-Bold")
+          .text(`${paybackMonths}`, M + INDICATOR_W + 8, Y + 8, { width: INDICATOR_W, align: "center" });
+        doc.fontSize(6.5).fillColor(C.textLight).font("Helvetica")
+          .text("Meses para Payback", M + INDICATOR_W + 8, Y + 32, { width: INDICATOR_W, align: "center" });
+
+        // Annual gain
+        const annualGain = netGain * 12;
+        box(M + (INDICATOR_W + 8) * 2, Y, INDICATOR_W, INDICATOR_H, { fill: C.bgLight, stroke: C.border });
+        doc.fontSize(14).fillColor(C.green).font("Helvetica-Bold")
+          .text(fmt(annualGain), M + (INDICATOR_W + 8) * 2, Y + 10, { width: INDICATOR_W, align: "center" });
+        doc.fontSize(6.5).fillColor(C.textLight).font("Helvetica")
+          .text("Ganho Anual Estimado", M + (INDICATOR_W + 8) * 2, Y + 32, { width: INDICATOR_W, align: "center" });
+
+        Y += INDICATOR_H + 20;
       }
 
-      Y += 20;
-
-      doc.fontSize(10).fillColor(C.dark).font("Helvetica-Bold")
-        .text("Ganho Líquido Mensal Estimado", M, Y, { align: "center", width: CW });
-      Y += 20;
-
-      doc.fontSize(36).fillColor(C.green).font("Helvetica-Bold")
-        .text(fmt(data.netGain), M, Y, { align: "center", width: CW });
-      Y += 50;
-
-      // Slogan box
-      box(M + 60, Y, CW - 120, 40, { fill: C.pinkLight, stroke: C.pink });
-      doc.fontSize(11).fillColor(C.pink).font("Helvetica-Bold")
-        .text("Kenlo, Quem Usa, lidera e ganha dinheiro!", M + 70, Y + 13, { align: "center", width: CW - 140 });
+      // --- CTA SLOGAN BOX ---
+      const CTA_H = 44;
+      doc.roundedRect(M + 40, Y, CW - 80, CTA_H, 6).fill(C.red);
+      doc.fontSize(12).fillColor(C.white).font("Helvetica-Bold")
+        .text("Kenlo — Quem usa, lidera.", M + 50, Y + 10, { width: CW - 100, align: "center" });
+      doc.fontSize(7).fillColor("rgba(255,255,255,0.8)").font("Helvetica")
+        .text("Transforme sua imobiliária em uma máquina de resultados", M + 50, Y + 27, { width: CW - 100, align: "center" });
     }
 
     doc.end();
