@@ -1145,119 +1145,126 @@ export default function CalculadoraPage() {
                   </div>
 
                   {/* Website */}
-                  <div>
-                    <Label className="text-sm font-semibold mb-2 block">Tem site? *</Label>
-                    <RadioGroup
-                      value={businessNature.hasWebsite ? "yes" : "no"}
-                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasWebsite: value === "yes", websiteUrl: value === "no" ? "" : businessNature.websiteUrl })}
-                      className="flex gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="has_website_yes" />
-                        <Label htmlFor="has_website_yes" className="cursor-pointer">Sim</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="has_website_no" />
-                        <Label htmlFor="has_website_no" className="cursor-pointer">Não</Label>
-                      </div>
-                    </RadioGroup>
+                  <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Tem site? *</Label>
+                      <RadioGroup
+                        value={businessNature.hasWebsite ? "yes" : "no"}
+                        onValueChange={(value) => setBusinessNature({ ...businessNature, hasWebsite: value === "yes", websiteUrl: value === "no" ? "" : businessNature.websiteUrl })}
+                        className="flex gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="yes" id="has_website_yes" />
+                          <Label htmlFor="has_website_yes" className="cursor-pointer">Sim</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="no" id="has_website_no" />
+                          <Label htmlFor="has_website_no" className="cursor-pointer">Não</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
                     {businessNature.hasWebsite && (
-                      <Input
-                        className="mt-2"
-                        value={businessNature.websiteUrl}
-                        onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
-                        placeholder="https://www.imobiliaria.com.br"
-                      />
+                      <div className="md:pt-7">
+                        <Input
+                          value={businessNature.websiteUrl}
+                          onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
+                          placeholder="https://www.imobiliaria.com.br"
+                        />
+                      </div>
                     )}
                   </div>
 
                   {/* CRM System - Only show for Corretora or Ambos */}
                   {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-                    <div>
-                    <Label className="text-sm font-semibold mb-2 block">Já usa CRM? (para Corretagem)</Label>
-                    <RadioGroup
-                      value={businessNature.hasCRM ? "yes" : "no"}
-                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasCRM: value === "yes", crmSystem: value === "no" ? "" : businessNature.crmSystem, crmOther: value === "no" ? "" : businessNature.crmOther })}
-                      className="flex gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="has_crm_yes" />
-                        <Label htmlFor="has_crm_yes" className="cursor-pointer">Sim</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="has_crm_no" />
-                        <Label htmlFor="has_crm_no" className="cursor-pointer">Não</Label>
-                      </div>
-                    </RadioGroup>
-                    {businessNature.hasCRM && (
-                      <div className="mt-2 space-y-2">
-                        <Select
-                          value={businessNature.crmSystem}
-                          onValueChange={(value) => setBusinessNature({ ...businessNature, crmSystem: value as CRMSystem, crmOther: value !== "Outro" ? "" : businessNature.crmOther })}
+                    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">Já usa CRM? (para Corretagem)</Label>
+                        <RadioGroup
+                          value={businessNature.hasCRM ? "yes" : "no"}
+                          onValueChange={(value) => setBusinessNature({ ...businessNature, hasCRM: value === "yes", crmSystem: value === "no" ? "" : businessNature.crmSystem, crmOther: value === "no" ? "" : businessNature.crmOther })}
+                          className="flex gap-4"
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o CRM" />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-[300px]">
-                            {CRM_SYSTEMS.map((crm) => (
-                              <SelectItem key={crm} value={crm}>{crm}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {businessNature.crmSystem === "Outro" && (
-                          <Input
-                            value={businessNature.crmOther}
-                            onChange={(e) => setBusinessNature({ ...businessNature, crmOther: e.target.value })}
-                            placeholder="Digite o nome do CRM"
-                          />
-                        )}
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="yes" id="has_crm_yes" />
+                            <Label htmlFor="has_crm_yes" className="cursor-pointer">Sim</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="no" id="has_crm_no" />
+                            <Label htmlFor="has_crm_no" className="cursor-pointer">Não</Label>
+                          </div>
+                        </RadioGroup>
                       </div>
-                    )}
+                      {businessNature.hasCRM && (
+                        <div className="md:pt-7 space-y-2">
+                          <Select
+                            value={businessNature.crmSystem}
+                            onValueChange={(value) => setBusinessNature({ ...businessNature, crmSystem: value as CRMSystem, crmOther: value !== "Outro" ? "" : businessNature.crmOther })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o CRM" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[300px]">
+                              {CRM_SYSTEMS.map((crm) => (
+                                <SelectItem key={crm} value={crm}>{crm}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {businessNature.crmSystem === "Outro" && (
+                            <Input
+                              value={businessNature.crmOther}
+                              onChange={(e) => setBusinessNature({ ...businessNature, crmOther: e.target.value })}
+                              placeholder="Digite o nome do CRM"
+                            />
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {/* ERP System - Only show for Administrador de Aluguel or Ambos */}
                   {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-                    <div>
-                    <Label className="text-sm font-semibold mb-2 block">Já usa ERP? (para Locação)</Label>
-                    <RadioGroup
-                      value={businessNature.hasERP ? "yes" : "no"}
-                      onValueChange={(value) => setBusinessNature({ ...businessNature, hasERP: value === "yes", erpSystem: value === "no" ? "" : businessNature.erpSystem, erpOther: value === "no" ? "" : businessNature.erpOther })}
-                      className="flex gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="has_erp_yes" />
-                        <Label htmlFor="has_erp_yes" className="cursor-pointer">Sim</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="has_erp_no" />
-                        <Label htmlFor="has_erp_no" className="cursor-pointer">Não</Label>
-                      </div>
-                    </RadioGroup>
-                    {businessNature.hasERP && (
-                      <div className="mt-2 space-y-2">
-                        <Select
-                          value={businessNature.erpSystem}
-                          onValueChange={(value) => setBusinessNature({ ...businessNature, erpSystem: value as ERPSystem, erpOther: value !== "Outro" ? "" : businessNature.erpOther })}
+                    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">Já usa ERP? (para Locação)</Label>
+                        <RadioGroup
+                          value={businessNature.hasERP ? "yes" : "no"}
+                          onValueChange={(value) => setBusinessNature({ ...businessNature, hasERP: value === "yes", erpSystem: value === "no" ? "" : businessNature.erpSystem, erpOther: value === "no" ? "" : businessNature.erpOther })}
+                          className="flex gap-4"
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o ERP" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ERP_SYSTEMS.map((erp) => (
-                              <SelectItem key={erp} value={erp}>{erp}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {businessNature.erpSystem === "Outro" && (
-                          <Input
-                            value={businessNature.erpOther}
-                            onChange={(e) => setBusinessNature({ ...businessNature, erpOther: e.target.value })}
-                            placeholder="Digite o nome do ERP"
-                          />
-                        )}
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="yes" id="has_erp_yes" />
+                            <Label htmlFor="has_erp_yes" className="cursor-pointer">Sim</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="no" id="has_erp_no" />
+                            <Label htmlFor="has_erp_no" className="cursor-pointer">Não</Label>
+                          </div>
+                        </RadioGroup>
                       </div>
-                    )}
+                      {businessNature.hasERP && (
+                        <div className="md:pt-7 space-y-2">
+                          <Select
+                            value={businessNature.erpSystem}
+                            onValueChange={(value) => setBusinessNature({ ...businessNature, erpSystem: value as ERPSystem, erpOther: value !== "Outro" ? "" : businessNature.erpOther })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o ERP" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ERP_SYSTEMS.map((erp) => (
+                                <SelectItem key={erp} value={erp}>{erp}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {businessNature.erpSystem === "Outro" && (
+                            <Input
+                              value={businessNature.erpOther}
+                              onChange={(e) => setBusinessNature({ ...businessNature, erpOther: e.target.value })}
+                              placeholder="Digite o nome do ERP"
+                            />
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -1416,3 +1416,22 @@
   - [x] Administrador de Aluguel: apenas ERP visível ✓
   - [x] Ambos: CRM e ERP visíveis ✓
   - [x] Modal de pré-visualização exibe todos os dados corretamente ✓
+
+## Melhoria de Layout - Campos Condicionais Horizontais (Fev 2026)
+
+- [x] Reorganizar layout dos campos condicionais para aproveitar espaço horizontal:
+  - [x] Campo "Tem site?": Colocar input URL à direita dos radio buttons (Sim/Não)
+  - [x] Campo "Já usa CRM?": Colocar dropdown de CRM à direita dos radio buttons
+  - [x] Campo "Já usa ERP?": Colocar dropdown de ERP à direita dos radio buttons
+- [x] Implementar usando grid layout (2 colunas):
+  - [x] Coluna esquerda: Label + Radio buttons
+  - [x] Coluna direita: Input/Dropdown condicional
+- [x] Garantir responsividade:
+  - [x] Desktop: Layout horizontal (2 colunas)
+  - [x] Mobile: Layout vertical (1 coluna, campos abaixo)
+- [x] Testar em diferentes tamanhos de tela ✓
+- [x] Testes realizados com sucesso:
+  - [x] Website: Input URL aparece à direita dos radio buttons ✓
+  - [x] CRM: Dropdown CRM aparece à direita dos radio buttons ✓
+  - [x] ERP: Dropdown ERP aparece à direita dos radio buttons ✓
+  - [x] Layout aproveita melhor o espaço horizontal disponível ✓
