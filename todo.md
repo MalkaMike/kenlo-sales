@@ -1461,3 +1461,29 @@
   - [x] Box não selecionada: borda cinza + fundo branco ✓
   - [x] Seleção muda ao clicar em outra box ✓
   - [x] Validação condicional CRM/ERP funcionando ✓
+
+## Correções - Tipo de Negócio e Layout Website/CRM/ERP (Fev 2026)
+
+- [ ] Corrigir boxes de "Tipo de Negócio":
+  - [ ] Reduzir tamanho das boxes (estão muito grandes)
+  - [ ] Remover descrições ("CRM + Site para vendas", "Gestão de locações", "Solução completa")
+  - [ ] Manter apenas ícone + título
+  - [ ] Mudar terceira opção de "Imob + Loc" para "Ambos"
+  - [ ] Contexto: Cliente que é Corretora E Administrador ao mesmo tempo
+- [ ] Reorganizar perguntas Website/CRM/ERP em 3 colunas:
+  - [ ] Coluna 1: "Tem site?" com boxes Sim/Não (substituir radio buttons)
+  - [ ] Coluna 2: "Já usa CRM?" com boxes Sim/Não (aparece para Corretora/Ambos)
+  - [ ] Coluna 3: "Já usa ERP?" com boxes Sim/Não (aparece para Administrador/Ambos)
+  - [ ] Cada pergunta em sua própria coluna, não mais layout vertical
+- [ ] Testar layout de 3 colunas e validação condicional
+
+## UI Refinements - Business Nature Section (Feb 2026)
+
+- [x] Reduzir tamanho das boxes de Tipo de Negócio (de p-6 para p-4)
+- [x] Remover descrições das boxes de Tipo de Negócio (manter apenas ícone + título)
+- [x] Mudar terceira opção de "Imob + Loc" para "Ambos"
+- [x] Reorganizar campos Website/CRM/ERP em layout de 3 colunas lado a lado
+- [x] Substituir radio buttons tradicionais por boxes estilizadas Sim/Não
+- [x] Aplicar mesmo padrão visual das boxes de produto (borda rosa quando selecionado)
+- [x] Manter visibilidade condicional: CRM para Corretora/Ambos, ERP para Administrador/Ambos
+- [x] Testar comportamento completo com todos os tipos de negócio

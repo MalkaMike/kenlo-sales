@@ -1075,20 +1075,17 @@ export default function CalculadoraPage() {
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "broker" })}
-                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                        className={`p-4 rounded-xl border-2 transition-all text-center ${
                           businessNature.businessType === "broker"
                             ? "border-primary bg-primary/5"
                             : "border-border bg-background hover:border-primary/30"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <TrendingUp className={`w-6 h-6 flex-shrink-0 ${
+                        <div className="flex flex-col items-center gap-2">
+                          <TrendingUp className={`w-5 h-5 ${
                             businessNature.businessType === "broker" ? "text-primary" : "text-muted-foreground"
                           }`} />
-                          <div className="flex-1">
-                            <div className="font-semibold text-base mb-1">Corretora</div>
-                            <div className="text-sm text-muted-foreground">CRM + Site para vendas</div>
-                          </div>
+                          <div className="font-semibold text-sm">Corretora</div>
                         </div>
                       </button>
 
@@ -1096,20 +1093,17 @@ export default function CalculadoraPage() {
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "rental_admin" })}
-                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                        className={`p-4 rounded-xl border-2 transition-all text-center ${
                           businessNature.businessType === "rental_admin"
                             ? "border-primary bg-primary/5"
                             : "border-border bg-background hover:border-primary/30"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <Key className={`w-6 h-6 flex-shrink-0 ${
+                        <div className="flex flex-col items-center gap-2">
+                          <Key className={`w-5 h-5 ${
                             businessNature.businessType === "rental_admin" ? "text-primary" : "text-muted-foreground"
                           }`} />
-                          <div className="flex-1">
-                            <div className="font-semibold text-base mb-1">Administrador de Aluguel</div>
-                            <div className="text-sm text-muted-foreground">Gestão de locações</div>
-                          </div>
+                          <div className="font-semibold text-sm">Administrador de Aluguel</div>
                         </div>
                       </button>
 
@@ -1117,20 +1111,17 @@ export default function CalculadoraPage() {
                       <button
                         type="button"
                         onClick={() => setBusinessNature({ ...businessNature, businessType: "both" })}
-                        className={`p-6 rounded-xl border-2 transition-all text-left ${
+                        className={`p-4 rounded-xl border-2 transition-all text-center ${
                           businessNature.businessType === "both"
                             ? "border-primary bg-primary/5"
                             : "border-border bg-background hover:border-primary/30"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <Zap className={`w-6 h-6 flex-shrink-0 ${
+                        <div className="flex flex-col items-center gap-2">
+                          <Zap className={`w-5 h-5 ${
                             businessNature.businessType === "both" ? "text-primary" : "text-muted-foreground"
                           }`} />
-                          <div className="flex-1">
-                            <div className="font-semibold text-base mb-1">Imob + Loc</div>
-                            <div className="text-sm text-muted-foreground">Solução completa</div>
-                          </div>
+                          <div className="font-semibold text-sm">Ambos</div>
                         </div>
                       </button>
                     </div>
@@ -1190,129 +1181,151 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
-                  {/* Website */}
-                  <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
+                  {/* Website / CRM / ERP - 3 Column Layout */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Column 1: Website */}
                     <div>
-                      <Label className="text-sm font-semibold mb-2 block">Tem site? *</Label>
-                      <RadioGroup
-                        value={businessNature.hasWebsite ? "yes" : "no"}
-                        onValueChange={(value) => setBusinessNature({ ...businessNature, hasWebsite: value === "yes", websiteUrl: value === "no" ? "" : businessNature.websiteUrl })}
-                        className="flex gap-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id="has_website_yes" />
-                          <Label htmlFor="has_website_yes" className="cursor-pointer">Sim</Label>
+                      <Label className="text-sm font-semibold mb-3 block">Tem site? *</Label>
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div
+                          onClick={() => setBusinessNature({ ...businessNature, hasWebsite: true })}
+                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                            businessNature.hasWebsite
+                              ? "border-[#E91E63] bg-[#FCE4EC]"
+                              : "border-gray-300 bg-white hover:border-gray-400"
+                          }`}
+                        >
+                          <span className="text-sm font-medium">Sim</span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id="has_website_no" />
-                          <Label htmlFor="has_website_no" className="cursor-pointer">Não</Label>
+                        <div
+                          onClick={() => setBusinessNature({ ...businessNature, hasWebsite: false, websiteUrl: "" })}
+                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                            !businessNature.hasWebsite
+                              ? "border-[#E91E63] bg-[#FCE4EC]"
+                              : "border-gray-300 bg-white hover:border-gray-400"
+                          }`}
+                        >
+                          <span className="text-sm font-medium">Não</span>
                         </div>
-                      </RadioGroup>
-                    </div>
-                    {businessNature.hasWebsite && (
-                      <div className="md:pt-7">
+                      </div>
+                      {businessNature.hasWebsite && (
                         <Input
                           value={businessNature.websiteUrl}
                           onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
                           placeholder="https://www.imobiliaria.com.br"
+                          className="text-sm"
                         />
+                      )}
+                    </div>
+
+                    {/* Column 2: CRM - Only show for Corretora or Ambos */}
+                    {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
+                      <div>
+                        <Label className="text-sm font-semibold mb-3 block">Já usa CRM?</Label>
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div
+                            onClick={() => setBusinessNature({ ...businessNature, hasCRM: true })}
+                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                              businessNature.hasCRM
+                                ? "border-[#E91E63] bg-[#FCE4EC]"
+                                : "border-gray-300 bg-white hover:border-gray-400"
+                            }`}
+                          >
+                            <span className="text-sm font-medium">Sim</span>
+                          </div>
+                          <div
+                            onClick={() => setBusinessNature({ ...businessNature, hasCRM: false, crmSystem: "", crmOther: "" })}
+                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                              !businessNature.hasCRM
+                                ? "border-[#E91E63] bg-[#FCE4EC]"
+                                : "border-gray-300 bg-white hover:border-gray-400"
+                            }`}
+                          >
+                            <span className="text-sm font-medium">Não</span>
+                          </div>
+                        </div>
+                        {businessNature.hasCRM && (
+                          <div className="space-y-2">
+                            <Select
+                              value={businessNature.crmSystem}
+                              onValueChange={(value) => setBusinessNature({ ...businessNature, crmSystem: value as CRMSystem, crmOther: value !== "Outro" ? "" : businessNature.crmOther })}
+                            >
+                              <SelectTrigger className="text-sm">
+                                <SelectValue placeholder="Selecione o CRM" />
+                              </SelectTrigger>
+                              <SelectContent className="max-h-[300px]">
+                                {CRM_SYSTEMS.map((crm) => (
+                                  <SelectItem key={crm} value={crm}>{crm}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {businessNature.crmSystem === "Outro" && (
+                              <Input
+                                value={businessNature.crmOther}
+                                onChange={(e) => setBusinessNature({ ...businessNature, crmOther: e.target.value })}
+                                placeholder="Digite o nome do CRM"
+                                className="text-sm"
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Column 3: ERP - Only show for Administrador de Aluguel or Ambos */}
+                    {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
+                      <div>
+                        <Label className="text-sm font-semibold mb-3 block">Já usa ERP?</Label>
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div
+                            onClick={() => setBusinessNature({ ...businessNature, hasERP: true })}
+                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                              businessNature.hasERP
+                                ? "border-[#E91E63] bg-[#FCE4EC]"
+                                : "border-gray-300 bg-white hover:border-gray-400"
+                            }`}
+                          >
+                            <span className="text-sm font-medium">Sim</span>
+                          </div>
+                          <div
+                            onClick={() => setBusinessNature({ ...businessNature, hasERP: false, erpSystem: "", erpOther: "" })}
+                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
+                              !businessNature.hasERP
+                                ? "border-[#E91E63] bg-[#FCE4EC]"
+                                : "border-gray-300 bg-white hover:border-gray-400"
+                            }`}
+                          >
+                            <span className="text-sm font-medium">Não</span>
+                          </div>
+                        </div>
+                        {businessNature.hasERP && (
+                          <div className="space-y-2">
+                            <Select
+                              value={businessNature.erpSystem}
+                              onValueChange={(value) => setBusinessNature({ ...businessNature, erpSystem: value as ERPSystem, erpOther: value !== "Outro" ? "" : businessNature.erpOther })}
+                            >
+                              <SelectTrigger className="text-sm">
+                                <SelectValue placeholder="Selecione o ERP" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ERP_SYSTEMS.map((erp) => (
+                                  <SelectItem key={erp} value={erp}>{erp}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {businessNature.erpSystem === "Outro" && (
+                              <Input
+                                value={businessNature.erpOther}
+                                onChange={(e) => setBusinessNature({ ...businessNature, erpOther: e.target.value })}
+                                placeholder="Digite o nome do ERP"
+                                className="text-sm"
+                              />
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  {/* CRM System - Only show for Corretora or Ambos */}
-                  {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-                    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">Já usa CRM? (para Corretagem)</Label>
-                        <RadioGroup
-                          value={businessNature.hasCRM ? "yes" : "no"}
-                          onValueChange={(value) => setBusinessNature({ ...businessNature, hasCRM: value === "yes", crmSystem: value === "no" ? "" : businessNature.crmSystem, crmOther: value === "no" ? "" : businessNature.crmOther })}
-                          className="flex gap-4"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="has_crm_yes" />
-                            <Label htmlFor="has_crm_yes" className="cursor-pointer">Sim</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="has_crm_no" />
-                            <Label htmlFor="has_crm_no" className="cursor-pointer">Não</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                      {businessNature.hasCRM && (
-                        <div className="md:pt-7 space-y-2">
-                          <Select
-                            value={businessNature.crmSystem}
-                            onValueChange={(value) => setBusinessNature({ ...businessNature, crmSystem: value as CRMSystem, crmOther: value !== "Outro" ? "" : businessNature.crmOther })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o CRM" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[300px]">
-                              {CRM_SYSTEMS.map((crm) => (
-                                <SelectItem key={crm} value={crm}>{crm}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          {businessNature.crmSystem === "Outro" && (
-                            <Input
-                              value={businessNature.crmOther}
-                              onChange={(e) => setBusinessNature({ ...businessNature, crmOther: e.target.value })}
-                              placeholder="Digite o nome do CRM"
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* ERP System - Only show for Administrador de Aluguel or Ambos */}
-                  {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-                    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-start">
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">Já usa ERP? (para Locação)</Label>
-                        <RadioGroup
-                          value={businessNature.hasERP ? "yes" : "no"}
-                          onValueChange={(value) => setBusinessNature({ ...businessNature, hasERP: value === "yes", erpSystem: value === "no" ? "" : businessNature.erpSystem, erpOther: value === "no" ? "" : businessNature.erpOther })}
-                          className="flex gap-4"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="yes" id="has_erp_yes" />
-                            <Label htmlFor="has_erp_yes" className="cursor-pointer">Sim</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="no" id="has_erp_no" />
-                            <Label htmlFor="has_erp_no" className="cursor-pointer">Não</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                      {businessNature.hasERP && (
-                        <div className="md:pt-7 space-y-2">
-                          <Select
-                            value={businessNature.erpSystem}
-                            onValueChange={(value) => setBusinessNature({ ...businessNature, erpSystem: value as ERPSystem, erpOther: value !== "Outro" ? "" : businessNature.erpOther })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o ERP" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ERP_SYSTEMS.map((erp) => (
-                                <SelectItem key={erp} value={erp}>{erp}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          {businessNature.erpSystem === "Outro" && (
-                            <Input
-                              value={businessNature.erpOther}
-                              onChange={(e) => setBusinessNature({ ...businessNature, erpOther: e.target.value })}
-                              placeholder="Digite o nome do ERP"
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
 
