@@ -1602,3 +1602,93 @@
 - [x] Remover completamente todos os badges "Recomendado" da tabela de Kombos
 - [x] Verificar KomboComparisonTable component
 - [x] Testar todas as correções no navegador
+
+## PDF Redesign - World-Class Executive Proposal (Feb 2026)
+
+### Professional Header
+- [ ] Create sophisticated header block with gray background
+- [ ] Add Date of Issue (current date)
+- [ ] Add Validity Date (30 days from issue)
+- [ ] Add Vendor Name: "Kenlo"
+- [ ] Add Client Name (agencyName)
+- [ ] Add Client Contact Person (clientName)
+- [ ] Add Email
+- [ ] Add Phone Number
+- [ ] Implement multi-column grid layout for elegant placement
+
+### Visual Logic & Hierarchy - Metrics
+- [ ] Create high-contrast cards for IMOB and LOCACAO metrics
+- [ ] Add dark blue headers (#1E293B) for metric cards
+- [ ] Add icons for Users, Closures, Contracts
+- [ ] Implement checkbox visual indicators (☐ unchecked, ☑ checked)
+- [ ] Display IMOB metrics: Users, Closures/month, Leads/month, IA SDR, WhatsApp
+- [ ] Display LOCACAO metrics: Contracts, New contracts/month, Cobra Inquilino, Cobra Proprietario
+
+### Visual Logic & Hierarchy - Solution & Add-ons
+- [ ] Create "Solução em análise" section with 3 horizontal boxes
+- [ ] Highlight selected solution with pink background
+- [ ] Add blue callout box above add-ons explaining selection system
+- [ ] Implement 2x3 grid layout for 6 add-ons
+- [ ] Highlight selected add-ons with pink border (#EC4899)
+- [ ] Show add-on titles and descriptions in clean tiles
+
+### Payment Frequency & Plan Selection
+- [ ] Display 4 payment frequency boxes with percentages
+- [ ] Highlight selected frequency with pink border
+- [ ] Show Kombo options in horizontal row
+- [ ] Add discount badges (10% OFF, 15% OFF, 20% OFF) on Kombos
+- [ ] Highlight selected Kombo with pink background
+
+### Financial Integrity - The Calculus
+- [ ] **CRITICAL**: Ensure all math is logically consistent
+- [ ] Calculate Total = License + Additional Users + Additional Contracts + Implementation
+- [ ] Calculate Installments = Total ÷ number of installments
+- [ ] Calculate Monthly Equivalent = Total ÷ 12
+- [ ] Create Comparison Table showing:
+  * Mensal (current frequency × 1.25)
+  * Semestral (current frequency × 1.111)
+  * Bi-Annual (current frequency × 0.9)
+- [ ] Calculate Post-paid estimates correctly
+- [ ] Verify all numbers match expected formulas
+
+### Investment Section Breakdown
+- [ ] Show "Licença pré-paga" line item
+- [ ] Show "Usuários adicionais pré-pagos" line item
+- [ ] Show "Contratos adicionais pré-pagos" line item
+- [ ] Show "Implantação (única vez)" line item
+- [ ] Display **Total** in bold
+- [ ] Display **Condições de Pagamento** (e.g., "3x R$ 4,333.33")
+- [ ] Display **Equivalente mensal**
+- [ ] Add comparison table section
+- [ ] Add post-paid estimates section
+
+### Page 2 - Kenlo Receita Extras
+- [ ] Create second page for "Kenlo Receita Extras"
+- [ ] Display revenue number in large, prominent format
+- [ ] Add Kenlo slogan: "Kenlo, Quem Usa, lidera e ganha dinheiro!"
+- [ ] Ensure proper spacing and layout
+
+### Aesthetic Requirements
+- [ ] Apply SaaS-Modern aesthetic: plenty of white space
+- [ ] Use Sans-serif typography (Helvetica/similar)
+- [ ] Use thin borders throughout
+- [ ] Ensure professional, tech-forward appearance
+- [ ] Maintain Kenlo brand voice
+
+### Testing & Validation
+- [ ] Test PDF generation with sample data
+- [ ] Verify all mathematical calculations are correct
+- [ ] Verify all visual elements match Book3.pdf reference
+- [ ] Test with different scenarios (Imob only, Loc only, Both)
+- [ ] Test with different Kombos (Start, Pro, Core Gestão, Elite)
+- [ ] Test with different payment frequencies
+- [ ] Verify 2-page layout works correctly
+
+## PDF Design Refinements - Match Book3.pdf Exactly (Feb 2026)
+
+- [x] **Darker metrics card headers** - Make IMOB/LOCAÇÃO headers dark blue/gray like Book3.pdf
+- [x] **Fix blue callout box text** - Replace placeholder English with proper Portuguese explanation
+- [x] **Show discount badges on ALL Kombos** - Display "10% OFF", "15% OFF", "20% OFF" on all applicable plans
+- [x] **Implement Page 2** - Add "Kenlo Receita Extras" with revenue breakdown and slogan when netGain > 0
+- [x] **Add icons to metrics** - Include visual icons for Users, Closures, Contracts
+- [x] Test all refinements with sample PDF generation
