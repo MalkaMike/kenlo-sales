@@ -1838,3 +1838,10 @@
 - [ ] Fix all sections: proper spacing, no text on top of text
 - [ ] Test with example data and verify ZERO overlaps
 - [ ] Verify all text is readable
+
+## PDF Header Fix - Logo & Title (Feb 2026)
+- [ ] Convert Kenlo.ai logo to white PNG for PDF header
+- [ ] Replace current logo in PDF with real Kenlo logo
+- [ ] Change title from "PROPOSTA COMERCIAL KENLO" to "Orçamento Comercial"
+- [ ] Fix Emissão/Validade text overlap with logo
+- [ ] Test PDF generation and verify clean header with no overlaps

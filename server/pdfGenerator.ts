@@ -157,29 +157,29 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ============================================
 
     // --- HEADER (red band) ---
-    const HDR_H = 70;
+    const HDR_H = 80;
     doc.rect(0, 0, PAGE_W, HDR_H).fill(C.red);
 
-    // Logo (left) - use smaller height to avoid overlap
+    // Logo (left) - real Kenlo logo, white version
     const logoPath = path.join(process.cwd(), "client/public/kenlo-logo-white.png");
     if (fs.existsSync(logoPath)) {
-      try { doc.image(logoPath, M, 14, { height: 22 }); } catch (_) {}
+      try { doc.image(logoPath, M, 10, { height: 28 }); } catch (_) {}
     }
 
-    // Title (right of logo, vertically centered in header)
-    doc.fontSize(12).fillColor(C.white).font("Helvetica-Bold")
-      .text("PROPOSTA COMERCIAL KENLO", M + 100, 18);
+    // Title (right of logo, vertically centered in top portion of header)
+    doc.fontSize(14).fillColor(C.white).font("Helvetica-Bold")
+      .text("Orçamento Comercial", M + 120, 16);
 
-    // Date line (below title, left)
+    // Date line (bottom of header, left - well below logo)
     const issueDate = new Date().toLocaleDateString("pt-BR");
     doc.fontSize(7).fillColor(C.white).font("Helvetica")
-      .text(`Emissão: ${issueDate}  |  Validade: 30 dias`, M, HDR_H - 18);
+      .text(`Emissão: ${issueDate}  |  Validade: 30 dias`, M, HDR_H - 16);
 
-    // Vendor info (right side)
+    // Vendor info (right side, top)
     doc.fontSize(7).fillColor(C.white).font("Helvetica");
     const vX = PAGE_W - M - 170;
-    doc.text(`Vendedor: ${data.salesPersonName}`, vX, 18, { width: 170, align: "right" });
-    doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 28, { width: 170, align: "right" });
+    doc.text(`Vendedor: ${data.salesPersonName}`, vX, 14, { width: 170, align: "right" });
+    doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 26, { width: 170, align: "right" });
     doc.text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, vX, 38, { width: 170, align: "right" });
 
     // Client bar (just below header)
