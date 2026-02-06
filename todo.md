@@ -1528,3 +1528,14 @@
 - [x] Usar mesmas cores e estilo visual da calculadora (rosa para seleção, azul para headers)
 - [x] Testar geração de PDF e garantir que tudo cabe em uma página
 - [x] Validar que todas as regras de negócio estão sendo respeitadas
+
+## Bug Fixes - Export Modal and Plan Logic (Feb 2026)
+
+- [x] **Bug: Export modal payment options not clickable** - Boxes "À vista", "2x", "3x" não respondem ao clique
+- [x] Investigar se há overlay ou z-index bloqueando os cliques
+- [x] Testar funcionalidade de seleção de parcelas no modal
+- [x] **Bug: Validar lógica de determinação de planos Prime/K/K2**
+- [x] Corrigir regras para IMOB: Prime (1-6 usuários), K (7-13 usuários), K2 (14+ usuários) - baseado em USUÁRIOS
+- [x] Corrigir regras para LOC: Prime (1-100 contratos), K (101-200 contratos), K2 (201+ contratos) - baseado em CONTRATOS
+- [x] Cliente não escolhe plano - sistema determina automaticamente baseado em usuários/contratos
+- [x] Testar determinação de plano com diferentes combinações de usuários e contratos

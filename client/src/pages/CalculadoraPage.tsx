@@ -785,15 +785,15 @@ export default function CalculadoraPage() {
     if (product === "imob" || product === "both") {
       const users = metrics.imobUsers;
       
-      // IMOB: Baseado em capacidade incluída
-      // Prime: 2 incluídos (até 7 usuários total)
-      // K: 7 incluídos (8 a 14 usuários total)
-      // K2: 14 incluídos (15+ usuários total)
+      // IMOB: Baseado em número de usuários
+      // Prime: 1-6 usuários
+      // K: 7-13 usuários
+      // K2: 14+ usuários
       let recommendedPlan: PlanTier = 'prime';
       
-      if (users >= 16) {
+      if (users >= 14) {
         recommendedPlan = 'k2';
-      } else if (users >= 8) {
+      } else if (users >= 7) {
         recommendedPlan = 'k';
       } else {
         recommendedPlan = 'prime';
@@ -805,15 +805,15 @@ export default function CalculadoraPage() {
     if (product === "loc" || product === "both") {
       const contracts = metrics.contractsUnderManagement;
       
-      // LOC: Baseado em capacidade incluída
-      // Prime: 100 incluídos (até 200 contratos total)
-      // K: 200 incluídos (201 a 500 contratos total)
-      // K2: 500 incluídos (501+ contratos total)
+      // LOC: Baseado em número de contratos
+      // Prime: 1-100 contratos
+      // K: 101-200 contratos
+      // K2: 201+ contratos
       let recommendedPlan: PlanTier = 'prime';
       
-      if (contracts >= 501) {
+      if (contracts >= 201) {
         recommendedPlan = 'k2';
-      } else if (contracts >= 201) {
+      } else if (contracts >= 101) {
         recommendedPlan = 'k';
       } else {
         recommendedPlan = 'prime';

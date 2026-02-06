@@ -148,8 +148,9 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
                 className="grid grid-cols-3 gap-3"
               >
                 {installmentOptions.map((option) => (
-                  <div
+                  <Label
                     key={option.value}
+                    htmlFor={`installment-${option.value}`}
                     className={`relative flex items-center justify-center rounded-lg border-2 p-3 cursor-pointer transition-all ${
                       installments === option.value
                         ? "border-primary bg-primary/5"
@@ -161,13 +162,10 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
                       id={`installment-${option.value}`}
                       className="sr-only"
                     />
-                    <Label
-                      htmlFor={`installment-${option.value}`}
-                      className="cursor-pointer font-medium text-sm"
-                    >
+                    <span className="font-medium text-sm">
                       {option.label}
-                    </Label>
-                  </div>
+                    </span>
+                  </Label>
                 ))}
               </RadioGroup>
             </div>
