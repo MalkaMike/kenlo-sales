@@ -1719,3 +1719,10 @@
   - [x] Generate test PDF and verify NO weird characters (Ø=ÜÊ, Ø=Ÿ, &₁, etc.)
   - [x] Verify all text is readable and professional
   - [x] Compare with Book3.pdf for visual quality
+
+## Verify Metrics Data Mapping in PDF (Feb 2026)
+
+- [x] Verify PDF generator correctly reads imobUsers, closings, contracts, newContracts, leadsPerMonth from top-level data
+- [x] Test PDF generation from actual calculator with real metrics values
+- [x] Confirm metrics cards show correct numbers (not zeros)
+- [x] Verify IA SDR and WhatsApp checkboxes reflect actual state
