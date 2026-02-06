@@ -1692,3 +1692,10 @@
 - [x] **Implement Page 2** - Add "Kenlo Receita Extras" with revenue breakdown and slogan when netGain > 0
 - [x] **Add icons to metrics** - Include visual icons for Users, Closures, Contracts
 - [x] Test all refinements with sample PDF generation
+
+## Verify Metrics Cards in Generated PDFs (Feb 2026)
+
+- [x] Check if frontend passes metrics data (imobUsers, closings, leadsPerMonth, contracts, newContracts) to PDF generator
+- [x] Verify PDF generator receives and displays metrics cards correctly
+- [x] Test PDF generation from calculator with real data to confirm metrics cards appear
+- [x] Fix any missing data mapping between frontend and PDF generator
