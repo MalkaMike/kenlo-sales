@@ -1493,3 +1493,10 @@
 - [x] Ajustar tamanho das boxes de Tipo de Negócio para corresponder às boxes de produto ("Imob só")
 - [x] Usar mesmo font-size e padding das boxes de produto
 - [x] Garantir homogeneidade visual entre todas as boxes de seleção
+
+## Website/CRM/ERP UI Improvement (Feb 2026)
+
+- [x] Substituir boxes Sim/Não por switches (toggles) igual aos add-ons
+- [x] Ajustar font-size dos labels para manter consistência visual
+- [x] Remover boxes desnecessárias e usar componente Switch do shadcn/ui
+- [x] Testar funcionalidade dos switches com todos os tipos de negócio

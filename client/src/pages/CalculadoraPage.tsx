@@ -1181,68 +1181,36 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
-                  {/* Website / CRM / ERP - 3 Column Layout */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Column 1: Website */}
-                    <div>
-                      <Label className="text-sm font-semibold mb-3 block">Tem site? *</Label>
-                      <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div
-                          onClick={() => setBusinessNature({ ...businessNature, hasWebsite: true })}
-                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                            businessNature.hasWebsite
-                              ? "border-[#E91E63] bg-[#FCE4EC]"
-                              : "border-gray-300 bg-white hover:border-gray-400"
-                          }`}
-                        >
-                          <span className="text-sm font-medium">Sim</span>
-                        </div>
-                        <div
-                          onClick={() => setBusinessNature({ ...businessNature, hasWebsite: false, websiteUrl: "" })}
-                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                            !businessNature.hasWebsite
-                              ? "border-[#E91E63] bg-[#FCE4EC]"
-                              : "border-gray-300 bg-white hover:border-gray-400"
-                          }`}
-                        >
-                          <span className="text-sm font-medium">Não</span>
-                        </div>
-                      </div>
-                      {businessNature.hasWebsite && (
-                        <Input
-                          value={businessNature.websiteUrl}
-                          onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
-                          placeholder="https://www.imobiliaria.com.br"
-                          className="text-sm"
-                        />
-                      )}
+                  {/* Website / CRM / ERP - Clean Layout with Switches */}
+                  <div className="space-y-4">
+                    {/* Website */}
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="hasWebsite" className="text-sm font-medium">Tem site? *</Label>
+                      <Switch
+                        id="hasWebsite"
+                        checked={businessNature.hasWebsite}
+                        onCheckedChange={(checked) => setBusinessNature({ ...businessNature, hasWebsite: checked, websiteUrl: checked ? businessNature.websiteUrl : "" })}
+                      />
                     </div>
+                    {businessNature.hasWebsite && (
+                      <Input
+                        value={businessNature.websiteUrl}
+                        onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
+                        placeholder="https://www.imobiliaria.com.br"
+                        className="text-sm"
+                      />
+                    )}
 
-                    {/* Column 2: CRM - Only show for Corretora or Ambos */}
+                    {/* CRM - Only show for Corretora or Ambos */}
                     {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-                      <div>
-                        <Label className="text-sm font-semibold mb-3 block">Já usa CRM?</Label>
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div
-                            onClick={() => setBusinessNature({ ...businessNature, hasCRM: true })}
-                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                              businessNature.hasCRM
-                                ? "border-[#E91E63] bg-[#FCE4EC]"
-                                : "border-gray-300 bg-white hover:border-gray-400"
-                            }`}
-                          >
-                            <span className="text-sm font-medium">Sim</span>
-                          </div>
-                          <div
-                            onClick={() => setBusinessNature({ ...businessNature, hasCRM: false, crmSystem: "", crmOther: "" })}
-                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                              !businessNature.hasCRM
-                                ? "border-[#E91E63] bg-[#FCE4EC]"
-                                : "border-gray-300 bg-white hover:border-gray-400"
-                            }`}
-                          >
-                            <span className="text-sm font-medium">Não</span>
-                          </div>
+                      <>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="hasCRM" className="text-sm font-medium">Já usa CRM?</Label>
+                          <Switch
+                            id="hasCRM"
+                            checked={businessNature.hasCRM}
+                            onCheckedChange={(checked) => setBusinessNature({ ...businessNature, hasCRM: checked, crmSystem: checked ? businessNature.crmSystem : "", crmOther: checked ? businessNature.crmOther : "" })}
+                          />
                         </div>
                         {businessNature.hasCRM && (
                           <div className="space-y-2">
@@ -1269,34 +1237,19 @@ export default function CalculadoraPage() {
                             )}
                           </div>
                         )}
-                      </div>
+                      </>
                     )}
 
-                    {/* Column 3: ERP - Only show for Administrador de Aluguel or Ambos */}
+                    {/* ERP - Only show for Administrador de Aluguel or Ambos */}
                     {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-                      <div>
-                        <Label className="text-sm font-semibold mb-3 block">Já usa ERP?</Label>
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div
-                            onClick={() => setBusinessNature({ ...businessNature, hasERP: true })}
-                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                              businessNature.hasERP
-                                ? "border-[#E91E63] bg-[#FCE4EC]"
-                                : "border-gray-300 bg-white hover:border-gray-400"
-                            }`}
-                          >
-                            <span className="text-sm font-medium">Sim</span>
-                          </div>
-                          <div
-                            onClick={() => setBusinessNature({ ...businessNature, hasERP: false, erpSystem: "", erpOther: "" })}
-                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                              !businessNature.hasERP
-                                ? "border-[#E91E63] bg-[#FCE4EC]"
-                                : "border-gray-300 bg-white hover:border-gray-400"
-                            }`}
-                          >
-                            <span className="text-sm font-medium">Não</span>
-                          </div>
+                      <>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="hasERP" className="text-sm font-medium">Já usa ERP?</Label>
+                          <Switch
+                            id="hasERP"
+                            checked={businessNature.hasERP}
+                            onCheckedChange={(checked) => setBusinessNature({ ...businessNature, hasERP: checked, erpSystem: checked ? businessNature.erpSystem : "", erpOther: checked ? businessNature.erpOther : "" })}
+                          />
                         </div>
                         {businessNature.hasERP && (
                           <div className="space-y-2">
@@ -1323,7 +1276,7 @@ export default function CalculadoraPage() {
                             )}
                           </div>
                         )}
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>
