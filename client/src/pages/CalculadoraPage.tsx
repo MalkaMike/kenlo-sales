@@ -1549,22 +1549,38 @@ export default function CalculadoraPage() {
                             <Switch
                               id="externalAI"
                               checked={metrics.usesExternalAI}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                              onCheckedChange={(checked) => {
+                                if (checked && metrics.wantsWhatsApp) {
+                                  // Disable WhatsApp when IA SDR is enabled
+                                  setMetrics({ ...metrics, usesExternalAI: true, wantsWhatsApp: false });
+                                  toast.info("WhatsApp Integrado foi desabilitado pois IA SDR Externa foi ativado. Você pode usar um ou outro, não ambos.");
+                                } else {
+                                  setMetrics({ ...metrics, usesExternalAI: checked });
+                                }
+                              }}
                               disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                             <div className="flex items-center gap-2">
                               <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
-                              {!metrics.usesExternalAI && (
+                              {metrics.usesExternalAI && (
                                 <span className="text-xs text-muted-foreground">(Requer IA SDR)</span>
                               )}
                             </div>
                             <Switch
                               id="whatsapp"
-                              checked={metrics.wantsWhatsApp && metrics.usesExternalAI}
-                              onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
-                              disabled={(product !== "imob" && product !== "both") || !metrics.usesExternalAI}
+                              checked={metrics.wantsWhatsApp}
+                              onCheckedChange={(checked) => {
+                                if (checked && metrics.usesExternalAI) {
+                                  // Disable IA SDR when WhatsApp is enabled
+                                  setMetrics({ ...metrics, wantsWhatsApp: true, usesExternalAI: false });
+                                  toast.info("IA SDR Externa foi desabilitado pois WhatsApp Integrado foi ativado. Você pode usar um ou outro, não ambos.");
+                                } else {
+                                  setMetrics({ ...metrics, wantsWhatsApp: checked });
+                                }
+                              }}
+                              disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
                         </div>

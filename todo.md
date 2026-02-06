@@ -1591,3 +1591,14 @@
 - [x] **Adicionar boxes visuais** em torno de cada Kombo na tabela para destacar melhor (já implementado)
 - [x] **Remover botão "Pré-visualizar Dados""
 - [x] Testar todas as mudanças no navegador
+
+## Bug Fixes - IA SDR/WhatsApp and Recomendado Badge (Feb 2026)
+
+- [x] **Bug: IA SDR e WhatsApp não são mutuamente exclusivos** - Usuário pode ativar ambos simultaneamente
+- [x] Implementar lógica: Se IA SDR é ativado, WhatsApp deve ser desabilitado automaticamente (e vice-versa)
+- [x] Permitir que usuário tenha nenhum dos dois ativados
+- [x] Adicionar mensagem informativa quando um desabilita o outro
+- [x] **Bug: Badge "Recomendado" ainda aparece na tabela de Kombos**
+- [x] Remover completamente todos os badges "Recomendado" da tabela de Kombos
+- [x] Verificar KomboComparisonTable component
+- [x] Testar todas as correções no navegador

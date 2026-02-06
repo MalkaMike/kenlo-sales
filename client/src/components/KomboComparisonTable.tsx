@@ -806,13 +806,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             SELECIONADO
                           </Badge>
                         )}
-                        {/* Badge RECOMENDADO - fixo baseado na lógica, independente da seleção */}
-                        {col.isRecommended && (
-                          <Badge className="bg-amber-500 text-white text-[10px] px-2 py-0.5">
-                            <Star className="w-3 h-3 mr-1" />
-                            Recomendado
-                          </Badge>
-                        )}
+
                       </div>
                     </th>
                   ))}
