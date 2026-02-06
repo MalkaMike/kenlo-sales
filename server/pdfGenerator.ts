@@ -202,11 +202,11 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.text(`Email: ${data.vendorEmail || "vendas@kenlo.com.br"}`, vX, 25, { width: 170, align: "right" });
     doc.text(`Telefone: ${data.vendorPhone || "(11) 1234-5678"}`, vX, 36, { width: 170, align: "right" });
 
-    // --- CLIENT BAR (Comment 1: more space, bigger font) ---
-    let Y = HDR_H + 14;
-    doc.fontSize(8).fillColor(C.red).font("Helvetica-Bold").text("CLIENTE:", M, Y);
-    doc.fontSize(9).fillColor(C.dark).font("Helvetica-Bold")
-      .text(`${data.agencyName || "Imobiliária"}  |  ${data.clientName}`, M + 55, Y);
+    // --- CLIENT BAR (Comment 1: bigger font) ---
+    let Y = HDR_H + 16;
+    doc.fontSize(10).fillColor(C.red).font("Helvetica-Bold").text("CLIENTE:", M, Y);
+    doc.fontSize(12).fillColor(C.dark).font("Helvetica-Bold")
+      .text(`${data.agencyName || "Imobiliária"}  |  ${data.clientName}`, M + 65, Y - 1);
     // Contact info on second line
     Y += 14;
     const contactParts = [data.email, data.cellphone].filter(Boolean).join("  |  ");
@@ -380,9 +380,17 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const KOMBO_W = (CW - 40) / 6;
     kombos.forEach((k, i) => {
       const x = M + i * (KOMBO_W + 8);
+      // Comment 3: Exact match - only 1 plan highlighted
+      // Handle various naming: "Kombo Imob Start" → "imob-start", "imob_start" → "imob-start", "elite" → "elite"
+      const rawKombo = (data.komboName || "").toLowerCase()
+        .replace(/^kombo\s+/, "") // strip "Kombo " prefix
+        .replace(/locação/g, "loc") // normalize locação → loc
+        .replace(/[\s_]+/g, "-") // spaces/underscores → hyphens
+        .replace(/-pro$/, "-pro") // keep -pro
+        .replace(/-start$/, "-start"); // keep -start
       const sel =
-        data.komboName?.toLowerCase().includes(k.key.split("-")[0]) ||
-        (k.key === "none" && !data.komboName);
+        rawKombo === k.key ||
+        (k.key === "none" && (!data.komboName || rawKombo === "none" || rawKombo === "sem-kombo" || rawKombo === ""));
       box(x, Y, KOMBO_W, 34, { selected: sel });
 
       // Discount badge
@@ -411,8 +419,12 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const totalInvestment = licensePrepaid + additionalUsersPrepaid + additionalContractsPrepaid + implementation;
 
     Y = labelRow("Licença pré-paga", fmt(licensePrepaid), Y);
-    Y = labelRow("Usuários adicionais pré-pagos", fmt(additionalUsersPrepaid), Y);
-    Y = labelRow("Contratos adicionais pré-pagos", fmt(additionalContractsPrepaid), Y);
+    if (additionalUsersPrepaid > 0) {
+      Y = labelRow("Usuários adicionais pré-pagos", fmt(additionalUsersPrepaid), Y);
+    }
+    if (additionalContractsPrepaid > 0) {
+      Y = labelRow("Contratos adicionais pré-pagos", fmt(additionalContractsPrepaid), Y);
+    }
     Y = labelRow("Implantação (única vez)", fmt(implementation), Y);
 
     Y += 4;
@@ -427,9 +439,15 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const installmentValue = totalInvestment / installments;
     Y = labelRow("Condições de Pagamento", `${installments}x ${fmt(installmentValue)}`, Y, { bold: true });
 
-    // Monthly equivalent
-    const monthlyEquivalent = totalInvestment / 12;
-    Y = labelRow("Equivalente mensal", fmt(monthlyEquivalent), Y, { bold: true });
+    // Monthly recurring equivalent (EXCLUDING implantação - Comment 6)
+    const recurringTotal = licensePrepaid + additionalUsersPrepaid + additionalContractsPrepaid;
+    const monthlyRecurring = recurringTotal / 12;
+    Y += 4;
+    doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+      .text("Custo Mensal Recorrente Equivalente (Excl. implantação)", M + 10, Y);
+    doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+      .text(fmt(monthlyRecurring), M + CW - 90, Y, { width: 90, align: "right" });
+    Y += 14;
 
     Y += 6;
 
@@ -456,20 +474,21 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       { label: "Bienal (-10%)", mult: 0.90 },
     ];
     freqComps.forEach((fc) => {
-      const annualAtFreq = baseAnnualValue * fc.mult;
-      const monthlyAtFreq = annualAtFreq / 12;
-      // Show: "Frequency label" → "R$ X,XX / mês"
+      // Comment 5: Skip the selected frequency - it's already shown above
       const isCurrent = (
         (fc.mult === 1.25 && data.paymentPlan === "monthly") ||
         (fc.mult === 1.10 && data.paymentPlan === "semestral") ||
         (fc.mult === 1.0 && data.paymentPlan === "annual") ||
         (fc.mult === 0.90 && (data.paymentPlan === "biannual" || data.paymentPlan === "biennial"))
       );
+      if (isCurrent) return; // skip selected frequency
+      const annualAtFreq = baseAnnualValue * fc.mult;
+      const monthlyAtFreq = annualAtFreq / 12;
       Y = labelRow(
-        fc.label + (isCurrent ? "  ← selecionado" : ""),
+        fc.label,
         `${fmt(monthlyAtFreq)} / mês`,
         Y,
-        { indent: 20, bold: isCurrent, valueColor: isCurrent ? C.pink : C.text }
+        { indent: 20, bold: false, valueColor: C.text }
       );
     });
 

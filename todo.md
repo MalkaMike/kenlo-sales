@@ -1913,3 +1913,24 @@
 - [x] Page 2 only appears when revenue data exists
 - [x] Test with 3 random examples - verified all layouts correct
 - [x] Zero overlapping text on both pages confirmed
+
+## PDF Comments Round 6 (Feb 2026)
+- [ ] Comment 1: Increase CLIENTE font size - too small compared to rest
+- [ ] Comment 2: Single product card spans full page width (same height as 2-product layout)
+- [ ] Comment 3: Only highlight 1 plan (the one client selected), not 2
+- [ ] Comment 4: Hide "Usuários adicionais pré-pagos" and "Contratos adicionais pré-pagos" when R$ 0,00
+- [ ] Comment 5: Remove selected frequency from comparison section (already shown above)
+- [ ] Comment 6: Rename to "Custo Mensal Recorrente Equivalente (Excl. implantação)" and recalculate without implantação
+- [ ] Fix random example generator to only send 1 plan selection
+- [ ] Test with 3 random examples and verify all 6 fixes
+
+## PDF V6 Comments - All Applied (Feb 2026)
+- [x] Comment 1: Bigger CLIENTE font + highlight business type in pink
+- [x] Comment 2: Full-width single product card (IMOB or LOC only)
+- [x] Comment 3: Only 1 plan highlighted (exact match, not partial)
+- [x] Comment 4: Hide zero-value lines in investment section
+- [x] Comment 5: Remove selected frequency from comparison list
+- [x] Comment 6: Rename to "Custo Mensal Recorrente Equivalente (Excl. implantação)"
+- [x] Fix businessType not passed in generatePDF schema
+- [x] Fix kombo name matching (handle "Kombo " prefix)
+- [x] Test with 3 random examples - all verified clean
