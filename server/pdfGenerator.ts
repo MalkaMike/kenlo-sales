@@ -116,33 +116,60 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const stroke = options.stroke || colors.border;
       
       if (options.selected) {
+        // Pink background + pink border for selected items
         doc.roundedRect(x, y, width, height, radius)
            .lineWidth(2)
-           .stroke(colors.primary)
-           .fillOpacity(0.05)
-           .fill(colors.primary)
-           .fillOpacity(1);
+           .fillAndStroke(colors.primaryLight, colors.primary);
       } else {
         doc.roundedRect(x, y, width, height, radius)
            .lineWidth(1)
-           .stroke(stroke)
-           .fillOpacity(1)
-           .fill(fill);
+           .fillAndStroke(fill, stroke);
       }
     };
 
+    const drawCheckbox = (x: number, y: number, checked: boolean) => {
+      const size = 12;
+      // Draw checkbox square
+      doc.rect(x, y, size, size)
+         .lineWidth(1)
+         .stroke(colors.border);
+      
+      // Draw checkmark if checked
+      if (checked) {
+        doc.fontSize(10).fillColor(colors.primary).font("Helvetica-Bold")
+           .text("✓", x + 1, y - 1); // Unicode checkmark
+      }
+    };
+
+    const drawBadge = (x: number, y: number, text: string, bgColor: string = colors.primary) => {
+      const padding = 6;
+      const textWidth = doc.widthOfString(text);
+      const badgeWidth = textWidth + (padding * 2);
+      const badgeHeight = 16;
+      
+      // Draw badge background
+      doc.roundedRect(x, y, badgeWidth, badgeHeight, 4)
+         .fill(bgColor);
+      
+      // Draw badge text
+      doc.fontSize(7).fillColor(colors.white).font("Helvetica-Bold")
+         .text(text, x + padding, y + 4);
+      
+      return badgeWidth;
+    };
+
     const drawSwitch = (x: number, y: number, isOn: boolean) => {
-      const width = 32;
-      const height = 18;
+      const width = 28;
+      const height = 16;
       const radius = height / 2;
       
       // Background
       doc.roundedRect(x, y, width, height, radius)
-         .fill(isOn ? colors.primary : colors.border);
+         .fill(isOn ? colors.primary : "#D1D5DB");
       
       // Circle
-      const circleX = isOn ? x + width - radius - 2 : x + radius + 2;
-      doc.circle(circleX, y + radius, radius - 3)
+      const circleX = isOn ? x + width - radius - 1 : x + radius + 1;
+      doc.circle(circleX, y + radius, radius - 2)
          .fill(colors.white);
     };
 

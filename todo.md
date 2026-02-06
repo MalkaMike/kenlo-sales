@@ -1550,3 +1550,25 @@
 - [x] Bloquear exportação de proposta se alguma pergunta obrigatória não for respondida
 - [x] Adicionar mensagem de erro visual quando tentar exportar sem responder
 - [x] Testar validação com todos os tipos de negócio (Corretora, Administrador, Ambos)
+
+## PDF Visual Improvements - Match Book2.pdf Layout (Feb 2026)
+
+- [ ] Adicionar ícones nas boxes de Tipo de Negócio (TrendingUp, Home, Zap)
+- [ ] Adicionar switches visuais (toggles ON/OFF) em Métricas (Website, CRM, ERP)
+- [ ] Adicionar switches visuais (toggles ON/OFF) em Add-ons
+- [ ] Adicionar fundo rosa claro (#FFF1F5) para items selecionados (não apenas borda)
+- [ ] Adicionar badge de desconto no Plano Selecionado (ex: "15% OFF")
+- [ ] Adicionar seção "Kenlo Receita Extras" com valor destacado em verde
+- [ ] Reduzir altura das boxes para layout mais compacto
+- [ ] Testar geração de PDF com todos os elementos visuais
+
+## PDF Visual Improvements - Match Book2.pdf Layout (Feb 2026)
+
+- [x] Adicionar fundos coloridos (rosa claro #FFF1F5) para items selecionados
+- [x] Adicionar badges de desconto nos Kombos (ex: "15% OFF")
+- [x] Adicionar switches visuais (toggles ON/OFF) nos Add-ons e Métricas
+- [x] Adicionar checkboxes visuais (☐/☑) nas Métricas
+- [x] Adicionar seção "Kenlo Receita Extras" com valor verde grande
+- [x] Usar símbolos Unicode para ícones simples quando possível
+- [x] Testar geração de PDF e validar que todas as melhorias visuais estão presentes
+- [x] Comparar PDF gerado com Book2.pdf para garantir correspondência visual
