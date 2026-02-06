@@ -1500,3 +1500,11 @@
 - [x] Ajustar font-size dos labels para manter consistência visual
 - [x] Remover boxes desnecessárias e usar componente Switch do shadcn/ui
 - [x] Testar funcionalidade dos switches com todos os tipos de negócio
+
+## 3-Column Layout for Website/CRM/ERP Switches (Feb 2026)
+
+- [x] Reorganizar switches de Website/CRM/ERP em layout de 3 colunas lado a lado
+- [x] Manter switches mas em grid horizontal (não vertical)
+- [x] Cada coluna: label no topo, switch abaixo
+- [x] Visibilidade condicional mantida (CRM para Corretora/Ambos, ERP para Administrador/Ambos)
+- [x] Testar layout de 3 colunas com todos os tipos de negócio

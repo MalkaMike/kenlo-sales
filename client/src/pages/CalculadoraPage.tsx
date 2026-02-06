@@ -1181,30 +1181,32 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
-                  {/* Website / CRM / ERP - Clean Layout with Switches */}
-                  <div className="space-y-4">
-                    {/* Website */}
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="hasWebsite" className="text-sm font-medium">Tem site? *</Label>
-                      <Switch
-                        id="hasWebsite"
-                        checked={businessNature.hasWebsite}
-                        onCheckedChange={(checked) => setBusinessNature({ ...businessNature, hasWebsite: checked, websiteUrl: checked ? businessNature.websiteUrl : "" })}
-                      />
+                  {/* Website / CRM / ERP - 3 Column Layout with Switches */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Column 1: Website - Always visible */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <Label htmlFor="hasWebsite" className="text-sm font-medium">Tem site? *</Label>
+                        <Switch
+                          id="hasWebsite"
+                          checked={businessNature.hasWebsite}
+                          onCheckedChange={(checked) => setBusinessNature({ ...businessNature, hasWebsite: checked, websiteUrl: checked ? businessNature.websiteUrl : "" })}
+                        />
+                      </div>
+                      {businessNature.hasWebsite && (
+                        <Input
+                          value={businessNature.websiteUrl}
+                          onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
+                          placeholder="https://www.imobiliaria.com.br"
+                          className="text-sm"
+                        />
+                      )}
                     </div>
-                    {businessNature.hasWebsite && (
-                      <Input
-                        value={businessNature.websiteUrl}
-                        onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
-                        placeholder="https://www.imobiliaria.com.br"
-                        className="text-sm"
-                      />
-                    )}
 
-                    {/* CRM - Only show for Corretora or Ambos */}
+                    {/* Column 2: CRM - Only show for Corretora or Ambos */}
                     {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-                      <>
-                        <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
                           <Label htmlFor="hasCRM" className="text-sm font-medium">Já usa CRM?</Label>
                           <Switch
                             id="hasCRM"
@@ -1237,13 +1239,13 @@ export default function CalculadoraPage() {
                             )}
                           </div>
                         )}
-                      </>
+                      </div>
                     )}
 
-                    {/* ERP - Only show for Administrador de Aluguel or Ambos */}
+                    {/* Column 3: ERP - Only show for Administrador de Aluguel or Ambos */}
                     {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-                      <>
-                        <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
                           <Label htmlFor="hasERP" className="text-sm font-medium">Já usa ERP?</Label>
                           <Switch
                             id="hasERP"
@@ -1276,7 +1278,7 @@ export default function CalculadoraPage() {
                             )}
                           </div>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
