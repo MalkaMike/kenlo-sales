@@ -1985,3 +1985,6 @@
 - [x] C2: Pós-pago groups: IMOB (Usuários), LOCAÇÃO (Contratos, Boletos, Split), IMOB e LOC (Assinaturas, WhatsApp)
 - [x] Update tRPC schema and client export handler for new detailed fields
 - [x] Test with random examples and real export (143 tests, 9 files, all passing)
+- [x] Verified real export with Imob+Loc Elite Kombo K2 Semestral - all fields correct
+- [x] Verified 3 random examples (IMOB only, Elite both products, LOC only) - all correct
+- [x] Fixed productType normalization (imob_loc → both) for real exports
