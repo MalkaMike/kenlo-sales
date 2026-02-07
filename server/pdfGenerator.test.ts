@@ -5,7 +5,8 @@ import { generateProposalPDF } from './pdfGenerator';
  * PDF Generator Tests
  * 
  * These tests verify that the PDF generator produces valid PDFs
- * with correct content for various configurations.
+ * with correct content for various configurations including:
+ * - V8: Plan naming (IMOB - PRIME/K/K2), Investimento table, Pós-Pago breakdown
  */
 
 const baseData = {
@@ -39,7 +40,6 @@ describe('PDF Generator', () => {
     const result = await generateProposalPDF(baseData);
     expect(result).toBeInstanceOf(Buffer);
     expect(result.length).toBeGreaterThan(1000);
-    // Check PDF header magic bytes
     expect(result.slice(0, 5).toString()).toBe('%PDF-');
   });
 
@@ -96,7 +96,6 @@ describe('PDF Generator', () => {
       netGain: 12800,
     });
     expect(result).toBeInstanceOf(Buffer);
-    // Revenue page makes it larger
     expect(result.length).toBeGreaterThan(3000);
   });
 
@@ -198,6 +197,171 @@ describe('PDF Generator', () => {
     const result = await generateProposalPDF({
       ...baseData,
       businessType: 'both',
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  // V8 Tests: Plan naming, Investimento table, Pós-Pago breakdown
+
+  it('should render Investimento table with individual product prices', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      productType: 'both',
+      imobPlan: 'K',
+      locPlan: 'K2',
+      imobPrice: 497,
+      locPrice: 1197,
+      addonPrices: { leads: 407, inteligencia: 97, assinatura: 30 },
+      selectedAddons: '["leads","inteligencia","assinatura"]',
+      komboName: 'Kombo Core Gestão',
+      komboDiscount: 10,
+      contracts: 300,
+      newContracts: 12,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render VIP/CS Dedicado as "Incluído" in Investimento table', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      vipIncluded: true,
+      csIncluded: true,
+      vipPrice: 0,
+      csPrice: 0,
+      komboName: 'Kombo Elite',
+      komboDiscount: 20,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render VIP/CS Dedicado with prices when not included', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      vipIncluded: false,
+      csIncluded: false,
+      vipPrice: 97,
+      csPrice: 197,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render detailed Pós-Pago breakdown with IMOB group', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      imobPlan: 'PRIME',
+      imobUsers: 5,
+      postPaidTotal: 171,
+      postPaidBreakdown: [
+        {
+          group: 'IMOB',
+          items: [
+            { name: 'Usuários Adicionais', included: 2, additional: 3, unitPrice: 57, total: 171, unit: 'usuário' },
+          ],
+        },
+      ],
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render detailed Pós-Pago breakdown with LOC group', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      productType: 'loc',
+      locPlan: 'K',
+      contracts: 250,
+      newContracts: 10,
+      chargesBoletoToTenant: true,
+      boletoAmount: 12,
+      chargesSplitToOwner: true,
+      splitAmount: 5,
+      postPaidTotal: 450,
+      postPaidBreakdown: [
+        {
+          group: 'LOCAÇÃO',
+          items: [
+            { name: 'Contratos Adicionais', included: 200, additional: 50, unitPrice: 3, total: 150, unit: 'contrato' },
+            { name: 'Custo Boletos (Pay)', included: 5, additional: 245, unitPrice: 1, total: 245, unit: 'boleto' },
+            { name: 'Custo Split (Pay)', included: 5, additional: 10, unitPrice: 5.5, total: 55, unit: 'split' },
+          ],
+        },
+      ],
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render Pós-Pago breakdown with multiple groups (IMOB + LOC + shared)', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      productType: 'both',
+      imobPlan: 'K2',
+      locPlan: 'K2',
+      imobUsers: 20,
+      contracts: 600,
+      newContracts: 15,
+      chargesBoletoToTenant: true,
+      boletoAmount: 25,
+      chargesSplitToOwner: true,
+      splitAmount: 15,
+      selectedAddons: '["leads","inteligencia","assinatura","pay","seguros","cash"]',
+      komboName: 'Kombo Elite',
+      komboDiscount: 20,
+      postPaidTotal: 1250,
+      postPaidBreakdown: [
+        {
+          group: 'IMOB',
+          items: [
+            { name: 'Usuários Adicionais', included: 14, additional: 6, unitPrice: 37, total: 222, unit: 'usuário' },
+          ],
+        },
+        {
+          group: 'LOCAÇÃO',
+          items: [
+            { name: 'Contratos Adicionais', included: 500, additional: 100, unitPrice: 3, total: 300, unit: 'contrato' },
+            { name: 'Custo Boletos (Pay)', included: 15, additional: 585, unitPrice: 0.5, total: 292.5, unit: 'boleto' },
+            { name: 'Custo Split (Pay)', included: 15, additional: 85, unitPrice: 2, total: 170, unit: 'split' },
+          ],
+        },
+        {
+          group: 'IMOB e LOC',
+          items: [
+            { name: 'Assinaturas Digitais', included: 15, additional: 10, unitPrice: 1.5, total: 15, unit: 'assinatura' },
+            { name: 'Mensagens WhatsApp', included: 100, additional: 200, unitPrice: 2, total: 400, unit: 'msg' },
+          ],
+        },
+      ],
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should handle empty postPaidBreakdown array', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      postPaidTotal: 0,
+      postPaidBreakdown: [],
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should render addonPrices for individual add-on line items', async () => {
+    const result = await generateProposalPDF({
+      ...baseData,
+      selectedAddons: '["leads","inteligencia","assinatura","pay","seguros","cash"]',
+      addonPrices: {
+        leads: 457,
+        inteligencia: 97,
+        assinatura: 30,
+        pay: 0,
+        seguros: 0,
+        cash: 0,
+      },
     });
     expect(result).toBeInstanceOf(Buffer);
     expect(result.length).toBeGreaterThan(1000);

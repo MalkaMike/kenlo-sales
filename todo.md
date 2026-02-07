@@ -1973,3 +1973,15 @@
 - [x] Fill complete simulation in calculator with all fields
 - [x] Export real PDF and verify all fields appear correctly
 - [x] No issues found - 100% data fidelity confirmed across both pages
+
+## PDF V8 Feedback (Feb 2026)
+- [x] C1: Fix plan naming format: "IMOB - K2" instead of "IMOB (K2)", plan tier in RED
+- [x] C1: Validate plan vs user count in random examples (K2 needs 15+ users, K needs 7+, Prime 2+)
+- [x] C2: Replace Investimento section with detailed table matching calculadora design
+- [x] C2: Table shows: Produtos (Imob - K2, Loc - K2 with prices), Add-ons (each with price), Serviços Premium (Incluído/price), Total Mensal, Implantação, Anual Equivalente
+- [x] C2: After table: Total Investimento, Condições de Pagamento, Investimento Mensal Recorrente
+- [x] C2: Replace Pós-Pago with detailed breakdown grouped by IMOB/LOC/Shared
+- [x] C2: Each pós-pago item shows: included count, additional count, total price, per-unit price
+- [x] C2: Pós-pago groups: IMOB (Usuários), LOCAÇÃO (Contratos, Boletos, Split), IMOB e LOC (Assinaturas, WhatsApp)
+- [x] Update tRPC schema and client export handler for new detailed fields
+- [x] Test with random examples and real export (143 tests, 9 files, all passing)

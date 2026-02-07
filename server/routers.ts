@@ -447,6 +447,16 @@ export const appRouter = router({
         // Business nature
         businessType: z.string().optional(),
         monthlyLicenseBase: z.number().optional(),
+        // Individual line item prices for Investimento table
+        imobPrice: z.number().optional(),
+        locPrice: z.number().optional(),
+        addonPrices: z.string().optional(), // JSON: {leads: 557, inteligencia: 337, ...}
+        vipIncluded: z.boolean().optional(),
+        csIncluded: z.boolean().optional(),
+        vipPrice: z.number().optional(),
+        csPrice: z.number().optional(),
+        // Pós-pago breakdown details
+        postPaidBreakdown: z.string().optional(), // JSON with detailed breakdown
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user is authorized via salesperson login OR OAuth with authorized domain

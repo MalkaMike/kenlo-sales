@@ -386,7 +386,17 @@ export default function CalculadoraPage() {
     ];
     const frequencies: PaymentFrequency[] = ["monthly", "semestral", "annual", "biennial"];
     const businessTypes = ["broker", "rental_admin", "both"] as const;
-    const plans: PlanTier[] = ["prime", "k", "k2"];
+    // Plan selection based on user/contract count
+    const planForImobUsers = (users: number): PlanTier => {
+      if (users <= 6) return "prime";
+      if (users <= 13) return "k";
+      return "k2";
+    };
+    const planForLocContracts = (contracts: number): PlanTier => {
+      if (contracts <= 100) return "prime";
+      if (contracts <= 200) return "k";
+      return "k2";
+    };
     
     // Define possible kombo configurations
     const komboConfigs = [
@@ -407,18 +417,20 @@ export default function CalculadoraPage() {
       try {
         const config = pick(komboConfigs);
         const freq = pick(frequencies);
-        const iplan = pick(plans);
-        const lplan = pick(plans);
         const company = pick(companyNames);
         const owner = pick(ownerNames);
         const bizType = pick([...businessTypes]);
         
-        // Random metrics
+        // Random metrics (must be before plan derivation)
         const imobUsers = randInt(2, 30);
         const closings = randInt(2, 20);
         const leadsMonth = randInt(50, 500);
         const contracts = randInt(50, 800);
         const newContracts = randInt(2, 25);
+        
+        // Derive plans from metrics (validated)
+        const iplan = planForImobUsers(imobUsers);
+        const lplan = planForLocContracts(contracts);
         const wantsWA = config.addons.includes("leads") ? randBool() : false;
         const chargesBoleto = config.addons.includes("pay") ? randBool() : false;
         const chargesSplit = config.addons.includes("pay") ? randBool() : false;
@@ -456,8 +468,177 @@ export default function CalculadoraPage() {
         );
         const firstYearTotal = totalAnnual + implantationFee;
         
-        // Post-paid estimate
-        let postPaidTotal = randInt(0, 500);
+        // Calculate individual line item prices for the Investimento table
+        let imobPrice = 0;
+        let locPrice = 0;
+        const addonPricesObj: Record<string, number> = {};
+        
+        if (config.product === "imob" || config.product === "both") {
+          imobPrice = roundToEndIn7(PLAN_ANNUAL_PRICES[iplan] * freqMult * discountMult);
+        }
+        if (config.product === "loc" || config.product === "both") {
+          locPrice = roundToEndIn7(PLAN_ANNUAL_PRICES[lplan] * freqMult * discountMult);
+        }
+        for (const addon of config.addons) {
+          const ap = ADDON_ANNUAL_PRICES[addon as keyof typeof ADDON_ANNUAL_PRICES] || 0;
+          if (ap > 0) {
+            addonPricesObj[addon] = roundToEndIn7(ap * freqMult * discountMult);
+          }
+        }
+
+        // VIP/CS: included in all Kombos, otherwise random
+        const vipIncluded = !!config.komboId;
+        const csIncluded = !!config.komboId;
+        const vipPrice = vipIncluded ? 0 : 0; // Only if user toggles VIP
+        const csPrice = csIncluded ? 0 : 0;
+
+        // Calculate realistic post-paid breakdown
+        let postPaidTotal = 0;
+        const ppBreakdown: {
+          imobAddons?: { groupLabel: string; groupTotal: number; items: any[] };
+          locAddons?: { groupLabel: string; groupTotal: number; items: any[] };
+          sharedAddons?: { groupLabel: string; groupTotal: number; items: any[] };
+          total: number;
+        } = { total: 0 };
+
+        // IMOB: Additional Users
+        if (config.product === "imob" || config.product === "both") {
+          const included = iplan === "prime" ? 2 : iplan === "k" ? 7 : 14;
+          const additional = Math.max(0, imobUsers - included);
+          if (additional > 0) {
+            let userCost = 0;
+            if (iplan === "prime") userCost = additional * 57;
+            else if (iplan === "k") {
+              const t1 = Math.min(additional, 10);
+              const t2 = Math.max(0, additional - 10);
+              userCost = t1 * 47 + t2 * 37;
+            } else {
+              const t1 = Math.min(additional, 10);
+              const t2 = Math.min(Math.max(0, additional - 10), 40);
+              const t3 = Math.max(0, additional - 50);
+              userCost = t1 * 47 + t2 * 37 + t3 * 27;
+            }
+            postPaidTotal += userCost;
+            if (!ppBreakdown.imobAddons) ppBreakdown.imobAddons = { groupLabel: "IMOB", groupTotal: 0, items: [] };
+            ppBreakdown.imobAddons.items.push({
+              label: "Usuários Adicionais",
+              included,
+              additional,
+              total: userCost,
+              perUnit: iplan === "prime" ? 57 : 47,
+              unitLabel: "usuário",
+            });
+            ppBreakdown.imobAddons.groupTotal += userCost;
+          }
+        }
+
+        // LOC: Additional Contracts
+        if (config.product === "loc" || config.product === "both") {
+          const included = lplan === "prime" ? 100 : lplan === "k" ? 200 : 500;
+          const additional = Math.max(0, contracts - included);
+          if (additional > 0) {
+            const t1 = Math.min(additional, 250);
+            const t2 = Math.min(Math.max(0, additional - 250), 500);
+            const t3 = Math.max(0, additional - 750);
+            const contractCost = t1 * 3 + t2 * 2.5 + t3 * 2;
+            postPaidTotal += contractCost;
+            if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
+            ppBreakdown.locAddons.items.push({
+              label: "Contratos Adicionais",
+              included,
+              additional,
+              total: contractCost,
+              perUnit: 3,
+              unitLabel: "contrato",
+            });
+            ppBreakdown.locAddons.groupTotal += contractCost;
+          }
+
+          // Boleto costs
+          if (chargesBoleto && config.addons.includes("pay")) {
+            const inclBoletos = lplan === "prime" ? 2 : lplan === "k" ? 5 : 15;
+            const addBoletos = Math.max(0, contracts - inclBoletos);
+            if (addBoletos > 0) {
+              const boletoCost = addBoletos * 4;
+              postPaidTotal += boletoCost;
+              if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
+              ppBreakdown.locAddons.items.push({
+                label: "Custo Boletos (Pay)",
+                included: inclBoletos,
+                additional: addBoletos,
+                total: boletoCost,
+                perUnit: 4,
+                unitLabel: "boleto",
+              });
+              ppBreakdown.locAddons.groupTotal += boletoCost;
+            }
+          }
+
+          // Split costs
+          if (chargesSplit && config.addons.includes("pay")) {
+            const inclSplits = lplan === "prime" ? 2 : lplan === "k" ? 5 : 15;
+            const addSplits = Math.max(0, contracts - inclSplits);
+            if (addSplits > 0) {
+              const splitCost = addSplits * 4;
+              postPaidTotal += splitCost;
+              if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
+              ppBreakdown.locAddons.items.push({
+                label: "Custo Split (Pay)",
+                included: inclSplits,
+                additional: addSplits,
+                total: splitCost,
+                perUnit: 4,
+                unitLabel: "split",
+              });
+              ppBreakdown.locAddons.groupTotal += splitCost;
+            }
+          }
+        }
+
+        // Shared: Digital Signatures
+        if (config.addons.includes("assinatura")) {
+          const included = 15;
+          let totalSigs = 0;
+          if (config.product === "imob" || config.product === "both") totalSigs += closings;
+          if (config.product === "loc" || config.product === "both") totalSigs += newContracts;
+          const additional = Math.max(0, totalSigs - included);
+          if (additional > 0) {
+            const sigCost = additional * 1.8;
+            postPaidTotal += sigCost;
+            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
+            ppBreakdown.sharedAddons.items.push({
+              label: "Assinaturas Digitais",
+              included,
+              additional,
+              total: sigCost,
+              perUnit: 1.8,
+              unitLabel: "assinatura",
+            });
+            ppBreakdown.sharedAddons.groupTotal += sigCost;
+          }
+        }
+
+        // WhatsApp Messages
+        if (config.addons.includes("leads") && wantsWA) {
+          const included = 100;
+          const additional = Math.max(0, leadsMonth - included);
+          if (additional > 0) {
+            const waCost = additional * 2;
+            postPaidTotal += waCost;
+            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
+            ppBreakdown.sharedAddons.items.push({
+              label: "Mensagens WhatsApp",
+              included,
+              additional,
+              total: waCost,
+              perUnit: 2,
+              unitLabel: "msg",
+            });
+            ppBreakdown.sharedAddons.groupTotal += waCost;
+          }
+        }
+
+        ppBreakdown.total = postPaidTotal;
         
         // Revenue
         const revenueFromBoletos = (chargesBoleto || chargesSplit) && (config.product === "loc" || config.product === "both")
@@ -513,6 +694,15 @@ export default function CalculadoraPage() {
           premiumServicesPrice: 0,
           installments,
           businessType: bizType,
+          // New V8 fields
+          imobPrice: imobPrice > 0 ? imobPrice : undefined,
+          locPrice: locPrice > 0 ? locPrice : undefined,
+          addonPrices: Object.keys(addonPricesObj).length > 0 ? JSON.stringify(addonPricesObj) : undefined,
+          vipIncluded,
+          csIncluded,
+          vipPrice,
+          csPrice,
+          postPaidBreakdown: JSON.stringify(ppBreakdown),
         };
         
         const pdfResult = await generatePDF.mutateAsync(proposalData);
@@ -3559,6 +3749,123 @@ export default function CalculadoraPage() {
                   premiumServicesPrice: premiumServicesPrice,
                   // Installment options (from QuoteInfoDialog)
                   installments: quoteInfo.installments,
+                  // V8: Individual line item prices for Investimento table
+                  imobPrice: (() => {
+                    if (product !== 'imob' && product !== 'both') return undefined;
+                    const items = getLineItems();
+                    const imobItem = items.find(it => it.name.startsWith('Imob'));
+                    return imobItem ? (activeKombo !== 'none' ? imobItem.priceComKombo : imobItem.priceSemKombo) : undefined;
+                  })(),
+                  locPrice: (() => {
+                    if (product !== 'loc' && product !== 'both') return undefined;
+                    const items = getLineItems();
+                    const locItem = items.find(it => it.name.startsWith('Loc'));
+                    return locItem ? (activeKombo !== 'none' ? locItem.priceComKombo : locItem.priceSemKombo) : undefined;
+                  })(),
+                  addonPrices: (() => {
+                    const items = getLineItems();
+                    const prices: Record<string, number> = {};
+                    const addonKeys = ['Leads', 'Intelig\u00eancia', 'Assinatura'];
+                    const keyMap: Record<string, string> = { 'Leads': 'leads', 'Intelig\u00eancia': 'inteligencia', 'Assinatura': 'assinatura' };
+                    for (const item of items) {
+                      if (addonKeys.includes(item.name)) {
+                        const price = activeKombo !== 'none' ? item.priceComKombo : item.priceSemKombo;
+                        if (price > 0) prices[keyMap[item.name]] = price;
+                      }
+                    }
+                    return Object.keys(prices).length > 0 ? JSON.stringify(prices) : undefined;
+                  })(),
+                  vipIncluded: hasPremiumIncluded && (metrics.imobVipSupport || metrics.locVipSupport),
+                  csIncluded: hasPremiumIncluded && (metrics.imobDedicatedCS || metrics.locDedicatedCS),
+                  vipPrice: !hasPremiumIncluded && (metrics.imobVipSupport || metrics.locVipSupport) ? 97 : 0,
+                  csPrice: !hasPremiumIncluded && (metrics.imobDedicatedCS || metrics.locDedicatedCS) ? 197 : 0,
+                  // V8: P\u00f3s-pago breakdown
+                  postPaidBreakdown: (() => {
+                    const bd: any = { total: postPaidTotal };
+                    // IMOB: Additional Users
+                    if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
+                      const plan = imobPlan;
+                      const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                      const additional = Math.max(0, metrics.imobUsers - included);
+                      if (additional > 0) {
+                        let userCost = 0;
+                        if (plan === 'prime') userCost = additional * 57;
+                        else if (plan === 'k') {
+                          const t1 = Math.min(additional, 10); const t2 = Math.max(0, additional - 10);
+                          userCost = t1 * 47 + t2 * 37;
+                        } else {
+                          const t1 = Math.min(additional, 10); const t2 = Math.min(Math.max(0, additional - 10), 40); const t3 = Math.max(0, additional - 50);
+                          userCost = t1 * 47 + t2 * 37 + t3 * 27;
+                        }
+                        if (!bd.imobAddons) bd.imobAddons = { groupLabel: 'IMOB', groupTotal: 0, items: [] };
+                        bd.imobAddons.items.push({ label: 'Usu\u00e1rios Adicionais', included, additional, total: userCost, perUnit: plan === 'prime' ? 57 : 47, unitLabel: 'usu\u00e1rio' });
+                        bd.imobAddons.groupTotal += userCost;
+                      }
+                    }
+                    // LOC: Additional Contracts
+                    if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
+                      const plan = locPlan;
+                      const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                      const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                      if (additional > 0) {
+                        const t1 = Math.min(additional, 250); const t2 = Math.min(Math.max(0, additional - 250), 500); const t3 = Math.max(0, additional - 750);
+                        const cost = t1 * 3 + t2 * 2.5 + t3 * 2;
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        bd.locAddons.items.push({ label: 'Contratos Adicionais', included, additional, total: cost, perUnit: 3, unitLabel: 'contrato' });
+                        bd.locAddons.groupTotal += cost;
+                      }
+                    }
+                    // LOC: Boleto costs
+                    if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
+                      const plan = locPlan;
+                      const inclBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                      const addBoletos = Math.max(0, metrics.contractsUnderManagement - inclBoletos);
+                      if (addBoletos > 0) {
+                        const cost = addBoletos * 4;
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        bd.locAddons.items.push({ label: 'Custo Boletos (Pay)', included: inclBoletos, additional: addBoletos, total: cost, perUnit: 4, unitLabel: 'boleto' });
+                        bd.locAddons.groupTotal += cost;
+                      }
+                    }
+                    // LOC: Split costs
+                    if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
+                      const plan = locPlan;
+                      const inclSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                      const addSplits = Math.max(0, metrics.contractsUnderManagement - inclSplits);
+                      if (addSplits > 0) {
+                        const cost = addSplits * 4;
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        bd.locAddons.items.push({ label: 'Custo Split (Pay)', included: inclSplits, additional: addSplits, total: cost, perUnit: 4, unitLabel: 'split' });
+                        bd.locAddons.groupTotal += cost;
+                      }
+                    }
+                    // Shared: Digital Signatures
+                    if (addons.assinatura) {
+                      const included = 15;
+                      let totalSigs = 0;
+                      if (product === 'imob' || product === 'both') totalSigs += metrics.closingsPerMonth;
+                      if (product === 'loc' || product === 'both') totalSigs += metrics.newContractsPerMonth;
+                      const additional = Math.max(0, totalSigs - included);
+                      if (additional > 0) {
+                        const cost = additional * 1.8;
+                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
+                        bd.sharedAddons.items.push({ label: 'Assinaturas Digitais', included, additional, total: cost, perUnit: 1.8, unitLabel: 'assinatura' });
+                        bd.sharedAddons.groupTotal += cost;
+                      }
+                    }
+                    // Shared: WhatsApp Messages
+                    if (addons.leads && metrics.wantsWhatsApp) {
+                      const included = 100;
+                      const additional = Math.max(0, metrics.leadsPerMonth - included);
+                      if (additional > 0) {
+                        const cost = additional * 2;
+                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
+                        bd.sharedAddons.items.push({ label: 'Mensagens WhatsApp', included, additional, total: cost, perUnit: 2, unitLabel: 'msg' });
+                        bd.sharedAddons.groupTotal += cost;
+                      }
+                    }
+                    return JSON.stringify(bd);
+                  })(),
                 };
 
                 // Generate PDF
