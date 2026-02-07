@@ -289,9 +289,12 @@ export default function CalculadoraPage() {
   const generatePDF = trpc.proposals.generatePDF.useMutation();
   const createProposal = trpc.proposals.create.useMutation();
 
-  // Recommended plans
+  // Recommended plans (user-selected, can be overridden)
   const [imobPlan, setImobPlan] = useState<PlanTier>("k");
   const [locPlan, setLocPlan] = useState<PlanTier>("k");
+  // System-recommended plans (computed from metrics, used for badge display)
+  const [recommendedImobPlan, setRecommendedImobPlan] = useState<PlanTier>("k");
+  const [recommendedLocPlan, setRecommendedLocPlan] = useState<PlanTier>("k");
 
   // Reset all fields to default values
   const handleReset = useCallback(() => {
@@ -358,6 +361,8 @@ export default function CalculadoraPage() {
     // Reset recommended plans
     setImobPlan("k");
     setLocPlan("k");
+    setRecommendedImobPlan("k");
+    setRecommendedLocPlan("k");
   }, []);
 
   // Generate 3 random example PDFs directly (bypasses UI state, calls API directly)
@@ -1233,6 +1238,7 @@ export default function CalculadoraPage() {
 
   // Auto-recommend plans based on CAPACITY (número de usuários/contratos)
   // Regra: Número de usuários ou contratos define o nível mínimo do plano
+  // This sets BOTH the user-selected plan AND the recommended plan tracker
   useEffect(() => {
     if (product === "imob" || product === "both") {
       const users = metrics.imobUsers;
@@ -1241,17 +1247,18 @@ export default function CalculadoraPage() {
       // Prime: 1-4 usuários
       // K: 5-15 usuários
       // K2: 16+ usuários
-      let recommendedPlan: PlanTier = 'prime';
+      let recommended: PlanTier = 'prime';
       
       if (users >= 16) {
-        recommendedPlan = 'k2';
+        recommended = 'k2';
       } else if (users >= 5) {
-        recommendedPlan = 'k';
+        recommended = 'k';
       } else {
-        recommendedPlan = 'prime';
+        recommended = 'prime';
       }
       
-      setImobPlan(recommendedPlan);
+      setRecommendedImobPlan(recommended);
+      setImobPlan(recommended);
     }
 
     if (product === "loc" || product === "both") {
@@ -1261,17 +1268,18 @@ export default function CalculadoraPage() {
       // Prime: 1-199 contratos
       // K: 200-499 contratos
       // K2: 500+ contratos
-      let recommendedPlan: PlanTier = 'prime';
+      let recommended: PlanTier = 'prime';
       
       if (contracts >= 500) {
-        recommendedPlan = 'k2';
+        recommended = 'k2';
       } else if (contracts >= 200) {
-        recommendedPlan = 'k';
+        recommended = 'k';
       } else {
-        recommendedPlan = 'prime';
+        recommended = 'prime';
       }
       
-      setLocPlan(recommendedPlan);
+      setRecommendedLocPlan(recommended);
+      setLocPlan(recommended);
     }
   }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
@@ -1333,7 +1341,7 @@ export default function CalculadoraPage() {
 
   // Pre-select product based on businessType from §1
   // Corretora → imob, Administrador → loc, Ambos → both
-  // User can always override this pre-selection in §3
+  // User can always override this pre-selection in §3 (Solução e Plano Recomendados)
   useEffect(() => {
     const bt = businessNature.businessType;
     if (bt === "broker") {
@@ -1966,153 +1974,139 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §3: Solução Selecionada */}
-              {/* Step 1: Product Selection */}
+              {/* §3: Solução e Plano Recomendados (merged §3+§4) */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  3. Solução Selecionada
+                  3. Solução e Plano Recomendados
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Com base nas informações fornecidas, selecionamos automaticamente a solução ideal. Você pode alterar a qualquer momento.
+                  Com base na sua operação, recomendamos a configuração abaixo. Você pode ajustar produto e plano livremente.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
-                  {[
-                    { value: "imob", label: "Imob só", icon: TrendingUp, desc: "CRM + Site para vendas" },
-                    { value: "loc", label: "Loc só", icon: Key, desc: "Gestão de locações" },
-                    { value: "both", label: "Imob + Loc", icon: Zap, desc: "Solução completa" },
-                  ].map((opt) => (
+                
+                <div className={`grid gap-4 ${product === "both" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1 max-w-lg"}`}>
+                  {/* IMOB Card — shown when product is imob or both */}
+                  {(product === "imob" || product === "both") && (
+                    <Card className="border-blue-200/60 bg-gradient-to-br from-blue-50/40 to-white">
+                      <CardContent className="pt-5 pb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="p-1.5 rounded-lg bg-blue-100">
+                            <TrendingUp className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <span className="font-bold text-sm text-gray-900">Kenlo IMOB</span>
+                          <span className="text-[10px] text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full font-medium">CRM + Site</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["prime", "k", "k2"] as const).map((plan) => {
+                            const isSelected = imobPlan === plan;
+                            const isRecommended = recommendedImobPlan === plan;
+                            const planOrder = { prime: 0, k: 1, k2: 2 };
+                            const isBelowRecommended = planOrder[plan] < planOrder[recommendedImobPlan];
+                            return (
+                              <button
+                                key={plan}
+                                onClick={() => setImobPlan(plan)}
+                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
+                                  isSelected
+                                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
+                                    : isBelowRecommended
+                                    ? "border-gray-200 bg-gray-50/80 opacity-50 hover:opacity-70 cursor-pointer"
+                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
+                                }`}
+                              >
+                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                {isRecommended && (
+                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
+                                    Recomendado
+                                  </Badge>
+                                )}
+                                {isSelected && !isRecommended && (
+                                  <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
+                                    Selecionado
+                                  </Badge>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* LOC Card — shown when product is loc or both */}
+                  {(product === "loc" || product === "both") && (
+                    <Card className="border-green-200/60 bg-gradient-to-br from-green-50/40 to-white">
+                      <CardContent className="pt-5 pb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="p-1.5 rounded-lg bg-green-100">
+                            <Key className="w-4 h-4 text-green-600" />
+                          </div>
+                          <span className="font-bold text-sm text-gray-900">Kenlo Locação</span>
+                          <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">Gestão</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["prime", "k", "k2"] as const).map((plan) => {
+                            const isSelected = locPlan === plan;
+                            const isRecommended = recommendedLocPlan === plan;
+                            const planOrder = { prime: 0, k: 1, k2: 2 };
+                            const isBelowRecommended = planOrder[plan] < planOrder[recommendedLocPlan];
+                            return (
+                              <button
+                                key={plan}
+                                onClick={() => setLocPlan(plan)}
+                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
+                                  isSelected
+                                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
+                                    : isBelowRecommended
+                                    ? "border-gray-200 bg-gray-50/80 opacity-50 hover:opacity-70 cursor-pointer"
+                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
+                                }`}
+                              >
+                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                {isRecommended && (
+                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
+                                    Recomendado
+                                  </Badge>
+                                )}
+                                {isSelected && !isRecommended && (
+                                  <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
+                                    Selecionado
+                                  </Badge>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Subtle product switch — allows changing product without going back to §1 */}
+                <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>Alterar solução:</span>
+                  {["imob", "loc", "both"].map((opt) => (
                     <button
-                      key={opt.value}
-                      onClick={() => setProduct(opt.value as ProductSelection)}
-                      className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
-                        product === opt.value
-                          ? "border-primary bg-primary/5 shadow-md"
-                          : "border-gray-200 hover:border-gray-300 active:border-primary/50"
+                      key={opt}
+                      onClick={() => setProduct(opt as ProductSelection)}
+                      className={`px-2.5 py-1 rounded-full transition-all ${
+                        product === opt
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "hover:bg-gray-100 text-gray-500"
                       }`}
                     >
-                      <div className="flex items-center gap-2 mb-1">
-                        <opt.icon className={`w-5 h-5 sm:w-4 sm:h-4 ${product === opt.value ? "text-primary" : "text-gray-400"}`} />
-                        <div className="font-semibold text-sm sm:text-xs">{opt.label}</div>
-                      </div>
-                      <div className="text-xs sm:text-[11px] text-gray-500">{opt.desc}</div>
+                      {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
                     </button>
                   ))}
                 </div>
               </div>
 
 
-
-              {/* §4: Plano Recomendado */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  4. Plano Recomendado
-                </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Com base no tamanho da sua operação, este é o plano recomendado. Você pode alterar o plano a qualquer momento.
-                </p>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* IMOB Plan Selection */}
-                  {(product === "imob" || product === "both") && (
-                    <Card className="bg-blue-50/30">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4" />
-                          Kenlo IMOB
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["prime", "k", "k2"] as const).map((plan) => {
-                            const isRecommended = imobPlan === plan;
-                            const planOrder = { prime: 0, k: 1, k2: 2 };
-                            const isBelow = planOrder[plan] < planOrder[imobPlan];
-                            return (
-                              <button
-                                key={plan}
-                                onClick={() => setImobPlan(plan)}
-                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
-                                  isRecommended
-                                    ? "border-primary bg-primary/5 shadow-md"
-                                    : isBelow
-                                    ? "border-gray-200 bg-gray-50 opacity-60 hover:opacity-80 cursor-pointer"
-                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                                }`}
-                              >
-                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                {isRecommended && (
-                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
-                                    Recomendado
-                                  </Badge>
-                                )}
-                                {isBelow && (
-                                  <div className="mt-1 text-[9px] text-amber-600 leading-tight">
-                                    Pode não atender sua operação
-                                  </div>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* LOC Plan Selection */}
-                  {(product === "loc" || product === "both") && (
-                    <Card className="bg-green-50/30">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Key className="w-4 h-4" />
-                          Kenlo Locação
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["prime", "k", "k2"] as const).map((plan) => {
-                            const isRecommended = locPlan === plan;
-                            const planOrder = { prime: 0, k: 1, k2: 2 };
-                            const isBelow = planOrder[plan] < planOrder[locPlan];
-                            return (
-                              <button
-                                key={plan}
-                                onClick={() => setLocPlan(plan)}
-                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
-                                  isRecommended
-                                    ? "border-primary bg-primary/5 shadow-md"
-                                    : isBelow
-                                    ? "border-gray-200 bg-gray-50 opacity-60 hover:opacity-80 cursor-pointer"
-                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                                }`}
-                              >
-                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                {isRecommended && (
-                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
-                                    Recomendado
-                                  </Badge>
-                                )}
-                                {isBelow && (
-                                  <div className="mt-1 text-[9px] text-amber-600 leading-tight">
-                                    Pode não atender sua operação
-                                  </div>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </div>
-
-
-              {/* §5: Add-ons Opcionais */}
+              {/* §4: Add-ons Opcionais (was §5) */}
               {/* Step 2: Add-ons */}
               <div className="mb-6 sm:mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                   <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    5. Add-ons Opcionais
+                    4. Add-ons Opcionais
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Estes serviços ficam disponíveis por padrão e podem ser ativados durante o onboarding.
@@ -2256,10 +2250,10 @@ export default function CalculadoraPage() {
 
 
 
-              {/* §6: Benefícios Inclusos */}
+              {/* §5: Benefícios Inclusos (was §6) */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  6. Benefícios Inclusos
+                  5. Benefícios Inclusos
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Confira os benefícios incluídos na sua configuração. Se qualquer produto qualificar, os benefícios se aplicam a todos.
@@ -2411,7 +2405,7 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §7: Kombos */}
+              {/* §6: Kombos (was §7) */}
               {/* Section 4 bis: Kombo Comparison Table */}
               <div id="kombo-comparison-section">
               <KomboComparisonTable
@@ -2484,10 +2478,10 @@ export default function CalculadoraPage() {
 
 
 
-              {/* §8: Frequência de Pagamento */}
+              {/* §7: Frequência de Pagamento (was §8) */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  8. Frequência de Pagamento
+                  7. Frequência de Pagamento
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Todos os valores exibidos são mensais equivalentes, independentemente da forma de pagamento escolhida.
@@ -2527,7 +2521,7 @@ export default function CalculadoraPage() {
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    9. Custos Pós-Pago - Sem surpresas, só o que você usar
+                    8. Custos Pós-Pago - Sem surpresas, só o que você usar
                   </h2>
                   
                   <Card>
@@ -3208,7 +3202,7 @@ export default function CalculadoraPage() {
                   return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    10. Kenlo Receita Extra
+                    9. Kenlo Receita Extra
                   </h2>
                   
                   <Card>

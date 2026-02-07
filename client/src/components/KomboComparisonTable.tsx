@@ -761,7 +761,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-bold text-gray-900 mb-3">
-        7. Sua Seleção vs Kombos
+        6. Sua Seleção vs Kombos
       </h2>
 
       <Card>

@@ -2106,3 +2106,14 @@
 - [x] Remove "(Requer IA SDR)" text from WhatsApp toggle
 - [x] Remove IA SDR dependency logic — WhatsApp should be independent toggle
 - [x] WhatsApp and IA SDR are separate, independent options
+
+## Merge §3 and §4 into single "Solução e Plano Recomendados" section
+- [x] Merge §3 (Solução Selecionada) and §4 (Plano Recomendado) into one section
+- [x] Title: "Solução e Plano Recomendados"
+- [x] Auto-display products based on business type (no separate IMOB+LOC option)
+- [x] For each product: show Prime/K/K2 plans with "Recomendado" badge on recommended plan
+- [x] Allow free upgrade/downgrade — never explain eligibility rules
+- [x] Clean, compact layout — feels like intelligent recommendation, not manual config
+- [x] Remove old separate §3 and §4 section headers
+- [x] Update section numbering (now 9 sections total)
+- [x] Tests pass (179 tests, all green)
