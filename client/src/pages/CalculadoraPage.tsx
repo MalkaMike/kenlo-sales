@@ -1761,10 +1761,9 @@ export default function CalculadoraPage() {
                 </h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* Imob Questions */}
-                  <Card className={`bg-blue-50/30 transition-opacity ${
-                    product === "imob" || product === "both" ? "opacity-100" : "opacity-40"
-                  }`}>
+                  {/* Imob Questions - visible when businessType is broker or both */}
+                  {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
+                  <Card className="bg-blue-50/30">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base flex items-center gap-2">
                         <TrendingUp className="w-4 h-4" />
@@ -1784,8 +1783,7 @@ export default function CalculadoraPage() {
                               setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
                             }}
                             min="1"
-                            disabled={product !== "imob" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
+                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
                           />
                         </div>
                         <div>
@@ -1799,8 +1797,7 @@ export default function CalculadoraPage() {
                               setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
                             }}
                             min="0"
-                            disabled={product !== "imob" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
+                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
                           />
                         </div>
                       </div>
@@ -1822,7 +1819,6 @@ export default function CalculadoraPage() {
                                 setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
                               }}
                               min="0"
-                              disabled={product !== "imob" && product !== "both"}
                               className="mt-1"
                             />
                           </div>
@@ -1839,7 +1835,6 @@ export default function CalculadoraPage() {
                                   setMetrics({ ...metrics, usesExternalAI: checked });
                                 }
                               }}
-                              disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
@@ -1860,18 +1855,17 @@ export default function CalculadoraPage() {
                                   setMetrics({ ...metrics, wantsWhatsApp: checked });
                                 }
                               }}
-                              disabled={product !== "imob" && product !== "both"}
                             />
                           </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
+                  )}
 
-                  {/* Loc Questions */}
-                  <Card className={`bg-green-50/30 transition-opacity ${
-                    product === "loc" || product === "both" ? "opacity-100" : "opacity-40"
-                  }`}>
+                  {/* Loc Questions - visible when businessType is rental_admin or both */}
+                  {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
+                  <Card className="bg-green-50/30">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base flex items-center gap-2">
                         <Key className="w-4 h-4" />
@@ -1891,8 +1885,7 @@ export default function CalculadoraPage() {
                               setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
                             }}
                             min="1"
-                            disabled={product !== "loc" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
+                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
                           />
                         </div>
                         <div>
@@ -1906,8 +1899,7 @@ export default function CalculadoraPage() {
                               setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
                             }}
                             min="0"
-                            disabled={product !== "loc" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
+                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
                           />
                         </div>
                       </div>
@@ -1975,6 +1967,7 @@ export default function CalculadoraPage() {
                       )}
                     </CardContent>
                   </Card>
+                  )}
                 
                 </div>
               </div>
@@ -3532,8 +3525,6 @@ export default function CalculadoraPage() {
                         if (product === 'imob' || product === 'both') {
                           if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
                           if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
-                        }
-                        if (product === 'loc' || product === 'both') {
                           if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
                           if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
                         }

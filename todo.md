@@ -2081,3 +2081,9 @@
 - [x] Keep Kombo comparison table design (selectable columns)
 - [x] Keep sticky bottom bar
 - [x] Keep Kenlo brand colors and typography
+
+## Fix §2 Informações do Negócio linking with §1 Natureza do Negócio
+- [x] §2 IMOB fields should only show when businessType is "corretora" or "ambos"
+- [x] §2 LOC fields should only show when businessType is "administrador" or "ambos"
+- [x] When businessType changes, §2 should update visibility immediately
+- [x] Re-read Master Prompt rules to ensure full compliance
