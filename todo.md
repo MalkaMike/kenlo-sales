@@ -2144,3 +2144,6 @@
 - [x] Renumber §8 Pós-Pago → §7, §9 Receita Extra → §8
 - [x] All prices update from single selector (onFrequencyChange callback)
 - [x] No repetition of payment frequency in any other step
+
+## Move frequency selector above comparison table in §6
+- [x] Move "Ciclo de Pagamento" selector above the comparison table (flow: select cycle → prices update → compare)
