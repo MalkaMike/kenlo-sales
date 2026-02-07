@@ -11,7 +11,7 @@
  * - Clean, modular code for easy modifications
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ type ViewMode = "monthly" | "semestral" | "annual" | "biennial";
 // Anual is the reference (0%), others are relative to annual
 const FREQUENCY_OPTIONS: { id: ViewMode; label: string; discount: string }[] = [
   { id: "monthly", label: "Mensal", discount: "+25%" },
-  { id: "semestral", label: "Semestral", discount: "+10%" },
+  { id: "semestral", label: "Semestral", discount: "+11%" },
   { id: "annual", label: "Anual", discount: "0% - Referência" },
   { id: "biennial", label: "Bienal", discount: "-10%" },
 ];
@@ -643,6 +643,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Initialize viewMode from props.frequency to stay in sync
   const [viewMode, setViewMode] = useState<ViewMode>(props.frequency);
   
+  // Sync viewMode when parent frequency changes
+  useEffect(() => {
+    setViewMode(props.frequency);
+  }, [props.frequency]);
+
   // Selected Plan for export (user confirms their choice)
   const [selectedPlan, setSelectedPlan] = useState<KomboId | null>(null);
 
@@ -756,7 +761,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-bold text-gray-900 mb-3">
-        4. Sua Seleção vs Kombos
+        7. Sua Seleção vs Kombos
       </h2>
 
       <Card>

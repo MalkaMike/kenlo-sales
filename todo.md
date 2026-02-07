@@ -2046,3 +2046,38 @@
 
 ### Update Tests
 - [x] Update vitest tests for new pricing rules (36 new V9 tests, 179 total)
+
+## Master Prompt Restructuring (Feb 2026)
+
+### Section Order Restructuring (10 sections)
+- [x] §1 IDENTIFICATION — Natureza do Negócio: Tipo operação (Corretora/Administradora/Ambos), Nome empresa, Nome responsável, Email, Telefone, WhatsApp. Smart: "Ambos" preselects Imob+Loc
+- [x] §2 INFORMAÇÕES DO NEGÓCIO: Imob (users, closings, IA SDR, WhatsApp), Loc (contracts, new contracts). ❗ NO Serviços Premium here. All defaults 0/OFF
+- [x] §3 ESCOLHA DO PRODUTO (Auto): Title "Solução Selecionada". Auto-select based on inputs >0. Keep existing product card design (pink/gray cards with plan buttons)
+- [x] §4 PLANO RECOMENDADO: Title "Plano Recomendado". Hide ALL thresholds. Show "Recomendado" badge. Higher plans selectable. Independent for Imob/Loc
+- [x] §5 ADD-ONS OPCIONAIS: Keep existing toggle design. Copy: "Estes serviços ficam disponíveis por padrão e podem ser ativados durante o onboarding."
+- [x] §6 BENEFÍCIOS INCLUSOS (NEW): Show VIP, CS, Treinamentos. Benefits from ANY plan shared across products.
+- [x] §7 KOMBOS (Always Visible): ALL Kombos always shown. Keep existing comparison table design
+- [x] §8 FREQUÊNCIA DE PAGAMENTO: Mensal (+25%), Semestral (+11%), Anual (0% ref), Bienal (-10%). Footnote about monthly equivalents
+- [x] §9 KENLO RECEITA EXTRA: Pay (boleto/split questions), Seguros (R$10/contrato), Cash. Summary
+- [x] §10 EXPORTAÇÃO & FINALIZAÇÃO: Gerar exemplos, Exportar cotação PDF
+
+### Smart Behaviors
+- [x] Auto-select product when inputs > 0 (users > 0 → Imob, contracts > 0 → Loc)
+- [x] "Ambos" business type preselects Imob + Loc
+- [x] Plan recommendation without showing thresholds
+- [ ] Lower plans disabled/de-emphasized with tooltip (TODO: add tooltip on lower plans)
+- [x] Benefits shared across products (qualify via Imob OR Loc → both get benefits)
+
+### UI Rules (ABSOLUTE CONSTRAINTS)
+- [x] ❌ Never show plan thresholds (user ranges, contract ranges)
+- [x] ❌ Never show internal qualification logic
+- [x] ❌ Never block user actions with rules
+- [x] Remove all visible threshold text from plan selection UI
+- [x] Remove VIP/CS from "Informações do Negócio" section (move to Benefícios Inclusos)
+
+### Preserve Existing Design
+- [x] Keep product card design (pink Imob card, gray Loc card with plan buttons below)
+- [x] Keep add-on toggle card design (grid of cards with switches)
+- [x] Keep Kombo comparison table design (selectable columns)
+- [x] Keep sticky bottom bar
+- [x] Keep Kenlo brand colors and typography

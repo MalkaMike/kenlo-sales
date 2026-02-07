@@ -1529,6 +1529,7 @@ export default function CalculadoraPage() {
           {/* Main Calculator Card */}
           <Card className="shadow-xl">
             <CardContent className="p-4 sm:p-6">
+
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
@@ -1752,11 +1753,242 @@ export default function CalculadoraPage() {
                 </div>
               </div>
 
+
+              {/* §2: Informações do Negócio */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+                  2. Informações do Negócio
+                </h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* Imob Questions */}
+                  <Card className={`bg-blue-50/30 transition-opacity ${
+                    product === "imob" || product === "both" ? "opacity-100" : "opacity-40"
+                  }`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4" />
+                        Kenlo IMOB
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
+                          <Input
+                            id="imobUsers"
+                            type="number" inputMode="numeric"
+                            value={metrics.imobUsers}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
+                            }}
+                            min="1"
+                            disabled={product !== "imob" && product !== "both"}
+                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="closings" className="text-sm">Fechamentos por mês</Label>
+                          <Input
+                            id="closings"
+                            type="number" inputMode="numeric"
+                            value={metrics.closingsPerMonth}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
+                            }}
+                            min="0"
+                            disabled={product !== "imob" && product !== "both"}
+                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Box: Leads */}
+                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-blue-800">Leads</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <Label htmlFor="leadsPerMonth" className="text-sm">Leads recebidos por mês</Label>
+                            <Input
+                              id="leadsPerMonth"
+                              type="number" inputMode="numeric"
+                              value={metrics.leadsPerMonth}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
+                              }}
+                              min="0"
+                              disabled={product !== "imob" && product !== "both"}
+                              className="mt-1"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)</Label>
+                            <Switch
+                              id="externalAI"
+                              checked={metrics.usesExternalAI}
+                              onCheckedChange={(checked) => {
+                                if (checked && metrics.wantsWhatsApp) {
+                                  setMetrics({ ...metrics, usesExternalAI: true, wantsWhatsApp: false });
+                                  toast.info("WhatsApp Integrado foi desabilitado pois IA SDR Externa foi ativado. Você pode usar um ou outro, não ambos.");
+                                } else {
+                                  setMetrics({ ...metrics, usesExternalAI: checked });
+                                }
+                              }}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
+                              {metrics.usesExternalAI && (
+                                <span className="text-xs text-muted-foreground">(Requer IA SDR)</span>
+                              )}
+                            </div>
+                            <Switch
+                              id="whatsapp"
+                              checked={metrics.wantsWhatsApp}
+                              onCheckedChange={(checked) => {
+                                if (checked && metrics.usesExternalAI) {
+                                  setMetrics({ ...metrics, wantsWhatsApp: true, usesExternalAI: false });
+                                  toast.info("IA SDR Externa foi desabilitado pois WhatsApp Integrado foi ativado. Você pode usar um ou outro, não ambos.");
+                                } else {
+                                  setMetrics({ ...metrics, wantsWhatsApp: checked });
+                                }
+                              }}
+                              disabled={product !== "imob" && product !== "both"}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Loc Questions */}
+                  <Card className={`bg-green-50/30 transition-opacity ${
+                    product === "loc" || product === "both" ? "opacity-100" : "opacity-40"
+                  }`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <Key className="w-4 h-4" />
+                        Kenlo Locação
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
+                          <Input
+                            id="contracts"
+                            type="number" inputMode="numeric"
+                            value={metrics.contractsUnderManagement}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
+                            }}
+                            min="1"
+                            disabled={product !== "loc" && product !== "both"}
+                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="newContracts" className="text-sm">Novos contratos por mês</Label>
+                          <Input
+                            id="newContracts"
+                            type="number" inputMode="numeric"
+                            value={metrics.newContractsPerMonth}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || 0;
+                              setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
+                            }}
+                            min="0"
+                            disabled={product !== "loc" && product !== "both"}
+                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Box: Kenlo Pay - Only shown when Pay add-on is enabled */}
+                      {addons.pay && (
+                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay</span>
+                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesBoleto" className="text-sm">Cobra boleto do inquilino?</Label>
+                              <Switch
+                                id="chargesBoleto"
+                                checked={metrics.chargesBoletoToTenant}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
+                              />
+                            </div>
+                            {metrics.chargesBoletoToTenant && (
+                              <div className="pl-2">
+                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
+                                <Input
+                                  id="boletoAmount"
+                                  type="number" inputMode="numeric"
+                                  value={metrics.boletoChargeAmount}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
+                                  }}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesSplit" className="text-sm">Cobra split do proprietário?</Label>
+                              <Switch
+                                id="chargesSplit"
+                                checked={metrics.chargesSplitToOwner}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
+                              />
+                            </div>
+                            {metrics.chargesSplitToOwner && (
+                              <div className="pl-2">
+                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
+                                <Input
+                                  id="splitAmount"
+                                  type="number" inputMode="numeric"
+                                  value={metrics.splitChargeAmount}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
+                                  }}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                
+                </div>
+              </div>
+
+
+              {/* §3: Solução Selecionada */}
               {/* Step 1: Product Selection */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  2. Escolha o Produto
+                  3. Solução Selecionada
                 </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Com base nas informações fornecidas, selecionamos automaticamente a solução ideal. Você pode alterar a qualquer momento.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
                   {[
                     { value: "imob", label: "Imob só", icon: TrendingUp, desc: "CRM + Site para vendas" },
@@ -1782,12 +2014,124 @@ export default function CalculadoraPage() {
                 </div>
               </div>
 
+
+
+              {/* §4: Plano Recomendado */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+                  4. Plano Recomendado
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Com base no tamanho da sua operação, este é o plano recomendado. Você pode alterar o plano a qualquer momento.
+                </p>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* IMOB Plan Selection */}
+                  {(product === "imob" || product === "both") && (
+                    <Card className="bg-blue-50/30">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4" />
+                          Kenlo IMOB
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["prime", "k", "k2"] as const).map((plan) => {
+                            const isRecommended = imobPlan === plan;
+                            const planOrder = { prime: 0, k: 1, k2: 2 };
+                            const isBelow = planOrder[plan] < planOrder[imobPlan];
+                            return (
+                              <button
+                                key={plan}
+                                onClick={() => {
+                                  if (!isBelow) setImobPlan(plan);
+                                }}
+                                disabled={isBelow}
+                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
+                                  isRecommended
+                                    ? "border-primary bg-primary/5 shadow-md"
+                                    : isBelow
+                                    ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
+                                }`}
+                                title={isBelow ? "Este plano pode não atender totalmente à sua operação atual." : ""}
+                              >
+                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                {isRecommended && (
+                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
+                                    Recomendado
+                                  </Badge>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* LOC Plan Selection */}
+                  {(product === "loc" || product === "both") && (
+                    <Card className="bg-green-50/30">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Key className="w-4 h-4" />
+                          Kenlo Locação
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["prime", "k", "k2"] as const).map((plan) => {
+                            const isRecommended = locPlan === plan;
+                            const planOrder = { prime: 0, k: 1, k2: 2 };
+                            const isBelow = planOrder[plan] < planOrder[locPlan];
+                            return (
+                              <button
+                                key={plan}
+                                onClick={() => {
+                                  if (!isBelow) setLocPlan(plan);
+                                }}
+                                disabled={isBelow}
+                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
+                                  isRecommended
+                                    ? "border-primary bg-primary/5 shadow-md"
+                                    : isBelow
+                                    ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
+                                }`}
+                                title={isBelow ? "Este plano pode não atender totalmente à sua operação atual." : ""}
+                              >
+                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                {isRecommended && (
+                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
+                                    Recomendado
+                                  </Badge>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
+
+
+              {/* §5: Add-ons Opcionais */}
               {/* Step 2: Add-ons */}
               <div className="mb-6 sm:mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                   <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    3. Add-ons Opcionais
+                    5. Add-ons Opcionais
                   </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Estes serviços ficam disponíveis por padrão e podem ser ativados durante o onboarding.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <div></div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
@@ -1902,361 +2246,164 @@ export default function CalculadoraPage() {
                 </div>
               </div>
 
-                      {/* Step 3: Business Info */}
-              <div className="mb-4">
-                <h2 className="text-lg font-bold text-gray-900 mb-3">
-                  4. Informações do Negócio
+
+
+              {/* §6: Benefícios Inclusos */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+                  6. Benefícios Inclusos
                 </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Confira os benefícios incluídos na sua configuração. Se qualquer produto qualificar, os benefícios se aplicam a todos.
+                </p>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* Imob Questions - Always visible */}
-                  <Card className={`bg-blue-50/30 transition-opacity ${
-                    product === "imob" || product === "both" ? "opacity-100" : "opacity-40"
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Suporte VIP */}
+                  <Card className={`transition-all ${
+                    (metrics.imobVipSupport || metrics.locVipSupport) 
+                      ? "border-green-200 bg-green-50/50" 
+                      : (imobPlan === "prime" && locPlan === "prime") || (product === "imob" && imobPlan === "prime") || (product === "loc" && locPlan === "prime")
+                      ? "border-yellow-200 bg-yellow-50/30"
+                      : "border-gray-200 bg-gray-50/30 opacity-60"
                   }`}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        Kenlo IMOB
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
-                          <Input
-                            id="imobUsers"
-                            type="number" inputMode="numeric"
-                            value={metrics.imobUsers}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
-                            }}
-                            min="1"
-                            disabled={product !== "imob" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="closings" className="text-sm">Fechamentos por mês</Label>
-                          <Input
-                            id="closings"
-                            type="number" inputMode="numeric"
-                            value={metrics.closingsPerMonth}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
-                            }}
-                            min="0"
-                            disabled={product !== "imob" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "imob" || product === "both") ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Box: Leads */}
-                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-blue-800">Leads</span>
-                        </div>
-                        <div className="space-y-2">
-                          <div>
-                            <Label htmlFor="leadsPerMonth" className="text-sm">Leads recebidos por mês</Label>
-                            <Input
-                              id="leadsPerMonth"
-                              type="number" inputMode="numeric"
-                              value={metrics.leadsPerMonth}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
-                              }}
-                              min="0"
-                              disabled={product !== "imob" && product !== "both"}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)</Label>
-                            <Switch
-                              id="externalAI"
-                              checked={metrics.usesExternalAI}
-                              onCheckedChange={(checked) => {
-                                if (checked && metrics.wantsWhatsApp) {
-                                  // Disable WhatsApp when IA SDR is enabled
-                                  setMetrics({ ...metrics, usesExternalAI: true, wantsWhatsApp: false });
-                                  toast.info("WhatsApp Integrado foi desabilitado pois IA SDR Externa foi ativado. Você pode usar um ou outro, não ambos.");
-                                } else {
-                                  setMetrics({ ...metrics, usesExternalAI: checked });
-                                }
-                              }}
-                              disabled={product !== "imob" && product !== "both"}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
-                              {metrics.usesExternalAI && (
-                                <span className="text-xs text-muted-foreground">(Requer IA SDR)</span>
-                              )}
-                            </div>
-                            <Switch
-                              id="whatsapp"
-                              checked={metrics.wantsWhatsApp}
-                              onCheckedChange={(checked) => {
-                                if (checked && metrics.usesExternalAI) {
-                                  // Disable IA SDR when WhatsApp is enabled
-                                  setMetrics({ ...metrics, wantsWhatsApp: true, usesExternalAI: false });
-                                  toast.info("IA SDR Externa foi desabilitado pois WhatsApp Integrado foi ativado. Você pode usar um ou outro, não ambos.");
-                                } else {
-                                  setMetrics({ ...metrics, wantsWhatsApp: checked });
-                                }
-                              }}
-                              disabled={product !== "imob" && product !== "both"}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Box: Serviços Premium */}
-                      <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-purple-800">Serviços Premium</span>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="imobVipSupport" className="text-sm">Suporte VIP</Label>
-                              {(imobPlan === "k" || imobPlan === "k2") && (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                  Incluído
-                                </Badge>
-                              )}
-                              {imobPlan === "prime" && (
+                    <CardContent className="pt-4 pb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-sm">Suporte VIP</span>
+                        {(metrics.imobVipSupport || metrics.locVipSupport) ? (
+                          <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Incluído
+                          </Badge>
+                        ) : (
+                          (() => {
+                            const anyPrime = (product === "imob" || product === "both") && imobPlan === "prime" || 
+                                            (product === "loc" || product === "both") && locPlan === "prime";
+                            return anyPrime ? (
+                              <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
                                   Opcional (R$97/mês)
                                 </Badge>
-                              )}
-                            </div>
-                            <Switch
-                              id="imobVipSupport"
-                              checked={metrics.imobVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ 
-                                ...metrics, 
-                                imobVipSupport: checked,
-                                locVipSupport: checked // Share with LOC
-                              })}
-                              disabled={(product !== "imob" && product !== "both") || imobPlan === "k" || imobPlan === "k2"}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="imobDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {imobPlan === "k2" && (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                  Incluído
-                                </Badge>
-                              )}
-                              {imobPlan === "k" && (
-                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-500 border-gray-200">
-                                  Indisponível
-                                </Badge>
-                              )}
-                              {imobPlan === "prime" && (
-                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                  Opcional (R$197/mês)
-                                </Badge>
-                              )}
-                            </div>
-                            <Switch
-                              id="imobDedicatedCS"
-                              checked={metrics.imobDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ 
-                                ...metrics, 
-                                imobDedicatedCS: checked,
-                                locDedicatedCS: checked // Share with LOC
-                              })}
-                              disabled={(product !== "imob" && product !== "both") || imobPlan === "k" || imobPlan === "k2"}
-                            />
-                          </div>
-                        </div>
+                                <Switch
+                                  checked={metrics.imobVipSupport}
+                                  onCheckedChange={(checked) => setMetrics({ 
+                                    ...metrics, 
+                                    imobVipSupport: checked,
+                                    locVipSupport: checked
+                                  })}
+                                />
+                              </div>
+                            ) : (
+                              <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
+                                Não aplicável
+                              </Badge>
+                            );
+                          })()
+                        )}
                       </div>
+                      <p className="text-xs text-muted-foreground">
+                        Atendimento prioritário com SLA reduzido e canal exclusivo.
+                      </p>
                     </CardContent>
                   </Card>
 
-                  {/* Loc Questions - Always visible */}
-                  <Card className={`bg-green-50/30 transition-opacity ${
-                    product === "loc" || product === "both" ? "opacity-100" : "opacity-40"
+                  {/* CS Dedicado */}
+                  <Card className={`transition-all ${
+                    (metrics.imobDedicatedCS || metrics.locDedicatedCS)
+                      ? "border-green-200 bg-green-50/50"
+                      : (imobPlan === "prime" && (product === "imob" || product === "both")) || (locPlan === "prime" && (product === "loc" || product === "both"))
+                      ? "border-yellow-200 bg-yellow-50/30"
+                      : "border-gray-200 bg-gray-50/30 opacity-60"
                   }`}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Key className="w-4 h-4" />
-                        Kenlo Locação
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
-                          <Input
-                            id="contracts"
-                            type="number" inputMode="numeric"
-                            value={metrics.contractsUnderManagement}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
-                            }}
-                            min="1"
-                            disabled={product !== "loc" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="newContracts" className="text-sm">Novos contratos por mês</Label>
-                          <Input
-                            id="newContracts"
-                            type="number" inputMode="numeric"
-                            value={metrics.newContractsPerMonth}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
-                            }}
-                            min="0"
-                            disabled={product !== "loc" && product !== "both"}
-                            className={`mt-1 ${animateMetrics && (product === "loc" || product === "both") ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Box: Kenlo Pay - Only shown when Pay add-on is enabled */}
-                      {addons.pay && (
-                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay</span>
-                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesBoleto" className="text-sm">Cobra boleto do inquilino?</Label>
-                              <Switch
-                                id="chargesBoleto"
-                                checked={metrics.chargesBoletoToTenant}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
-                              />
-                            </div>
-                            {metrics.chargesBoletoToTenant && (
-                              <div className="pl-2">
-                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
-                                <Input
-                                  id="boletoAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.boletoChargeAmount}
-                                  onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
-                                  }}
-                                  className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
-                                />
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesSplit" className="text-sm">Cobra split do proprietário?</Label>
-                              <Switch
-                                id="chargesSplit"
-                                checked={metrics.chargesSplitToOwner}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
-                              />
-                            </div>
-                            {metrics.chargesSplitToOwner && (
-                              <div className="pl-2">
-                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
-                                <Input
-                                  id="splitAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.splitChargeAmount}
-                                  onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
-                                  }}
-                                  className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Box: Serviços Premium */}
-                      <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-purple-800">Serviços Premium</span>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="locVipSupport" className="text-sm">Suporte VIP</Label>
-                              {(locPlan === "k" || locPlan === "k2") && (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                  Incluído
-                                </Badge>
-                              )}
-                              {locPlan === "prime" && (
-                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                  Opcional (R$97/mês)
-                                </Badge>
-                              )}
-                            </div>
-                            <Switch
-                              id="locVipSupport"
-                              checked={metrics.locVipSupport}
-                              onCheckedChange={(checked) => setMetrics({ 
-                                ...metrics, 
-                                locVipSupport: checked,
-                                imobVipSupport: checked // Share with IMOB
-                              })}
-                              disabled={(product !== "loc" && product !== "both") || locPlan === "k" || locPlan === "k2"}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="locDedicatedCS" className="text-sm">CS Dedicado</Label>
-                              {locPlan === "k2" && (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                  Incluído
-                                </Badge>
-                              )}
-                              {locPlan === "k" && (
-                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-500 border-gray-200">
-                                  Indisponível
-                                </Badge>
-                              )}
-                              {locPlan === "prime" && (
+                    <CardContent className="pt-4 pb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-sm">CS Dedicado</span>
+                        {(metrics.imobDedicatedCS || metrics.locDedicatedCS) ? (
+                          <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Incluído
+                          </Badge>
+                        ) : (
+                          (() => {
+                            // CS is available for Prime (paid) and K2 (included), NOT for K
+                            const anyPrime = (product === "imob" || product === "both") && imobPlan === "prime" || 
+                                            (product === "loc" || product === "both") && locPlan === "prime";
+                            const anyK = ((product === "imob" || product === "both") && imobPlan === "k") || 
+                                        ((product === "loc" || product === "both") && locPlan === "k");
+                            return anyPrime && !anyK ? (
+                              <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
                                   Opcional (R$197/mês)
                                 </Badge>
-                              )}
-                            </div>
-                            <Switch
-                              id="locDedicatedCS"
-                              checked={metrics.locDedicatedCS}
-                              onCheckedChange={(checked) => setMetrics({ 
-                                ...metrics, 
-                                locDedicatedCS: checked,
-                                imobDedicatedCS: checked // Share with IMOB
-                              })}
-                              disabled={(product !== "loc" && product !== "both") || locPlan === "k" || locPlan === "k2"}
-                            />
-                          </div>
-                        </div>
+                                <Switch
+                                  checked={metrics.imobDedicatedCS}
+                                  onCheckedChange={(checked) => setMetrics({ 
+                                    ...metrics, 
+                                    imobDedicatedCS: checked,
+                                    locDedicatedCS: checked
+                                  })}
+                                />
+                              </div>
+                            ) : (
+                              <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
+                                Não disponível neste plano
+                              </Badge>
+                            );
+                          })()
+                        )}
                       </div>
+                      <p className="text-xs text-muted-foreground">
+                        Customer Success dedicado para acompanhamento estratégico.
+                      </p>
                     </CardContent>
                   </Card>
-                
+
+                  {/* Treinamentos */}
+                  <Card className={`transition-all ${
+                    (imobPlan === "k2" || locPlan === "k2") && product !== undefined
+                      ? "border-green-200 bg-green-50/50"
+                      : "border-gray-200 bg-gray-50/30 opacity-60"
+                  }`}>
+                    <CardContent className="pt-4 pb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-sm">Treinamentos</span>
+                        {(() => {
+                          const imobK2 = (product === "imob" || product === "both") && imobPlan === "k2";
+                          const locK2 = (product === "loc" || product === "both") && locPlan === "k2";
+                          const bothK2 = imobK2 && locK2;
+                          
+                          if (bothK2) {
+                            return (
+                              <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                4 online ou 2 presencial/ano
+                              </Badge>
+                            );
+                          } else if (imobK2 || locK2) {
+                            return (
+                              <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                2 online ou 1 presencial/ano
+                              </Badge>
+                            );
+                          } else {
+                            return (
+                              <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
+                                Disponível no K2
+                              </Badge>
+                            );
+                          }
+                        })()}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Treinamentos exclusivos para sua equipe, online ou presencial.
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
 
+
+              {/* §7: Kombos */}
               {/* Section 4 bis: Kombo Comparison Table */}
               <div id="kombo-comparison-section">
               <KomboComparisonTable
@@ -2328,10 +2475,51 @@ export default function CalculadoraPage() {
               </div>
 
 
+
+              {/* §8: Frequência de Pagamento */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+                  8. Frequência de Pagamento
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Todos os valores exibidos são mensais equivalentes, independentemente da forma de pagamento escolhida.
+                </p>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {([
+                    { value: "monthly", label: "Mensal", badge: "+25%" },
+                    { value: "semestral", label: "Semestral", badge: "+11%" },
+                    { value: "annual", label: "Anual", badge: "Referência" },
+                    { value: "biennial", label: "Bienal", badge: "-10%" },
+                  ] as const).map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setFrequency(opt.value as PaymentFrequency)}
+                      className={`relative p-3 rounded-lg border-2 transition-all text-center ${
+                        frequency === opt.value
+                          ? "border-primary bg-primary/5 shadow-md"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="font-semibold text-sm">{opt.label}</div>
+                      <div className={`text-xs mt-1 ${
+                        opt.value === "annual" ? "text-primary font-medium" :
+                        opt.value === "biennial" ? "text-green-600" :
+                        "text-muted-foreground"
+                      }`}>
+                        {opt.badge}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+
+
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    5. Custos Pós-Pago - Sem surpresas, só o que você usar
+                    9. Custos Pós-Pago - Sem surpresas, só o que você usar
                   </h2>
                   
                   <Card>
@@ -2998,6 +3186,7 @@ export default function CalculadoraPage() {
 
 
                 {/* SECTION 6: KENLO RECEITA EXTRA - Only show when there are revenues */}
+
                 {(() => {
                   // Calculate if there are any revenues
                   // Use local variable to avoid TypeScript narrowing issues
@@ -3011,7 +3200,7 @@ export default function CalculadoraPage() {
                   return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    6. Kenlo Receita Extra
+                    10. Kenlo Receita Extra
                   </h2>
                   
                   <Card>
@@ -3541,6 +3730,7 @@ export default function CalculadoraPage() {
                     </Button>
                   </div>
                 </div>
+
 
             </CardContent>
           </Card>
