@@ -2135,3 +2135,12 @@
 - [x] If K2 in both IMOB and LOCAÇÃO, training benefits are cumulative (doubled)
 - [x] Training values are reference-only — must NOT appear as purchasable items
 - [x] Clean, compact layout consistent with advisory tone
+
+## Fix duplicate payment frequency — consolidate into §6
+- [x] Remove §7 (Frequência de Pagamento) entirely
+- [x] Move frequency selector visual/copy into §6 (Sua Seleção vs Kombos)
+- [x] §6 order: comparison table → frequency selector below
+- [x] Use copy: "Valores exibidos em base mensal. Escolha o ciclo de pagamento ideal. O plano anual é a referência. Pagamentos mais longos geram desconto."
+- [x] Renumber §8 Pós-Pago → §7, §9 Receita Extra → §8
+- [x] All prices update from single selector (onFrequencyChange callback)
+- [x] No repetition of payment frequency in any other step

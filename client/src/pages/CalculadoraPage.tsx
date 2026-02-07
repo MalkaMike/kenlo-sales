@@ -2457,50 +2457,12 @@ export default function CalculadoraPage() {
 
 
 
-              {/* §7: Frequência de Pagamento (was §8) */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  7. Frequência de Pagamento
-                </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Valores em base mensal. Escolha o ciclo ideal.
-                </p>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {([
-                    { value: "monthly", label: "Mensal", badge: "+25%" },
-                    { value: "semestral", label: "Semestral", badge: "+11%" },
-                    { value: "annual", label: "Anual", badge: "Referência" },
-                    { value: "biennial", label: "Bienal", badge: "-10%" },
-                  ] as const).map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setFrequency(opt.value as PaymentFrequency)}
-                      className={`relative p-3 rounded-lg border-2 transition-all text-center ${
-                        frequency === opt.value
-                          ? "border-primary bg-primary/5 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      <div className="font-semibold text-sm">{opt.label}</div>
-                      <div className={`text-xs mt-1 ${
-                        opt.value === "annual" ? "text-primary font-medium" :
-                        opt.value === "biennial" ? "text-green-600" :
-                        "text-muted-foreground"
-                      }`}>
-                        {opt.badge}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
 
 
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    8. Custos Pós-Pago - Sem surpresas, só o que você usar
+                    7. Custos Pós-Pago - Sem surpresas, só o que você usar
                   </h2>
                   
                   <Card>
@@ -3181,7 +3143,7 @@ export default function CalculadoraPage() {
                   return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    9. Kenlo Receita Extra
+                    8. Kenlo Receita Extra
                   </h2>
                   
                   <Card>

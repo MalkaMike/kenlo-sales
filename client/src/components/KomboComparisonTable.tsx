@@ -763,37 +763,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       <h2 className="text-lg font-bold text-gray-900 mb-3">
         6. Sua Seleção vs Kombos
       </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Valores exibidos em base mensal. Escolha o ciclo de pagamento ideal.<br />
+        O plano anual é a referência. Pagamentos mais longos geram desconto.
+      </p>
 
       <Card>
         <CardContent className="p-4">
-          {/* Frequency Selector - 4 Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-6">
-            {FREQUENCY_OPTIONS.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => handleFrequencyChange(option.id)}
-                className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
-                  viewMode === option.id
-                    ? "bg-pink-50 border-primary text-primary"
-                    : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                <span className={`text-lg font-semibold ${
-                  viewMode === option.id ? "text-primary" : "text-gray-900"
-                }`}>
-                  {option.label}
-                </span>
-                <span className={`text-sm mt-1 px-3 py-0.5 rounded-full ${
-                  viewMode === option.id
-                    ? "bg-pink-100 text-primary"
-                    : "bg-gray-100 text-gray-500"
-                }`}>
-                  {option.discount}
-                </span>
-              </button>
-            ))}
-          </div>
-
           {/* Comparison Table */}
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed">
@@ -987,6 +963,37 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               <strong>Anual Equivalente:</strong> Inclui 12 meses de mensalidade + custo de implantação (única vez).
               {viewMode === "annual" && " Valores exibidos em base anual."}
             </p>
+          </div>
+
+          {/* Payment Frequency Selector */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Ciclo de Pagamento</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              {FREQUENCY_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleFrequencyChange(option.id)}
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${
+                    viewMode === option.id
+                      ? "bg-pink-50 border-primary text-primary"
+                      : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <span className={`text-base font-semibold ${
+                    viewMode === option.id ? "text-primary" : "text-gray-900"
+                  }`}>
+                    {option.label}
+                  </span>
+                  <span className={`text-xs mt-1 px-2 py-0.5 rounded-full ${
+                    viewMode === option.id
+                      ? "bg-pink-100 text-primary"
+                      : "bg-gray-100 text-gray-500"
+                  }`}>
+                    {option.discount}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
