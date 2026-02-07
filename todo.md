@@ -1992,8 +1992,8 @@
 ## V9 Pricing & Flow Update (Feb 2026)
 
 ### Plan Tier Thresholds
-- [ ] IMOB: Prime 1-4 users (was 1-6), K 5-15 users (was 7-13), K2 16+ users (was 14+)
-- [ ] LOC: Prime 1-199 contracts (was 1-100), K 200-499 contracts (was 101-200), K2 500+ contracts (was 201+)
+- [x] IMOB: Prime 1-4 users (was 1-6), K 5-15 users (was 7-13), K2 16+ users (was 14+)
+- [x] LOC: Prime 1-199 contracts (was 1-100), K 200-499 contracts (was 101-200), K2 500+ contracts (was 201+)
 
 ### Included Quantities
 - [x] IMOB Prime users included: 2 (unchanged)
