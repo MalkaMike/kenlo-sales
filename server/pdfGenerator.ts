@@ -250,7 +250,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       // Accent bar
       doc.roundedRect(cx, metricsStartY, cardW, 16, 4).fill(C.dark);
       doc.rect(cx, metricsStartY + 7, cardW, 9).fill(C.dark);
-      doc.fontSize(7.5).fillColor(C.white).font("Helvetica-Bold").text("IMOB", cx + 12, metricsStartY + 4);
+      const imobPlanLabel = data.imobPlan ? ` (${data.imobPlan.toUpperCase()})` : "";
+      doc.fontSize(7.5).fillColor(C.white).font("Helvetica-Bold").text(`IMOB${imobPlanLabel}`, cx + 12, metricsStartY + 4);
 
       // Row 1: Users + Closings
       const r1 = metricsStartY + 22;
@@ -273,11 +274,13 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       // Accent bar
       doc.roundedRect(cx, metricsStartY, cardW, 16, 4).fill(C.dark);
       doc.rect(cx, metricsStartY + 7, cardW, 9).fill(C.dark);
-      doc.fontSize(7.5).fillColor(C.white).font("Helvetica-Bold").text("LOCAÇÃO", cx + 12, metricsStartY + 4);
+      const locPlanLabel = data.locPlan ? ` (${data.locPlan.toUpperCase()})` : "";
+      doc.fontSize(7.5).fillColor(C.white).font("Helvetica-Bold").text(`LOCAÇÃO${locPlanLabel}`, cx + 12, metricsStartY + 4);
 
-      // Row 1: Contracts
+      // Row 1: Contracts + New Contracts
       const r1 = metricsStartY + 22;
       metricStat(cx + 12, r1, `${data.contracts || 0}`, "Contratos sob gestão");
+      metricStat(cx + cardW / 2 + 5, r1, `${data.newContracts || 0}`, "Novos / mês");
 
       // Row 2: Boleto toggle + value
       const r2 = r1 + 20;
@@ -387,6 +390,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const rawKombo = (data.komboName || "").toLowerCase()
       .replace(/^kombo\s+/, "")
       .replace(/locação/g, "loc")
+      .replace(/gestão/g, "gestao")
       .replace(/[\s_]+/g, "-")
       .replace(/-pro$/, "-pro")
       .replace(/-start$/, "-start");
@@ -410,7 +414,18 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.fontSize(5.5).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold")
         .text(k.label, x, Y + (k.disc ? 16 : 11), { width: KOMBO_W, align: "center" });
     });
-    Y += KOMBO_H + SECTION_GAP;
+    Y += KOMBO_H + 6;
+
+    // Plan tier display (Prime/K/K2)
+    const planParts: string[] = [];
+    if (showImob && data.imobPlan) planParts.push(`IMOB: ${data.imobPlan.toUpperCase()}`);
+    if (showLoc && data.locPlan) planParts.push(`LOC: ${data.locPlan.toUpperCase()}`);
+    if (planParts.length > 0) {
+      doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+        .text(`Plano: ${planParts.join("  |  ")}`, M + 10, Y);
+      Y += LINE_H;
+    }
+    Y += SECTION_GAP - 6;
 
     // --- 7. INVESTIMENTO ---
     Y = sectionTitle("Investimento", Y);

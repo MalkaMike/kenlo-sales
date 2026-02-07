@@ -1954,3 +1954,17 @@
 - [x] Add page boundary check for Pós-Pago section
 - [x] Verify all 3 random examples generate correct page count (1 or 2 pages max)
 - [x] Add comprehensive vitest tests for PDF generator (13 tests, all passing)
+
+## PDF Data Audit & Code Cleanup (Feb 2026)
+- [x] Audit every calculator field against PDF output for 100% data fidelity
+- [x] Fix missing fields in real export handler (email, cellphone, boletoAmount, splitAmount, chargesBoletoToTenant, monthlyLicenseBase)
+- [x] Add plan tier display (Prime/K/K2) to PDF card headers and below Kombos
+- [x] Fix Core Gestão Kombo highlighting bug (gestão → gestao normalization)
+- [x] Clean and optimize entire codebase:
+  - [x] Removed 4 unused component files (ManusDialog, PDFPreviewDialog, PreviewDataDialog, ComponentShowcase)
+  - [x] Removed unused imports (PreviewDataDialog from CalculadoraPage, deleteQuote from routers)
+  - [x] Removed unused function (getProposalsByUser from proposals.ts)
+  - [x] Optimized quotes.ts: requireDb() helper, SQL COUNT for stats, batch delete with single query
+  - [x] Reduced quotes.ts from 571 → 384 lines (33% reduction)
+  - [x] Reduced proposals.ts from 23 → 8 lines
+- [x] Run all tests and verify everything works (135 tests, 9 files, all passing)

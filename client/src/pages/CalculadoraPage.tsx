@@ -12,7 +12,6 @@ import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/cons
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
-import { PreviewDataDialog } from "@/components/PreviewDataDialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -3530,6 +3529,11 @@ export default function CalculadoraPage() {
                   usesExternalAI: metrics.usesExternalAI,
                   wantsWhatsApp: metrics.wantsWhatsApp,
                   chargesSplitToOwner: metrics.chargesSplitToOwner,
+                  chargesBoletoToTenant: metrics.chargesBoletoToTenant,
+                  boletoAmount: metrics.boletoChargeAmount,
+                  splitAmount: metrics.splitChargeAmount,
+                  email: businessNature.email,
+                  cellphone: businessNature.cellphone,
                   selectedAddons: JSON.stringify(compatibleAddons), // Use validated compatible add-ons only
                   paymentPlan: frequency,
                   totalMonthly,
@@ -3546,6 +3550,8 @@ export default function CalculadoraPage() {
                   prepaymentUsersAmount: prepayment.users,
                   prepaymentContractsAmount: prepayment.contracts,
                   prepaymentMonths: prepaymentMonths,
+                  // Monthly license base for PDF display
+                  monthlyLicenseBase: totalMonthly,
                   // Premium services - ALL Kombos include Premium Services for free
                   hasPremiumServices: hasPremiumIncluded || 
                     ((metrics.imobVipSupport || metrics.locVipSupport) && 
@@ -3608,7 +3614,7 @@ export default function CalculadoraPage() {
                       cellPhone: businessNature.cellphone,
                       landlinePhone: businessNature.landline,
                       websiteUrl: businessNature.hasWebsite ? businessNature.websiteUrl : "Cliente não tem site ainda",
-                      // Business Nature fields
+                      // Business nature
                       businessType: businessNature.businessType,
                       email: businessNature.email,
                       hasCRM: businessNature.hasCRM ? 1 : 0,

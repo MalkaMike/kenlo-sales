@@ -1,233 +1,163 @@
-import { eq, desc, isNull, and, inArray, sql, or } from "drizzle-orm";
+import { eq, desc, isNull, and, inArray, sql, or, gte, lte } from "drizzle-orm";
 import { quotes, InsertQuote, Quote } from "../drizzle/schema";
 import { getDb } from "./db";
 
-/**
- * Save a quote to the database
- */
+// ============================================
+// DB Helper - eliminates repeated null-check boilerplate
+// ============================================
+
+async function requireDb() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db;
+}
+
+// ============================================
+// CRUD Operations
+// ============================================
+
 export async function saveQuote(quote: InsertQuote): Promise<number | null> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot save quote: database not available");
-    return null;
-  }
-
-  try {
-    const result = await db.insert(quotes).values(quote);
-    return result[0].insertId;
-  } catch (error) {
-    console.error("[Database] Failed to save quote:", error);
-    throw error;
-  }
+  const db = await requireDb();
+  const result = await db.insert(quotes).values(quote);
+  return result[0].insertId;
 }
 
-/**
- * Get all active quotes (not soft-deleted) ordered by creation date (newest first)
- */
 export async function getQuotes(limit: number = 100): Promise<Quote[]> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get quotes: database not available");
-    return [];
-  }
-
-  try {
-    const result = await db
-      .select()
-      .from(quotes)
-      .where(isNull(quotes.deletedAt))
-      .orderBy(desc(quotes.createdAt))
-      .limit(limit);
-    return result;
-  } catch (error) {
-    console.error("[Database] Failed to get quotes:", error);
-    throw error;
-  }
+  const db = await requireDb();
+  return db
+    .select()
+    .from(quotes)
+    .where(isNull(quotes.deletedAt))
+    .orderBy(desc(quotes.createdAt))
+    .limit(limit);
 }
 
-/**
- * Get a single quote by ID
- */
 export async function getQuoteById(id: number): Promise<Quote | null> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get quote: database not available");
-    return null;
-  }
-
-  try {
-    const result = await db
-      .select()
-      .from(quotes)
-      .where(and(eq(quotes.id, id), isNull(quotes.deletedAt)));
-    return result[0] || null;
-  } catch (error) {
-    console.error("[Database] Failed to get quote:", error);
-    throw error;
-  }
+  const db = await requireDb();
+  const result = await db
+    .select()
+    .from(quotes)
+    .where(and(eq(quotes.id, id), isNull(quotes.deletedAt)));
+  return result[0] || null;
 }
 
-/**
- * Soft delete a quote - only if salesperson owns it or is master
- * Returns: { success: boolean, error?: string }
- */
+// ============================================
+// Soft Delete (with ownership check)
+// ============================================
+
 export async function softDeleteQuote(
-  id: number, 
-  salespersonId: number, 
+  id: number,
+  salespersonId: number,
   isMaster: boolean
 ): Promise<{ success: boolean; error?: string }> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot delete quote: database not available");
-    return { success: false, error: "Database not available" };
+  const db = await requireDb();
+
+  const quote = await getQuoteById(id);
+  if (!quote) return { success: false, error: "Cotação não encontrada" };
+  if (!isMaster && quote.salespersonId !== salespersonId) {
+    return { success: false, error: "Você só pode apagar suas próprias cotações" };
   }
 
-  try {
-    // First, get the quote to check ownership
-    const quote = await getQuoteById(id);
-    if (!quote) {
-      return { success: false, error: "Cotação não encontrada" };
-    }
-
-    // Check ownership - master can delete any, others only their own
-    if (!isMaster && quote.salespersonId !== salespersonId) {
-      return { success: false, error: "Você só pode apagar suas próprias cotações" };
-    }
-
-    // Soft delete by setting deletedAt
-    await db
-      .update(quotes)
-      .set({ deletedAt: new Date() })
-      .where(eq(quotes.id, id));
-    
-    return { success: true };
-  } catch (error) {
-    console.error("[Database] Failed to delete quote:", error);
-    throw error;
-  }
+  await db.update(quotes).set({ deletedAt: new Date() }).where(eq(quotes.id, id));
+  return { success: true };
 }
 
-/**
- * Soft delete multiple quotes in batch - only if salesperson owns them or is master
- * Returns: { success: boolean, deletedCount: number, errors: string[] }
- */
 export async function softDeleteQuotesBatch(
-  ids: number[], 
-  salespersonId: number, 
+  ids: number[],
+  salespersonId: number,
   isMaster: boolean
 ): Promise<{ success: boolean; deletedCount: number; errors: string[] }> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot delete quotes: database not available");
-    return { success: false, deletedCount: 0, errors: ["Database not available"] };
-  }
+  if (ids.length === 0) return { success: true, deletedCount: 0, errors: [] };
 
+  const db = await requireDb();
   const errors: string[] = [];
   let deletedCount = 0;
 
-  try {
-    for (const id of ids) {
-      // Get the quote to check ownership
-      const quote = await getQuoteById(id);
-      if (!quote) {
-        errors.push(`Cotação #${id} não encontrada`);
-        continue;
-      }
+  // Fetch all quotes in one query
+  const targetQuotes = await db
+    .select()
+    .from(quotes)
+    .where(and(inArray(quotes.id, ids), isNull(quotes.deletedAt)));
 
-      // Check ownership - master can delete any, others only their own
-      if (!isMaster && quote.salespersonId !== salespersonId) {
-        errors.push(`Cotação #${id}: Você só pode apagar suas próprias cotações`);
-        continue;
-      }
+  const quoteMap = new Map(targetQuotes.map((q) => [q.id, q]));
 
-      // Soft delete by setting deletedAt
-      await db
-        .update(quotes)
-        .set({ deletedAt: new Date() })
-        .where(eq(quotes.id, id));
-      
-      deletedCount++;
+  // Collect IDs that pass ownership check
+  const idsToDelete: number[] = [];
+  for (const id of ids) {
+    const quote = quoteMap.get(id);
+    if (!quote) {
+      errors.push(`Cotação #${id} não encontrada`);
+      continue;
     }
-
-    return { 
-      success: deletedCount > 0, 
-      deletedCount, 
-      errors 
-    };
-  } catch (error) {
-    console.error("[Database] Failed to delete quotes batch:", error);
-    throw error;
+    if (!isMaster && quote.salespersonId !== salespersonId) {
+      errors.push(`Cotação #${id}: Você só pode apagar suas próprias cotações`);
+      continue;
+    }
+    idsToDelete.push(id);
   }
+
+  // Single batch update instead of N individual updates
+  if (idsToDelete.length > 0) {
+    await db
+      .update(quotes)
+      .set({ deletedAt: new Date() })
+      .where(inArray(quotes.id, idsToDelete));
+    deletedCount = idsToDelete.length;
+  }
+
+  return { success: deletedCount > 0, deletedCount, errors };
 }
 
-/**
- * Hard delete a quote (legacy - kept for compatibility)
- */
-export async function deleteQuote(id: number): Promise<boolean> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot delete quote: database not available");
-    return false;
-  }
+// ============================================
+// Statistics (uses SQL COUNT for efficiency)
+// ============================================
 
-  try {
-    await db.delete(quotes).where(eq(quotes.id, id));
-    return true;
-  } catch (error) {
-    console.error("[Database] Failed to delete quote:", error);
-    throw error;
-  }
-}
-
-/**
- * Get quote statistics
- */
 export async function getQuoteStats(): Promise<{
   total: number;
   linksCopied: number;
   pdfsExported: number;
 }> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get quote stats: database not available");
-    return { total: 0, linksCopied: 0, pdfsExported: 0 };
-  }
+  const db = await requireDb();
 
-  try {
-    const allQuotes = await db
-      .select()
-      .from(quotes)
-      .where(isNull(quotes.deletedAt));
-    const linksCopied = allQuotes.filter(q => q.action === "link_copied").length;
-    const pdfsExported = allQuotes.filter(q => q.action === "pdf_exported").length;
-    
-    return {
-      total: allQuotes.length,
-      linksCopied,
-      pdfsExported,
-    };
-  } catch (error) {
-    console.error("[Database] Failed to get quote stats:", error);
-    throw error;
-  }
+  const [totalResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(quotes)
+    .where(isNull(quotes.deletedAt));
+
+  const [linksResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(quotes)
+    .where(and(isNull(quotes.deletedAt), eq(quotes.action, "link_copied")));
+
+  const [pdfsResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(quotes)
+    .where(and(isNull(quotes.deletedAt), eq(quotes.action, "pdf_exported")));
+
+  return {
+    total: totalResult.count,
+    linksCopied: linksResult.count,
+    pdfsExported: pdfsResult.count,
+  };
 }
 
-/**
- * Performance metrics types
- */
+// ============================================
+// Performance Metrics
+// ============================================
+
 export interface KomboMetrics {
   komboId: string;
   komboName: string;
   count: number;
-  mrrWithoutPostPaid: number; // MRR sem pós-pago
-  mrrWithPostPaid: number; // MRR com pós-pago
+  mrrWithoutPostPaid: number;
+  mrrWithPostPaid: number;
   implantationVolume: number;
   implantationValue: number;
 }
 
 export interface PlanMetrics {
-  product: string; // "imob" | "loc"
-  plan: string; // "prime" | "k" | "k2"
+  product: string;
+  plan: string;
   count: number;
   mrrWithoutPostPaid: number;
   mrrWithPostPaid: number;
@@ -255,33 +185,19 @@ export interface FrequencyMetrics {
 }
 
 export interface PerformanceMetrics {
-  // Summary
   totalQuotes: number;
   totalMrrWithoutPostPaid: number;
   totalMrrWithPostPaid: number;
   totalImplantationVolume: number;
   totalImplantationValue: number;
   ticketMedio: number;
-  
-  // By Kombo
   byKombo: KomboMetrics[];
-  
-  // By Plan (for non-Kombo quotes)
   byPlan: PlanMetrics[];
-  
-  // By Vendor
   byVendor: VendorMetrics[];
-  
-  // By Frequency
   byFrequency: FrequencyMetrics[];
-  
-  // Top Add-ons
   topAddons: { addon: string; count: number; percentage: number }[];
 }
 
-/**
- * Parse JSON safely
- */
 function parseJSON(str: string | null): any {
   if (!str) return null;
   try {
@@ -291,280 +207,178 @@ function parseJSON(str: string | null): any {
   }
 }
 
-/**
- * Get comprehensive performance metrics
- */
-export async function getPerformanceMetrics(
-  filters?: {
-    salespersonId?: number;
-    dateFrom?: Date;
-    dateTo?: Date;
-  }
-): Promise<PerformanceMetrics> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get performance metrics: database not available");
-    return {
-      totalQuotes: 0,
-      totalMrrWithoutPostPaid: 0,
-      totalMrrWithPostPaid: 0,
-      totalImplantationVolume: 0,
-      totalImplantationValue: 0,
-      ticketMedio: 0,
-      byKombo: [],
-      byPlan: [],
-      byVendor: [],
-      byFrequency: [],
-      topAddons: [],
-    };
-  }
-
-  try {
-    // Get all active quotes
-    let allQuotes = await db
-      .select()
-      .from(quotes)
-      .where(isNull(quotes.deletedAt))
-      .orderBy(desc(quotes.createdAt));
-
-    // Apply filters
-    if (filters?.salespersonId) {
-      allQuotes = allQuotes.filter(q => q.salespersonId === filters.salespersonId);
-    }
-    if (filters?.dateFrom) {
-      allQuotes = allQuotes.filter(q => new Date(q.createdAt) >= filters.dateFrom!);
-    }
-    if (filters?.dateTo) {
-      allQuotes = allQuotes.filter(q => new Date(q.createdAt) <= filters.dateTo!);
-    }
-
-    // Initialize metrics
-    const komboMap = new Map<string, KomboMetrics>();
-    const planMap = new Map<string, PlanMetrics>();
-    const vendorMap = new Map<string, VendorMetrics>();
-    const frequencyMap = new Map<string, number>();
-    const addonMap = new Map<string, number>();
-
-    let totalMrrWithoutPostPaid = 0;
-    let totalMrrWithPostPaid = 0;
-    let totalImplantationVolume = 0;
-    let totalImplantationValue = 0;
-
-    // Process each quote
-    for (const quote of allQuotes) {
-      const totals = parseJSON(quote.totals);
-      const addons = parseJSON(quote.addons);
-      
-      // Calculate MRR (monthly recurring revenue)
-      const monthly = totals?.monthly || 0;
-      const postPaid = totals?.postPaid || 0;
-      const implantation = totals?.implantation || 0;
-
-      totalMrrWithoutPostPaid += monthly;
-      totalMrrWithPostPaid += monthly + postPaid;
-      if (implantation > 0) {
-        totalImplantationVolume++;
-        totalImplantationValue += implantation;
-      }
-
-      // By Kombo
-      const komboId = quote.komboId || "sem_kombo";
-      const komboName = quote.komboName || "Sem Kombo";
-      if (!komboMap.has(komboId)) {
-        komboMap.set(komboId, {
-          komboId,
-          komboName,
-          count: 0,
-          mrrWithoutPostPaid: 0,
-          mrrWithPostPaid: 0,
-          implantationVolume: 0,
-          implantationValue: 0,
-        });
-      }
-      const komboMetrics = komboMap.get(komboId)!;
-      komboMetrics.count++;
-      komboMetrics.mrrWithoutPostPaid += monthly;
-      komboMetrics.mrrWithPostPaid += monthly + postPaid;
-      if (implantation > 0) {
-        komboMetrics.implantationVolume++;
-        komboMetrics.implantationValue += implantation;
-      }
-
-      // By Plan (for non-Kombo or detailed breakdown)
-      if (quote.imobPlan) {
-        const planKey = `imob_${quote.imobPlan}`;
-        if (!planMap.has(planKey)) {
-          planMap.set(planKey, {
-            product: "imob",
-            plan: quote.imobPlan,
-            count: 0,
-            mrrWithoutPostPaid: 0,
-            mrrWithPostPaid: 0,
-            implantationVolume: 0,
-            implantationValue: 0,
-          });
-        }
-        const planMetrics = planMap.get(planKey)!;
-        planMetrics.count++;
-        planMetrics.mrrWithoutPostPaid += monthly / (quote.locPlan ? 2 : 1);
-        planMetrics.mrrWithPostPaid += (monthly + postPaid) / (quote.locPlan ? 2 : 1);
-      }
-      if (quote.locPlan) {
-        const planKey = `loc_${quote.locPlan}`;
-        if (!planMap.has(planKey)) {
-          planMap.set(planKey, {
-            product: "loc",
-            plan: quote.locPlan,
-            count: 0,
-            mrrWithoutPostPaid: 0,
-            mrrWithPostPaid: 0,
-            implantationVolume: 0,
-            implantationValue: 0,
-          });
-        }
-        const planMetrics = planMap.get(planKey)!;
-        planMetrics.count++;
-        planMetrics.mrrWithoutPostPaid += monthly / (quote.imobPlan ? 2 : 1);
-        planMetrics.mrrWithPostPaid += (monthly + postPaid) / (quote.imobPlan ? 2 : 1);
-      }
-
-      // By Vendor
-      const vendorName = quote.vendorName || "Sem vendedor";
-      const salespersonId = quote.salespersonId;
-      if (!vendorMap.has(vendorName)) {
-        vendorMap.set(vendorName, {
-          vendorName,
-          salespersonId,
-          totalQuotes: 0,
-          mrrWithoutPostPaid: 0,
-          mrrWithPostPaid: 0,
-          implantationVolume: 0,
-          implantationValue: 0,
-          ticketMedio: 0,
-          komboBreakdown: [],
-          planBreakdown: [],
-        });
-      }
-      const vendorMetrics = vendorMap.get(vendorName)!;
-      vendorMetrics.totalQuotes++;
-      vendorMetrics.mrrWithoutPostPaid += monthly;
-      vendorMetrics.mrrWithPostPaid += monthly + postPaid;
-      if (implantation > 0) {
-        vendorMetrics.implantationVolume++;
-        vendorMetrics.implantationValue += implantation;
-      }
-
-      // By Frequency
-      const frequency = quote.frequency || "unknown";
-      frequencyMap.set(frequency, (frequencyMap.get(frequency) || 0) + 1);
-
-      // Add-ons
-      if (addons && typeof addons === "object") {
-        for (const [addon, enabled] of Object.entries(addons)) {
-          if (enabled) {
-            addonMap.set(addon, (addonMap.get(addon) || 0) + 1);
-          }
-        }
-      }
-    }
-
-    // Calculate ticket medio for each vendor
-    for (const vendor of Array.from(vendorMap.values())) {
-      if (vendor.totalQuotes > 0) {
-        vendor.ticketMedio = vendor.mrrWithPostPaid / vendor.totalQuotes;
-      }
-    }
-
-    // Convert maps to arrays and sort
-    const byKombo = Array.from(komboMap.values())
-      .sort((a, b) => b.count - a.count);
-
-    const byPlan = Array.from(planMap.values())
-      .sort((a, b) => b.count - a.count);
-
-    const byVendor = Array.from(vendorMap.values())
-      .sort((a, b) => b.mrrWithPostPaid - a.mrrWithPostPaid);
-
-    const totalQuotes = allQuotes.length;
-    const byFrequency = Array.from(frequencyMap.entries())
-      .map(([frequency, count]) => ({
-        frequency,
-        count,
-        percentage: totalQuotes > 0 ? (count / totalQuotes) * 100 : 0,
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    const topAddons = Array.from(addonMap.entries())
-      .map(([addon, count]) => ({
-        addon,
-        count,
-        percentage: totalQuotes > 0 ? (count / totalQuotes) * 100 : 0,
-      }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
-
-    return {
-      totalQuotes,
-      totalMrrWithoutPostPaid,
-      totalMrrWithPostPaid,
-      totalImplantationVolume,
-      totalImplantationValue,
-      ticketMedio: totalQuotes > 0 ? totalMrrWithPostPaid / totalQuotes : 0,
-      byKombo,
-      byPlan,
-      byVendor,
-      byFrequency,
-      topAddons,
-    };
-  } catch (error) {
-    console.error("[Database] Failed to get performance metrics:", error);
-    throw error;
+/** Accumulate metrics into a Map entry, creating it if needed */
+function accumulateMetrics<T extends { count: number; mrrWithoutPostPaid: number; mrrWithPostPaid: number; implantationVolume: number; implantationValue: number }>(
+  map: Map<string, T>,
+  key: string,
+  factory: () => T,
+  monthly: number,
+  postPaid: number,
+  implantation: number,
+  divisor: number = 1
+) {
+  if (!map.has(key)) map.set(key, factory());
+  const m = map.get(key)!;
+  m.count++;
+  m.mrrWithoutPostPaid += monthly / divisor;
+  m.mrrWithPostPaid += (monthly + postPaid) / divisor;
+  if (implantation > 0) {
+    m.implantationVolume++;
+    m.implantationValue += implantation;
   }
 }
 
-/**
- * Get quotes for a specific user (either OAuth user or salesperson)
- * For OAuth users: match by vendorName (since they don't have salespersonId)
- * For salespeople: match by salespersonId
- */
+export async function getPerformanceMetrics(
+  filters?: { salespersonId?: number; dateFrom?: Date; dateTo?: Date }
+): Promise<PerformanceMetrics> {
+  const db = await requireDb();
+
+  // Build WHERE conditions
+  const conditions = [isNull(quotes.deletedAt)];
+  if (filters?.salespersonId) conditions.push(eq(quotes.salespersonId, filters.salespersonId));
+  if (filters?.dateFrom) conditions.push(gte(quotes.createdAt, filters.dateFrom));
+  if (filters?.dateTo) conditions.push(lte(quotes.createdAt, filters.dateTo));
+
+  const allQuotes = await db
+    .select()
+    .from(quotes)
+    .where(and(...conditions))
+    .orderBy(desc(quotes.createdAt));
+
+  // Aggregation maps
+  const komboMap = new Map<string, KomboMetrics>();
+  const planMap = new Map<string, PlanMetrics>();
+  const vendorMap = new Map<string, VendorMetrics>();
+  const frequencyMap = new Map<string, number>();
+  const addonMap = new Map<string, number>();
+
+  let totalMrrWithoutPostPaid = 0;
+  let totalMrrWithPostPaid = 0;
+  let totalImplantationVolume = 0;
+  let totalImplantationValue = 0;
+
+  for (const quote of allQuotes) {
+    const totals = parseJSON(quote.totals);
+    const addons = parseJSON(quote.addons);
+
+    const monthly = totals?.monthly || 0;
+    const postPaid = totals?.postPaid || 0;
+    const implantation = totals?.implantation || 0;
+
+    totalMrrWithoutPostPaid += monthly;
+    totalMrrWithPostPaid += monthly + postPaid;
+    if (implantation > 0) {
+      totalImplantationVolume++;
+      totalImplantationValue += implantation;
+    }
+
+    // By Kombo
+    const komboId = quote.komboId || "sem_kombo";
+    const komboName = quote.komboName || "Sem Kombo";
+    accumulateMetrics(komboMap, komboId, () => ({
+      komboId, komboName, count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0, implantationVolume: 0, implantationValue: 0,
+    }), monthly, postPaid, implantation);
+
+    // By Plan
+    const hasBothPlans = !!(quote.imobPlan && quote.locPlan);
+    const divisor = hasBothPlans ? 2 : 1;
+
+    if (quote.imobPlan) {
+      accumulateMetrics(planMap, `imob_${quote.imobPlan}`, () => ({
+        product: "imob", plan: quote.imobPlan!, count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0, implantationVolume: 0, implantationValue: 0,
+      }), monthly, postPaid, implantation, divisor);
+    }
+    if (quote.locPlan) {
+      accumulateMetrics(planMap, `loc_${quote.locPlan}`, () => ({
+        product: "loc", plan: quote.locPlan!, count: 0, mrrWithoutPostPaid: 0, mrrWithPostPaid: 0, implantationVolume: 0, implantationValue: 0,
+      }), monthly, postPaid, implantation, divisor);
+    }
+
+    // By Vendor
+    const vendorName = quote.vendorName || "Sem vendedor";
+    if (!vendorMap.has(vendorName)) {
+      vendorMap.set(vendorName, {
+        vendorName,
+        salespersonId: quote.salespersonId,
+        totalQuotes: 0,
+        mrrWithoutPostPaid: 0,
+        mrrWithPostPaid: 0,
+        implantationVolume: 0,
+        implantationValue: 0,
+        ticketMedio: 0,
+        komboBreakdown: [],
+        planBreakdown: [],
+      });
+    }
+    const vm = vendorMap.get(vendorName)!;
+    vm.totalQuotes++;
+    vm.mrrWithoutPostPaid += monthly;
+    vm.mrrWithPostPaid += monthly + postPaid;
+    if (implantation > 0) {
+      vm.implantationVolume++;
+      vm.implantationValue += implantation;
+    }
+
+    // By Frequency
+    const frequency = quote.frequency || "unknown";
+    frequencyMap.set(frequency, (frequencyMap.get(frequency) || 0) + 1);
+
+    // Add-ons
+    if (addons && typeof addons === "object") {
+      for (const [addon, enabled] of Object.entries(addons)) {
+        if (enabled) addonMap.set(addon, (addonMap.get(addon) || 0) + 1);
+      }
+    }
+  }
+
+  // Calculate ticket medio for each vendor
+  for (const vendor of Array.from(vendorMap.values())) {
+    if (vendor.totalQuotes > 0) vendor.ticketMedio = vendor.mrrWithPostPaid / vendor.totalQuotes;
+  }
+
+  const totalQuotes = allQuotes.length;
+
+  return {
+    totalQuotes,
+    totalMrrWithoutPostPaid,
+    totalMrrWithPostPaid,
+    totalImplantationVolume,
+    totalImplantationValue,
+    ticketMedio: totalQuotes > 0 ? totalMrrWithPostPaid / totalQuotes : 0,
+    byKombo: Array.from(komboMap.values()).sort((a, b) => b.count - a.count),
+    byPlan: Array.from(planMap.values()).sort((a, b) => b.count - a.count),
+    byVendor: Array.from(vendorMap.values()).sort((a, b) => b.mrrWithPostPaid - a.mrrWithPostPaid),
+    byFrequency: Array.from(frequencyMap.entries())
+      .map(([frequency, count]) => ({ frequency, count, percentage: totalQuotes > 0 ? (count / totalQuotes) * 100 : 0 }))
+      .sort((a, b) => b.count - a.count),
+    topAddons: Array.from(addonMap.entries())
+      .map(([addon, count]) => ({ addon, count, percentage: totalQuotes > 0 ? (count / totalQuotes) * 100 : 0 }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10),
+  };
+}
+
+// ============================================
+// User-specific Queries
+// ============================================
+
 export async function getQuotesByUser(params: {
   salespersonId?: number;
   userName?: string;
   limit?: number;
 }): Promise<Quote[]> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get quotes: database not available");
-    return [];
-  }
+  const db = await requireDb();
 
-  try {
-    // Build conditions
-    const conditions = [isNull(quotes.deletedAt)];
-    
-    const userConditions = [];
-    if (params.salespersonId) {
-      userConditions.push(eq(quotes.salespersonId, params.salespersonId));
-    }
-    if (params.userName) {
-      userConditions.push(eq(quotes.vendorName, params.userName));
-    }
+  const conditions = [isNull(quotes.deletedAt)];
+  const userConditions = [];
+  if (params.salespersonId) userConditions.push(eq(quotes.salespersonId, params.salespersonId));
+  if (params.userName) userConditions.push(eq(quotes.vendorName, params.userName));
+  if (userConditions.length > 0) conditions.push(or(...userConditions)!);
 
-    // Apply user conditions with OR if any exist
-    if (userConditions.length > 0) {
-      conditions.push(or(...userConditions)!);
-    }
-
-    const result = await db
-      .select()
-      .from(quotes)
-      .where(and(...conditions))
-      .orderBy(desc(quotes.createdAt))
-      .limit(params.limit || 100);
-
-    return result;
-  } catch (error) {
-    console.error("[Database] Failed to get quotes by user:", error);
-    throw error;
-  }
+  return db
+    .select()
+    .from(quotes)
+    .where(and(...conditions))
+    .orderBy(desc(quotes.createdAt))
+    .limit(params.limit || 100);
 }
