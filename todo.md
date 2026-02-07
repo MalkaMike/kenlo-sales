@@ -2127,3 +2127,11 @@
 
 ## Remove product badges from add-on cards
 - [x] Remove "Imob" and "Loc" badges from add-on cards in §4 (Add-ons Opcionais)
+
+## Training Benefits Rule — Benefícios Inclusos
+- [x] Benefits determined by highest plan across IMOB and LOCAÇÃO (not per-product)
+- [x] If client has different plans per product, highest plan defines benefits for entire account
+- [x] K2 benefits include: 2 online trainings (ref R$2.000 each) OR 1 on-site training (ref R$3.000)
+- [x] If K2 in both IMOB and LOCAÇÃO, training benefits are cumulative (doubled)
+- [x] Training values are reference-only — must NOT appear as purchasable items
+- [x] Clean, compact layout consistent with advisory tone

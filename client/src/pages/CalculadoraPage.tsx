@@ -1283,55 +1283,36 @@ export default function CalculadoraPage() {
     }
   }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
-  // Auto-activate Suporte Premium and CS Dedicado based on selected plans (V9 rules)
-  // Rules:
+  // Auto-activate Suporte Premium and CS Dedicado based on HIGHEST plan across products (V9 rules)
+  // HIGHEST-PLAN-WINS: Benefits are determined by the highest plan across IMOB and LOCAÇÃO.
+  // Plan hierarchy: K2 > K > Prime
   // - Suporte VIP: Included (locked ON) for K and K2, Optional (paid R$97) for Prime
   // - CS Dedicado: Included (locked ON) for K2, NOT AVAILABLE for K, Optional (paid R$197) for Prime
-  // - SHARED: If VIP/CS is enabled for IMOB (by plan or manually), it's automatically enabled for LOC (and vice-versa)
+  // - Benefits apply to the ENTIRE account, not per-product
   useEffect(() => {
     setMetrics(prev => {
       const newMetrics = { ...prev };
       
-      // IMOB: Set default values based on plan
+      // Determine the highest plan across all selected products
+      const planRank = { prime: 0, k: 1, k2: 2 };
+      let highestPlan: PlanTier = "prime";
+      
       if (product === "imob" || product === "both") {
-        // Suporte VIP: Included in K and K2, optional for Prime
-        const shouldEnableImobVip = imobPlan === "k" || imobPlan === "k2";
-        newMetrics.imobVipSupport = shouldEnableImobVip;
-        
-        // CS Dedicado: Included only in K2, optional for Prime and K
-        const shouldEnableImobCS = imobPlan === "k2";
-        newMetrics.imobDedicatedCS = shouldEnableImobCS;
-      } else {
-        // If IMOB is not selected, reset to false
-        newMetrics.imobVipSupport = false;
-        newMetrics.imobDedicatedCS = false;
+        if (planRank[imobPlan] > planRank[highestPlan]) highestPlan = imobPlan;
       }
-      
-      // LOC: Same logic as IMOB
       if (product === "loc" || product === "both") {
-        const shouldEnableLocVip = locPlan === "k" || locPlan === "k2";
-        newMetrics.locVipSupport = shouldEnableLocVip;
-        
-        const shouldEnableLocCS = locPlan === "k2";
-        newMetrics.locDedicatedCS = shouldEnableLocCS;
-      } else {
-        // If LOC is not selected, reset to false
-        newMetrics.locVipSupport = false;
-        newMetrics.locDedicatedCS = false;
+        if (planRank[locPlan] > planRank[highestPlan]) highestPlan = locPlan;
       }
       
-      // SHARED PREMIUM SERVICES: If VIP/CS is enabled for one product, enable for the other
-      // VIP Support: If enabled for IMOB, enable for LOC (and vice-versa)
-      if (newMetrics.imobVipSupport || newMetrics.locVipSupport) {
-        newMetrics.imobVipSupport = true;
-        newMetrics.locVipSupport = true;
-      }
+      // Apply benefits based on highest plan (account-wide)
+      const vipIncluded = highestPlan === "k" || highestPlan === "k2";
+      const csIncluded = highestPlan === "k2";
       
-      // CS Dedicado: If enabled for IMOB, enable for LOC (and vice-versa)
-      if (newMetrics.imobDedicatedCS || newMetrics.locDedicatedCS) {
-        newMetrics.imobDedicatedCS = true;
-        newMetrics.locDedicatedCS = true;
-      }
+      // Set both products to the same benefit state (account-wide)
+      newMetrics.imobVipSupport = vipIncluded;
+      newMetrics.locVipSupport = vipIncluded;
+      newMetrics.imobDedicatedCS = csIncluded;
+      newMetrics.locDedicatedCS = csIncluded;
       
       return newMetrics;
     });
@@ -2246,7 +2227,7 @@ export default function CalculadoraPage() {
 
 
 
-              {/* §5: Benefícios Inclusos (was §6) */}
+              {/* §5: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
                   5. Benefícios Inclusos
@@ -2255,28 +2236,46 @@ export default function CalculadoraPage() {
                   Já incluídos na sua configuração.
                 </p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Suporte VIP */}
-                  <Card className={`transition-all ${
-                    (metrics.imobVipSupport || metrics.locVipSupport) 
-                      ? "border-green-200 bg-green-50/50" 
-                      : (imobPlan === "prime" && locPlan === "prime") || (product === "imob" && imobPlan === "prime") || (product === "loc" && locPlan === "prime")
-                      ? "border-yellow-200 bg-yellow-50/30"
-                      : "border-gray-200 bg-gray-50/30 opacity-60"
-                  }`}>
-                    <CardContent className="pt-4 pb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-sm">Suporte VIP</span>
-                        {(metrics.imobVipSupport || metrics.locVipSupport) ? (
-                          <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Incluído
-                          </Badge>
-                        ) : (
-                          (() => {
-                            const anyPrime = (product === "imob" || product === "both") && imobPlan === "prime" || 
-                                            (product === "loc" || product === "both") && locPlan === "prime";
-                            return anyPrime ? (
+                {/* Compute highest plan once for the whole section */}
+                {(() => {
+                  const planRank = { prime: 0, k: 1, k2: 2 };
+                  let highestPlan: PlanTier = "prime";
+                  if (product === "imob" || product === "both") {
+                    if (planRank[imobPlan] > planRank[highestPlan]) highestPlan = imobPlan;
+                  }
+                  if (product === "loc" || product === "both") {
+                    if (planRank[locPlan] > planRank[highestPlan]) highestPlan = locPlan;
+                  }
+                  
+                  const vipIncluded = highestPlan === "k" || highestPlan === "k2";
+                  const csIncluded = highestPlan === "k2";
+                  const isPrimeOnly = highestPlan === "prime";
+                  
+                  // K2 training: cumulative if K2 in both products
+                  const imobK2 = (product === "imob" || product === "both") && imobPlan === "k2";
+                  const locK2 = (product === "loc" || product === "both") && locPlan === "k2";
+                  const bothK2 = imobK2 && locK2;
+                  const anyK2 = imobK2 || locK2;
+                  
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {/* Suporte VIP */}
+                      <Card className={`transition-all ${
+                        vipIncluded
+                          ? "border-green-200 bg-green-50/50" 
+                          : isPrimeOnly
+                          ? "border-yellow-200 bg-yellow-50/30"
+                          : "border-gray-200 bg-gray-50/30 opacity-60"
+                      }`}>
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-sm">Suporte VIP</span>
+                            {vipIncluded ? (
+                              <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                Incluído
+                              </Badge>
+                            ) : isPrimeOnly ? (
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
                                   Opcional (R$97/mês)
@@ -2294,40 +2293,31 @@ export default function CalculadoraPage() {
                               <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
                                 Não aplicável
                               </Badge>
-                            );
-                          })()
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Atendimento prioritário com SLA reduzido e canal exclusivo.
-                      </p>
-                    </CardContent>
-                  </Card>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Atendimento prioritário com SLA reduzido e canal exclusivo.
+                          </p>
+                        </CardContent>
+                      </Card>
 
-                  {/* CS Dedicado */}
-                  <Card className={`transition-all ${
-                    (metrics.imobDedicatedCS || metrics.locDedicatedCS)
-                      ? "border-green-200 bg-green-50/50"
-                      : (imobPlan === "prime" && (product === "imob" || product === "both")) || (locPlan === "prime" && (product === "loc" || product === "both"))
-                      ? "border-yellow-200 bg-yellow-50/30"
-                      : "border-gray-200 bg-gray-50/30 opacity-60"
-                  }`}>
-                    <CardContent className="pt-4 pb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-sm">CS Dedicado</span>
-                        {(metrics.imobDedicatedCS || metrics.locDedicatedCS) ? (
-                          <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Incluído
-                          </Badge>
-                        ) : (
-                          (() => {
-                            // CS is available for Prime (paid) and K2 (included), NOT for K
-                            const anyPrime = (product === "imob" || product === "both") && imobPlan === "prime" || 
-                                            (product === "loc" || product === "both") && locPlan === "prime";
-                            const anyK = ((product === "imob" || product === "both") && imobPlan === "k") || 
-                                        ((product === "loc" || product === "both") && locPlan === "k");
-                            return anyPrime && !anyK ? (
+                      {/* CS Dedicado */}
+                      <Card className={`transition-all ${
+                        csIncluded
+                          ? "border-green-200 bg-green-50/50"
+                          : isPrimeOnly
+                          ? "border-yellow-200 bg-yellow-50/30"
+                          : "border-gray-200 bg-gray-50/30 opacity-60"
+                      }`}>
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-sm">CS Dedicado</span>
+                            {csIncluded ? (
+                              <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                Incluído
+                              </Badge>
+                            ) : isPrimeOnly ? (
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
                                   Opcional (R$197/mês)
@@ -2345,59 +2335,52 @@ export default function CalculadoraPage() {
                               <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
                                 Não disponível neste plano
                               </Badge>
-                            );
-                          })()
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Customer Success dedicado para acompanhamento estratégico.
-                      </p>
-                    </CardContent>
-                  </Card>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Customer Success dedicado para acompanhamento estratégico.
+                          </p>
+                        </CardContent>
+                      </Card>
 
-                  {/* Treinamentos */}
-                  <Card className={`transition-all ${
-                    (imobPlan === "k2" || locPlan === "k2") && product !== undefined
-                      ? "border-green-200 bg-green-50/50"
-                      : "border-gray-200 bg-gray-50/30 opacity-60"
-                  }`}>
-                    <CardContent className="pt-4 pb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-sm">Treinamentos</span>
-                        {(() => {
-                          const imobK2 = (product === "imob" || product === "both") && imobPlan === "k2";
-                          const locK2 = (product === "loc" || product === "both") && locPlan === "k2";
-                          const bothK2 = imobK2 && locK2;
-                          
-                          if (bothK2) {
-                            return (
+                      {/* Treinamentos — K2 benefit, cumulative if K2 in both products */}
+                      <Card className={`transition-all ${
+                        anyK2
+                          ? "border-green-200 bg-green-50/50"
+                          : "border-gray-200 bg-gray-50/30 opacity-60"
+                      }`}>
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-sm">Treinamentos</span>
+                            {bothK2 ? (
                               <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
                                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                                4 online ou 2 presencial/ano
+                                4 online ou 2 presencial
                               </Badge>
-                            );
-                          } else if (imobK2 || locK2) {
-                            return (
+                            ) : anyK2 ? (
                               <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">
                                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                                2 online ou 1 presencial/ano
+                                2 online ou 1 presencial
                               </Badge>
-                            );
-                          } else {
-                            return (
+                            ) : (
                               <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
                                 Disponível no K2
                               </Badge>
-                            );
-                          }
-                        })()}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Treinamentos exclusivos para sua equipe, online ou presencial.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {bothK2 
+                              ? "4 treinamentos online (ref. R$2.000/cada) ou 2 presenciais (ref. R$3.000/cada) por ano."
+                              : anyK2
+                              ? "2 treinamentos online (ref. R$2.000/cada) ou 1 presencial (ref. R$3.000) por ano."
+                              : "Treinamentos exclusivos para sua equipe, online ou presencial."
+                            }
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })()}
               </div>
 
 
