@@ -1529,7 +1529,7 @@ export default function CalculadoraPage() {
               Cotação Kenlo
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
-              Configure a solução ideal para sua imobiliária e veja o investimento em tempo real
+              Veja o investimento ideal para sua imobiliária — em tempo real
             </p>
             <Button
               variant="outline"
@@ -1977,10 +1977,10 @@ export default function CalculadoraPage() {
               {/* §3: Solução e Plano Recomendados (merged §3+§4) */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  3. Solução e Plano Recomendados
+                  3. Nossa Recomendação
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Com base na sua operação, recomendamos a configuração abaixo. Você pode ajustar produto e plano livremente.
+                  Baseado no seu perfil, este é o melhor ponto de partida.
                 </p>
                 
                 <div className={`grid gap-4 ${product === "both" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1 max-w-lg"}`}>
@@ -2021,7 +2021,7 @@ export default function CalculadoraPage() {
                                 )}
                                 {isSelected && !isRecommended && (
                                   <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
-                                    Selecionado
+                                    Sua escolha
                                   </Badge>
                                 )}
                               </button>
@@ -2069,7 +2069,7 @@ export default function CalculadoraPage() {
                                 )}
                                 {isSelected && !isRecommended && (
                                   <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
-                                    Selecionado
+                                    Sua escolha
                                   </Badge>
                                 )}
                               </button>
@@ -2083,7 +2083,7 @@ export default function CalculadoraPage() {
 
                 {/* Subtle product switch — allows changing product without going back to §1 */}
                 <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>Alterar solução:</span>
+                  <span>Ajustar:</span>
                   {["imob", "loc", "both"].map((opt) => (
                     <button
                       key={opt}
@@ -2109,7 +2109,7 @@ export default function CalculadoraPage() {
                     4. Add-ons Opcionais
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Estes serviços ficam disponíveis por padrão e podem ser ativados durante o onboarding.
+                    Ative conforme a necessidade — sem compromisso.
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -2256,7 +2256,7 @@ export default function CalculadoraPage() {
                   5. Benefícios Inclusos
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Confira os benefícios incluídos na sua configuração. Se qualquer produto qualificar, os benefícios se aplicam a todos.
+                  Já incluídos na sua configuração.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -2484,7 +2484,7 @@ export default function CalculadoraPage() {
                   7. Frequência de Pagamento
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Todos os valores exibidos são mensais equivalentes, independentemente da forma de pagamento escolhida.
+                  Valores em base mensal. Escolha o ciclo ideal.
                 </p>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

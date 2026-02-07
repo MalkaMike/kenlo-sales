@@ -2117,3 +2117,10 @@
 - [x] Remove old separate §3 and §4 section headers
 - [x] Update section numbering (now 9 sections total)
 - [x] Tests pass (179 tests, all green)
+
+## Microcopy Review — §3 "Solução e Plano Recomendados" (CEO-to-CEO tone)
+- [x] Review and refine §3 section title (“Nossa Recomendação”)
+- [x] Review and refine §3 subtitle text (“Baseado no seu perfil, este é o melhor ponto de partida.”)
+- [x] Review and refine plan button labels and badges (“Sua escolha” when overriding)
+- [x] Review and refine product switcher labels (“Ajustar:”)
+- [x] Review and refine surrounding section subtitles for consistency (§4, §5, §7, page header)
