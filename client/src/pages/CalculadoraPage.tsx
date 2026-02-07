@@ -1329,13 +1329,7 @@ export default function CalculadoraPage() {
     });
   }, [imobPlan, locPlan, product]);
 
-  // Auto-disable WhatsApp when both Leads and IA SDR Externa are OFF
-  useEffect(() => {
-    const shouldDisableWhatsApp = !addons.leads && !metrics.usesExternalAI;
-    if (shouldDisableWhatsApp && metrics.wantsWhatsApp) {
-      setMetrics({ ...metrics, wantsWhatsApp: false });
-    }
-  }, [addons.leads, metrics.usesExternalAI]);
+  // WhatsApp and IA SDR are independent options - no dependency between them
 
   // Pre-select product based on businessType from §1
   // Corretora → imob, Administrador → loc, Ambos → both
@@ -1842,32 +1836,17 @@ export default function CalculadoraPage() {
                               id="externalAI"
                               checked={metrics.usesExternalAI}
                               onCheckedChange={(checked) => {
-                                if (checked && metrics.wantsWhatsApp) {
-                                  setMetrics({ ...metrics, usesExternalAI: true, wantsWhatsApp: false });
-                                  toast.info("WhatsApp Integrado foi desabilitado pois IA SDR Externa foi ativado. Você pode usar um ou outro, não ambos.");
-                                } else {
-                                  setMetrics({ ...metrics, usesExternalAI: checked });
-                                }
+                                setMetrics({ ...metrics, usesExternalAI: checked });
                               }}
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
-                              {metrics.usesExternalAI && (
-                                <span className="text-xs text-muted-foreground">(Requer IA SDR)</span>
-                              )}
-                            </div>
+                            <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
                             <Switch
                               id="whatsapp"
                               checked={metrics.wantsWhatsApp}
                               onCheckedChange={(checked) => {
-                                if (checked && metrics.usesExternalAI) {
-                                  setMetrics({ ...metrics, wantsWhatsApp: true, usesExternalAI: false });
-                                  toast.info("IA SDR Externa foi desabilitado pois WhatsApp Integrado foi ativado. Você pode usar um ou outro, não ambos.");
-                                } else {
-                                  setMetrics({ ...metrics, wantsWhatsApp: checked });
-                                }
+                                setMetrics({ ...metrics, wantsWhatsApp: checked });
                               }}
                             />
                           </div>
@@ -3981,11 +3960,6 @@ export default function CalculadoraPage() {
                   return; // Stop PDF generation
                 }
                 
-                // Validate WhatsApp dependency
-                if (metrics.wantsWhatsApp && !addons.leads && !metrics.usesExternalAI) {
-                  toast.error('WhatsApp Integrado requer Leads ou IA SDR Externa ativa.');
-                  return;
-                }
                 
                 // Validate Premium Services logic
                 // ALL Kombos include Premium Services (VIP + CS Dedicado) for free

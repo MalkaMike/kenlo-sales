@@ -2101,3 +2101,8 @@
 - [x] Add tooltip on lower plans in §4 when higher plan is recommended (per Master Prompt)
 - [x] Lower plans should be de-emphasized but still selectable (opacity-60, amber warning text, clickable)
 - [x] Expand §6 Treinamentos card: show "2 online OU 1 presencial" when K2, "4 online ou 2 presencial" when both K2 (already implemented)
+
+## Fix WhatsApp Integrado dependency
+- [x] Remove "(Requer IA SDR)" text from WhatsApp toggle
+- [x] Remove IA SDR dependency logic — WhatsApp should be independent toggle
+- [x] WhatsApp and IA SDR are separate, independent options
