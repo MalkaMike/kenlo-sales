@@ -2124,3 +2124,6 @@
 - [x] Review and refine plan button labels and badges (“Sua escolha” when overriding)
 - [x] Review and refine product switcher labels (“Ajustar:”)
 - [x] Review and refine surrounding section subtitles for consistency (§4, §5, §7, page header)
+
+## Remove product badges from add-on cards
+- [x] Remove "Imob" and "Loc" badges from add-on cards in §4 (Add-ons Opcionais)

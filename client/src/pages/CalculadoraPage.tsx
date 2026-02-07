@@ -2153,7 +2153,6 @@ export default function CalculadoraPage() {
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
                       <div className="flex items-center gap-2">
                         <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-100 text-pink-600 font-medium">Imob</span>
                       </div>
                       <Switch
                         id="leads"
@@ -2196,7 +2195,6 @@ export default function CalculadoraPage() {
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
                       <div className="flex items-center gap-2">
                         <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
                       </div>
                       <Switch
                         id="pay"
@@ -2214,7 +2212,6 @@ export default function CalculadoraPage() {
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
                       <div className="flex items-center gap-2">
                         <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
                       </div>
                       <Switch
                         id="seguros"
@@ -2232,7 +2229,6 @@ export default function CalculadoraPage() {
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
                       <div className="flex items-center gap-2">
                         <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
                       </div>
                       <Switch
                         id="cash"
