@@ -1337,6 +1337,20 @@ export default function CalculadoraPage() {
     }
   }, [addons.leads, metrics.usesExternalAI]);
 
+  // Pre-select product based on businessType from §1
+  // Corretora → imob, Administrador → loc, Ambos → both
+  // User can always override this pre-selection in §3
+  useEffect(() => {
+    const bt = businessNature.businessType;
+    if (bt === "broker") {
+      setProduct("imob");
+    } else if (bt === "rental_admin") {
+      setProduct("loc");
+    } else if (bt === "both") {
+      setProduct("both");
+    }
+  }, [businessNature.businessType]);
+
   // Detect which Kombo is active and return discount percentage
   // Old detectKombo function removed - now using new Kombo system above
 

@@ -2087,3 +2087,9 @@
 - [x] §2 LOC fields should only show when businessType is "administrador" or "ambos"
 - [x] When businessType changes, §2 should update visibility immediately
 - [x] Re-read Master Prompt rules to ensure full compliance
+
+## Fix §3 Product Pre-Selection based on §1 Business Type
+- [x] Pre-select product based on businessType: Corretora→imob, Administrador→loc, Ambos→both
+- [x] All 3 product options (Imob só, Loc só, Imob+Loc) must ALWAYS be visible and clickable
+- [x] User can override the pre-selection at any time
+- [x] Pre-selection should trigger when businessType changes in §1
