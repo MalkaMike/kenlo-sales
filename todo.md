@@ -2093,3 +2093,11 @@
 - [x] All 3 product options (Imob só, Loc só, Imob+Loc) must ALWAYS be visible and clickable
 - [x] User can override the pre-selection at any time
 - [x] Pre-selection should trigger when businessType changes in §1
+
+## Improvements: Add-on Availability, Plan Tooltips, Treinamentos
+- [x] Grey out Leads add-on when only LOC is selected (Leads = Imob only)
+- [x] Grey out Pay/Seguros/Cash add-ons when only IMOB is selected (Pay/Seguros/Cash = Loc only)
+- [x] Inteligência and Assinatura available for both products
+- [x] Add tooltip on lower plans in §4 when higher plan is recommended (per Master Prompt)
+- [x] Lower plans should be de-emphasized but still selectable (opacity-60, amber warning text, clickable)
+- [x] Expand §6 Treinamentos card: show "2 online OU 1 presencial" when K2, "4 online ou 2 presencial" when both K2 (already implemented)

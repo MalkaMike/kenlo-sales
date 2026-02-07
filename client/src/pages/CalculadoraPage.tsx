@@ -2051,24 +2051,25 @@ export default function CalculadoraPage() {
                             return (
                               <button
                                 key={plan}
-                                onClick={() => {
-                                  if (!isBelow) setImobPlan(plan);
-                                }}
-                                disabled={isBelow}
+                                onClick={() => setImobPlan(plan)}
                                 className={`relative p-3 rounded-lg border-2 transition-all text-center ${
                                   isRecommended
                                     ? "border-primary bg-primary/5 shadow-md"
                                     : isBelow
-                                    ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+                                    ? "border-gray-200 bg-gray-50 opacity-60 hover:opacity-80 cursor-pointer"
                                     : "border-gray-200 hover:border-gray-300 cursor-pointer"
                                 }`}
-                                title={isBelow ? "Este plano pode não atender totalmente à sua operação atual." : ""}
                               >
                                 <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
                                 {isRecommended && (
                                   <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
                                     Recomendado
                                   </Badge>
+                                )}
+                                {isBelow && (
+                                  <div className="mt-1 text-[9px] text-amber-600 leading-tight">
+                                    Pode não atender sua operação
+                                  </div>
                                 )}
                               </button>
                             );
@@ -2096,24 +2097,25 @@ export default function CalculadoraPage() {
                             return (
                               <button
                                 key={plan}
-                                onClick={() => {
-                                  if (!isBelow) setLocPlan(plan);
-                                }}
-                                disabled={isBelow}
+                                onClick={() => setLocPlan(plan)}
                                 className={`relative p-3 rounded-lg border-2 transition-all text-center ${
                                   isRecommended
                                     ? "border-primary bg-primary/5 shadow-md"
                                     : isBelow
-                                    ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+                                    ? "border-gray-200 bg-gray-50 opacity-60 hover:opacity-80 cursor-pointer"
                                     : "border-gray-200 hover:border-gray-300 cursor-pointer"
                                 }`}
-                                title={isBelow ? "Este plano pode não atender totalmente à sua operação atual." : ""}
                               >
                                 <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
                                 {isRecommended && (
                                   <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
                                     Recomendado
                                   </Badge>
+                                )}
+                                {isBelow && (
+                                  <div className="mt-1 text-[9px] text-amber-600 leading-tight">
+                                    Pode não atender sua operação
+                                  </div>
                                 )}
                               </button>
                             );
@@ -2176,7 +2178,10 @@ export default function CalculadoraPage() {
                   {/* Row 1: Leads, Inteligência, Assinatura */}
                   <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-100 text-pink-600 font-medium">Imob</span>
+                      </div>
                       <Switch
                         id="leads"
                         checked={addons.leads}
@@ -2184,7 +2189,9 @@ export default function CalculadoraPage() {
                         disabled={!isAddonAvailable("leads")}
                       />
                     </div>
-                    <div className="text-xs text-gray-500">Gestão automatizada de leads</div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
+                    </div>
                   </div>
 
                   <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
@@ -2214,7 +2221,10 @@ export default function CalculadoraPage() {
                   {/* Row 2: Pay, Seguros, Cash */}
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
+                      </div>
                       <Switch
                         id="pay"
                         checked={addons.pay}
@@ -2222,12 +2232,17 @@ export default function CalculadoraPage() {
                         disabled={!isAddonAvailable("pay")}
                       />
                     </div>
-                    <div className="text-xs text-gray-500">Boleto e Split digital embutido na plataforma</div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
+                    </div>
                   </div>
 
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
+                      </div>
                       <Switch
                         id="seguros"
                         checked={addons.seguros}
@@ -2235,12 +2250,17 @@ export default function CalculadoraPage() {
                         disabled={!isAddonAvailable("seguros")}
                       />
                     </div>
-                    <div className="text-xs text-gray-500">Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês</div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : "Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês"}
+                    </div>
                   </div>
 
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
                     <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">Loc</span>
+                      </div>
                       <Switch
                         id="cash"
                         checked={addons.cash}
@@ -2248,7 +2268,9 @@ export default function CalculadoraPage() {
                         disabled={!isAddonAvailable("cash")}
                       />
                     </div>
-                    <div className="text-xs text-gray-500">Financie seus proprietários até 24 meses</div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("cash") ? "Requer Kenlo Locação" : "Financie seus proprietários até 24 meses"}
+                    </div>
                   </div>
                 </div>
               </div>
