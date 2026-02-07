@@ -61,7 +61,7 @@ const KOMBOS = {
     requiredProducts: ["imob"] as ProductSelection[],
     requiredAddons: ["leads", "assinatura"],
     forbiddenAddons: ["inteligencia"], // Must NOT have Inteligência
-    includesPremiumServices: false, // NÃO inclui VIP/CS - cliente paga à parte
+    includesPremiumServices: true, // INCLUI VIP + CS Dedicado (V9 update)
     freeImplementations: ["leads"], // Implantação de Leads ofertada
   },
   imob_pro: {
@@ -388,13 +388,13 @@ export default function CalculadoraPage() {
     const businessTypes = ["broker", "rental_admin", "both"] as const;
     // Plan selection based on user/contract count
     const planForImobUsers = (users: number): PlanTier => {
-      if (users <= 6) return "prime";
-      if (users <= 13) return "k";
+      if (users <= 4) return "prime";
+      if (users <= 15) return "k";
       return "k2";
     };
     const planForLocContracts = (contracts: number): PlanTier => {
-      if (contracts <= 100) return "prime";
-      if (contracts <= 200) return "k";
+      if (contracts <= 199) return "prime";
+      if (contracts <= 499) return "k";
       return "k2";
     };
     
@@ -501,22 +501,22 @@ export default function CalculadoraPage() {
           total: number;
         } = { total: 0 };
 
-        // IMOB: Additional Users
+        // IMOB: Additional Users (V9)
         if (config.product === "imob" || config.product === "both") {
-          const included = iplan === "prime" ? 2 : iplan === "k" ? 7 : 14;
+          const included = iplan === "prime" ? 2 : iplan === "k" ? 5 : 10;
           const additional = Math.max(0, imobUsers - included);
           if (additional > 0) {
             let userCost = 0;
             if (iplan === "prime") userCost = additional * 57;
             else if (iplan === "k") {
-              const t1 = Math.min(additional, 10);
-              const t2 = Math.max(0, additional - 10);
+              const t1 = Math.min(additional, 5);
+              const t2 = Math.max(0, additional - 5);
               userCost = t1 * 47 + t2 * 37;
             } else {
               const t1 = Math.min(additional, 10);
-              const t2 = Math.min(Math.max(0, additional - 10), 40);
-              const t3 = Math.max(0, additional - 50);
-              userCost = t1 * 47 + t2 * 37 + t3 * 27;
+              const t2 = Math.min(Math.max(0, additional - 10), 90);
+              const t3 = Math.max(0, additional - 100);
+              userCost = t1 * 37 + t2 * 27 + t3 * 17;
             }
             postPaidTotal += userCost;
             if (!ppBreakdown.imobAddons) ppBreakdown.imobAddons = { groupLabel: "IMOB", groupTotal: 0, items: [] };
@@ -525,22 +525,31 @@ export default function CalculadoraPage() {
               included,
               additional,
               total: userCost,
-              perUnit: iplan === "prime" ? 57 : 47,
+              perUnit: iplan === "prime" ? 57 : iplan === "k" ? 47 : 37,
               unitLabel: "usuário",
             });
             ppBreakdown.imobAddons.groupTotal += userCost;
           }
         }
 
-        // LOC: Additional Contracts
+        // LOC: Additional Contracts (V9: K included 150)
         if (config.product === "loc" || config.product === "both") {
-          const included = lplan === "prime" ? 100 : lplan === "k" ? 200 : 500;
+          const included = lplan === "prime" ? 100 : lplan === "k" ? 150 : 500;
           const additional = Math.max(0, contracts - included);
           if (additional > 0) {
-            const t1 = Math.min(additional, 250);
-            const t2 = Math.min(Math.max(0, additional - 250), 500);
-            const t3 = Math.max(0, additional - 750);
-            const contractCost = t1 * 3 + t2 * 2.5 + t3 * 2;
+            let contractCost = 0;
+            if (lplan === "prime") {
+              contractCost = additional * 3;
+            } else if (lplan === "k") {
+              const t1 = Math.min(additional, 250);
+              const t2 = Math.max(0, additional - 250);
+              contractCost = t1 * 3 + t2 * 2.5;
+            } else {
+              const t1 = Math.min(additional, 250);
+              const t2 = Math.min(Math.max(0, additional - 250), 250);
+              const t3 = Math.max(0, additional - 500);
+              contractCost = t1 * 3 + t2 * 2.5 + t3 * 2;
+            }
             postPaidTotal += contractCost;
             if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
             ppBreakdown.locAddons.items.push({
@@ -554,12 +563,24 @@ export default function CalculadoraPage() {
             ppBreakdown.locAddons.groupTotal += contractCost;
           }
 
-          // Boleto costs
+          // Boleto costs (V9: tiered by plan)
           if (chargesBoleto && config.addons.includes("pay")) {
             const inclBoletos = lplan === "prime" ? 2 : lplan === "k" ? 5 : 15;
             const addBoletos = Math.max(0, contracts - inclBoletos);
             if (addBoletos > 0) {
-              const boletoCost = addBoletos * 4;
+              let boletoCost = 0;
+              if (lplan === "prime") {
+                boletoCost = addBoletos * 4;
+              } else if (lplan === "k") {
+                const bt1 = Math.min(addBoletos, 250);
+                const bt2 = Math.max(0, addBoletos - 250);
+                boletoCost = bt1 * 4 + bt2 * 3.5;
+              } else {
+                const bt1 = Math.min(addBoletos, 250);
+                const bt2 = Math.min(Math.max(0, addBoletos - 250), 250);
+                const bt3 = Math.max(0, addBoletos - 500);
+                boletoCost = bt1 * 4 + bt2 * 3.5 + bt3 * 3;
+              }
               postPaidTotal += boletoCost;
               if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
               ppBreakdown.locAddons.items.push({
@@ -574,12 +595,24 @@ export default function CalculadoraPage() {
             }
           }
 
-          // Split costs
+          // Split costs (V9: tiered by plan, same as boleto)
           if (chargesSplit && config.addons.includes("pay")) {
             const inclSplits = lplan === "prime" ? 2 : lplan === "k" ? 5 : 15;
             const addSplits = Math.max(0, contracts - inclSplits);
             if (addSplits > 0) {
-              const splitCost = addSplits * 4;
+              let splitCost = 0;
+              if (lplan === "prime") {
+                splitCost = addSplits * 4;
+              } else if (lplan === "k") {
+                const st1 = Math.min(addSplits, 250);
+                const st2 = Math.max(0, addSplits - 250);
+                splitCost = st1 * 4 + st2 * 3.5;
+              } else {
+                const st1 = Math.min(addSplits, 250);
+                const st2 = Math.min(Math.max(0, addSplits - 250), 250);
+                const st3 = Math.max(0, addSplits - 500);
+                splitCost = st1 * 4 + st2 * 3.5 + st3 * 3;
+              }
               postPaidTotal += splitCost;
               if (!ppBreakdown.locAddons) ppBreakdown.locAddons = { groupLabel: "LOCAÇÃO", groupTotal: 0, items: [] };
               ppBreakdown.locAddons.items.push({
@@ -595,7 +628,7 @@ export default function CalculadoraPage() {
           }
         }
 
-        // Shared: Digital Signatures
+        // Shared: Digital Signatures (V9: tiered pricing)
         if (config.addons.includes("assinatura")) {
           const included = 15;
           let totalSigs = 0;
@@ -603,7 +636,11 @@ export default function CalculadoraPage() {
           if (config.product === "loc" || config.product === "both") totalSigs += newContracts;
           const additional = Math.max(0, totalSigs - included);
           if (additional > 0) {
-            const sigCost = additional * 1.8;
+            // V9: 1-20 = R$1.80, 21-40 = R$1.70, 41+ = R$1.50
+            const st1 = Math.min(additional, 20);
+            const st2 = Math.min(Math.max(0, additional - 20), 20);
+            const st3 = Math.max(0, additional - 40);
+            const sigCost = st1 * 1.8 + st2 * 1.7 + st3 * 1.5;
             postPaidTotal += sigCost;
             if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
             ppBreakdown.sharedAddons.items.push({
@@ -618,12 +655,17 @@ export default function CalculadoraPage() {
           }
         }
 
-        // WhatsApp Messages
+        // WhatsApp Messages (V9: tiered pricing)
         if (config.addons.includes("leads") && wantsWA) {
           const included = 100;
           const additional = Math.max(0, leadsMonth - included);
           if (additional > 0) {
-            const waCost = additional * 2;
+            // V9: 1-200 = R$2, 201-350 = R$1.80, 351-1000 = R$1.50, 1001+ = R$1.20
+            const wt1 = Math.min(additional, 200);
+            const wt2 = Math.min(Math.max(0, additional - 200), 150);
+            const wt3 = Math.min(Math.max(0, additional - 350), 650);
+            const wt4 = Math.max(0, additional - 1000);
+            const waCost = wt1 * 2 + wt2 * 1.8 + wt3 * 1.5 + wt4 * 1.2;
             postPaidTotal += waCost;
             if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
             ppBreakdown.sharedAddons.items.push({
@@ -1125,31 +1167,31 @@ export default function CalculadoraPage() {
     // Mensalidade base (anual)
     const baseCost = PLAN_ANNUAL_PRICES[plan];
     
-    // Usuários incluídos por plano (atualizado Fev 2026)
-    // Prime: 2 usuários, K: 7 usuários, K2: 14 usuários
-    const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+    // Usuários incluídos por plano (V9)
+    // Prime: 2 usuários, K: 5 usuários, K2: 10 usuários
+    const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
     const additional = Math.max(0, users - included);
     
-    // Custo de usuários adicionais (atualizado Fev 2026)
+    // Custo de usuários adicionais (V9)
     // Prime: R$57 fixo por usuário
-    // K: 1-10 = R$47, 11+ = R$37
-    // K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
+    // K: 1-5 = R$47, 6+ = R$37
+    // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
     let additionalCost = 0;
     if (additional > 0) {
       if (plan === 'prime') {
         // Prime: R$57 fixo por usuário adicional
         additionalCost = additional * 57;
       } else if (plan === 'k') {
-        // K: 1-10 = R$47, 11+ = R$37
-        const tier1 = Math.min(additional, 10);
-        const tier2 = Math.max(0, additional - 10);
+        // K: 1-5 = R$47, 6+ = R$37
+        const tier1 = Math.min(additional, 5);
+        const tier2 = Math.max(0, additional - 5);
         additionalCost = (tier1 * 47) + (tier2 * 37);
       } else {
-        // K2: 1-10 = R$47, 11-50 = R$37, 51+ = R$27
+        // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
         const tier1 = Math.min(additional, 10);
-        const tier2 = Math.min(Math.max(0, additional - 10), 40); // 11-50 (40 usuários)
-        const tier3 = Math.max(0, additional - 50);
-        additionalCost = (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+        const tier2 = Math.min(Math.max(0, additional - 10), 90); // 11-100 (90 usuários)
+        const tier3 = Math.max(0, additional - 100);
+        additionalCost = (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
       }
     }
     
@@ -1164,8 +1206,9 @@ export default function CalculadoraPage() {
     // Mensalidade base (anual)
     const baseCost = PLAN_ANNUAL_PRICES[plan];
     
-    // Contratos incluídos por plano
-    const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+    // Contratos incluídos por plano (V9)
+    // Prime: 100, K: 150, K2: 500
+    const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
     const additional = Math.max(0, contracts - included);
     
     // Custo de contratos adicionais
@@ -1194,15 +1237,15 @@ export default function CalculadoraPage() {
     if (product === "imob" || product === "both") {
       const users = metrics.imobUsers;
       
-      // IMOB: Baseado em número de usuários
-      // Prime: 1-6 usuários
-      // K: 7-13 usuários
-      // K2: 14+ usuários
+      // IMOB: Baseado em número de usuários (V9)
+      // Prime: 1-4 usuários
+      // K: 5-15 usuários
+      // K2: 16+ usuários
       let recommendedPlan: PlanTier = 'prime';
       
-      if (users >= 14) {
+      if (users >= 16) {
         recommendedPlan = 'k2';
-      } else if (users >= 7) {
+      } else if (users >= 5) {
         recommendedPlan = 'k';
       } else {
         recommendedPlan = 'prime';
@@ -1214,15 +1257,15 @@ export default function CalculadoraPage() {
     if (product === "loc" || product === "both") {
       const contracts = metrics.contractsUnderManagement;
       
-      // LOC: Baseado em número de contratos
-      // Prime: 1-100 contratos
-      // K: 101-200 contratos
-      // K2: 201+ contratos
+      // LOC: Baseado em número de contratos (V9)
+      // Prime: 1-199 contratos
+      // K: 200-499 contratos
+      // K2: 500+ contratos
       let recommendedPlan: PlanTier = 'prime';
       
-      if (contracts >= 201) {
+      if (contracts >= 500) {
         recommendedPlan = 'k2';
-      } else if (contracts >= 101) {
+      } else if (contracts >= 200) {
         recommendedPlan = 'k';
       } else {
         recommendedPlan = 'prime';
@@ -1232,10 +1275,10 @@ export default function CalculadoraPage() {
     }
   }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
-  // Auto-activate Suporte Premium and CS Dedicado based on selected plans
+  // Auto-activate Suporte Premium and CS Dedicado based on selected plans (V9 rules)
   // Rules:
-  // - Suporte VIP: Default ON for K and K2 (included), Default OFF for Prime (optional paid)
-  // - CS Dedicado: Default ON for K2 (included), Default OFF for Prime and K (optional paid)
+  // - Suporte VIP: Included (locked ON) for K and K2, Optional (paid R$97) for Prime
+  // - CS Dedicado: Included (locked ON) for K2, NOT AVAILABLE for K, Optional (paid R$197) for Prime
   // - SHARED: If VIP/CS is enabled for IMOB (by plan or manually), it's automatically enabled for LOC (and vice-versa)
   useEffect(() => {
     setMetrics(prev => {
@@ -1356,20 +1399,22 @@ export default function CalculadoraPage() {
     // Calculate additional users cost (IMOB)
     if ((product === 'imob' || product === 'both') && prepayAdditionalUsers) {
       const plan = imobPlan;
-      const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+      const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
       const additional = Math.max(0, metrics.imobUsers - included);
       if (additional > 0) {
         let monthlyCost = 0;
         if (plan === 'prime') monthlyCost = additional * 57;
         else if (plan === 'k') {
-          const tier1 = Math.min(additional, 10);
-          const tier2 = Math.max(0, additional - 10);
+          // K: 1-5 = R$47, 6+ = R$37
+          const tier1 = Math.min(additional, 5);
+          const tier2 = Math.max(0, additional - 5);
           monthlyCost = (tier1 * 47) + (tier2 * 37);
         } else {
+          // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
           const tier1 = Math.min(additional, 10);
-          const tier2 = Math.min(Math.max(0, additional - 10), 40);
-          const tier3 = Math.max(0, additional - 50);
-          monthlyCost = (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+          const tier2 = Math.min(Math.max(0, additional - 10), 90);
+          const tier3 = Math.max(0, additional - 100);
+          monthlyCost = (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
         }
         usersPrepayment = monthlyCost * months;
       }
@@ -1378,7 +1423,7 @@ export default function CalculadoraPage() {
     // Calculate additional contracts cost (LOC)
     if ((product === 'loc' || product === 'both') && prepayAdditionalContracts) {
       const plan = locPlan;
-      const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+      const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
       const additional = Math.max(0, metrics.contractsUnderManagement - included);
       if (additional > 0) {
         let monthlyCost = 0;
@@ -1985,6 +2030,11 @@ export default function CalculadoraPage() {
                                   Incluído
                                 </Badge>
                               )}
+                              {imobPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
+                                  Opcional (R$97/mês)
+                                </Badge>
+                              )}
                             </div>
                             <Switch
                               id="imobVipSupport"
@@ -1994,7 +2044,7 @@ export default function CalculadoraPage() {
                                 imobVipSupport: checked,
                                 locVipSupport: checked // Share with LOC
                               })}
-                              disabled={product !== "imob" && product !== "both"}
+                              disabled={(product !== "imob" && product !== "both") || imobPlan === "k" || imobPlan === "k2"}
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
@@ -2003,6 +2053,16 @@ export default function CalculadoraPage() {
                               {imobPlan === "k2" && (
                                 <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
                                   Incluído
+                                </Badge>
+                              )}
+                              {imobPlan === "k" && (
+                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-500 border-gray-200">
+                                  Indisponível
+                                </Badge>
+                              )}
+                              {imobPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
+                                  Opcional (R$197/mês)
                                 </Badge>
                               )}
                             </div>
@@ -2014,7 +2074,7 @@ export default function CalculadoraPage() {
                                 imobDedicatedCS: checked,
                                 locDedicatedCS: checked // Share with LOC
                               })}
-                              disabled={product !== "imob" && product !== "both"}
+                              disabled={(product !== "imob" && product !== "both") || imobPlan === "k" || imobPlan === "k2"}
                             />
                           </div>
                         </div>
@@ -2142,6 +2202,11 @@ export default function CalculadoraPage() {
                                   Incluído
                                 </Badge>
                               )}
+                              {locPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
+                                  Opcional (R$97/mês)
+                                </Badge>
+                              )}
                             </div>
                             <Switch
                               id="locVipSupport"
@@ -2151,7 +2216,7 @@ export default function CalculadoraPage() {
                                 locVipSupport: checked,
                                 imobVipSupport: checked // Share with IMOB
                               })}
-                              disabled={product !== "loc" && product !== "both"}
+                              disabled={(product !== "loc" && product !== "both") || locPlan === "k" || locPlan === "k2"}
                             />
                           </div>
                           <div className="flex items-center justify-between p-2 bg-white rounded-lg">
@@ -2160,6 +2225,16 @@ export default function CalculadoraPage() {
                               {locPlan === "k2" && (
                                 <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
                                   Incluído
+                                </Badge>
+                              )}
+                              {locPlan === "k" && (
+                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-500 border-gray-200">
+                                  Indisponível
+                                </Badge>
+                              )}
+                              {locPlan === "prime" && (
+                                <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
+                                  Opcional (R$197/mês)
                                 </Badge>
                               )}
                             </div>
@@ -2171,7 +2246,7 @@ export default function CalculadoraPage() {
                                 locDedicatedCS: checked,
                                 imobDedicatedCS: checked // Share with IMOB
                               })}
-                              disabled={product !== "loc" && product !== "both"}
+                              disabled={(product !== "loc" && product !== "both") || locPlan === "k" || locPlan === "k2"}
                             />
                           </div>
                         </div>
@@ -2269,19 +2344,21 @@ export default function CalculadoraPage() {
                         
                         // Additional Users (only if NOT prepaid)
                         const plan = imobPlan;
-                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                         const additional = Math.max(0, metrics.imobUsers - included);
                         if (additional > 0 && !prepayAdditionalUsers) {
                           if (plan === 'prime') imobSubtotal += additional * 57;
                           else if (plan === 'k') {
-                            const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.max(0, additional - 10);
+                            // K: 1-5 = R$47, 6+ = R$37
+                            const tier1 = Math.min(additional, 5);
+                            const tier2 = Math.max(0, additional - 5);
                             imobSubtotal += (tier1 * 47) + (tier2 * 37);
                           } else {
+                            // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
                             const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                            const tier3 = Math.max(0, additional - 50);
-                            imobSubtotal += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                            const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                            const tier3 = Math.max(0, additional - 100);
+                            imobSubtotal += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                           }
                         }
                         
@@ -2313,21 +2390,21 @@ export default function CalculadoraPage() {
                       {/* IMOB Additional Users */}
                       {(product === 'imob' || product === 'both') && (() => {
                         const plan = imobPlan;
-                        // Usuários inclusos: Prime 2, K 7, K2 14
-                        const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                        // Usuários inclusos: Prime 2, K 5, K2 10
+                        const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                         const additional = Math.max(0, metrics.imobUsers - included);
                         const totalCost = (() => {
-                          // Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
+                          // V9: Prime: R$57 fixo, K: 1-5=R$47/6+=R$37, K2: 1-10=R$37/11-100=R$27/101+=R$17
                           if (plan === 'prime') return additional * 57;
                           else if (plan === 'k') {
-                            const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.max(0, additional - 10);
+                            const tier1 = Math.min(additional, 5);
+                            const tier2 = Math.max(0, additional - 5);
                             return (tier1 * 47) + (tier2 * 37);
                           } else {
                             const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                            const tier3 = Math.max(0, additional - 50);
-                            return (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                            const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                            const tier3 = Math.max(0, additional - 100);
+                            return (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                           }
                         })();
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
@@ -2420,7 +2497,7 @@ export default function CalculadoraPage() {
                         
                         // Additional Contracts (only if NOT prepaid)
                         const plan = locPlan;
-                        const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                        const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                         const additional = Math.max(0, metrics.contractsUnderManagement - included);
                         if (additional > 0 && !prepayAdditionalContracts) {
                           if (plan === 'prime') locSubtotal += additional * 3;
@@ -2491,7 +2568,7 @@ export default function CalculadoraPage() {
                       {/* LOC Additional Contracts */}
                       {(product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
-                        const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                        const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                         const additional = Math.max(0, metrics.contractsUnderManagement - included);
                         const totalCost = (() => {
                           if (plan === 'prime') return additional * 3;
@@ -2727,8 +2804,8 @@ export default function CalculadoraPage() {
                           if (metrics.imobVipSupport && imobPlan === 'prime') {
                             imobSupportCost += 97;
                           }
-                          // CS Dedicado: R$197/mês for Prime and K, free for K2
-                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') {
+                          // CS Dedicado: R$197/mês for Prime only (K=not available, K2=included)
+                          if (metrics.imobDedicatedCS && imobPlan === 'prime') {
                             imobSupportCost += 197;
                           }
                         }
@@ -2740,8 +2817,8 @@ export default function CalculadoraPage() {
                           if (metrics.locVipSupport && locPlan === 'prime') {
                             locSupportCost += 97;
                           }
-                          // CS Dedicado: R$197/mês for Prime and K, free for K2
-                          if (metrics.locDedicatedCS && locPlan !== 'k2') {
+                          // CS Dedicado: R$197/mês for Prime only (K=not available, K2=included)
+                          if (metrics.locDedicatedCS && locPlan === 'prime') {
                             locSupportCost += 197;
                           }
                         }
@@ -2752,9 +2829,9 @@ export default function CalculadoraPage() {
                         
                         const services = [];
                         if (metrics.imobVipSupport && imobPlan === 'prime') services.push('VIP Imob');
-                        if (metrics.imobDedicatedCS && imobPlan !== 'k2') services.push('CS Imob');
+                        if (metrics.imobDedicatedCS && imobPlan === 'prime') services.push('CS Imob');
                         if (metrics.locVipSupport && locPlan === 'prime') services.push('VIP Loc');
-                        if (metrics.locDedicatedCS && locPlan !== 'k2') services.push('CS Loc');
+                        if (metrics.locDedicatedCS && locPlan === 'prime') services.push('CS Loc');
                         
                         return (
                           <div className="flex justify-between items-start py-4 border-b border-gray-200">
@@ -2783,31 +2860,33 @@ export default function CalculadoraPage() {
                         // Support Services
                         if (product === 'imob' || product === 'both') {
                           if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
+                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
                         }
                         if (product === 'loc' || product === 'both') {
                           if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
+                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
                         }
                         
-                        // Additional Users (Imob) - Prime: R$57 fixo, K: 1-10=R$47/11+=R$37, K2: 1-10=R$47/11-50=R$37/51+=R$27
+                        // Additional Users (Imob) - V9: Prime: R$57 fixo, K: 1-5=R$47/6+=R$37, K2: 1-10=R$37/11-100=R$27/101+=R$17
                         // Skip if prepaid
                         if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
                             if (plan === 'prime') {
                               totalPostPaid += additional * 57;
                             } else if (plan === 'k') {
-                              const tier1 = Math.min(additional, 10);
-                              const tier2 = Math.max(0, additional - 10);
+                              // K: 1-5 = R$47, 6+ = R$37
+                              const tier1 = Math.min(additional, 5);
+                              const tier2 = Math.max(0, additional - 5);
                               totalPostPaid += (tier1 * 47) + (tier2 * 37);
                             } else {
+                              // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
                               const tier1 = Math.min(additional, 10);
-                              const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                              const tier3 = Math.max(0, additional - 50);
-                              totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                              const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                              const tier3 = Math.max(0, additional - 100);
+                              totalPostPaid += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                             }
                           }
                         }
@@ -2816,7 +2895,7 @@ export default function CalculadoraPage() {
                         // Skip if prepaid
                         if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
-                          const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 250);
@@ -2847,10 +2926,11 @@ export default function CalculadoraPage() {
                           if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
                           const additional = Math.max(0, totalSignatures - included);
                           if (additional > 0) {
-                            const tier1 = Math.min(additional, 30);
-                            const tier2 = Math.min(Math.max(0, additional - 30), 50);
-                            const tier3 = Math.max(0, additional - 80);
-                            totalPostPaid += tier1 * 1.8 + tier2 * 1.5 + tier3 * 1.2;
+                            // V9: 1-20=R$1.80, 21-40=R$1.70, 41+=R$1.50
+                            const tier1 = Math.min(additional, 20);
+                            const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                            const tier3 = Math.max(0, additional - 40);
+                            totalPostPaid += tier1 * 1.8 + tier2 * 1.7 + tier3 * 1.5;
                           }
                         }
                         
@@ -3020,26 +3100,28 @@ export default function CalculadoraPage() {
                               // Skip if prepaid
                               if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                                 const plan = imobPlan;
-                                const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                                const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                                 const additional = Math.max(0, metrics.imobUsers - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 57;
                                   else if (plan === 'k') {
-                                    const tier1 = Math.min(additional, 10);
-                                    const tier2 = Math.max(0, additional - 10);
+                                    // K: 1-5 = R$47, 6+ = R$37
+                                    const tier1 = Math.min(additional, 5);
+                                    const tier2 = Math.max(0, additional - 5);
                                     totalPostPaid += (tier1 * 47) + (tier2 * 37);
                                   } else {
+                                    // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
                                     const tier1 = Math.min(additional, 10);
-                                    const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                                    const tier3 = Math.max(0, additional - 50);
-                                    totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                                    const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                                    const tier3 = Math.max(0, additional - 100);
+                                    totalPostPaid += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                                   }
                                 }
                               }
                               // Skip if prepaid
                               if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                                 const plan = locPlan;
-                                const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                                const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                                 const additional = Math.max(0, metrics.contractsUnderManagement - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 3;
@@ -3120,11 +3202,11 @@ export default function CalculadoraPage() {
                               // Support Services
                               if (product === 'imob' || product === 'both') {
                                 if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                                if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
+                                if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
                               }
                               if (product === 'loc' || product === 'both') {
                                 if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                                if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
+                                if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
                               }
                               return totalPostPaid;
                             })())}/mês
@@ -3139,26 +3221,28 @@ export default function CalculadoraPage() {
                         // Skip if prepaid
                         if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
-                          const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                           const additional = Math.max(0, metrics.imobUsers - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 57;
                             else if (plan === 'k') {
-                              const tier1 = Math.min(additional, 10);
-                              const tier2 = Math.max(0, additional - 10);
+                              // K: 1-5 = R$47, 6+ = R$37
+                              const tier1 = Math.min(additional, 5);
+                              const tier2 = Math.max(0, additional - 5);
                               totalPostPaid += (tier1 * 47) + (tier2 * 37);
                             } else {
+                              // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
                               const tier1 = Math.min(additional, 10);
-                              const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                              const tier3 = Math.max(0, additional - 50);
-                              totalPostPaid += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                              const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                              const tier3 = Math.max(0, additional - 100);
+                              totalPostPaid += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                             }
                           }
                         }
                         // Skip if prepaid
                         if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
-                          const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                           const additional = Math.max(0, metrics.contractsUnderManagement - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 3;
@@ -3258,11 +3342,11 @@ export default function CalculadoraPage() {
                         // Support Services
                         if (product === 'imob' || product === 'both') {
                           if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.imobDedicatedCS && imobPlan !== 'k2') totalPostPaid += 197;
+                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
                         }
                         if (product === 'loc' || product === 'both') {
                           if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.locDedicatedCS && locPlan !== 'k2') totalPostPaid += 197;
+                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
                         }
                         let totalRevenue = 0;
                         if (addons.pay && (product === 'loc' || product === 'both')) {
@@ -3499,38 +3583,38 @@ export default function CalculadoraPage() {
                 // Support Services
                 if (product === 'imob' || product === 'both') {
                   if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += 97;
-                  if (metrics.imobDedicatedCS && imobPlan !== 'k2') postPaidTotal += 197;
+                  if (metrics.imobDedicatedCS && imobPlan === 'prime') postPaidTotal += 197;
                 }
                 if (product === 'loc' || product === 'both') {
                   if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += 97;
-                  if (metrics.locDedicatedCS && locPlan !== 'k2') postPaidTotal += 197;
+                  if (metrics.locDedicatedCS && locPlan === 'prime') postPaidTotal += 197;
                 }
                 
-                // Additional Users (Imob) - Skip if prepaid
+                // Additional Users (Imob) - Skip if prepaid (V9)
                 if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                   const plan = imobPlan;
-                  const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                  const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                   const additional = Math.max(0, metrics.imobUsers - included);
                   if (additional > 0) {
                     if (plan === 'prime') {
                       postPaidTotal += additional * 57;
                     } else if (plan === 'k') {
-                      const tier1 = Math.min(additional, 10);
-                      const tier2 = Math.max(0, additional - 10);
+                      const tier1 = Math.min(additional, 5);
+                      const tier2 = Math.max(0, additional - 5);
                       postPaidTotal += (tier1 * 47) + (tier2 * 37);
                     } else {
                       const tier1 = Math.min(additional, 10);
-                      const tier2 = Math.min(Math.max(0, additional - 10), 40);
-                      const tier3 = Math.max(0, additional - 50);
-                      postPaidTotal += (tier1 * 47) + (tier2 * 37) + (tier3 * 27);
+                      const tier2 = Math.min(Math.max(0, additional - 10), 90);
+                      const tier3 = Math.max(0, additional - 100);
+                      postPaidTotal += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
                     }
                   }
                 }
                 
-                // Additional Contracts (Loc) - Skip if prepaid
+                // Additional Contracts (Loc) - Skip if prepaid (V9: K=150)
                 if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                   const plan = locPlan;
-                  const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                  const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                   const additional = Math.max(0, metrics.contractsUnderManagement - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 250);
@@ -3553,7 +3637,7 @@ export default function CalculadoraPage() {
                   }
                 }
                 
-                // Digital Signatures
+                // Digital Signatures (V9: 1-20=R$1.80, 21-40=R$1.70, 41+=R$1.50)
                 if (addons.assinatura) {
                   const included = 15;
                   let totalSignatures = 0;
@@ -3561,10 +3645,10 @@ export default function CalculadoraPage() {
                   if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
                   const additional = Math.max(0, totalSignatures - included);
                   if (additional > 0) {
-                    const tier1 = Math.min(additional, 30);
-                    const tier2 = Math.min(Math.max(0, additional - 30), 50);
-                    const tier3 = Math.max(0, additional - 80);
-                    postPaidTotal += tier1 * 1.8 + tier2 * 1.5 + tier3 * 1.2;
+                    const tier1 = Math.min(additional, 20);
+                    const tier2 = Math.min(Math.max(0, additional - 20), 20);
+                    const tier3 = Math.max(0, additional - 40);
+                    postPaidTotal += tier1 * 1.8 + tier2 * 1.7 + tier3 * 1.5;
                   }
                 }
                 
@@ -3782,64 +3866,72 @@ export default function CalculadoraPage() {
                   // V8: P\u00f3s-pago breakdown
                   postPaidBreakdown: (() => {
                     const bd: any = { total: postPaidTotal };
-                    // IMOB: Additional Users
+                    // IMOB: Additional Users (V9)
                     if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                       const plan = imobPlan;
-                      const included = plan === 'prime' ? 2 : plan === 'k' ? 7 : 14;
+                      const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                       const additional = Math.max(0, metrics.imobUsers - included);
                       if (additional > 0) {
                         let userCost = 0;
                         if (plan === 'prime') userCost = additional * 57;
                         else if (plan === 'k') {
-                          const t1 = Math.min(additional, 10); const t2 = Math.max(0, additional - 10);
+                          const t1 = Math.min(additional, 5); const t2 = Math.max(0, additional - 5);
                           userCost = t1 * 47 + t2 * 37;
                         } else {
-                          const t1 = Math.min(additional, 10); const t2 = Math.min(Math.max(0, additional - 10), 40); const t3 = Math.max(0, additional - 50);
-                          userCost = t1 * 47 + t2 * 37 + t3 * 27;
+                          const t1 = Math.min(additional, 10); const t2 = Math.min(Math.max(0, additional - 10), 90); const t3 = Math.max(0, additional - 100);
+                          userCost = t1 * 37 + t2 * 27 + t3 * 17;
                         }
                         if (!bd.imobAddons) bd.imobAddons = { groupLabel: 'IMOB', groupTotal: 0, items: [] };
-                        bd.imobAddons.items.push({ label: 'Usu\u00e1rios Adicionais', included, additional, total: userCost, perUnit: plan === 'prime' ? 57 : 47, unitLabel: 'usu\u00e1rio' });
+                        bd.imobAddons.items.push({ label: 'Usuários Adicionais', included, additional, total: userCost, perUnit: plan === 'prime' ? 57 : plan === 'k' ? 47 : 37, unitLabel: 'usuário' });
                         bd.imobAddons.groupTotal += userCost;
                       }
                     }
-                    // LOC: Additional Contracts
+                    // LOC: Additional Contracts (V9: K=150)
                     if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                       const plan = locPlan;
-                      const included = plan === 'prime' ? 100 : plan === 'k' ? 200 : 500;
+                      const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
                       const additional = Math.max(0, metrics.contractsUnderManagement - included);
                       if (additional > 0) {
-                        const t1 = Math.min(additional, 250); const t2 = Math.min(Math.max(0, additional - 250), 500); const t3 = Math.max(0, additional - 750);
-                        const cost = t1 * 3 + t2 * 2.5 + t3 * 2;
-                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        let cost = 0;
+                        if (plan === 'prime') { cost = additional * 3; }
+                        else if (plan === 'k') { const t1 = Math.min(additional, 250); const t2 = Math.max(0, additional - 250); cost = t1 * 3 + t2 * 2.5; }
+                        else { const t1 = Math.min(additional, 250); const t2 = Math.min(Math.max(0, additional - 250), 250); const t3 = Math.max(0, additional - 500); cost = t1 * 3 + t2 * 2.5 + t3 * 2; }
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCAÇÃO', groupTotal: 0, items: [] };
                         bd.locAddons.items.push({ label: 'Contratos Adicionais', included, additional, total: cost, perUnit: 3, unitLabel: 'contrato' });
                         bd.locAddons.groupTotal += cost;
                       }
                     }
-                    // LOC: Boleto costs
+                    // LOC: Boleto costs (V9: tiered by plan)
                     if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                       const plan = locPlan;
                       const inclBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
                       const addBoletos = Math.max(0, metrics.contractsUnderManagement - inclBoletos);
                       if (addBoletos > 0) {
-                        const cost = addBoletos * 4;
-                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        let cost = 0;
+                        if (plan === 'prime') { cost = addBoletos * 4; }
+                        else if (plan === 'k') { const bt1 = Math.min(addBoletos, 250); const bt2 = Math.max(0, addBoletos - 250); cost = bt1 * 4 + bt2 * 3.5; }
+                        else { const bt1 = Math.min(addBoletos, 250); const bt2 = Math.min(Math.max(0, addBoletos - 250), 250); const bt3 = Math.max(0, addBoletos - 500); cost = bt1 * 4 + bt2 * 3.5 + bt3 * 3; }
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCAÇÃO', groupTotal: 0, items: [] };
                         bd.locAddons.items.push({ label: 'Custo Boletos (Pay)', included: inclBoletos, additional: addBoletos, total: cost, perUnit: 4, unitLabel: 'boleto' });
                         bd.locAddons.groupTotal += cost;
                       }
                     }
-                    // LOC: Split costs
+                    // LOC: Split costs (V9: tiered by plan)
                     if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                       const plan = locPlan;
                       const inclSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
                       const addSplits = Math.max(0, metrics.contractsUnderManagement - inclSplits);
                       if (addSplits > 0) {
-                        const cost = addSplits * 4;
-                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCA\u00c7\u00c3O', groupTotal: 0, items: [] };
+                        let cost = 0;
+                        if (plan === 'prime') { cost = addSplits * 4; }
+                        else if (plan === 'k') { const st1 = Math.min(addSplits, 250); const st2 = Math.max(0, addSplits - 250); cost = st1 * 4 + st2 * 3.5; }
+                        else { const st1 = Math.min(addSplits, 250); const st2 = Math.min(Math.max(0, addSplits - 250), 250); const st3 = Math.max(0, addSplits - 500); cost = st1 * 4 + st2 * 3.5 + st3 * 3; }
+                        if (!bd.locAddons) bd.locAddons = { groupLabel: 'LOCAÇÃO', groupTotal: 0, items: [] };
                         bd.locAddons.items.push({ label: 'Custo Split (Pay)', included: inclSplits, additional: addSplits, total: cost, perUnit: 4, unitLabel: 'split' });
                         bd.locAddons.groupTotal += cost;
                       }
                     }
-                    // Shared: Digital Signatures
+                    // Shared: Digital Signatures (V9: tiered 1-20=R$1.80, 21-40=R$1.70, 41+=R$1.50)
                     if (addons.assinatura) {
                       const included = 15;
                       let totalSigs = 0;
@@ -3847,18 +3939,20 @@ export default function CalculadoraPage() {
                       if (product === 'loc' || product === 'both') totalSigs += metrics.newContractsPerMonth;
                       const additional = Math.max(0, totalSigs - included);
                       if (additional > 0) {
-                        const cost = additional * 1.8;
+                        const st1 = Math.min(additional, 20); const st2 = Math.min(Math.max(0, additional - 20), 20); const st3 = Math.max(0, additional - 40);
+                        const cost = st1 * 1.8 + st2 * 1.7 + st3 * 1.5;
                         if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
                         bd.sharedAddons.items.push({ label: 'Assinaturas Digitais', included, additional, total: cost, perUnit: 1.8, unitLabel: 'assinatura' });
                         bd.sharedAddons.groupTotal += cost;
                       }
                     }
-                    // Shared: WhatsApp Messages
+                    // Shared: WhatsApp Messages (V9: tiered 1-200=R$2, 201-350=R$1.80, 351-1000=R$1.50, 1001+=R$1.20)
                     if (addons.leads && metrics.wantsWhatsApp) {
                       const included = 100;
                       const additional = Math.max(0, metrics.leadsPerMonth - included);
                       if (additional > 0) {
-                        const cost = additional * 2;
+                        const wt1 = Math.min(additional, 200); const wt2 = Math.min(Math.max(0, additional - 200), 150); const wt3 = Math.min(Math.max(0, additional - 350), 650); const wt4 = Math.max(0, additional - 1000);
+                        const cost = wt1 * 2 + wt2 * 1.8 + wt3 * 1.5 + wt4 * 1.2;
                         if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
                         bd.sharedAddons.items.push({ label: 'Mensagens WhatsApp', included, additional, total: cost, perUnit: 2, unitLabel: 'msg' });
                         bd.sharedAddons.groupTotal += cost;

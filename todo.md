@@ -1988,3 +1988,61 @@
 - [x] Verified real export with Imob+Loc Elite Kombo K2 Semestral - all fields correct
 - [x] Verified 3 random examples (IMOB only, Elite both products, LOC only) - all correct
 - [x] Fixed productType normalization (imob_loc → both) for real exports
+
+## V9 Pricing & Flow Update (Feb 2026)
+
+### Plan Tier Thresholds
+- [ ] IMOB: Prime 1-4 users (was 1-6), K 5-15 users (was 7-13), K2 16+ users (was 14+)
+- [ ] LOC: Prime 1-199 contracts (was 1-100), K 200-499 contracts (was 101-200), K2 500+ contracts (was 201+)
+
+### Included Quantities
+- [x] IMOB Prime users included: 2 (unchanged)
+- [x] IMOB K users included: 5 (was 7)
+- [x] IMOB K2 users included: 10 (was 14)
+- [x] LOC Prime contracts included: 100 (unchanged)
+- [x] LOC K contracts included: 150 (standardized)
+- [x] LOC K2 contracts included: 500 (unchanged)
+
+### Additional User Pricing (IMOB) - Tiered
+- [x] Prime: R$57 flat (unchanged)
+- [x] K: 1-5 at R$47, 6+ at R$37 (was 1-10 at R$47, 11+ at R$37)
+- [x] K2: 1-10 at R$37, 11-100 at R$27, 101+ at R$17 (was 1-10 at R$47, 11-50 at R$37, 51+ at R$27)
+
+### Additional Contract Pricing (LOC) - Tiered
+- [x] Prime: R$3 flat (unchanged)
+- [x] K: 1-250 at R$3, 251+ at R$2.50 (unchanged)
+- [x] K2: 1-250 at R$3, 251-500 at R$2.50, 501+ at R$2 (unchanged)
+
+### VIP/CS Auto-Inclusion Logic Update
+- [x] VIP: K and K2 = included, Prime = optional paid R$97
+- [x] CS: K2 only = included, K = NOT available, Prime = optional paid R$197
+- [ ] Cross-product: If K/K2 in ANY product → VIP/CS for ALL products
+- [ ] Remove manual VIP/CS toggles, show as read-only Benefícios Inclusos
+
+### Tiered Pós-Pago Pricing Updates
+- [x] Boletos: Prime R$4 flat, K 1-250:R$4/251+:R$3.50, K2 1-250:R$4/251-500:R$3.50/501+:R$3
+- [x] Split: Same tiers as Boletos
+- [x] Assinaturas: 1-20:R$1.80, 21-40:R$1.70, 41+:R$1.50 (was flat R$1.80)
+- [ ] Leads WhatsApp: 100 included (was 150), tiers 1-200:R$2/201-350:R$1.80/351-1000:R$1.50/1001+:R$1.20
+
+### Semestral Frequency
+- [ ] Change from +10% to +11% (÷0.90 → ÷0.89 = ×1.1236)
+
+### Kombos Updates
+- [ ] ALL Kombos include VIP + CS Dedicado (Imob Start too)
+- [ ] Kombos ALWAYS visible even when not eligible (show what's missing to unlock)
+
+### New Features
+- [ ] Validação Biométrica: R$7.00 each (pós-pago) when Assinatura add-on active
+- [ ] K2 Treinamentos: 2 online OR 1 presencial/year; both K2 = 4 online OR 2 presencial
+- [ ] Seguros commission by plan: Prime 35%, K 40%, K2 45%
+
+### Auto Product Selection
+- [ ] Auto-select IMOB when users > 0, LOC when contracts > 0
+
+### Update PDF Generator & Random Examples
+- [ ] Update all pricing constants in PDF generator
+- [ ] Update random example generator for new rules
+
+### Update Tests
+- [x] Update vitest tests for new pricing rules (36 new V9 tests, 179 total)
