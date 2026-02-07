@@ -1968,3 +1968,8 @@
   - [x] Reduced quotes.ts from 571 → 384 lines (33% reduction)
   - [x] Reduced proposals.ts from 23 → 8 lines
 - [x] Run all tests and verify everything works (135 tests, 9 files, all passing)
+
+## Real PDF Export Test (Feb 2026)
+- [x] Fill complete simulation in calculator with all fields
+- [x] Export real PDF and verify all fields appear correctly
+- [x] No issues found - 100% data fidelity confirmed across both pages
