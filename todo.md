@@ -2147,3 +2147,8 @@
 
 ## Move frequency selector above comparison table in §6
 - [x] Move "Ciclo de Pagamento" selector above the comparison table (flow: select cycle → prices update → compare)
+
+## Master Prompt Alignment — 3 Changes
+- [x] Swap Benefícios (§3) before Add-ons (§4) — renumber accordingly
+- [x] Move Pay questions (cobra boleto? cobra split? quanto?) from §1 to §7 Receita Extra section
+- [x] Add mandatory copy to Receita Extra: "Kenlo é a única plataforma que pode se pagar enquanto você usa." + "Não inclui impostos."

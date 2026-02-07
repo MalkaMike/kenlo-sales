@@ -1322,7 +1322,7 @@ export default function CalculadoraPage() {
 
   // Pre-select product based on businessType from §1
   // Corretora → imob, Administrador → loc, Ambos → both
-  // User can always override this pre-selection in §3 (Solução e Plano Recomendados)
+  // User can always override this pre-selection in §2 (Solução e Plano Recomendados)
   useEffect(() => {
     const bt = businessNature.businessType;
     if (bt === "broker") {
@@ -1530,7 +1530,7 @@ export default function CalculadoraPage() {
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  1. Natureza do Negócio
+                  Natureza do Negócio
                 </h2>
                 <div className="space-y-4">
                   {/* Business Type */}
@@ -1751,10 +1751,10 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §2: Informações do Negócio */}
+              {/* §1: Informações do Negócio */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  2. Informações do Negócio
+                    1. Informações do Negócio
                 </h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -1886,67 +1886,7 @@ export default function CalculadoraPage() {
                         </div>
                       </div>
 
-                      {/* Box: Kenlo Pay - Only shown when Pay add-on is enabled */}
-                      {addons.pay && (
-                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-yellow-800">Kenlo Pay</span>
-                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesBoleto" className="text-sm">Cobra boleto do inquilino?</Label>
-                              <Switch
-                                id="chargesBoleto"
-                                checked={metrics.chargesBoletoToTenant}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
-                              />
-                            </div>
-                            {metrics.chargesBoletoToTenant && (
-                              <div className="pl-2">
-                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
-                                <Input
-                                  id="boletoAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.boletoChargeAmount}
-                                  onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
-                                  }}
-                                  className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
-                                />
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesSplit" className="text-sm">Cobra split do proprietário?</Label>
-                              <Switch
-                                id="chargesSplit"
-                                checked={metrics.chargesSplitToOwner}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
-                              />
-                            </div>
-                            {metrics.chargesSplitToOwner && (
-                              <div className="pl-2">
-                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto cobra? (R$)</Label>
-                                <Input
-                                  id="splitAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.splitChargeAmount}
-                                  onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
-                                  }}
-                                  className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
+
                     </CardContent>
                   </Card>
                   )}
@@ -1955,10 +1895,10 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §3: Solução e Plano Recomendados (merged §3+§4) */}
+              {/* §2: Solução e Plano Recomendados */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  3. Nossa Recomendação
+                  2. Nossa Recomendação
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Baseado no seu perfil, este é o melhor ponto de partida.
@@ -2082,155 +2022,10 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §4: Add-ons Opcionais (was §5) */}
-              {/* Step 2: Add-ons */}
-              <div className="mb-6 sm:mb-8">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    4. Add-ons Opcionais
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    Ative conforme a necessidade — sem compromisso.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <div></div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setAddons({
-                          leads: isAddonAvailable("leads"),
-                          inteligencia: true,
-                          assinatura: true,
-                          pay: isAddonAvailable("pay"),
-                          seguros: isAddonAvailable("seguros"),
-                          cash: isAddonAvailable("cash"),
-                        });
-                      }}
-                      className="px-3 py-2 text-xs sm:text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white active:bg-primary active:text-white transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
-                    >
-                      Selecionar Todos
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAddons({
-                          leads: false,
-                          inteligencia: false,
-                          assinatura: false,
-                          pay: false,
-                          seguros: false,
-                          cash: false,
-                        });
-                      }}
-                      className="px-3 py-2 text-xs sm:text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
-                    >
-                      Deselecionar Todos
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {/* Row 1: Leads, Inteligência, Assinatura */}
-                  <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
-                      </div>
-                      <Switch
-                        id="leads"
-                        checked={addons.leads}
-                        onCheckedChange={(checked) => setAddons({ ...addons, leads: checked })}
-                        disabled={!isAddonAvailable("leads")}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
-                    </div>
-                  </div>
-
-                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="inteligencia" className="font-semibold text-sm cursor-pointer">Inteligência</Label>
-                      <Switch
-                        id="inteligencia"
-                        checked={addons.inteligencia}
-                        onCheckedChange={(checked) => setAddons({ ...addons, inteligencia: checked })}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">BI de KPIs de performance</div>
-                  </div>
-
-                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <Label htmlFor="assinatura" className="font-semibold text-sm cursor-pointer">Assinatura</Label>
-                      <Switch
-                        id="assinatura"
-                        checked={addons.assinatura}
-                        onCheckedChange={(checked) => setAddons({ ...addons, assinatura: checked })}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">Assinatura digital embutida na plataforma</div>
-                  </div>
-
-                  {/* Row 2: Pay, Seguros, Cash */}
-                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
-                      </div>
-                      <Switch
-                        id="pay"
-                        checked={addons.pay}
-                        onCheckedChange={(checked) => setAddons({ ...addons, pay: checked })}
-                        disabled={!isAddonAvailable("pay")}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
-                    </div>
-                  </div>
-
-                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
-                      </div>
-                      <Switch
-                        id="seguros"
-                        checked={addons.seguros}
-                        onCheckedChange={(checked) => setAddons({ ...addons, seguros: checked })}
-                        disabled={!isAddonAvailable("seguros")}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : "Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês"}
-                    </div>
-                  </div>
-
-                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
-                    <div className="flex items-center justify-between mb-2 sm:mb-1">
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
-                      </div>
-                      <Switch
-                        id="cash"
-                        checked={addons.cash}
-                        onCheckedChange={(checked) => setAddons({ ...addons, cash: checked })}
-                        disabled={!isAddonAvailable("cash")}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {!isAddonAvailable("cash") ? "Requer Kenlo Locação" : "Financie seus proprietários até 24 meses"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-
-              {/* §5: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
+              {/* §3: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  5. Benefícios Inclusos
+                  3. Benefícios Inclusos
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Já incluídos na sua configuração.
@@ -2384,7 +2179,154 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §6: Kombos (was §7) */}
+              {/* §4: Add-ons Opcionais */}
+              <div className="mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <h2 className="text-base sm:text-lg font-bold text-gray-900">
+                    4. Add-ons Opcionais
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Ative conforme a necessidade — sem compromisso.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <div></div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setAddons({
+                          leads: isAddonAvailable("leads"),
+                          inteligencia: true,
+                          assinatura: true,
+                          pay: isAddonAvailable("pay"),
+                          seguros: isAddonAvailable("seguros"),
+                          cash: isAddonAvailable("cash"),
+                        });
+                      }}
+                      className="px-3 py-2 text-xs sm:text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white active:bg-primary active:text-white transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
+                    >
+                      Selecionar Todos
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAddons({
+                          leads: false,
+                          inteligencia: false,
+                          assinatura: false,
+                          pay: false,
+                          seguros: false,
+                          cash: false,
+                        });
+                      }}
+                      className="px-3 py-2 text-xs sm:text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
+                    >
+                      Deselecionar Todos
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Row 1: Leads, Inteligência, Assinatura */}
+                  <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>
+                      </div>
+                      <Switch
+                        id="leads"
+                        checked={addons.leads}
+                        onCheckedChange={(checked) => setAddons({ ...addons, leads: checked })}
+                        disabled={!isAddonAvailable("leads")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="inteligencia" className="font-semibold text-sm cursor-pointer">Inteligência</Label>
+                      <Switch
+                        id="inteligencia"
+                        checked={addons.inteligencia}
+                        onCheckedChange={(checked) => setAddons({ ...addons, inteligencia: checked })}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">BI de KPIs de performance</div>
+                  </div>
+
+                  <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <Label htmlFor="assinatura" className="font-semibold text-sm cursor-pointer">Assinatura</Label>
+                      <Switch
+                        id="assinatura"
+                        checked={addons.assinatura}
+                        onCheckedChange={(checked) => setAddons({ ...addons, assinatura: checked })}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">Assinatura digital embutida na plataforma</div>
+                  </div>
+
+                  {/* Row 2: Pay, Seguros, Cash */}
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
+                      </div>
+                      <Switch
+                        id="pay"
+                        checked={addons.pay}
+                        onCheckedChange={(checked) => setAddons({ ...addons, pay: checked })}
+                        disabled={!isAddonAvailable("pay")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
+                    </div>
+                  </div>
+
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
+                      </div>
+                      <Switch
+                        id="seguros"
+                        checked={addons.seguros}
+                        onCheckedChange={(checked) => setAddons({ ...addons, seguros: checked })}
+                        disabled={!isAddonAvailable("seguros")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : "Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês"}
+                    </div>
+                  </div>
+
+                  <div className={`p-3 rounded-lg border ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-1">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>
+                      </div>
+                      <Switch
+                        id="cash"
+                        checked={addons.cash}
+                        onCheckedChange={(checked) => setAddons({ ...addons, cash: checked })}
+                        disabled={!isAddonAvailable("cash")}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {!isAddonAvailable("cash") ? "Requer Kenlo Locação" : "Financie seus proprietários até 24 meses"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+              {/* Old §5 Benefícios removed — now at §3 above */}
+
+
+              {/* §5: Sua Seleção vs Kombos */}
               {/* Section 4 bis: Kombo Comparison Table */}
               <div id="kombo-comparison-section">
               <KomboComparisonTable
@@ -2462,7 +2404,7 @@ export default function CalculadoraPage() {
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    7. Custos Pós-Pago - Sem surpresas, só o que você usar
+                    6. Custos Pós-Pago - Sem surpresas, só o que você usar
                   </h2>
                   
                   <Card>
@@ -3143,11 +3085,74 @@ export default function CalculadoraPage() {
                   return (
                 <div className="mt-6 mb-4">
                   <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    8. Kenlo Receita Extra
+                    7. Kenlo Receita Extra
                   </h2>
                   
                   <Card>
                     <CardContent className="pt-6">
+                      {/* Pay Questions — moved here per master prompt §6 */}
+                      {addons.pay && (product === 'loc' || product === 'both') && (
+                        <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm font-semibold text-yellow-800">Kenlo Pay — Boletos & Split</span>
+                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">Disponível por padrão para clientes de Locação. Ativação opcional no onboarding.</p>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesBoleto" className="text-sm">Você cobra o boleto do inquilino?</Label>
+                              <Switch
+                                id="chargesBoleto"
+                                checked={metrics.chargesBoletoToTenant}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
+                              />
+                            </div>
+                            {metrics.chargesBoletoToTenant && (
+                              <div className="pl-2">
+                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto você cobra por boleto? (R$)</Label>
+                                <Input
+                                  id="boletoAmount"
+                                  type="number" inputMode="numeric"
+                                  value={metrics.boletoChargeAmount}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
+                                  }}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                              <Label htmlFor="chargesSplit" className="text-sm">Você cobra o split do proprietário?</Label>
+                              <Switch
+                                id="chargesSplit"
+                                checked={metrics.chargesSplitToOwner}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
+                              />
+                            </div>
+                            {metrics.chargesSplitToOwner && (
+                              <div className="pl-2">
+                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto você cobra por split? (R$)</Label>
+                                <Input
+                                  id="splitAmount"
+                                  type="number" inputMode="numeric"
+                                  value={metrics.splitChargeAmount}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0;
+                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
+                                  }}
+                                  className="mt-1 h-8 text-sm"
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Receitas Category Header */}
                       {((addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both')) || 
                         (addons.seguros && (product === 'loc' || product === 'both'))) && (
@@ -3506,18 +3511,18 @@ export default function CalculadoraPage() {
                             <div className="mt-4 text-center">
                               {isProfit ? (
                                 <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">
-                                  Kenlo, a única plataforma que te paga enquanto você usa.
+                                  Kenlo é a única plataforma que pode se pagar enquanto você usa.
                                 </p>
                               ) : (
                                 <p className="text-sm font-medium text-primary bg-primary/10 py-3 px-4 rounded-lg">
-                                  Kenlo, a plataforma com menor custo considerando que também te ajuda a ganhar dinheiro sem esforço.
+                                  Kenlo é a única plataforma que pode se pagar enquanto você usa.
                                 </p>
                               )}
                             </div>
                             
                             {/* Footnote */}
                             <div className="mt-4 text-xs text-gray-500 italic">
-                              (1) Não inclui custos de impostos.
+                              Não inclui impostos.
                             </div>
                           </>
                         );
