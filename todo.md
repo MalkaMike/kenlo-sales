@@ -2230,3 +2230,10 @@
 - [x] Client-side PDF end-to-end test: IMOB K2 + LOC K, Elite (20% OFF), Semestral — ALL fixes verified in browser
 - [x] Fix: Elite kombo detection now checks required add-ons (leads, inteligencia, assinatura, pay, seguros) instead of counting total addons === 6
 - [x] Auth bypass reverted after testing
+
+## PDF Improvements Round 3
+- [x] ERRO 3: Boleto e split separados na Receita Extra — "Boleto cobrado do inquilino: R$ X" + "Split cobrado do proprietário: R$ X" com fórmulas individuais (ambos geradores)
+- [x] ERRO 4: Disclaimer de ROI adicionado — "Estimativas baseadas nas informações declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma." (ambos geradores)
+- [x] ERRO 5: Assinaturas Digitais — grupo "Add-ons Compartilhados (IMOB + LOC)" + item "Assinaturas Digitais (compartilhado)" (ambos geradores)
+- [x] AJUSTE 6: Treinamentos K2 padronizados — "Treinamentos acumulados: benefícios de ambos os planos K2 são somados (4 online/ano ou 2 presenciais)." (ambos geradores)
+- [x] Visual verification: Test 1 (boleto+split) e Test 2 (boleto only) confirmados visualmente

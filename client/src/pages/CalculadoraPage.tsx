@@ -648,9 +648,9 @@ export default function CalculadoraPage() {
             const st3 = Math.max(0, additional - 40);
             const sigCost = st1 * 1.8 + st2 * 1.7 + st3 * 1.5;
             postPaidTotal += sigCost;
-            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
+            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "Add-ons Compartilhados (IMOB + LOC)", groupTotal: 0, items: [] };
             ppBreakdown.sharedAddons.items.push({
-              label: "Assinaturas Digitais",
+              label: "Assinaturas Digitais (compartilhado)",
               included,
               additional,
               total: sigCost,
@@ -673,7 +673,7 @@ export default function CalculadoraPage() {
             const wt4 = Math.max(0, additional - 1000);
             const waCost = wt1 * 2 + wt2 * 1.8 + wt3 * 1.5 + wt4 * 1.2;
             postPaidTotal += waCost;
-            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "IMOB e LOC", groupTotal: 0, items: [] };
+            if (!ppBreakdown.sharedAddons) ppBreakdown.sharedAddons = { groupLabel: "Add-ons Compartilhados (IMOB + LOC)", groupTotal: 0, items: [] };
             ppBreakdown.sharedAddons.items.push({
               label: "Mensagens WhatsApp",
               included,
@@ -4071,8 +4071,8 @@ export default function CalculadoraPage() {
                       if (additional > 0) {
                         const st1 = Math.min(additional, 20); const st2 = Math.min(Math.max(0, additional - 20), 20); const st3 = Math.max(0, additional - 40);
                         const cost = st1 * 1.8 + st2 * 1.7 + st3 * 1.5;
-                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
-                        bd.sharedAddons.items.push({ label: 'Assinaturas Digitais', included, additional, total: cost, perUnit: 1.8, unitLabel: 'assinatura' });
+                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'Add-ons Compartilhados (IMOB + LOC)', groupTotal: 0, items: [] };
+                        bd.sharedAddons.items.push({ label: 'Assinaturas Digitais (compartilhado)', included, additional, total: cost, perUnit: 1.8, unitLabel: 'assinatura' });
                         bd.sharedAddons.groupTotal += cost;
                       }
                     }
@@ -4083,7 +4083,7 @@ export default function CalculadoraPage() {
                       if (additional > 0) {
                         const wt1 = Math.min(additional, 200); const wt2 = Math.min(Math.max(0, additional - 200), 150); const wt3 = Math.min(Math.max(0, additional - 350), 650); const wt4 = Math.max(0, additional - 1000);
                         const cost = wt1 * 2 + wt2 * 1.8 + wt3 * 1.5 + wt4 * 1.2;
-                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'IMOB e LOC', groupTotal: 0, items: [] };
+                        if (!bd.sharedAddons) bd.sharedAddons = { groupLabel: 'Add-ons Compartilhados (IMOB + LOC)', groupTotal: 0, items: [] };
                         bd.sharedAddons.items.push({ label: 'Mensagens WhatsApp', included, additional, total: cost, perUnit: 2, unitLabel: 'msg' });
                         bd.sharedAddons.groupTotal += cost;
                       }

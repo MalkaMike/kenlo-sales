@@ -847,7 +847,7 @@ export async function generateProposalPDFClient(
       doc.setTextColor(...hexToRgb(C.pink));
       doc.setFont("helvetica", "bold");
       doc.text(
-        "\u26A1 Treinamentos acumulados: Este plano inclui 4 treinamentos online/ano ou 2 presenciais.",
+        "\u26A1 Treinamentos acumulados: benefícios de ambos os planos K2 são somados (4 online/ano ou 2 presenciais).",
         TABLE_X + 4,
         Y + 4
       );
@@ -1128,23 +1128,39 @@ export async function generateProposalPDFClient(
     );
     Y += 10;
 
+    // Build Pay detail lines separating boleto and split
+    const payLines: string[] = [];
+    let payFormula = "";
+    if (data.chargesBoletoToTenant && data.boletoAmount && data.boletoAmount > 0) {
+      payLines.push(`Boleto cobrado do inquilino: ${fmt(data.boletoAmount)}`);
+      const boletoRevenue = (data.contracts || 0) * data.boletoAmount;
+      payFormula += `${data.contracts || 0} contratos × ${fmt(data.boletoAmount)} = ${fmt(boletoRevenue)}`;
+    }
+    if (data.chargesSplitToOwner && data.splitAmount && data.splitAmount > 0) {
+      if (payLines.length > 0) payFormula += "\n";
+      payLines.push(`Split cobrado do proprietário: ${fmt(data.splitAmount)}`);
+      const splitRevenue = (data.contracts || 0) * data.splitAmount;
+      payFormula += `${data.contracts || 0} contratos × ${fmt(data.splitAmount)} = ${fmt(splitRevenue)}`;
+    }
+    if (payLines.length === 0 && (data.revenueFromBoletos || 0) > 0) {
+      payFormula = `${data.contracts || 0} contratos × valor por contrato`;
+    }
+
     const revSources = [
       {
         key: "pay",
         label: "Kenlo Pay",
         desc: "Receita de boletos e split digital",
-        detail: data.chargesSplitToOwner
-          ? "Cobra Proprietário (Split) ativo"
-          : "Cobrança de boletos ativa",
+        detailLines: payLines.length > 0 ? payLines : ["Cobrança de boletos ativa"],
         value: data.revenueFromBoletos || 0,
         active: (data.revenueFromBoletos || 0) > 0,
-        formula: `${data.contracts || 0} contratos × valor por contrato`,
+        formula: payFormula || `${data.contracts || 0} contratos × valor por contrato`,
       },
       {
         key: "seguros",
         label: "Kenlo Seguros",
         desc: "Seguros embutido no boleto de locação",
-        detail: "R$10,00 por contrato/mês",
+        detailLines: ["R$10,00 por contrato/mês"],
         value: data.revenueFromInsurance || 0,
         active: (data.revenueFromInsurance || 0) > 0,
         formula: `${data.contracts || 0} contratos × R$10,00`,
@@ -1152,7 +1168,9 @@ export async function generateProposalPDFClient(
     ];
 
     const REV_CARD_W = COL2_W;
-    const REV_CARD_H = 65;
+    // Calculate card height based on max detail lines
+    const maxDetailLines = Math.max(...revSources.map(rs => rs.detailLines.length));
+    const REV_CARD_H = 65 + Math.max(0, (maxDetailLines - 1) * 8);
     revSources.forEach((rs, i) => {
       const x = M + i * (REV_CARD_W + 8);
       box(doc, x, Y, REV_CARD_W, REV_CARD_H, { selected: rs.active });
@@ -1187,18 +1205,32 @@ export async function generateProposalPDFClient(
       doc.setLineWidth(0.3);
       doc.line(x + 10, Y + 30, x + REV_CARD_W - 10, Y + 30);
 
+      // Render detail lines (boleto and split separated)
+      let detailY = Y + 38;
       doc.setFontSize(5.5);
-      doc.setTextColor(...hexToRgb(C.textLight));
-      doc.text(rs.formula, x + 10, Y + 38);
+      doc.setTextColor(...hexToRgb(C.text));
+      doc.setFont("helvetica", "normal");
+      for (const line of rs.detailLines) {
+        doc.text(line, x + 10, detailY);
+        detailY += 7;
+      }
+
+      // Formula below detail lines
       doc.setFontSize(5);
-      doc.text(rs.detail, x + 10, Y + 46);
+      doc.setTextColor(...hexToRgb(C.textLight));
+      // Split formula by newlines for multi-line rendering
+      const formulaLines = rs.formula.split("\n");
+      for (const fLine of formulaLines) {
+        doc.text(fLine, x + 10, detailY);
+        detailY += 7;
+      }
 
       doc.setFontSize(10);
       doc.setTextColor(
         ...hexToRgb(rs.active ? C.green : C.textLight)
       );
       doc.setFont("helvetica", "bold");
-      doc.text(fmt(rs.value), x + REV_CARD_W - 10, Y + 56, {
+      doc.text(fmt(rs.value), x + REV_CARD_W - 10, Y + REV_CARD_H - 9, {
         align: "right",
       });
     });
@@ -1381,7 +1413,18 @@ export async function generateProposalPDFClient(
       const aglw = doc.getTextWidth(agLabel);
       doc.text(agLabel, ax + (IND_W - aglw) / 2, Y + 32);
 
-      Y += IND_H + GAP;
+      Y += IND_H + 2;
+
+      // ERRO 4: ROI disclaimer
+      doc.setFontSize(4.5);
+      doc.setTextColor(...hexToRgb(C.textLight));
+      doc.setFont("helvetica", "italic");
+      doc.text(
+        "Estimativas baseadas nas informações declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma.",
+        M,
+        Y + 3
+      );
+      Y += 10;
     }
   }
 
