@@ -2273,3 +2273,19 @@
 - [x] FIX: R$ NaN in Kombo comparison table — fixed field name mismatch (totalMonthly vs monthlyTotal) in parseKomboComparison function
 - [x] VERIFIED: All 189 tests passing after fixes
 - [x] VERIFIED: Generated test PDF with IMOB K2 + LOC K, Elite kombo, Semestral — all values correct, no duplication, no NaN
+
+## Server-side PDF Redesign + Bienal Fix
+- [x] Fix Bienal "-10%" display in client-side PDF (minus sign renders as quote mark) — replaced all Unicode chars (U+2212, U+2713, U+26A1, U+2014, U+2013, U+00B7) with ASCII equivalents
+- [x] Redesign server-side PDF to match new 9-section client-side structure:
+  - [x] Section 1: Capa (logo, nome, data, "Proposta Comercial", consultor)
+  - [x] Section 2: Resumo da Configuração (mini-calculadora cards)
+  - [x] Section 3: Produtos Contratados (cards com plano e valor)
+  - [x] Section 4: Add-ons Contratados (cards simples)
+  - [x] Section 5: Frequência de Pagamento (visual selector)
+  - [x] Section 6: Seleção vs Kombos (tabela comparativa)
+  - [x] Section 7: Kenlo Receita Extra (Pay + Seguros)
+  - [x] Section 8: Investimento Total (fixo + variável)
+  - [x] Section 9: Conclusão (ROI + slogan)
+- [x] Fix Bienal "-10%" display in server-side PDF
+- [x] Update server-side PDF tests — all 21 PDF tests pass
+- [x] Visual verification of client-side PDF output — all 3 pages verified, all fixes confirmed

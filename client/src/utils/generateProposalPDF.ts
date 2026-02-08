@@ -231,7 +231,7 @@ function newPage(doc: jsPDF, data: ProposalPrintData): number {
   doc.setFontSize(6);
   doc.setTextColor(...rgb(C.textLight));
   doc.setFont("helvetica", "normal");
-  doc.text(`${data.agencyName || "Imobiliária"} — Proposta Comercial`, M, PH - 20);
+  doc.text(`${data.agencyName || "Imobiliaria"} - Proposta Comercial`, M, PH - 20);
   doc.text(`Vendedor: ${data.salesPersonName}`, PW - M, PH - 20, { align: "right" });
   return 30; // starting Y
 }
@@ -324,7 +324,7 @@ export async function generateProposalPDFClient(
     semestral: { label: "Semestral", adj: "+11%" },
     annual: { label: "Anual", adj: "0% (referência)" },
     anual: { label: "Anual", adj: "0% (referência)" },
-    bienal: { label: "Bienal", adj: "−10%" },
+    bienal: { label: "Bienal", adj: "-10%" },
   };
   const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || freqMap["annual"];
 
@@ -453,7 +453,7 @@ export async function generateProposalPDFClient(
   card(doc, M, Y, CARD_W, CARD_H2, { fill: C.bgSoft });
   label(doc, "ADD-ONS ATIVOS", M + 14, Y + 14, { size: 6, bold: true, color: C.textMuted });
   if (activeAddons.length > 0) {
-    const addonText = activeAddons.map(a => a.label).join("  ·  ");
+    const addonText = activeAddons.map(a => a.label).join("  |  ");
     value(doc, addonText, M + 14, Y + 30, { size: 8, color: C.text });
   } else {
     label(doc, "Nenhum add-on selecionado", M + 14, Y + 30, { size: 8, color: C.textLight });
@@ -521,7 +521,7 @@ export async function generateProposalPDFClient(
     label(doc, "BENEFÍCIOS PREMIUM", M + 14, Y + 14, { size: 6, bold: true, color: C.blue });
     label(doc, "Ao contratar plano K ou K2, os benefícios premium são estendidos a toda a operação.", M + 14, Y + 26, { size: 7, color: C.text });
     if (bothK2) {
-      label(doc, "⚡ Treinamentos acumulados: benefícios de ambos os planos K2 são somados (4 online/ano ou 2 presenciais).", M + 14, Y + 38, { size: 7, color: C.blue, bold: true });
+      label(doc, ">> Treinamentos acumulados: beneficios de ambos os planos K2 sao somados (4 online/ano ou 2 presenciais).", M + 14, Y + 38, { size: 7, color: C.blue, bold: true });
     }
     Y += PREM_H + GAP;
   }
@@ -560,7 +560,7 @@ export async function generateProposalPDFClient(
       doc.setFontSize(5);
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.text("✓", ax + 12, ay + 16);
+      doc.text("v", ax + 12.5, ay + 16);
 
       value(doc, `Kenlo ${a.label}`, ax + 24, ay + 16, { size: 8, color: C.dark });
       label(doc, meta.desc, ax + 14, ay + 28, { size: 6, color: C.textMuted });
@@ -589,7 +589,7 @@ export async function generateProposalPDFClient(
     { key: "monthly", label: "Mensal", adj: "+25%", color: C.textMuted },
     { key: "semestral", label: "Semestral", adj: "+11%", color: C.textMuted },
     { key: "annual", label: "Anual", adj: "0%", color: C.green },
-    { key: "bienal", label: "Bienal", adj: "−10%", color: C.green },
+    { key: "bienal", label: "Bienal", adj: "-10%", color: C.green },
   ];
 
   const FREQ_W = (CW - 3 * 8) / 4;
@@ -647,9 +647,9 @@ export async function generateProposalPDFClient(
     doc.setFontSize(7);
     doc.setTextColor(...rgb(C.primary));
     doc.setFont("helvetica", "bold");
-    doc.text(isKombo ? `✓ ${komboLabel}` : "✓ Sua Seleção Atual", M + 10, Y + 14);
+    doc.text(isKombo ? `> ${komboLabel}` : "> Sua Selecao Atual", M + 10, Y + 14);
     doc.setTextColor(...rgb(C.dark));
-    doc.text(komboDiscount > 0 ? `${komboDiscount}%` : "—", M + COL_NAME_W + 10, Y + 14);
+    doc.text(komboDiscount > 0 ? `${komboDiscount}%` : "-", M + COL_NAME_W + 10, Y + 14);
     doc.text(fmt(monthlyRecurring), M + COL_NAME_W + COL_DISC_W + 10, Y + 14);
     doc.setTextColor(...rgb(C.green));
     doc.text("Selecionado", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
@@ -678,7 +678,7 @@ export async function generateProposalPDFClient(
         doc.text(`${fmt(k.savings)}/mês`, M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
       } else {
         doc.setTextColor(...rgb(C.textLight));
-        doc.text("—", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
+        doc.text("-", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
       }
       Y += ROW_H;
     });
@@ -755,12 +755,12 @@ export async function generateProposalPDFClient(
 
   // Product lines
   if (showImob && data.imobPrice !== undefined) {
-    label(doc, `Kenlo IMOB – ${(data.imobPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
+    label(doc, `Kenlo IMOB - ${(data.imobPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
     value(doc, fmt(data.imobPrice), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
     iY += 12;
   }
   if (showLoc && data.locPrice !== undefined) {
-    label(doc, `Kenlo Locação – ${(data.locPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
+    label(doc, `Kenlo Locacao - ${(data.locPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
     value(doc, fmt(data.locPrice), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
     iY += 12;
   }
@@ -820,13 +820,13 @@ export async function generateProposalPDFClient(
   let payCondition = `${installments}x ${fmt(installmentValue)}`;
   const normPlan = data.paymentPlan?.toLowerCase() || "annual";
   if (normPlan === "monthly" || normPlan === "mensal") {
-    payCondition = `Cobrado mensalmente — ${fmt(data.totalMonthly || installmentValue)}/mês`;
+    payCondition = `Cobrado mensalmente - ${fmt(data.totalMonthly || installmentValue)}/mes`;
   } else if (normPlan === "semestral") {
-    payCondition = `Pago semestralmente — ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`;
+    payCondition = `Pago semestralmente - ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`;
   } else if (normPlan === "annual" || normPlan === "anual") {
     payCondition = `${installments}x ${fmt(installmentValue)} (anual)`;
   } else if (normPlan === "bienal") {
-    payCondition = `${installments}x ${fmt(installmentValue)} (bienal — 24 meses)`;
+    payCondition = `${installments}x ${fmt(installmentValue)} (bienal - 24 meses)`;
   }
 
   label(doc, "Condição de Pagamento", M + 14, iY, { size: 7, bold: true, color: C.dark });
@@ -843,7 +843,7 @@ export async function generateProposalPDFClient(
     const VAR_H = 50;
     card(doc, M, Y, CW, VAR_H, { fill: C.bgSoft, stroke: C.border });
     label(doc, "CUSTOS VARIÁVEIS (PÓS-PAGO ESTIMADO)", M + 14, Y + 14, { size: 7, bold: true, color: C.dark });
-    label(doc, "Sem surpresas — só o que você usar além do incluído no plano.", M + 14, Y + 26, { size: 6.5, color: C.textMuted });
+    label(doc, "Sem surpresas - so o que voce usar alem do incluido no plano.", M + 14, Y + 26, { size: 6.5, color: C.textMuted });
     value(doc, fmt(data.postPaidTotal || 0) + "/mês", M + CW - 14, Y + 38, { size: 9, color: C.text, align: "right" });
     Y += VAR_H + GAP;
   }
@@ -935,7 +935,7 @@ export async function generateProposalPDFClient(
   doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("Kenlo — Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
+  doc.text("Kenlo - Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
   doc.setFontSize(7);
   doc.setTextColor(...rgb("#CBD5E1"));
   doc.setFont("helvetica", "normal");
