@@ -629,7 +629,7 @@ export async function generateProposalPDFClient(
   const FREQ_H = 22;
   const freqs = [
     { key: "monthly", label: "Mensal", desc: "+25%" },
-    { key: "semestral", label: "Semestral", desc: "+10%" },
+    { key: "semestral", label: "Semestral", desc: "+11%" },
     { key: "annual", label: "Anual", desc: "0% - Referência" },
     { key: "bienal", label: "Bienal", desc: "-10%" },
   ];
@@ -843,6 +843,30 @@ export async function generateProposalPDFClient(
     }
   }
 
+  // K2 Training (derived from plan data)
+  const imobIsK2 = showImob && data.imobPlan?.toLowerCase() === "k2";
+  const locIsK2 = showLoc && data.locPlan?.toLowerCase() === "k2";
+  const anyK2 = imobIsK2 || locIsK2;
+  const bothK2 = imobIsK2 && locIsK2;
+  if (anyK2) {
+    Y = tableSectionHeader(doc, TABLE_X, Y, TABLE_W, "Treinamentos K2 (Incluído no plano)");
+    if (bothK2) {
+      Y = tableRow(doc, TABLE_X, Y, TABLE_W, "4 Treinamentos Online (ref. R$ 2.000/cada)", "Incluído", {
+        valueColor: C.red, bold: true,
+      });
+      Y = tableRow(doc, TABLE_X, Y, TABLE_W, "ou 2 Treinamentos Presenciais (ref. R$ 3.000/cada)", "Incluído", {
+        valueColor: C.red, bold: true,
+      });
+    } else {
+      Y = tableRow(doc, TABLE_X, Y, TABLE_W, "2 Treinamentos Online (ref. R$ 2.000/cada)", "Incluído", {
+        valueColor: C.red, bold: true,
+      });
+      Y = tableRow(doc, TABLE_X, Y, TABLE_W, "ou 1 Treinamento Presencial (ref. R$ 3.000)", "Incluído", {
+        valueColor: C.red, bold: true,
+      });
+    }
+  }
+
   // Summary rows
   Y = tableRow(
     doc,
@@ -889,10 +913,21 @@ export async function generateProposalPDFClient(
   doc.text(fmt(totalInvestment), M + CW, Y + 6, { align: "right" });
   Y += 13;
 
+  // Payment condition label varies by frequency
+  let paymentConditionLabel = "Condições de Pagamento";
+  let paymentConditionValue = `${installments}x ${fmt(installmentValue)}`;
+  if (data.paymentPlan === "monthly") {
+    paymentConditionLabel = "Condição de Pagamento";
+    paymentConditionValue = `Cobrado mensalmente — ${fmt(data.totalMonthly || installmentValue)}/mês`;
+  } else if (data.paymentPlan === "semestral") {
+    paymentConditionLabel = "Condição de Pagamento";
+    paymentConditionValue = `Pago à vista (semestral) — ${fmt(installmentValue)}`;
+  }
+
   Y = labelRow(
     doc,
-    "Condições de Pagamento",
-    `${installments}x ${fmt(installmentValue)}`,
+    paymentConditionLabel,
+    paymentConditionValue,
     Y,
     { bold: true }
   );

@@ -1493,11 +1493,11 @@ export default function CalculadoraPage() {
     biennial: "Bienal",
   };
   const frequencyBadges = {
-    monthly: "0% - Refer\u00eancia",
-    semestral: "-15%",
-    annual: "-20%",
-    biennial: "-25%",
-  };;
+    monthly: "+25%",
+    semestral: "+11%",
+    annual: "0% - Referência",
+    biennial: "-10%",
+  };
 
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-6 sm:py-12 px-4 sm:px-6">
@@ -3580,10 +3580,7 @@ export default function CalculadoraPage() {
 
                       {/* Frequency Badge */}
                       <div className="bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50">
-                        {frequency === 'monthly' && 'Mensal (0%)'}
-                        {frequency === 'semestral' && 'Semestral (-15%)'}
-                        {frequency === 'annual' && 'Anual (-20%)'}
-                        {frequency === 'biennial' && 'Bienal (-25%)'}
+                        {frequencyLabels[frequency]} ({frequencyBadges[frequency]})
                       </div>
 
                       {/* IMOB Metrics Badge */}
