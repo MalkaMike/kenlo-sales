@@ -103,7 +103,7 @@ const KOMBOS = {
     discount: 0.20, // 20% OFF
     implantationDiscount: 0, // Implantação fixa R$ 1.497
     requiredProducts: ["both"] as ProductSelection[],
-    requiredAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], // ALL add-ons
+    requiredAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros"], // ALL add-ons (Cash removed)
     includesPremiumServices: true, // INCLUI VIP + CS Dedicado
     freeImplementations: ["imob", "leads", "inteligencia"], // Implantação de IMOB, Leads e Inteligência ofertada
   },
@@ -410,7 +410,7 @@ export default function CalculadoraPage() {
       { product: "imob" as ProductSelection, addons: ["leads", "inteligencia", "assinatura"], komboId: "imob_pro", komboName: "Kombo Imob Pro", discount: 15 },
       { product: "loc" as ProductSelection, addons: ["inteligencia", "assinatura"], komboId: "locacao_pro", komboName: "Kombo Locação Pro", discount: 10 },
       { product: "both" as ProductSelection, addons: [] as string[], komboId: "core_gestao", komboName: "Kombo Core Gestão", discount: 0 },
-      { product: "both" as ProductSelection, addons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"], komboId: "elite", komboName: "Kombo Elite", discount: 20 },
+      { product: "both" as ProductSelection, addons: ["leads", "inteligencia", "assinatura", "pay", "seguros"], komboId: "elite", komboName: "Kombo Elite", discount: 20 },
       // No kombo scenarios
       { product: "imob" as ProductSelection, addons: ["leads"], komboId: null, komboName: undefined, discount: 0 },
       { product: "loc" as ProductSelection, addons: ["pay", "seguros"], komboId: null, komboName: undefined, discount: 0 },
@@ -3570,7 +3570,7 @@ export default function CalculadoraPage() {
                         if (addons.assinatura) selectedAddons.push('Assinatura');
                         if (addons.pay) selectedAddons.push('Pay');
                         if (addons.seguros) selectedAddons.push('Seguros');
-                        if (addons.cash) selectedAddons.push('Cash');
+                        // Cash removed from PDFs per business rule: Receita Extra = Pay + Seguros only
                         return selectedAddons.length > 0 && (
                           <div className="bg-secondary/80 text-white px-3 py-1.5 rounded-full font-medium">
                             Add-ons: {selectedAddons.join(', ')}
@@ -3699,9 +3699,9 @@ export default function CalculadoraPage() {
               try {
                 toast.loading("Gerando PDF...");
                 
-                // Get selected addons as array
+                // Get selected addons as array (exclude Cash from PDFs per business rule)
                 const selectedAddons = Object.entries(addons)
-                  .filter(([_, enabled]) => enabled)
+                  .filter(([name, enabled]) => enabled && name !== 'cash')
                   .map(([name, _]) => name);
 
                 // Calculate totals
@@ -3854,7 +3854,7 @@ export default function CalculadoraPage() {
                 
                 // Define which add-ons are compatible with each product
                 const imobCompatible = ['leads', 'inteligencia', 'assinatura'];
-                const locCompatible = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
+                const locCompatible = ['pay', 'seguros', 'inteligencia', 'assinatura'];
                 
                 selectedAddons.forEach((addon: string) => {
                   let isCompatible = false;
@@ -3888,7 +3888,7 @@ export default function CalculadoraPage() {
                     assinatura: 'Assinatura',
                     pay: 'Pay',
                     seguros: 'Seguros',
-                    cash: 'Cash',
+                    // cash removed from PDFs
                   };
                   const incompatibleNames = incompatibleAddons.map(a => addonNames[a] || a).join(', ');
                   toast.error(

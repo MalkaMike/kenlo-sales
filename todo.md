@@ -2204,3 +2204,12 @@
 - [x] Implement "Plano Contratado" simplified block (shows plan names + kombo badge + frequency)
 - [x] Implement single frequency highlight block (inside "Plano Contratado")
 - [x] Implement "Anual Equivalente" as pedagogical comparison line ("Investimento Mensal Recorrente")
+
+## PDF Errors Round 2 + Conceptual Adjustments
+- [x] ERROR 1: Plan name duplication FIXED — removed red overlay text in server-side PDF, now uses "Kenlo IMOB – K" format consistently in both generators
+- [x] ERROR 2: Payment condition text FIXED — now matches selected frequency exactly (Mensal→"Cobrado mensalmente", Semestral→"Pago semestralmente — R$X a cada 6 meses", Anual→"Xx R$X (anual)", Bienal→"Xx R$X (bienal — 24 meses)")
+- [x] ERROR 3: WhatsApp in pós-pago FIXED — already correctly gated by `addons.leads && metrics.wantsWhatsApp` at data construction level
+- [x] ERROR 4: Cash REMOVED from PDFs — removed from add-on lists, addon name maps, example configs, selectedAddons export, and compatibility lists in both generators
+- [x] ADJUST 1: Renamed "Plano Contratado" → "Estrutura Contratada" with sub-blocks: "Plano Base" (IMOB K + LOC K2) + "Estratégia Comercial" (Kombo badge or "Contratação avulsa") + "Ciclo de Pagamento"
+- [x] ADJUST 2: Enhanced premium benefits text — "Benefícios Premium Compartilhados" header + shared benefits note + K2 training accumulation text ("4 treinamentos online/ano ou 2 presenciais")
+- [x] ADJUST 3: Added Receita Extra standard text — "Pay e Seguros estão disponíveis por padrão. O uso é opcional e ativado durante o onboarding, conforme sua estratégia operacional." + renamed section to "Kenlo Receita Extra"

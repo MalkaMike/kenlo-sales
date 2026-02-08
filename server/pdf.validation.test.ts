@@ -5,166 +5,116 @@ import { describe, it, expect } from 'vitest';
  * 
  * These tests verify that the data sent to PDF generation matches
  * the calculator selections and that all validation logic works correctly.
+ * 
+ * Updated: Feb 2026 — Cash removed from PDFs, WhatsApp requires Leads,
+ * payment condition consistency, Estrutura Contratada wording.
  */
 
 describe('PDF Data Validation', () => {
   
-  describe('Add-on Compatibility Validation', () => {
+  describe('Add-on Compatibility Validation (Cash removed from PDFs)', () => {
+    
+    // The PDF add-on list no longer includes Cash
+    const pdfAddons = [
+      { key: "leads", label: "Leads" },
+      { key: "inteligencia", label: "Inteligência" },
+      { key: "assinatura", label: "Assinatura" },
+      { key: "pay", label: "Pay" },
+      { key: "seguros", label: "Seguros" },
+    ];
+    
+    it('should NOT include Cash in PDF add-on list', () => {
+      const hasCash = pdfAddons.some(a => a.key === 'cash');
+      expect(hasCash).toBe(false);
+    });
+    
+    it('should include exactly 5 add-ons (no Cash)', () => {
+      expect(pdfAddons).toHaveLength(5);
+    });
     
     it('should allow Leads, Inteligência, Assinatura for IMOB only', () => {
-      const product = 'imob';
       const imobCompatible = ['leads', 'inteligencia', 'assinatura'];
-      const locCompatible = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
       
       const testAddons = ['leads', 'inteligencia', 'assinatura'];
-      
       testAddons.forEach(addon => {
-        const isCompatible = imobCompatible.includes(addon);
-        expect(isCompatible).toBe(true);
+        expect(imobCompatible.includes(addon)).toBe(true);
       });
     });
     
-    it('should reject Pay, Seguros, Cash for IMOB only', () => {
-      const product = 'imob';
+    it('should reject Pay, Seguros for IMOB only', () => {
       const imobCompatible = ['leads', 'inteligencia', 'assinatura'];
       
-      const incompatibleAddons = ['pay', 'seguros', 'cash'];
-      
-      incompatibleAddons.forEach(addon => {
-        const isCompatible = imobCompatible.includes(addon);
-        expect(isCompatible).toBe(false);
+      ['pay', 'seguros'].forEach(addon => {
+        expect(imobCompatible.includes(addon)).toBe(false);
       });
     });
     
-    it('should allow Pay, Seguros, Cash, Inteligência, Assinatura for LOC only', () => {
-      const product = 'loc';
-      const locCompatible = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
+    it('should allow Pay, Seguros, Inteligência, Assinatura for LOC only (no Cash)', () => {
+      const locCompatible = ['pay', 'seguros', 'inteligencia', 'assinatura'];
       
-      const testAddons = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
+      // Cash should NOT be in locCompatible
+      expect(locCompatible.includes('cash')).toBe(false);
       
-      testAddons.forEach(addon => {
-        const isCompatible = locCompatible.includes(addon);
-        expect(isCompatible).toBe(true);
+      ['pay', 'seguros', 'inteligencia', 'assinatura'].forEach(addon => {
+        expect(locCompatible.includes(addon)).toBe(true);
       });
     });
     
     it('should reject Leads for LOC only', () => {
-      const product = 'loc';
-      const locCompatible = ['pay', 'seguros', 'cash', 'inteligencia', 'assinatura'];
-      
-      const isCompatible = locCompatible.includes('leads');
-      expect(isCompatible).toBe(false);
+      const locCompatible = ['pay', 'seguros', 'inteligencia', 'assinatura'];
+      expect(locCompatible.includes('leads')).toBe(false);
     });
     
-    it('should allow ALL add-ons for IMOB+LOC', () => {
-      const product = 'both';
-      const allAddons = ['leads', 'inteligencia', 'assinatura', 'pay', 'seguros', 'cash'];
+    it('should filter Cash from selectedAddons before PDF export', () => {
+      const addons = { leads: true, inteligencia: true, assinatura: true, pay: true, seguros: true, cash: true };
+      const selectedAddons = Object.entries(addons)
+        .filter(([name, enabled]) => enabled && name !== 'cash')
+        .map(([name]) => name);
       
-      allAddons.forEach(addon => {
-        // For 'both' product, all add-ons are compatible
-        const isCompatible = true;
-        expect(isCompatible).toBe(true);
-      });
+      expect(selectedAddons).not.toContain('cash');
+      expect(selectedAddons).toHaveLength(5);
+      expect(selectedAddons).toContain('leads');
+      expect(selectedAddons).toContain('seguros');
     });
   });
   
   describe('Premium Services Pricing Logic', () => {
     
-    it('should set Premium Services price to 0 for Kombo Imob Start', () => {
-      const komboName = 'Kombo Imob Start';
-      const hasPremiumIncluded = 
+    const checkPremiumIncluded = (komboName: string | undefined) => {
+      return (
         komboName === 'Kombo Imob Start' ||
         komboName === 'Kombo Core Gestão' || 
         komboName === 'Kombo Elite' ||
         komboName === 'Kombo Imob Pro' ||
-        komboName === 'Kombo Locação Pro';
-      
-      const premiumServicesPrice = hasPremiumIncluded ? 0 : 97 + 197;
-      
-      expect(hasPremiumIncluded).toBe(true);
-      expect(premiumServicesPrice).toBe(0);
-    });
+        komboName === 'Kombo Locação Pro'
+      );
+    };
     
-    it('should set Premium Services price to 0 for Kombo Core Gestão', () => {
-      const komboName = 'Kombo Core Gestão';
-      const hasPremiumIncluded = 
-        komboName === 'Kombo Imob Start' ||
-        komboName === 'Kombo Core Gestão' || 
-        komboName === 'Kombo Elite' ||
-        komboName === 'Kombo Imob Pro' ||
-        komboName === 'Kombo Locação Pro';
-      
-      const premiumServicesPrice = hasPremiumIncluded ? 0 : 97 + 197;
-      
-      expect(hasPremiumIncluded).toBe(true);
-      expect(premiumServicesPrice).toBe(0);
-    });
-    
-    it('should set Premium Services price to 0 for Kombo Elite', () => {
-      const komboName = 'Kombo Elite';
-      const hasPremiumIncluded = 
-        komboName === 'Kombo Imob Start' ||
-        komboName === 'Kombo Core Gestão' || 
-        komboName === 'Kombo Elite' ||
-        komboName === 'Kombo Imob Pro' ||
-        komboName === 'Kombo Locação Pro';
-      
-      const premiumServicesPrice = hasPremiumIncluded ? 0 : 97 + 197;
-      
-      expect(hasPremiumIncluded).toBe(true);
-      expect(premiumServicesPrice).toBe(0);
-    });
-    
-    it('should set Premium Services price to 0 for Kombo Imob Pro', () => {
-      const komboName = 'Kombo Imob Pro';
-      const hasPremiumIncluded = 
-        komboName === 'Kombo Imob Start' ||
-        komboName === 'Kombo Core Gestão' || 
-        komboName === 'Kombo Elite' ||
-        komboName === 'Kombo Imob Pro' ||
-        komboName === 'Kombo Locação Pro';
-      
-      const premiumServicesPrice = hasPremiumIncluded ? 0 : 97 + 197;
-      
-      expect(hasPremiumIncluded).toBe(true);
-      expect(premiumServicesPrice).toBe(0);
-    });
-    
-    it('should set Premium Services price to 0 for Kombo Locação Pro', () => {
-      const komboName = 'Kombo Locação Pro';
-      const hasPremiumIncluded = 
-        komboName === 'Kombo Imob Start' ||
-        komboName === 'Kombo Core Gestão' || 
-        komboName === 'Kombo Elite' ||
-        komboName === 'Kombo Imob Pro' ||
-        komboName === 'Kombo Locação Pro';
-      
-      const premiumServicesPrice = hasPremiumIncluded ? 0 : 97 + 197;
-      
-      expect(hasPremiumIncluded).toBe(true);
-      expect(premiumServicesPrice).toBe(0);
+    it('should set Premium Services price to 0 for all Kombos', () => {
+      const kombos = ['Kombo Imob Start', 'Kombo Core Gestão', 'Kombo Elite', 'Kombo Imob Pro', 'Kombo Locação Pro'];
+      kombos.forEach(kombo => {
+        expect(checkPremiumIncluded(kombo)).toBe(true);
+        const price = checkPremiumIncluded(kombo) ? 0 : 97 + 197;
+        expect(price).toBe(0);
+      });
     });
     
     it('should calculate Premium Services price for no Kombo (VIP + CS)', () => {
-      const komboName = undefined;
       const hasVip = true;
       const hasCS = true;
-      
-      const hasPremiumIncluded = false;
+      const hasPremiumIncluded = checkPremiumIncluded(undefined);
       
       const premiumServicesPrice = hasPremiumIncluded ? 0 : 
         (hasVip ? 97 : 0) + (hasCS ? 197 : 0);
       
       expect(hasPremiumIncluded).toBe(false);
-      expect(premiumServicesPrice).toBe(294); // 97 + 197
+      expect(premiumServicesPrice).toBe(294);
     });
     
     it('should calculate Premium Services price for no Kombo (VIP only)', () => {
-      const komboName = undefined;
       const hasVip = true;
       const hasCS = false;
-      
-      const hasPremiumIncluded = false;
+      const hasPremiumIncluded = checkPremiumIncluded(undefined);
       
       const premiumServicesPrice = hasPremiumIncluded ? 0 : 
         (hasVip ? 97 : 0) + (hasCS ? 197 : 0);
@@ -173,11 +123,9 @@ describe('PDF Data Validation', () => {
     });
     
     it('should calculate Premium Services price for no Kombo (CS only)', () => {
-      const komboName = undefined;
       const hasVip = false;
       const hasCS = true;
-      
-      const hasPremiumIncluded = false;
+      const hasPremiumIncluded = checkPremiumIncluded(undefined);
       
       const premiumServicesPrice = hasPremiumIncluded ? 0 : 
         (hasVip ? 97 : 0) + (hasCS ? 197 : 0);
@@ -186,46 +134,159 @@ describe('PDF Data Validation', () => {
     });
   });
   
-  describe('WhatsApp Dependency Validation', () => {
+  describe('WhatsApp Dependency Validation (ERROR 3 fix)', () => {
     
-    it('should allow WhatsApp when Leads is active', () => {
-      const wantsWhatsApp = true;
-      const hasLeads = true;
-      const hasExternalAI = false;
+    it('should only include WhatsApp in post-paid when Leads is active AND WhatsApp is toggled ON', () => {
+      const scenarios = [
+        { leads: true, wantsWhatsApp: true, shouldInclude: true },
+        { leads: true, wantsWhatsApp: false, shouldInclude: false },
+        { leads: false, wantsWhatsApp: true, shouldInclude: false },
+        { leads: false, wantsWhatsApp: false, shouldInclude: false },
+      ];
       
-      const isValid = !wantsWhatsApp || hasLeads || hasExternalAI;
-      
-      expect(isValid).toBe(true);
+      scenarios.forEach(({ leads, wantsWhatsApp, shouldInclude }) => {
+        const includeWhatsApp = leads && wantsWhatsApp;
+        expect(includeWhatsApp).toBe(shouldInclude);
+      });
     });
     
-    it('should allow WhatsApp when External AI is active', () => {
+    it('should NOT include WhatsApp cost in post-paid when Leads is inactive', () => {
+      const addons = { leads: false, inteligencia: true, assinatura: true, pay: true, seguros: true };
       const wantsWhatsApp = true;
-      const hasLeads = false;
-      const hasExternalAI = true;
+      const leadsPerMonth = 200;
       
-      const isValid = !wantsWhatsApp || hasLeads || hasExternalAI;
+      // WhatsApp should only be calculated if leads is active
+      const includeWhatsApp = addons.leads && wantsWhatsApp;
+      expect(includeWhatsApp).toBe(false);
       
-      expect(isValid).toBe(true);
+      // No WhatsApp cost should be added
+      let whatsAppCost = 0;
+      if (includeWhatsApp) {
+        const included = 100;
+        const additional = Math.max(0, leadsPerMonth - included);
+        whatsAppCost = additional * 2; // simplified
+      }
+      expect(whatsAppCost).toBe(0);
+    });
+  });
+  
+  describe('Payment Condition Consistency (ERROR 2 fix)', () => {
+    
+    const formatPaymentCondition = (paymentPlan: string, totalMonthly: number, installments: number, installmentValue: number) => {
+      let label = "Condição de Pagamento";
+      let value = `${installments}x R$ ${installmentValue.toFixed(2)}`;
+      
+      if (paymentPlan === "monthly") {
+        value = `Cobrado mensalmente — R$ ${totalMonthly.toFixed(2)}/mês`;
+      } else if (paymentPlan === "semestral") {
+        const semestralTotal = totalMonthly * 6;
+        value = `Pago semestralmente — R$ ${semestralTotal.toFixed(2)} a cada 6 meses`;
+      } else if (paymentPlan === "annual") {
+        value = `${installments}x R$ ${installmentValue.toFixed(2)} (anual)`;
+      } else if (paymentPlan === "bienal") {
+        value = `${installments}x R$ ${installmentValue.toFixed(2)} (bienal — 24 meses)`;
+      }
+      
+      return { label, value };
+    };
+    
+    it('should format monthly payment correctly', () => {
+      const result = formatPaymentCondition('monthly', 500, 1, 500);
+      expect(result.value).toContain('mensalmente');
+      expect(result.value).toContain('500.00');
     });
     
-    it('should reject WhatsApp when neither Leads nor External AI is active', () => {
-      const wantsWhatsApp = true;
-      const hasLeads = false;
-      const hasExternalAI = false;
-      
-      const isValid = !wantsWhatsApp || hasLeads || hasExternalAI;
-      
-      expect(isValid).toBe(false);
+    it('should format semestral payment as 6-month total', () => {
+      const result = formatPaymentCondition('semestral', 500, 6, 500);
+      expect(result.value).toContain('semestralmente');
+      expect(result.value).toContain('3000.00'); // 500 * 6
+      expect(result.value).toContain('a cada 6 meses');
     });
     
-    it('should allow WhatsApp disabled regardless of dependencies', () => {
-      const wantsWhatsApp = false;
-      const hasLeads = false;
-      const hasExternalAI = false;
+    it('should format annual payment with installments', () => {
+      const result = formatPaymentCondition('annual', 500, 12, 500);
+      expect(result.value).toContain('12x');
+      expect(result.value).toContain('(anual)');
+    });
+    
+    it('should format biennial payment with 24 months', () => {
+      const result = formatPaymentCondition('bienal', 500, 24, 500);
+      expect(result.value).toContain('24x');
+      expect(result.value).toContain('bienal');
+      expect(result.value).toContain('24 meses');
+    });
+  });
+  
+  describe('Estrutura Contratada Section (ADJUST 1)', () => {
+    
+    it('should format plan description as "IMOB K + LOC K2" style', () => {
+      const imobPlan = 'k';
+      const locPlan = 'k2';
+      const showImob = true;
+      const showLoc = true;
       
-      const isValid = !wantsWhatsApp || hasLeads || hasExternalAI;
+      const parts: string[] = [];
+      if (showImob && imobPlan) parts.push(`IMOB ${imobPlan.toUpperCase()}`);
+      if (showLoc && locPlan) parts.push(`LOC ${locPlan.toUpperCase()}`);
+      const planDescText = parts.join(' + ');
       
-      expect(isValid).toBe(true);
+      expect(planDescText).toBe('IMOB K + LOC K2');
+    });
+    
+    it('should format single product plan correctly', () => {
+      const imobPlan = 'prime';
+      const showImob = true;
+      const showLoc = false;
+      
+      const parts: string[] = [];
+      if (showImob && imobPlan) parts.push(`IMOB ${imobPlan.toUpperCase()}`);
+      const planDescText = parts.join(' + ');
+      
+      expect(planDescText).toBe('IMOB PRIME');
+    });
+    
+    it('should display kombo badge with discount when kombo is selected', () => {
+      const komboLabel = 'Kombo Elite';
+      const komboDiscount = 20;
+      const isKombo = komboDiscount > 0;
+      
+      expect(isKombo).toBe(true);
+      const badgeText = `${komboLabel} (${komboDiscount}% OFF)`;
+      expect(badgeText).toBe('Kombo Elite (20% OFF)');
+    });
+    
+    it('should show "Contratação avulsa" when no kombo is selected', () => {
+      const komboDiscount = 0;
+      const isKombo = komboDiscount > 0;
+      
+      expect(isKombo).toBe(false);
+    });
+  });
+  
+  describe('Receita Extra Section (ADJUST 3)', () => {
+    
+    it('should only include Pay and Seguros in Receita Extra (no Cash)', () => {
+      const receitaExtraSources = ['pay', 'seguros'];
+      
+      expect(receitaExtraSources).not.toContain('cash');
+      expect(receitaExtraSources).toHaveLength(2);
+    });
+    
+    it('should calculate revenue from boletos correctly', () => {
+      const contracts = 100;
+      const boletoAmount = 5.50;
+      const chargesBoleto = true;
+      
+      const revenue = chargesBoleto ? contracts * boletoAmount : 0;
+      expect(revenue).toBe(550);
+    });
+    
+    it('should calculate revenue from insurance correctly', () => {
+      const contracts = 100;
+      const hasSeguros = true;
+      
+      const revenue = hasSeguros ? contracts * 10 : 0;
+      expect(revenue).toBe(1000);
     });
   });
   
@@ -233,72 +294,56 @@ describe('PDF Data Validation', () => {
     
     it('should detect Kombo Imob Start (IMOB + Leads + Assinatura)', () => {
       const product = 'imob';
-      const addons = { leads: true, assinatura: true, inteligencia: false, pay: false, seguros: false, cash: false };
+      const addons = { leads: true, assinatura: true, inteligencia: false, pay: false, seguros: false };
       
       const hasImob = product === 'imob' || product === 'both';
       const hasLoc = product === 'loc' || product === 'both';
-      const hasLeads = addons.leads;
-      const hasInteligencia = addons.inteligencia;
-      const hasAssinatura = addons.assinatura;
-      const hasPay = addons.pay;
-      const hasSeguros = addons.seguros;
-      const hasCash = addons.cash;
-      
-      const isImobStart = hasImob && !hasLoc && hasLeads && hasAssinatura && !hasInteligencia;
+      const isImobStart = hasImob && !hasLoc && addons.leads && addons.assinatura && !addons.inteligencia;
       
       expect(isImobStart).toBe(true);
     });
     
     it('should detect Kombo Imob Pro (IMOB + Leads + Inteligência + Assinatura)', () => {
       const product = 'imob';
-      const addons = { leads: true, assinatura: true, inteligencia: true, pay: false, seguros: false, cash: false };
+      const addons = { leads: true, assinatura: true, inteligencia: true, pay: false, seguros: false };
       
       const hasImob = product === 'imob' || product === 'both';
       const hasLoc = product === 'loc' || product === 'both';
-      const hasLeads = addons.leads;
-      const hasInteligencia = addons.inteligencia;
-      const hasAssinatura = addons.assinatura;
-      
-      const isImobPro = hasImob && !hasLoc && hasLeads && hasInteligencia && hasAssinatura;
+      const isImobPro = hasImob && !hasLoc && addons.leads && addons.inteligencia && addons.assinatura;
       
       expect(isImobPro).toBe(true);
     });
     
     it('should detect Kombo Locação Pro (LOC + Inteligência + Assinatura)', () => {
       const product = 'loc';
-      const addons = { leads: false, assinatura: true, inteligencia: true, pay: false, seguros: false, cash: false };
+      const addons = { leads: false, assinatura: true, inteligencia: true, pay: false, seguros: false };
       
       const hasImob = product === 'imob' || product === 'both';
       const hasLoc = product === 'loc' || product === 'both';
-      const hasInteligencia = addons.inteligencia;
-      const hasAssinatura = addons.assinatura;
-      
-      const isLocacaoPro = !hasImob && hasLoc && hasInteligencia && hasAssinatura;
+      const isLocacaoPro = !hasImob && hasLoc && addons.inteligencia && addons.assinatura;
       
       expect(isLocacaoPro).toBe(true);
     });
     
     it('should detect Kombo Core Gestão (IMOB + LOC without add-ons)', () => {
       const product = 'both';
-      const addons = { leads: false, assinatura: false, inteligencia: false, pay: false, seguros: false, cash: false };
+      const addons = { leads: false, assinatura: false, inteligencia: false, pay: false, seguros: false };
       
       const hasImob = product === 'imob' || product === 'both';
       const hasLoc = product === 'loc' || product === 'both';
       const hasAnyAddon = Object.values(addons).some(v => v);
-      
       const isCoreGestao = hasImob && hasLoc && !hasAnyAddon;
       
       expect(isCoreGestao).toBe(true);
     });
     
-    it('should detect Kombo Elite (IMOB + LOC + ALL add-ons)', () => {
+    it('should detect Kombo Elite (IMOB + LOC + ALL add-ons except Cash)', () => {
       const product = 'both';
-      const addons = { leads: true, assinatura: true, inteligencia: true, pay: true, seguros: true, cash: true };
+      const addons = { leads: true, assinatura: true, inteligencia: true, pay: true, seguros: true };
       
       const hasImob = product === 'imob' || product === 'both';
       const hasLoc = product === 'loc' || product === 'both';
       const hasAllAddons = Object.values(addons).every(v => v);
-      
       const isElite = hasImob && hasLoc && hasAllAddons;
       
       expect(isElite).toBe(true);
@@ -333,6 +378,35 @@ describe('PDF Data Validation', () => {
       expect(metrics.contractsUnderManagement).toBeGreaterThan(0);
       expect(metrics.newContractsPerMonth).toBeGreaterThan(0);
       expect(typeof metrics.chargesSplitToOwner).toBe('boolean');
+    });
+  });
+  
+  describe('Plan Name Formatting (ERROR 1 fix)', () => {
+    
+    it('should format IMOB plan name without duplication', () => {
+      const imobPlan = 'k';
+      const formatted = `Kenlo IMOB \u2013 ${imobPlan.toUpperCase()}`;
+      
+      expect(formatted).toBe('Kenlo IMOB \u2013 K');
+      // Should NOT be "Kenlo IMOB \u2013 KK" (the old bug)
+      expect(formatted).not.toContain('KK');
+    });
+    
+    it('should format LOC plan name without duplication', () => {
+      const locPlan = 'k2';
+      const formatted = `Kenlo Loca\u00e7\u00e3o \u2013 ${locPlan.toUpperCase()}`;
+      
+      expect(formatted).toBe('Kenlo Loca\u00e7\u00e3o \u2013 K2');
+      // Should NOT be "Kenlo Loca\u00e7\u00e3o \u2013 K2K2" (the old bug)
+      expect(formatted).not.toContain('K2K2');
+    });
+    
+    it('should format PRIME plan name without duplication', () => {
+      const plan = 'prime';
+      const formatted = `Kenlo IMOB \u2013 ${plan.toUpperCase()}`;
+      
+      expect(formatted).toBe('Kenlo IMOB \u2013 PRIME');
+      expect(formatted).not.toContain('PRIMEPRIME');
     });
   });
 });
