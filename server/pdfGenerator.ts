@@ -389,10 +389,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       lbl("Nenhum add-on selecionado", M + 14, Y + 22, { size: 8, color: C.textLight });
     }
 
+    // Card: Frequencia (simple reference — detailed breakdown in Section 5)
     card(cx2, Y, CARD_W, CARD_H2, { fill: C.bgSoft });
     lbl("FREQUENCIA DE PAGAMENTO", cx2 + 14, Y + 6, { size: 6, bold: true, color: C.textMuted });
     val(selFreq.label, cx2 + 14, Y + 22, { size: 10, color: C.dark });
-    lbl(selFreq.adj, cx2 + 80, Y + 24, { size: 8, color: C.primary, bold: true });
 
     Y += CARD_H2 + GAP + 4;
 
@@ -445,7 +445,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const PREM_H = bothK2 ? 50 : 38;
       card(M, Y, CW, PREM_H, { fill: C.blueLight, stroke: C.border });
       lbl("BENEFICIOS PREMIUM", M + 14, Y + 6, { size: 6, bold: true, color: C.blue });
-      lbl("Ao contratar plano K ou K2, os beneficios premium sao estendidos a toda a operacao.", M + 14, Y + 20, { size: 7, color: C.text });
+      lbl("Ao contratar plano K ou K2 em qualquer produto, os beneficios premium sao automaticamente estendidos a toda a operacao (IMOB e LOCACAO).", M + 14, Y + 20, { size: 7, color: C.text });
       if (bothK2) {
         lbl(">> Treinamentos acumulados: beneficios de ambos os planos K2 sao somados (4 online/ano ou 2 presenciais).", M + 14, Y + 34, { size: 7, color: C.blue, bold: true });
       }
@@ -461,7 +461,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
       const ADDON_H = 40;
       const addonMeta: Record<string, { desc: string; pricing: string }> = {
-        leads: { desc: "Gestao automatizada de leads", pricing: "Pre-pago mensal" },
+        leads: { desc: "Automacao de leads ativa independentemente do uso de WhatsApp", pricing: "Pre-pago mensal" },
         inteligencia: { desc: "BI de KPIs e analytics avancado", pricing: "Pre-pago mensal" },
         assinatura: { desc: "Assinatura digital embutida", pricing: "Pos-pago por uso" },
         pay: { desc: "Boleto e Split digital embutido", pricing: "Direito do plano" },
@@ -601,6 +601,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       Y = sectionTitle("Kenlo Receita Extra", Y);
 
       lbl("Pay e Seguros sao direitos do plano. O uso e opcional e ativado durante o onboarding, conforme sua estrategia operacional.", M + 10, Y, { size: 6.5, color: C.textMuted });
+      Y += 10;
+      lbl("Os valores abaixo consideram o modelo informado pelo cliente durante a simulacao (quem paga boleto, split e respectivos valores).", M + 10, Y, { size: 6, color: C.textLight });
       Y += 14;
 
       const REV_W = CARD_W;
@@ -729,7 +731,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     lbl("Implantacao (unica vez)", M + 14, iY, { size: 7, color: C.text });
     doc.fontSize(7).fillColor(C.text).font("Helvetica-Bold")
       .text(fmt(data.implantationFee), M + 14, iY, { width: CW - 28, align: "right" });
-    iY += 14;
+    iY += 10;
+    lbl("A implantacao e um custo unico e nao recorrente, por isso nao entra no calculo do ROI mensal.", M + 14, iY, { size: 5.5, color: C.textLight });
+    iY += 10;
 
     // Payment condition
     let payCondition = `${installments}x ${fmt(installmentValue)}`;
@@ -804,13 +808,13 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         doc.fontSize(16).fillColor(C.green).font("Helvetica-Bold")
           .text(`${roiPercent}%`, M, Y + 8, { width: IND_W, align: "center" });
         doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
-          .text("ROI Receita vs Investimento", M, Y + 30, { width: IND_W, align: "center" });
+          .text("ROI (Receita vs Investimento)", M, Y + 30, { width: IND_W, align: "center" });
 
         // Payback
         const px = M + IND_W + 8;
         card(px, Y, IND_W, IND_H, { fill: C.bgSoft });
         doc.fontSize(14).fillColor(C.blue).font("Helvetica-Bold")
-          .text(`${paybackMonths} meses`, px, Y + 10, { width: IND_W, align: "center" });
+          .text(`${paybackMonths} ${paybackMonths === 1 ? "mes" : "meses"}`, px, Y + 10, { width: IND_W, align: "center" });
         doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
           .text("Payback da Implantacao", px, Y + 30, { width: IND_W, align: "center" });
 

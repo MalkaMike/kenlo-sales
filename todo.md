@@ -2289,3 +2289,14 @@
 - [x] Fix Bienal "-10%" display in server-side PDF
 - [x] Update server-side PDF tests — all 21 PDF tests pass
 - [x] Visual verification of client-side PDF output — all 3 pages verified, all fixes confirmed
+
+## PDF Micro-Adjustments (Precision & Pedagogy)
+- [x] 1. Remove frequency redundancy: keep in Resumo as simple label, keep explanatory block with percentages
+- [x] 2. Benefícios Premium text: "Ao contratar plano K ou K2 em qualquer produto, os benefícios premium são automaticamente estendidos a toda a operação (IMOB e LOCAÇÃO)."
+- [x] 3. Leads + WhatsApp clarification: add micro-text "Automação de leads ativa independentemente do uso de WhatsApp. O WhatsApp influencia apenas o modelo de atendimento e volume assistido."
+- [x] 4. Pay disclaimer: add "Os valores abaixo consideram o modelo informado pelo cliente durante a simulação (quem paga boleto, split e respectivos valores)."
+- [x] 5. ROI plural fix: "1 meses" -> "1 mês", "ROI Receita vs Investimento" -> "ROI (Receita vs Investimento)"
+- [x] 6. Implantação disclaimer: "A implantação é um custo único e não recorrente, por isso não entra no cálculo do ROI mensal."
+- [x] Apply all 6 fixes to client-side PDF (generateProposalPDF.ts)
+- [x] Apply all 6 fixes to server-side PDF (pdfGenerator.ts)
+- [x] Run tests and verify output — all 189 tests pass, PDF visually verified

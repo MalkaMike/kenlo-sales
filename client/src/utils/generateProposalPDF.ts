@@ -459,11 +459,10 @@ export async function generateProposalPDFClient(
     label(doc, "Nenhum add-on selecionado", M + 14, Y + 30, { size: 8, color: C.textLight });
   }
 
-  // Card: Frequência
+  // Card: Frequência (simple reference — detailed breakdown in Section 5)
   card(doc, cx2, Y, CARD_W, CARD_H2, { fill: C.bgSoft });
   label(doc, "FREQUÊNCIA DE PAGAMENTO", cx2 + 14, Y + 14, { size: 6, bold: true, color: C.textMuted });
   value(doc, selFreq.label, cx2 + 14, Y + 30, { size: 10, color: C.dark });
-  label(doc, selFreq.adj, cx2 + 80, Y + 30, { size: 8, color: C.primary, bold: true });
 
   Y += CARD_H2 + GAP + 4;
 
@@ -519,7 +518,7 @@ export async function generateProposalPDFClient(
     const PREM_H = bothK2 ? 50 : 38;
     card(doc, M, Y, CW, PREM_H, { fill: C.blueLight, stroke: C.border });
     label(doc, "BENEFÍCIOS PREMIUM", M + 14, Y + 14, { size: 6, bold: true, color: C.blue });
-    label(doc, "Ao contratar plano K ou K2, os benefícios premium são estendidos a toda a operação.", M + 14, Y + 26, { size: 7, color: C.text });
+    label(doc, "Ao contratar plano K ou K2 em qualquer produto, os benefícios premium são automaticamente estendidos a toda a operação (IMOB e LOCAÇÃO).", M + 14, Y + 26, { size: 7, color: C.text });
     if (bothK2) {
       label(doc, ">> Treinamentos acumulados: beneficios de ambos os planos K2 sao somados (4 online/ano ou 2 presenciais).", M + 14, Y + 38, { size: 7, color: C.blue, bold: true });
     }
@@ -535,7 +534,7 @@ export async function generateProposalPDFClient(
 
     const ADDON_H = 40;
     const addonMeta: Record<string, { desc: string; pricing: string }> = {
-      leads: { desc: "Gestão automatizada de leads", pricing: "Pré-pago mensal" },
+      leads: { desc: "Automação de leads ativa independentemente do uso de WhatsApp", pricing: "Pré-pago mensal" },
       inteligencia: { desc: "BI de KPIs e analytics avançado", pricing: "Pré-pago mensal" },
       assinatura: { desc: "Assinatura digital embutida", pricing: "Pós-pago por uso" },
       pay: { desc: "Boleto e Split digital embutido", pricing: "Direito do plano" },
@@ -694,6 +693,8 @@ export async function generateProposalPDFClient(
     Y = section(doc, "Kenlo Receita Extra", Y);
 
     label(doc, "Pay e Seguros são direitos do plano. O uso é opcional e ativado durante o onboarding, conforme sua estratégia operacional.", M + 10, Y, { size: 6.5, color: C.textMuted });
+    Y += 10;
+    label(doc, "Os valores abaixo consideram o modelo informado pelo cliente durante a simulação (quem paga boleto, split e respectivos valores).", M + 10, Y, { size: 6, color: C.textLight });
     Y += 14;
 
     // Pay card
@@ -814,7 +815,9 @@ export async function generateProposalPDFClient(
   // Implantação
   label(doc, "Implantação (única vez)", M + 14, iY, { size: 7, color: C.text });
   value(doc, fmt(data.implantationFee), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
-  iY += 14;
+  iY += 10;
+  label(doc, "A implantação é um custo único e não recorrente, por isso não entra no cálculo do ROI mensal.", M + 14, iY, { size: 5.5, color: C.textLight });
+  iY += 10;
 
   // Payment condition
   let payCondition = `${installments}x ${fmt(installmentValue)}`;
@@ -896,12 +899,12 @@ export async function generateProposalPDFClient(
       doc.setFontSize(6);
       doc.setTextColor(...rgb(C.textMuted));
       doc.setFont("helvetica", "normal");
-      doc.text("ROI Receita vs Investimento", M + IND_W / 2, Y + 34, { align: "center" });
+      doc.text("ROI (Receita vs Investimento)", M + IND_W / 2, Y + 34, { align: "center" });
 
       // Payback
       const px = M + IND_W + 8;
       card(doc, px, Y, IND_W, IND_H, { fill: C.bgSoft });
-      value(doc, `${paybackMonths} meses`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
+      value(doc, `${paybackMonths} ${paybackMonths === 1 ? "mês" : "meses"}`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
       doc.setFontSize(6);
       doc.setTextColor(...rgb(C.textMuted));
       doc.setFont("helvetica", "normal");
