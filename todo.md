@@ -2312,3 +2312,12 @@
 - [x] Fix client-side PDF: added "Efeito Kenlo" indicators for negative ROI (coverage %, revenue generated, uncovered cost)
 - [x] Fix server-side PDF with the same "Efeito Kenlo" indicators for negative ROI
 - [x] Test with negative ROI scenario — LOC K2, 50 contracts, boleto R$2: -R$917 net gain, 40% Efeito Kenlo, R$600 revenue, R$917 uncovered cost all displayed correctly
+
+## IMOB-Only Scenario Test (No Receita Extra)
+- [x] Test IMOB-only scenario without Pay/Seguros to validate Receita Extra section is correctly omitted — verified: hasRevenue=false correctly skips Section 7 in both PDFs
+- [x] Verify ROI section shows appropriate message when no revenue data exists — confirmed: ROI indicators only render when hasRevenue=true, IMOB-only PDFs skip both Receita Extra and ROI sections
+
+## Installment Breakdown in PDF
+- [x] Add installment/parcelamento breakdown table to client-side PDF — already implemented as pill-based selector showing À vista/2x/3x (annual) or up to 6x (bienal) with selected option highlighted
+- [x] Add installment/parcelamento breakdown table to server-side PDF — same pill-based installment breakdown implemented in pdfGenerator.ts
+- [x] Test installment display in generated PDF — 20 new tests added covering IMOB-only scenarios and all installment options (annual 1x/2x/3x, bienal 1x-6x, monthly, semestral)

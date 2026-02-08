@@ -534,7 +534,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // SECTION 6 - SELECAO vs KOMBOS
     // ================================================================
     if (komboComparison.length > 0) {
-      if (needsNewPage(Y, 140)) Y = newPage();
+      // Estimate table height: header + current row + all kombo rows
+      const estRows = 2 + komboComparison.length;
+      const estHeight = estRows * 22 + 30;
+      if (needsNewPage(Y, estHeight)) Y = newPage();
       Y = sectionTitle("Sua Selecao vs Kombos", Y);
 
       const TBL_W = CW;
@@ -544,15 +547,20 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const COL_SAVE_W = TBL_W * 0.25;
       const ROW_H = 22;
 
-      // Header row
-      doc.roundedRect(M, Y, TBL_W, ROW_H, 3).fill(C.dark);
-      doc.rect(M, Y + ROW_H / 2, TBL_W, ROW_H / 2).fill(C.dark);
-      doc.fontSize(7).fillColor("#FFFFFF").font("Helvetica-Bold");
-      doc.text("Kombo", M + 10, Y + 7, { lineBreak: false });
-      doc.text("Desconto", M + COL_NAME_W + 10, Y + 7, { lineBreak: false });
-      doc.text("Mensal Equiv.", M + COL_NAME_W + COL_DISC_W + 10, Y + 7, { lineBreak: false });
-      doc.text("Economia/mes", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
-      Y += ROW_H;
+      // Helper to draw table header row
+      const drawTableHeader = () => {
+        doc.roundedRect(M, Y, TBL_W, ROW_H, 3).fill(C.dark);
+        doc.rect(M, Y + ROW_H / 2, TBL_W, ROW_H / 2).fill(C.dark);
+        doc.fontSize(7).fillColor("#FFFFFF").font("Helvetica-Bold");
+        doc.text("Kombo", M + 10, Y + 7, { lineBreak: false });
+        doc.text("Desconto", M + COL_NAME_W + 10, Y + 7, { lineBreak: false });
+        doc.text("Mensal Equiv.", M + COL_NAME_W + COL_DISC_W + 10, Y + 7, { lineBreak: false });
+        doc.text("Economia/mes", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
+        Y += ROW_H;
+      };
+
+      // Draw initial header
+      drawTableHeader();
 
       // "Sua selecao" row (current)
       doc.rect(M, Y, TBL_W, ROW_H).fill(C.primaryLight);
@@ -566,12 +574,22 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         .text("Selecionado", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
       Y += ROW_H;
 
-      // Other kombos
-      komboComparison.forEach((k, i) => {
-        const isCurrentKombo = k.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_") === normalizedKombo;
-        if (isCurrentKombo) return;
+      // Other kombos (skip current selection AND "Sem Kombo" when no kombo is selected)
+      let renderedIdx = 0;
+      komboComparison.forEach((k) => {
+        const kNorm = k.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_");
+        // Skip the current kombo selection
+        if (kNorm === normalizedKombo) return;
+        // Skip "Sem Kombo" when user selected "Sua Selecao" (no kombo) to avoid redundancy
+        if (!isKombo && kNorm === "sem_kombo") return;
 
-        if (i % 2 === 0) {
+        // Page break check per row - re-draw header on new page
+        if (needsNewPage(Y, ROW_H + 4)) {
+          Y = newPage();
+          drawTableHeader();
+        }
+
+        if (renderedIdx % 2 === 0) {
           doc.rect(M, Y, TBL_W, ROW_H).fill(C.bgSoft);
         }
         divider(Y + ROW_H);
@@ -588,6 +606,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
             .text("-", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
         }
         Y += ROW_H;
+        renderedIdx++;
       });
 
       Y += GAP;
@@ -653,8 +672,22 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     if (needsNewPage(Y, 260)) Y = newPage();
     Y = sectionTitle("Investimento Total", Y);
 
-    // Fixed costs card
-    const INV_H = 160;
+    // Fixed costs card — calculate dynamic height
+    let dynH = 14 + 14 + 14 + 16 + 20 + 12 + 14;
+    if (showImob && data.imobPrice !== undefined) dynH += 12;
+    if (showLoc && data.locPrice !== undefined) dynH += 12;
+    const paidAddonsCount = Object.entries(addonPrices).filter(([_, p]) => p > 0).length;
+    dynH += paidAddonsCount * 12;
+    if (hasVip) dynH += 12;
+    if (hasCS) dynH += 12;
+    if (anyK2) dynH += 12;
+    const normPlanEst = data.paymentPlan?.toLowerCase() || "annual";
+    if (normPlanEst === "monthly" || normPlanEst === "mensal" || normPlanEst === "semestral") {
+      dynH += 12;
+    } else {
+      dynH += 28 + 4 + 10;
+    }
+    const INV_H = Math.max(dynH, 140);
     card(M, Y, CW, INV_H, { fill: C.bgSoft, stroke: C.border });
 
     let iY = Y + 14;
@@ -735,22 +768,46 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     lbl("A implantacao e um custo unico e nao recorrente, por isso nao entra no calculo do ROI mensal.", M + 14, iY, { size: 5.5, color: C.textLight });
     iY += 10;
 
-    // Payment condition
-    let payCondition = `${installments}x ${fmt(installmentValue)}`;
+    // Payment condition with installment breakdown
     const normPlan = data.paymentPlan?.toLowerCase() || "annual";
-    if (normPlan === "monthly" || normPlan === "mensal") {
-      payCondition = `Cobrado mensalmente - ${fmt(data.totalMonthly || installmentValue)}/mes`;
-    } else if (normPlan === "semestral") {
-      payCondition = `Pago semestralmente - ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`;
-    } else if (normPlan === "annual" || normPlan === "anual") {
-      payCondition = `${installments}x ${fmt(installmentValue)} (anual)`;
-    } else if (normPlan === "bienal") {
-      payCondition = `${installments}x ${fmt(installmentValue)} (bienal - 24 meses)`;
-    }
-
     lbl("Condicao de Pagamento", M + 14, iY, { size: 7, bold: true, color: C.dark });
-    doc.fontSize(7).fillColor(C.text).font("Helvetica")
-      .text(payCondition, M + 14, iY, { width: CW - 28, align: "right" });
+    iY += 12;
+
+    if (normPlan === "monthly" || normPlan === "mensal") {
+      lbl(`Cobrado mensalmente: ${fmt(data.totalMonthly || installmentValue)}/mes`, M + 14, iY, { size: 7, color: C.text });
+    } else if (normPlan === "semestral") {
+      lbl(`Pago semestralmente: ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`, M + 14, iY, { size: 7, color: C.text });
+    } else {
+      // Annual or Bienal — show installment breakdown pills
+      const periodLabel = normPlan === "bienal" ? "bienal (24 meses)" : "anual";
+      const maxInst = normPlan === "bienal" ? 6 : 3;
+      const PILL_W = (CW - 28 - (maxInst - 1) * 6) / maxInst;
+      const PILL_H = 28;
+
+      for (let n = 1; n <= maxInst; n++) {
+        const px = M + 14 + (n - 1) * (PILL_W + 6);
+        const isSel = n === installments;
+        // Pill background
+        doc.roundedRect(px, iY, PILL_W, PILL_H, 4)
+          .fill(isSel ? C.primary : C.bgSoft);
+        if (isSel) {
+          doc.roundedRect(px, iY, PILL_W, PILL_H, 4)
+            .strokeColor(C.primary).stroke();
+        }
+        // Label
+        const pillLabel = n === 1 ? "A vista" : `${n}x`;
+        doc.fontSize(6.5).fillColor(isSel ? "#FFFFFF" : C.text)
+          .font(isSel ? "Helvetica-Bold" : "Helvetica")
+          .text(pillLabel, px, iY + 4, { width: PILL_W, align: "center" });
+        // Value
+        const pillValue = fmt(totalInvestment / n);
+        doc.fontSize(6).fillColor(isSel ? "#FFFFFF" : C.textMuted)
+          .font("Helvetica")
+          .text(pillValue, px, iY + 15, { width: PILL_W, align: "center" });
+      }
+      iY += PILL_H + 4;
+      lbl(`Pagamento ${periodLabel} - Total: ${fmt(totalInvestment)}`, M + 14, iY, { size: 6, color: C.textMuted });
+    }
 
     Y += INV_H + GAP;
 

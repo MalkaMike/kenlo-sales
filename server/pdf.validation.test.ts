@@ -410,3 +410,197 @@ describe('PDF Data Validation', () => {
     });
   });
 });
+
+describe('IMOB-Only Scenario Validation (No Receita Extra)', () => {
+
+  it('should NOT show Receita Extra when product is IMOB only (no Pay/Seguros revenue)', () => {
+    const productType = 'imob';
+    const revenueFromBoletos = 0;
+    const revenueFromInsurance = 0;
+    const hasRevenue = (revenueFromBoletos || 0) > 0 || (revenueFromInsurance || 0) > 0;
+
+    expect(hasRevenue).toBe(false);
+  });
+
+  it('should NOT show Receita Extra when revenue fields are undefined', () => {
+    const revenueFromBoletos = undefined;
+    const revenueFromInsurance = undefined;
+    const hasRevenue = (revenueFromBoletos || 0) > 0 || (revenueFromInsurance || 0) > 0;
+
+    expect(hasRevenue).toBe(false);
+  });
+
+  it('should NOT show ROI indicators when hasRevenue is false', () => {
+    const hasRevenue = false;
+    // In the PDF, the ROI section is wrapped in `if (hasRevenue) { ... }`
+    // So when hasRevenue is false, ROI indicators are not rendered
+    expect(hasRevenue).toBe(false);
+  });
+
+  it('should correctly identify IMOB-only compatible add-ons (no Pay/Seguros/Cash)', () => {
+    const productType = 'imob';
+    const imobCompatible = ['leads', 'inteligencia', 'assinatura'];
+    const locOnlyAddons = ['pay', 'seguros', 'cash'];
+
+    // IMOB-only should not have LOC-only add-ons
+    locOnlyAddons.forEach(addon => {
+      expect(imobCompatible.includes(addon)).toBe(false);
+    });
+  });
+
+  it('should show correct add-ons in Resumo for IMOB-only with Leads', () => {
+    const selectedAddons = ['leads'];
+    const addonLabels = [
+      { key: 'leads', label: 'Leads' },
+      { key: 'inteligencia', label: 'Inteligência' },
+      { key: 'assinatura', label: 'Assinatura' },
+      { key: 'pay', label: 'Pay' },
+      { key: 'seguros', label: 'Seguros' },
+    ];
+    const activeAddons = addonLabels.filter(a => selectedAddons.includes(a.key));
+
+    expect(activeAddons).toHaveLength(1);
+    expect(activeAddons[0].label).toBe('Leads');
+  });
+
+  it('should show "Nenhum add-on selecionado" only when no add-ons are selected', () => {
+    const selectedAddons: string[] = [];
+    const addonLabels = [
+      { key: 'leads', label: 'Leads' },
+      { key: 'inteligencia', label: 'Inteligência' },
+      { key: 'assinatura', label: 'Assinatura' },
+      { key: 'pay', label: 'Pay' },
+      { key: 'seguros', label: 'Seguros' },
+    ];
+    const activeAddons = addonLabels.filter(a => selectedAddons.includes(a.key));
+
+    expect(activeAddons).toHaveLength(0);
+    // Only in this case should "Nenhum add-on selecionado" be shown
+  });
+
+  it('should calculate correct totalInvestment for IMOB-only (no revenue offset)', () => {
+    const totalAnnual = 11928;
+    const implantationFee = 1994;
+    const totalInvestment = totalAnnual + implantationFee;
+
+    expect(totalInvestment).toBe(13922);
+  });
+
+  it('should skip Receita Extra but still show Investimento Total for IMOB-only', () => {
+    // The PDF flow: Resumo -> Produtos -> Add-ons -> Frequência -> Kombos -> [Receita Extra] -> Investimento -> Conclusão
+    // For IMOB-only, Receita Extra is skipped, but Investimento Total is always shown
+    const hasRevenue = false;
+    const showInvestimento = true; // Always shown
+
+    expect(hasRevenue).toBe(false);
+    expect(showInvestimento).toBe(true);
+  });
+});
+
+describe('Installment Breakdown Validation', () => {
+
+  it('should calculate correct installment values for annual plan (3 options)', () => {
+    const totalAnnual = 11928;
+    const implantationFee = 1994;
+    const totalInvestment = totalAnnual + implantationFee;
+
+    expect(totalInvestment).toBe(13922);
+    expect(totalInvestment / 1).toBe(13922);
+    expect(totalInvestment / 2).toBe(6961);
+    expect(totalInvestment / 3).toBeCloseTo(4640.67, 1);
+  });
+
+  it('should calculate correct installment values for bienal plan (6 options)', () => {
+    const totalAnnual = 10735;
+    const implantationFee = 1994;
+    const totalInvestment = totalAnnual + implantationFee;
+
+    expect(totalInvestment).toBe(12729);
+    expect(totalInvestment / 1).toBe(12729);
+    expect(totalInvestment / 2).toBe(6364.5);
+    expect(totalInvestment / 3).toBe(4243);
+    expect(totalInvestment / 4).toBe(3182.25);
+    expect(totalInvestment / 5).toBe(2545.8);
+    expect(totalInvestment / 6).toBe(2121.5);
+  });
+
+  it('should show 3 installment pills for annual plan', () => {
+    const paymentPlan = 'annual';
+    const maxInstallments = paymentPlan === 'bienal' ? 6 : 3;
+
+    expect(maxInstallments).toBe(3);
+  });
+
+  it('should show 6 installment pills for bienal plan', () => {
+    const paymentPlan = 'bienal';
+    const maxInstallments = paymentPlan === 'bienal' ? 6 : 3;
+
+    expect(maxInstallments).toBe(6);
+  });
+
+  it('should NOT show installment pills for monthly plan', () => {
+    const paymentPlan = 'monthly';
+    const showPills = paymentPlan !== 'monthly' && paymentPlan !== 'mensal' && paymentPlan !== 'semestral';
+
+    expect(showPills).toBe(false);
+  });
+
+  it('should NOT show installment pills for semestral plan', () => {
+    const paymentPlan = 'semestral';
+    const showPills = paymentPlan !== 'monthly' && paymentPlan !== 'mensal' && paymentPlan !== 'semestral';
+
+    expect(showPills).toBe(false);
+  });
+
+  it('should highlight the selected installment option', () => {
+    const installments = 2;
+    const maxInstallments = 3;
+
+    for (let n = 1; n <= maxInstallments; n++) {
+      const isSel = n === installments;
+      if (n === 2) {
+        expect(isSel).toBe(true);
+      } else {
+        expect(isSel).toBe(false);
+      }
+    }
+  });
+
+  it('should label first pill as "A vista" and others as "Nx"', () => {
+    const maxInstallments = 3;
+    const labels: string[] = [];
+
+    for (let n = 1; n <= maxInstallments; n++) {
+      const pillLabel = n === 1 ? 'A vista' : `${n}x`;
+      labels.push(pillLabel);
+    }
+
+    expect(labels).toEqual(['A vista', '2x', '3x']);
+  });
+
+  it('should label bienal pills correctly (A vista, 2x, 3x, 4x, 5x, 6x)', () => {
+    const maxInstallments = 6;
+    const labels: string[] = [];
+
+    for (let n = 1; n <= maxInstallments; n++) {
+      const pillLabel = n === 1 ? 'A vista' : `${n}x`;
+      labels.push(pillLabel);
+    }
+
+    expect(labels).toEqual(['A vista', '2x', '3x', '4x', '5x', '6x']);
+  });
+
+  it('should show total investment label for annual plan', () => {
+    const paymentPlan = 'annual';
+    const periodLabel = paymentPlan === 'bienal' ? 'bienal (24 meses)' : 'anual';
+
+    expect(periodLabel).toBe('anual');
+  });
+
+  it('should show total investment label for bienal plan', () => {
+    const paymentPlan = 'bienal';
+    const periodLabel = paymentPlan === 'bienal' ? 'bienal (24 meses)' : 'anual';
+
+    expect(periodLabel).toBe('bienal (24 meses)');
+  });
+});

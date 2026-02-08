@@ -367,3 +367,232 @@ describe('PDF Generator', () => {
     expect(result.length).toBeGreaterThan(1000);
   });
 });
+
+describe('IMOB-Only Scenario (No Receita Extra)', () => {
+  const imobOnlyData = {
+    salesPersonName: 'Vendedor Teste',
+    vendorEmail: 'vendedor@kenlo.com.br',
+    vendorPhone: '(11) 99999-0000',
+    clientName: 'Maria IMOB',
+    agencyName: 'Imobiliária Solo',
+    productType: 'imob',
+    imobPlan: 'K',
+    selectedAddons: '["leads"]',
+    paymentPlan: 'annual',
+    totalMonthly: 994,
+    totalAnnual: 11928,
+    implantationFee: 1994,
+    firstYearTotal: 13922,
+    imobUsers: 1,
+    closings: 1,
+    leadsPerMonth: 0,
+    usesExternalAI: false,
+    wantsWhatsApp: false,
+    businessType: 'broker',
+    email: 'maria@imob.com',
+    cellphone: '(11) 99999-1111',
+    monthlyLicenseBase: 994,
+    postPaidTotal: 0,
+    imobPrice: 497,
+    addonPrices: { leads: 497 },
+    vipIncluded: false,
+    csIncluded: false,
+    vipPrice: 97,
+    csPrice: 0,
+  };
+
+  it('should generate a valid PDF for IMOB-only without revenue data', async () => {
+    const result = await generateProposalPDF(imobOnlyData);
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+    expect(result.slice(0, 5).toString()).toBe('%PDF-');
+  });
+
+  it('should generate PDF without Receita Extra section (no Pay/Seguros)', async () => {
+    // IMOB-only has no Pay/Seguros, so revenueFromBoletos and revenueFromInsurance should be 0/undefined
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 0,
+      netGain: 0,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF without ROI indicators when no revenue exists', async () => {
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      revenueFromBoletos: undefined,
+      revenueFromInsurance: undefined,
+      netGain: undefined,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF for IMOB-only with Leads + Inteligência (no Receita Extra)', async () => {
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      selectedAddons: '["leads","inteligencia"]',
+      addonPrices: { leads: 497, inteligencia: 252 },
+      totalMonthly: 1246,
+      totalAnnual: 14952,
+      implantationFee: 1497,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF for IMOB-only with Kombo Imob Start (no Receita Extra)', async () => {
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      selectedAddons: '["leads","assinatura"]',
+      addonPrices: { leads: 447, assinatura: 33 },
+      komboName: 'Kombo Imob Start',
+      komboDiscount: 10,
+      totalMonthly: 927,
+      totalAnnual: 11124,
+      implantationFee: 1497,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF for IMOB-only with Kombo Imob Pro (no Receita Extra)', async () => {
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      selectedAddons: '["leads","inteligencia","assinatura"]',
+      addonPrices: { leads: 422, inteligencia: 252, assinatura: 31 },
+      komboName: 'Kombo Imob Pro',
+      komboDiscount: 15,
+      totalMonthly: 1127,
+      totalAnnual: 13524,
+      implantationFee: 1497,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF for IMOB K2 without revenue (premium services shown)', async () => {
+    const result = await generateProposalPDF({
+      ...imobOnlyData,
+      imobPlan: 'K2',
+      imobPrice: 1197,
+      vipIncluded: true,
+      csIncluded: true,
+      vipPrice: 0,
+      csPrice: 0,
+      totalMonthly: 1694,
+      totalAnnual: 20328,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+});
+
+describe('Installment Breakdown in PDF', () => {
+  const baseInstallmentData = {
+    salesPersonName: 'Vendedor Teste',
+    vendorEmail: 'vendedor@kenlo.com.br',
+    clientName: 'João Parcelas',
+    agencyName: 'Imobiliária Parcelas',
+    productType: 'imob',
+    imobPlan: 'K',
+    selectedAddons: '["leads"]',
+    totalMonthly: 994,
+    totalAnnual: 11928,
+    implantationFee: 1994,
+    firstYearTotal: 13922,
+    imobUsers: 1,
+    closings: 1,
+    businessType: 'broker',
+    email: 'joao@parcelas.com',
+    cellphone: '(11) 99999-2222',
+    monthlyLicenseBase: 994,
+    postPaidTotal: 0,
+    imobPrice: 497,
+    addonPrices: { leads: 497 },
+    vipPrice: 97,
+  };
+
+  it('should generate PDF with À vista (1x) installment for annual plan', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'annual',
+      installments: 1,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with 2x installment for annual plan', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'annual',
+      installments: 2,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with 3x installment for annual plan', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'annual',
+      installments: 3,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with À vista (1x) for bienal plan', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'bienal',
+      installments: 1,
+      totalAnnual: 10735,
+      monthlyLicenseBase: 895,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with 6x installment for bienal plan', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'bienal',
+      installments: 6,
+      totalAnnual: 10735,
+      monthlyLicenseBase: 895,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with monthly payment (no installment pills)', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'monthly',
+      installments: 1,
+      totalMonthly: 1243,
+      totalAnnual: 14916,
+      monthlyLicenseBase: 1243,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate PDF with semestral payment (no installment pills)', async () => {
+    const result = await generateProposalPDF({
+      ...baseInstallmentData,
+      paymentPlan: 'semestral',
+      installments: 1,
+      totalMonthly: 1103,
+      totalAnnual: 13236,
+      monthlyLicenseBase: 1103,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+});
