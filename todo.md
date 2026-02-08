@@ -2300,3 +2300,9 @@
 - [x] Apply all 6 fixes to client-side PDF (generateProposalPDF.ts)
 - [x] Apply all 6 fixes to server-side PDF (pdfGenerator.ts)
 - [x] Run tests and verify output — all 189 tests pass, PDF visually verified
+
+## Positive ROI Scenario Testing
+- [x] Test PDF with positive ROI (high contracts + boleto/split values) — LOC K2 + IMOB PRIME, 500 contracts, boleto R$8.50, split R$5
+- [x] Validate "X mês" vs "X meses" plural logic — confirmed "1 mês" (singular) renders correctly
+- [x] Validate payback indicator display — 545% ROI, 1 mês payback, R$5.978,20 ganho líquido, R$71.738,40 anual
+- [x] No bugs found — all ROI indicators render correctly in positive scenario
