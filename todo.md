@@ -2227,3 +2227,6 @@
 - [x] Fix: freqMap now includes "mensal" and "anual" aliases for Portuguese frequency names
 - [x] Fix: Core Gestão kombo badge now shows correctly (komboDiscount=0 but komboName is set)
 - [x] Fix: Badge text omits "0% OFF" for Core Gestão, shows just "Kombo Core Gestão"
+- [x] Client-side PDF end-to-end test: IMOB K2 + LOC K, Elite (20% OFF), Semestral — ALL fixes verified in browser
+- [x] Fix: Elite kombo detection now checks required add-ons (leads, inteligencia, assinatura, pay, seguros) instead of counting total addons === 6
+- [x] Auth bypass reverted after testing

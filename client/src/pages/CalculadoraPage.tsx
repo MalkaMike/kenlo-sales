@@ -935,8 +935,8 @@ export default function CalculadoraPage() {
 
     // Check each Kombo in priority order (most specific first)
     
-    // Elite: IMOB + LOC + ALL add-ons
-    if (product === "both" && activeAddons.length === 6) {
+    // Elite: IMOB + LOC + ALL required add-ons (leads, inteligencia, assinatura, pay, seguros)
+    if (product === "both") {
       const allAddonsPresent = KOMBOS.elite.requiredAddons.every(addon => activeAddons.includes(addon));
       if (allAddonsPresent) return "elite";
     }
