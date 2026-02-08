@@ -199,9 +199,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       return y + HDR_ROW_H;
     };
 
-    // Normalize productType
-    const showImob = data.productType === "imob" || data.productType === "both" || data.productType === "imob_loc";
-    const showLoc = data.productType === "loc" || data.productType === "both" || data.productType === "imob_loc";
+    // Normalize productType (handle "ambos", "both", "imob_loc" etc.)
+    const normalizedProductType = data.productType?.toLowerCase().trim() || "";
+    const showImob = normalizedProductType === "imob" || normalizedProductType === "both" || normalizedProductType === "imob_loc" || normalizedProductType === "ambos";
+    const showLoc = normalizedProductType === "loc" || normalizedProductType === "both" || normalizedProductType === "imob_loc" || normalizedProductType === "ambos";
 
     // ============================================
     // PAGE 1 — HEADER (compact)
@@ -247,7 +248,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     ];
     bizTypes.forEach((t, i) => {
       const x = M + i * (COL3_W + 8);
-      const sel = data.businessType === t.key;
+      const normalizedBizType = data.businessType?.toLowerCase().trim() || "";
+      const sel = normalizedBizType === t.key || (t.key === "both" && (normalizedBizType === "ambos" || normalizedBizType === "imob_loc"));
       box(x, Y, COL3_W, BIZ_H, { selected: sel });
       doc.fontSize(6.5).fillColor(sel ? C.pink : C.text).font(sel ? "Helvetica-Bold" : "Helvetica").text(t.label, x + 8, Y + 6);
     });
@@ -316,7 +318,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     ];
     prods.forEach((p, i) => {
       const x = M + i * (COL3_W + 8);
-      const sel = data.productType === p.key || (p.key === "both" && data.productType === "imob_loc");
+      const sel = normalizedProductType === p.key || (p.key === "both" && (normalizedProductType === "imob_loc" || normalizedProductType === "ambos"));
       box(x, Y, COL3_W, SOL_H, { selected: sel });
       doc.fontSize(6.5).fillColor(sel ? C.pink : C.text).font("Helvetica-Bold").text(p.label, x + 8, Y + 3);
       doc.fontSize(5).fillColor(sel ? C.pink : C.textLight).font("Helvetica").text(p.desc, x + 8, Y + 13);
@@ -331,12 +333,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       { key: "pay", label: "Pay", desc: "Boleto e Split digital embutido" },
       { key: "seguros", label: "Seguros", desc: "Seguros embutido no boleto" },
     ];
+    // Normalize addon names: lowercase + strip accents to match keys like "inteligencia"
+    const normalizeAddon = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     let selAddons: string[] = [];
     try {
       const parsed = JSON.parse(data.selectedAddons);
-      if (Array.isArray(parsed)) selAddons = parsed.map((a: string) => a.trim().toLowerCase());
-      else selAddons = data.selectedAddons.split(",").map((a) => a.trim().toLowerCase());
-    } catch { selAddons = data.selectedAddons.split(",").map((a) => a.trim().toLowerCase()); }
+      if (Array.isArray(parsed)) selAddons = parsed.map((a: string) => normalizeAddon(a));
+      else selAddons = data.selectedAddons.split(",").map((a) => normalizeAddon(a));
+    } catch { selAddons = data.selectedAddons.split(",").map((a) => normalizeAddon(a)); }
 
     // Only show add-ons that were actually selected
     const selectedAddonsList = addons.filter(a => selAddons.includes(a.key));
@@ -410,7 +414,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       annual: { label: "Anual", desc: "0% \u2014 Refer\u00eancia" },
       bienal: { label: "Bienal", desc: "-10%" },
     };
-    const selFreq = freqMap[data.paymentPlan] || freqMap["annual"];
+    // Normalize paymentPlan to lowercase to match freqMap keys
+    const normalizedPaymentPlan = data.paymentPlan?.toLowerCase().trim() || "annual";
+    const selFreq = freqMap[normalizedPaymentPlan] || freqMap["annual"];
     doc.fontSize(6.5).fillColor(C.text).font("Helvetica").text("Ciclo de Pagamento:", M + 12, Y);
     const freqPrefW = doc.widthOfString("Ciclo de Pagamento: ");
     doc.fontSize(6.5).fillColor(C.pink).font("Helvetica-Bold")
@@ -530,17 +536,23 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // Payment condition label varies by frequency
     let paymentConditionLabel = "Condi\u00e7\u00e3o de Pagamento";
     let paymentConditionValue = `${installments}x ${fmt(installmentValue)}`;
-    if (data.paymentPlan === "monthly") {
+    if (normalizedPaymentPlan === "monthly" || normalizedPaymentPlan === "mensal") {
       paymentConditionValue = `Cobrado mensalmente \u2014 ${fmt(data.totalMonthly || installmentValue)}/m\u00eas`;
-    } else if (data.paymentPlan === "semestral") {
+    } else if (normalizedPaymentPlan === "semestral") {
       const semestralTotal = (data.totalMonthly || 0) * 6;
       paymentConditionValue = `Pago semestralmente \u2014 ${fmt(semestralTotal)} a cada 6 meses`;
-    } else if (data.paymentPlan === "annual") {
+    } else if (normalizedPaymentPlan === "annual" || normalizedPaymentPlan === "anual") {
       paymentConditionValue = `${installments}x ${fmt(installmentValue)} (anual)`;
-    } else if (data.paymentPlan === "bienal") {
+    } else if (normalizedPaymentPlan === "bienal") {
       paymentConditionValue = `${installments}x ${fmt(installmentValue)} (bienal \u2014 24 meses)`;
     }
-    Y = labelRow(paymentConditionLabel, paymentConditionValue, Y, { bold: true });
+    // Use smaller font for long payment condition values to prevent overlap
+    doc.fontSize(6.5).fillColor(C.text).font("Helvetica-Bold").text(paymentConditionLabel, M + 10, Y);
+    doc.fontSize(6).fillColor(C.text).font("Helvetica-Bold")
+      .text(paymentConditionValue, M + CW - 160, Y, { width: 160, align: "right" });
+    // Add extra spacing for multi-line payment conditions (semestral, bienal)
+    const isLongCondition = normalizedPaymentPlan === "semestral" || normalizedPaymentPlan === "bienal";
+    Y += isLongCondition ? 18 : 10;
 
     const recurringTotal = data.totalAnnual || 0;
     const monthlyRecurring = recurringTotal > 0 ? recurringTotal / 12 : monthlyLicense;

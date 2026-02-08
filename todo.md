@@ -2213,3 +2213,13 @@
 - [x] ADJUST 1: Renamed "Plano Contratado" → "Estrutura Contratada" with sub-blocks: "Plano Base" (IMOB K + LOC K2) + "Estratégia Comercial" (Kombo badge or "Contratação avulsa") + "Ciclo de Pagamento"
 - [x] ADJUST 2: Enhanced premium benefits text — "Benefícios Premium Compartilhados" header + shared benefits note + K2 training accumulation text ("4 treinamentos online/ano ou 2 presenciais")
 - [x] ADJUST 3: Added Receita Extra standard text — "Pay e Seguros estão disponíveis por padrão. O uso é opcional e ativado durante o onboarding, conforme sua estratégia operacional." + renamed section to "Kenlo Receita Extra"
+
+## Visual PDF Verification
+- [x] Generate test PDF with IMOB K2 + LOC Prime, Kombo Elite, Semestral — ALL fixes verified
+- [x] Fix server-side productType normalization ("ambos" not recognized → added to check)
+- [x] Fix server-side addon accent normalization ("Inteligência" → "inteligencia" via NFD strip)
+- [x] Fix server-side frequency case-insensitive matching ("Semestral" → "semestral")
+- [x] Fix server-side businessType normalization ("ambos" → maps to "both")
+- [x] Fix payment condition text overlap with recurring monthly line (wider column + extra spacing)
+- [ ] Generate test PDF with single product (IMOB K only, no kombo) — verify no duplication, no Cash
+- [ ] Generate test PDF with LOC K2 + Pay + Seguros — verify Receita Extra text appears correctly
