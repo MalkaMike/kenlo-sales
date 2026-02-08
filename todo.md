@@ -2306,3 +2306,9 @@
 - [x] Validate "X mês" vs "X meses" plural logic — confirmed "1 mês" (singular) renders correctly
 - [x] Validate payback indicator display — 545% ROI, 1 mês payback, R$5.978,20 ganho líquido, R$71.738,40 anual
 - [x] No bugs found — all ROI indicators render correctly in positive scenario
+
+## Bug Fix: Receita Extra Not Showing on Negative ROI
+- [x] Investigate why Kenlo Receita Extra section is hidden when ROI is negative — Receita Extra WAS showing, but ROI indicators were hidden by `if (isPositive)` check
+- [x] Fix client-side PDF: added "Efeito Kenlo" indicators for negative ROI (coverage %, revenue generated, uncovered cost)
+- [x] Fix server-side PDF with the same "Efeito Kenlo" indicators for negative ROI
+- [x] Test with negative ROI scenario — LOC K2, 50 contracts, boleto R$2: -R$917 net gain, 40% Efeito Kenlo, R$600 revenue, R$917 uncovered cost all displayed correctly

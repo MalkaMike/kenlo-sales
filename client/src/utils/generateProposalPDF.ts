@@ -884,45 +884,79 @@ export async function generateProposalPDFClient(
 
     Y += NET_H + 6;
 
-    // ROI indicators
-    if (isPositive && monthlyRecurring > 0) {
-      const roiPercent = ((totalRevenue / monthlyRecurring) * 100 - 100).toFixed(0);
-      const paybackMonths = monthlyRecurring > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
-      const annualGain = netGain * 12;
-
+    // ROI indicators — always shown when revenue exists (positive or negative)
+    if (monthlyRecurring > 0) {
+      const totalCost = monthlyRecurring + (data.postPaidTotal || 0);
       const IND_W = (CW - 16) / 3;
       const IND_H = 44;
 
-      // ROI
-      card(doc, M, Y, IND_W, IND_H, { fill: C.bgSoft });
-      value(doc, `${roiPercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
-      doc.setFontSize(6);
-      doc.setTextColor(...rgb(C.textMuted));
-      doc.setFont("helvetica", "normal");
-      doc.text("ROI (Receita vs Investimento)", M + IND_W / 2, Y + 34, { align: "center" });
+      if (isPositive) {
+        // POSITIVE: show ROI %, Payback, Annual Gain
+        const roiPercent = ((totalRevenue / monthlyRecurring) * 100 - 100).toFixed(0);
+        const paybackMonths = monthlyRecurring > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
+        const annualGain = netGain * 12;
 
-      // Payback
-      const px = M + IND_W + 8;
-      card(doc, px, Y, IND_W, IND_H, { fill: C.bgSoft });
-      value(doc, `${paybackMonths} ${paybackMonths === 1 ? "mês" : "meses"}`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
-      doc.setFontSize(6);
-      doc.setTextColor(...rgb(C.textMuted));
-      doc.setFont("helvetica", "normal");
-      doc.text("Payback da Implantação", px + IND_W / 2, Y + 34, { align: "center" });
+        // ROI
+        card(doc, M, Y, IND_W, IND_H, { fill: C.bgSoft });
+        value(doc, `${roiPercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("ROI (Receita vs Investimento)", M + IND_W / 2, Y + 34, { align: "center" });
 
-      // Annual gain
-      const ax = M + (IND_W + 8) * 2;
-      card(doc, ax, Y, IND_W, IND_H, { fill: C.bgSoft });
-      value(doc, fmt(annualGain), ax + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
-      doc.setFontSize(6);
-      doc.setTextColor(...rgb(C.textMuted));
-      doc.setFont("helvetica", "normal");
-      doc.text("Ganho Anual Estimado", ax + IND_W / 2, Y + 34, { align: "center" });
+        // Payback
+        const px = M + IND_W + 8;
+        card(doc, px, Y, IND_W, IND_H, { fill: C.bgSoft });
+        value(doc, `${paybackMonths} ${paybackMonths === 1 ? "m\u00eas" : "meses"}`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("Payback da Implanta\u00e7\u00e3o", px + IND_W / 2, Y + 34, { align: "center" });
+
+        // Annual gain
+        const ax = M + (IND_W + 8) * 2;
+        card(doc, ax, Y, IND_W, IND_H, { fill: C.bgSoft });
+        value(doc, fmt(annualGain), ax + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("Ganho Anual Estimado", ax + IND_W / 2, Y + 34, { align: "center" });
+      } else {
+        // NEGATIVE: show Efeito Kenlo (coverage %), Receita Mensal, Custo Descoberto
+        const coveragePercent = totalCost > 0 ? Math.round((totalRevenue / totalCost) * 100) : 0;
+        const uncoveredCost = Math.abs(netGain);
+
+        // Efeito Kenlo — coverage percentage
+        card(doc, M, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
+        value(doc, `${coveragePercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("Efeito Kenlo (cobertura do custo)", M + IND_W / 2, Y + 34, { align: "center" });
+
+        // Receita Mensal Gerada
+        const px = M + IND_W + 8;
+        card(doc, px, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
+        value(doc, fmt(totalRevenue), px + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("Receita Mensal Gerada", px + IND_W / 2, Y + 34, { align: "center" });
+
+        // Custo Líquido Descoberto
+        const ax = M + (IND_W + 8) * 2;
+        card(doc, ax, Y, IND_W, IND_H, { fill: C.bgSoft });
+        value(doc, fmt(uncoveredCost), ax + IND_W / 2, Y + 20, { size: 12, color: C.text, align: "center" });
+        doc.setFontSize(6);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "normal");
+        doc.text("Custo L\u00edquido Descoberto/m\u00eas", ax + IND_W / 2, Y + 34, { align: "center" });
+      }
 
       Y += IND_H + 6;
 
-      // Disclaimer
-      label(doc, "Estimativas baseadas nas informações declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma.", M, Y + 3, { size: 5, color: C.textLight });
+      // Disclaimer — always shown
+      label(doc, "Estimativas baseadas nas informa\u00e7\u00f5es declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma.", M, Y + 3, { size: 5, color: C.textLight });
       Y += 12;
     }
   }

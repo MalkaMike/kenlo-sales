@@ -794,41 +794,72 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
       Y += NET_H + 6;
 
-      // ROI indicators
-      if (isPositive && monthlyRecurring > 0) {
-        const roiPercent = ((totalRevenue / monthlyRecurring) * 100 - 100).toFixed(0);
-        const paybackMonths = monthlyRecurring > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
-        const annualGain = netGain * 12;
-
+      // ROI indicators - always shown when revenue exists (positive or negative)
+      if (monthlyRecurring > 0) {
+        const totalCost = monthlyRecurring + (data.postPaidTotal || 0);
         const IND_W = (CW - 16) / 3;
         const IND_H = 44;
 
-        // ROI
-        card(M, Y, IND_W, IND_H, { fill: C.bgSoft });
-        doc.fontSize(16).fillColor(C.green).font("Helvetica-Bold")
-          .text(`${roiPercent}%`, M, Y + 8, { width: IND_W, align: "center" });
-        doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
-          .text("ROI (Receita vs Investimento)", M, Y + 30, { width: IND_W, align: "center" });
+        if (isPositive) {
+          // POSITIVE: show ROI %, Payback, Annual Gain
+          const roiPercent = ((totalRevenue / monthlyRecurring) * 100 - 100).toFixed(0);
+          const paybackMonths = monthlyRecurring > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
+          const annualGain = netGain * 12;
 
-        // Payback
-        const px = M + IND_W + 8;
-        card(px, Y, IND_W, IND_H, { fill: C.bgSoft });
-        doc.fontSize(14).fillColor(C.blue).font("Helvetica-Bold")
-          .text(`${paybackMonths} ${paybackMonths === 1 ? "mes" : "meses"}`, px, Y + 10, { width: IND_W, align: "center" });
-        doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
-          .text("Payback da Implantacao", px, Y + 30, { width: IND_W, align: "center" });
+          // ROI
+          card(M, Y, IND_W, IND_H, { fill: C.bgSoft });
+          doc.fontSize(16).fillColor(C.green).font("Helvetica-Bold")
+            .text(`${roiPercent}%`, M, Y + 8, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("ROI (Receita vs Investimento)", M, Y + 30, { width: IND_W, align: "center" });
 
-        // Annual gain
-        const ax = M + (IND_W + 8) * 2;
-        card(ax, Y, IND_W, IND_H, { fill: C.bgSoft });
-        doc.fontSize(12).fillColor(C.green).font("Helvetica-Bold")
-          .text(fmt(annualGain), ax, Y + 10, { width: IND_W, align: "center" });
-        doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
-          .text("Ganho Anual Estimado", ax, Y + 30, { width: IND_W, align: "center" });
+          // Payback
+          const px = M + IND_W + 8;
+          card(px, Y, IND_W, IND_H, { fill: C.bgSoft });
+          doc.fontSize(14).fillColor(C.blue).font("Helvetica-Bold")
+            .text(`${paybackMonths} ${paybackMonths === 1 ? "mes" : "meses"}`, px, Y + 10, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("Payback da Implantacao", px, Y + 30, { width: IND_W, align: "center" });
+
+          // Annual gain
+          const ax = M + (IND_W + 8) * 2;
+          card(ax, Y, IND_W, IND_H, { fill: C.bgSoft });
+          doc.fontSize(12).fillColor(C.green).font("Helvetica-Bold")
+            .text(fmt(annualGain), ax, Y + 10, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("Ganho Anual Estimado", ax, Y + 30, { width: IND_W, align: "center" });
+        } else {
+          // NEGATIVE: show Efeito Kenlo (coverage %), Receita Mensal, Custo Descoberto
+          const coveragePercent = totalCost > 0 ? Math.round((totalRevenue / totalCost) * 100) : 0;
+          const uncoveredCost = Math.abs(netGain);
+
+          // Efeito Kenlo - coverage percentage
+          card(M, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
+          doc.fontSize(16).fillColor(C.green).font("Helvetica-Bold")
+            .text(`${coveragePercent}%`, M, Y + 8, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("Efeito Kenlo (cobertura do custo)", M, Y + 30, { width: IND_W, align: "center" });
+
+          // Receita Mensal Gerada
+          const px = M + IND_W + 8;
+          card(px, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
+          doc.fontSize(12).fillColor(C.green).font("Helvetica-Bold")
+            .text(fmt(totalRevenue), px, Y + 10, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("Receita Mensal Gerada", px, Y + 30, { width: IND_W, align: "center" });
+
+          // Custo Liquido Descoberto
+          const ax = M + (IND_W + 8) * 2;
+          card(ax, Y, IND_W, IND_H, { fill: C.bgSoft });
+          doc.fontSize(12).fillColor(C.text).font("Helvetica-Bold")
+            .text(fmt(uncoveredCost), ax, Y + 10, { width: IND_W, align: "center" });
+          doc.fontSize(6).fillColor(C.textMuted).font("Helvetica")
+            .text("Custo Liquido Descoberto/mes", ax, Y + 30, { width: IND_W, align: "center" });
+        }
 
         Y += IND_H + 6;
 
-        // Disclaimer
+        // Disclaimer - always shown
         doc.fontSize(5).fillColor(C.textLight).font("Helvetica")
           .text("Estimativas baseadas nas informacoes declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma.", M, Y + 3, { lineBreak: false });
         Y += 12;
