@@ -392,13 +392,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       .replace(/\s+/g, "_");
     const komboLabel = komboDisplayMap[normalizedKombo] || rawKombo;
     const komboDiscount = data.komboDiscount || 0;
-    const isKombo = komboDiscount > 0;
+    const hasKomboName = !!data.komboName && data.komboName.toLowerCase() !== "sem_kombo" && data.komboName.toLowerCase() !== "" && data.komboName.toLowerCase() !== "none";
+    const isKombo = komboDiscount > 0 || hasKomboName;
 
     const STRAT_H = isKombo ? 30 : 22;
     box(M, Y, CW, STRAT_H, { selected: isKombo });
     doc.fontSize(6).fillColor(C.textLight).font("Helvetica").text("Estratégia Comercial", M + 12, Y + 4);
     if (isKombo) {
-      const badgeText = `${komboLabel} (${komboDiscount}% OFF)`;
+      const badgeText = komboDiscount > 0 ? `${komboLabel} (${komboDiscount}% OFF)` : komboLabel;
       const badgeW = doc.widthOfString(badgeText) + 16;
       doc.roundedRect(M + 12, Y + 14, badgeW, 12, 3).fill(C.pink);
       doc.fontSize(6.5).fillColor(C.white).font("Helvetica-Bold").text(badgeText, M + 20, Y + 16);
@@ -410,8 +411,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // Frequency (single line, integrated)
     const freqMap: Record<string, { label: string; desc: string }> = {
       monthly: { label: "Mensal", desc: "+25%" },
+      mensal: { label: "Mensal", desc: "+25%" },
       semestral: { label: "Semestral", desc: "+11%" },
       annual: { label: "Anual", desc: "0% \u2014 Refer\u00eancia" },
+      anual: { label: "Anual", desc: "0% \u2014 Refer\u00eancia" },
       bienal: { label: "Bienal", desc: "-10%" },
     };
     // Normalize paymentPlan to lowercase to match freqMap keys

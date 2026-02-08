@@ -2221,5 +2221,9 @@
 - [x] Fix server-side frequency case-insensitive matching ("Semestral" → "semestral")
 - [x] Fix server-side businessType normalization ("ambos" → maps to "both")
 - [x] Fix payment condition text overlap with recurring monthly line (wider column + extra spacing)
-- [ ] Generate test PDF with single product (IMOB K only, no kombo) — verify no duplication, no Cash
-- [ ] Generate test PDF with LOC K2 + Pay + Seguros — verify Receita Extra text appears correctly
+- [x] Generate test PDF with IMOB K only, Mensal, no kombo — verified, fixed frequency display ("mensal" alias added to freqMap)
+- [x] Generate test PDF with LOC K2 + Pay + Seguros, Bienal — verified Receita Extra text, post-paid breakdown, all correct
+- [x] Generate test PDF with Ambos Prime+Prime, Anual, Core Gestão — verified, fixed kombo badge detection (check komboName not just discount)
+- [x] Fix: freqMap now includes "mensal" and "anual" aliases for Portuguese frequency names
+- [x] Fix: Core Gestão kombo badge now shows correctly (komboDiscount=0 but komboName is set)
+- [x] Fix: Badge text omits "0% OFF" for Core Gestão, shows just "Kombo Core Gestão"
