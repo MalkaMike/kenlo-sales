@@ -1,0 +1,25 @@
+PDF Generation Debug Notes
+==========================
+
+Issue: html2pdf.js (which uses html2canvas internally) does NOT support OKLCH color functions.
+Error: "Attempting to parse an unsupported color function 'oklch'"
+
+Root cause: Tailwind CSS 4 uses OKLCH color format for all CSS variables. 
+html2canvas cannot parse oklch() colors.
+
+Solution options:
+1. Use inline styles with hex/rgb colors instead of CSS variables in the ProposalPrintLayout component
+2. Convert all oklch colors to hex/rgb before passing to html2pdf
+3. Override CSS variables with hex equivalents in the print container
+
+Best approach: Use ONLY inline styles with hex/rgb colors in the ProposalPrintLayout.
+No Tailwind classes that resolve to oklch colors. All colors must be hardcoded hex values.
+
+Kenlo brand colors (from index.css):
+- Primary (red): oklch(0.637 0.237 25.331) → approximately #E63946 
+- Secondary (coral): oklch(0.705 0.213 22.18) → approximately #FF6B6B
+- Background: oklch(0.985 0.002 247.839) → approximately #F8F9FA
+- Foreground: oklch(0.145 0.005 247.839) → approximately #1A1A2E
+- Card: oklch(1 0 0) → #FFFFFF
+- Muted: oklch(0.955 0.005 247.839) → approximately #F0F0F5
+- Border: oklch(0.922 0.005 247.839) → approximately #E5E5EA

@@ -12,6 +12,7 @@ import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/cons
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
+import { downloadProposalPDF } from "@/utils/generateProposalPDF";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -3937,6 +3938,7 @@ export default function CalculadoraPage() {
                   chargesBoletoToTenant: metrics.chargesBoletoToTenant,
                   boletoAmount: metrics.boletoChargeAmount,
                   splitAmount: metrics.splitChargeAmount,
+                  businessType: businessNature.businessType,
                   email: businessNature.email,
                   cellphone: businessNature.cellphone,
                   selectedAddons: JSON.stringify(compatibleAddons), // Use validated compatible add-ons only
@@ -4093,28 +4095,13 @@ export default function CalculadoraPage() {
                   })(),
                 };
 
-                // Generate PDF
-                const pdfResult = await generatePDF.mutateAsync(proposalData);
-                
-                if (pdfResult.success && pdfResult.pdf) {
-                  // Create PDF blob for preview
-                  const pdfBlob = new Blob(
-                    [Uint8Array.from(atob(pdfResult.pdf), (c) => c.charCodeAt(0))],
-                    { type: "application/pdf" }
-                  );
-                  const url = URL.createObjectURL(pdfBlob);
-                  
-                  // Direct download
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = pdfResult.filename;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  URL.revokeObjectURL(url);
+                // Generate PDF using client-side html2pdf.js for pixel-perfect output
+                await downloadProposalPDF(proposalData);
                   
                   toast.dismiss();
                   toast.success("PDF baixado com sucesso!");
+
+                {
 
                   // Save to proposals database
                   await createProposal.mutateAsync(proposalData);

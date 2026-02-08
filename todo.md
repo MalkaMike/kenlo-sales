@@ -2152,3 +2152,21 @@
 - [x] Swap Benefícios (§3) before Add-ons (§4) — renumber accordingly
 - [x] Move Pay questions (cobra boleto? cobra split? quanto?) from §1 to §7 Receita Extra section
 - [x] Add mandatory copy to Receita Extra: "Kenlo é a única plataforma que pode se pagar enquanto você usa." + "Não inclui impostos."
+
+## New HTML-to-PDF Proposal (1-2 pages, executive-grade)
+- [x] Audit current PDF generation code and data flow
+- [x] Build PropostaPrint HTML component — condensed 1-2 page layout
+  - [x] Page 1: Header (Kenlo logo, date, vendor, client) + Business profile + Recommended solution + Add-ons + Frequency + Kombo + Investment
+  - [x] Page 2: Post-paid breakdown + Revenue data (when applicable) + CTA
+- [x] Implement client-side jsPDF direct drawing approach (server-side Puppeteer not needed)
+- [x] Wire up PDF generation button to use new approach
+- [x] Test PDF output quality and page count
+- [x] Replace old server-side PDF call with new client-side generation
+
+## HTML-to-PDF Proposal Generation (Replacing PDFKit)
+- [x] Create ProposalPrintLayout React component for pixel-perfect HTML rendering
+- [x] Create client-side PDF generation utility using jsPDF direct drawing API (html2pdf.js/html2canvas incompatible with OKLCH colors from Tailwind CSS 4)
+- [x] Integrate new PDF generation into CalculadoraPage export flow
+- [x] Keep server-side PDFKit as fallback (do not delete)
+- [x] Test PDF output quality - single page for simple scenarios, 2 pages when revenue data present
+- [x] Verify all 179 existing tests still pass
