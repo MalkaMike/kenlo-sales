@@ -2194,3 +2194,13 @@
 - [x] PDF must show selected payment condition only (improved labels: Mensal→"Cobrado mensalmente", Semestral→"Pago à vista")
 - [x] Ensure all prices reflect selected frequency before display (already correct — multipliers applied)
 - [x] Fix frequency badges in CalculadoraPage (was showing wrong percentages, now correct: +25%, +11%, 0% Referência, -10%)
+
+## Critical PDF Errors (User Feedback)
+- [x] ERROR 1: Remove alternative plans/kombos from PDF — now shows ONLY "Plano Contratado" block with selected plan + kombo
+- [x] ERROR 2: Show ONLY selected frequency in PDF — single line inside "Plano Contratado" block
+- [x] ERROR 3: Fix plan name duplication bug — removed red overlay text that caused "KK"/"K2K2" visual duplication
+- [x] ERROR 4: Remove unselected add-ons from PDF — now shows only selected add-ons under "Add-ons Contratados"
+- [x] ERROR 5: Add premium benefits cross-product note — added after investment table
+- [x] Implement "Plano Contratado" simplified block (shows plan names + kombo badge + frequency)
+- [x] Implement single frequency highlight block (inside "Plano Contratado")
+- [x] Implement "Anual Equivalente" as pedagogical comparison line ("Investimento Mensal Recorrente")

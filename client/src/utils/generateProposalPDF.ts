@@ -559,31 +559,10 @@ export async function generateProposalPDFClient(
   });
   Y += SOL_H + GAP;
 
-  // --- 4. ADD-ONS ---
-  Y = secTitle(doc, "Add-ons Opcionais", Y);
-  const addons = [
-    { key: "leads", label: "Leads", desc: "Gestão automatizada de leads" },
-    {
-      key: "inteligencia",
-      label: "Inteligência",
-      desc: "BI de KPIs de performance",
-    },
-    {
-      key: "assinatura",
-      label: "Assinatura",
-      desc: "Assinatura digital embutida",
-    },
-    { key: "pay", label: "Pay", desc: "Boleto e Split digital embutido" },
-    { key: "seguros", label: "Seguros", desc: "Seguros embutido no boleto" },
-    {
-      key: "cash",
-      label: "Cash",
-      desc: "Financie proprietários até 24 meses",
-    },
-  ];
+  // --- 4. ADD-ONS CONTRATADOS (only selected) ---
+  // Parse selected addons
   let selAddons: string[] = [];
   try {
-    // Handle both array and string inputs
     if (Array.isArray(data.selectedAddons)) {
       selAddons = (data.selectedAddons as unknown as string[]).map((a: string) => a.trim().toLowerCase());
     } else if (typeof data.selectedAddons === 'string') {
@@ -605,122 +584,113 @@ export async function generateProposalPDFClient(
     selAddons = [];
   }
 
-  const ADDON_H = 22;
-  addons.forEach((a, i) => {
-    const row = Math.floor(i / 3);
-    const col = i % 3;
-    const x = M + col * (COL3_W + 8);
-    const y = Y + row * (ADDON_H + 4);
-    const sel = selAddons.includes(a.key);
-    box(doc, x, y, COL3_W, ADDON_H, { selected: sel });
-    doc.setFontSize(6);
-    doc.setTextColor(...hexToRgb(sel ? C.pink : C.text));
-    doc.setFont("helvetica", "bold");
-    doc.text(a.label, x + 8, y + 10);
-    doc.setFontSize(4.5);
-    doc.setTextColor(...hexToRgb(sel ? C.pink : C.textLight));
-    doc.setFont("helvetica", "normal");
-    doc.text(a.desc, x + 8, y + 18);
-  });
-  Y += ADDON_H * 2 + 4 + GAP;
-
-  // --- 5. FREQUÊNCIA ---
-  Y = secTitle(doc, "Frequência de pagamento selecionada", Y);
-  const FREQ_H = 22;
-  const freqs = [
-    { key: "monthly", label: "Mensal", desc: "+25%" },
-    { key: "semestral", label: "Semestral", desc: "+11%" },
-    { key: "annual", label: "Anual", desc: "0% - Referência" },
-    { key: "bienal", label: "Bienal", desc: "-10%" },
+  const allAddons = [
+    { key: "leads", label: "Leads", desc: "Gestão automatizada de leads" },
+    { key: "inteligencia", label: "Inteligência", desc: "BI de KPIs de performance" },
+    { key: "assinatura", label: "Assinatura", desc: "Assinatura digital embutida" },
+    { key: "pay", label: "Pay", desc: "Boleto e Split digital embutido" },
+    { key: "seguros", label: "Seguros", desc: "Seguros embutido no boleto" },
+    { key: "cash", label: "Cash", desc: "Financie proprietários até 24 meses" },
   ];
-  freqs.forEach((f, i) => {
-    const x = M + i * (COL4_W + 8);
-    const sel = data.paymentPlan === f.key;
-    box(doc, x, Y, COL4_W, FREQ_H, { selected: sel });
-    doc.setFontSize(6.5);
-    doc.setTextColor(...hexToRgb(sel ? C.pink : C.text));
-    doc.setFont("helvetica", "bold");
-    // Center text
-    const tw = doc.getTextWidth(f.label);
-    doc.text(f.label, x + (COL4_W - tw) / 2, Y + 10);
-    doc.setFontSize(5);
-    doc.setTextColor(...hexToRgb(sel ? C.pink : C.textLight));
-    doc.setFont("helvetica", "normal");
-    const dw = doc.getTextWidth(f.desc);
-    doc.text(f.desc, x + (COL4_W - dw) / 2, Y + 18);
-  });
-  Y += FREQ_H + GAP;
+  // Only show add-ons that were actually selected
+  const selectedAddonsList = allAddons.filter(a => selAddons.includes(a.key));
 
-  // --- 6. PLANO SELECIONADO (Kombos) ---
-  Y = secTitle(doc, "Plano Selecionado", Y);
-  const KOMBO_H = 32;
-  const kombos = [
-    { id: "sem_kombo", label: "Sem Kombo", discount: 0 },
-    { id: "imob_start", label: "Imob Start", discount: 10 },
-    { id: "imob_pro", label: "Imob Pro", discount: 15 },
-    { id: "locacao_pro", label: "Loc Pro", discount: 10 },
-    { id: "core_gestao", label: "Core Gestão", discount: 15 },
-    { id: "elite", label: "Elite", discount: 20 },
-  ];
-  const KOMBO_W = (CW - 5 * 6) / 6;
+  if (selectedAddonsList.length > 0) {
+    Y = secTitle(doc, "Add-ons Contratados", Y);
+    const ADDON_H = 22;
+    selectedAddonsList.forEach((a, i) => {
+      const cols = Math.min(selectedAddonsList.length, 3);
+      const addonColW = (CW - (cols - 1) * 8) / cols;
+      const row = Math.floor(i / 3);
+      const col = i % 3;
+      const x = M + col * (addonColW + 8);
+      const y = Y + row * (ADDON_H + 4);
+      box(doc, x, y, addonColW, ADDON_H, { selected: true });
+      doc.setFontSize(6);
+      doc.setTextColor(...hexToRgb(C.pink));
+      doc.setFont("helvetica", "bold");
+      doc.text(`✓ ${a.label}`, x + 8, y + 10);
+      doc.setFontSize(4.5);
+      doc.setTextColor(...hexToRgb(C.pink));
+      doc.setFont("helvetica", "normal");
+      doc.text(a.desc, x + 8, y + 18);
+    });
+    const addonRows = Math.ceil(selectedAddonsList.length / 3);
+    Y += addonRows * (22 + 4) + GAP;
+  }
+
+  // --- 5. PLANO CONTRATADO (single block, no alternatives) ---
+  Y = secTitle(doc, "Plano Contratado", Y);
+  const PLAN_BLOCK_H = 48;
+  box(doc, M, Y, CW, PLAN_BLOCK_H, { selected: true });
+
+  // Build the plan description
+  const planDescParts: string[] = [];
+  if (showImob && data.imobPlan) planDescParts.push(`Kenlo IMOB – Plano ${data.imobPlan.toUpperCase()}`);
+  if (showLoc && data.locPlan) planDescParts.push(`Kenlo Locação – Plano ${data.locPlan.toUpperCase()}`);
+  const planDescText = planDescParts.join("  +  ");
+
+  // Kombo name
   const rawKombo = data.komboName || "sem_kombo";
+  const komboDisplayMap: Record<string, string> = {
+    sem_kombo: "Sem Kombo",
+    imob_start: "Kombo Imob Start",
+    imob_pro: "Kombo Imob Pro",
+    locacao_pro: "Kombo Loc Pro",
+    core_gestao: "Kombo Core Gestão",
+    elite: "Kombo Elite",
+  };
   const normalizedKombo = rawKombo
     .toLowerCase()
     .replace(/^kombo\s+/i, "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "_");
+  const komboLabel = komboDisplayMap[normalizedKombo] || rawKombo;
+  const komboDiscount = data.komboDiscount || 0;
 
-  kombos.forEach((k, i) => {
-    const x = M + i * (KOMBO_W + 6);
-    const sel =
-      normalizedKombo === k.id ||
-      normalizedKombo === k.label.toLowerCase().replace(/\s+/g, "_");
-    box(doc, x, Y, KOMBO_W, KOMBO_H, { selected: sel });
-    if (k.discount > 0) {
-      const badgeW = 34;
-      const badgeH = 11;
-      const bx = x + (KOMBO_W - badgeW) / 2;
-      doc.setFillColor(...hexToRgb(sel ? C.pink : C.dark));
-      doc.roundedRect(bx, Y + 3, badgeW, badgeH, 3, 3, "F");
-      doc.setFontSize(5.5);
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      const discText = `${k.discount}% OFF`;
-      const dtw = doc.getTextWidth(discText);
-      doc.text(discText, bx + (badgeW - dtw) / 2, Y + 10);
-    }
-    doc.setFontSize(5.5);
-    doc.setTextColor(...hexToRgb(sel ? C.pink : C.text));
+  // Plan name (large)
+  doc.setFontSize(9);
+  doc.setTextColor(...hexToRgb(C.pink));
+  doc.setFont("helvetica", "bold");
+  doc.text(planDescText, M + 12, Y + 14);
+
+  // Kombo badge
+  if (komboDiscount > 0) {
+    const badgeText = `${komboLabel} (${komboDiscount}% OFF)`;
+    const badgeW = doc.getTextWidth(badgeText) + 16;
+    doc.setFillColor(...hexToRgb(C.pink));
+    doc.roundedRect(M + 12, Y + 20, badgeW, 12, 3, 3, "F");
+    doc.setFontSize(6.5);
+    doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    const lw = doc.getTextWidth(k.label);
-    doc.text(
-      k.label,
-      x + (KOMBO_W - lw) / 2,
-      Y + (k.discount > 0 ? 26 : 18)
-    );
-  });
-  Y += KOMBO_H;
-
-  // Plan tier row below kombos
-  const planParts: string[] = [];
-  if (showImob && data.imobPlan)
-    planParts.push(`IMOB: ${data.imobPlan.toUpperCase()}`);
-  if (showLoc && data.locPlan)
-    planParts.push(`LOC: ${data.locPlan.toUpperCase()}`);
-  if (planParts.length > 0) {
-    Y += 4;
-    doc.setFontSize(6);
+    doc.text(badgeText, M + 20, Y + 28);
+  } else {
+    doc.setFontSize(7);
     doc.setTextColor(...hexToRgb(C.textLight));
     doc.setFont("helvetica", "normal");
-    doc.text("Plano: ", M, Y + 5);
-    const prefW = doc.getTextWidth("Plano: ");
-    doc.setTextColor(...hexToRgb(C.red));
-    doc.setFont("helvetica", "bold");
-    doc.text(planParts.join("  |  "), M + prefW, Y + 5);
-    Y += 10;
+    doc.text("(Sem Kombo)", M + 12, Y + 26);
   }
-  Y += GAP;
+
+  // Frequency (single line, integrated)
+  const freqMap: Record<string, { label: string; desc: string }> = {
+    monthly: { label: "Mensal", desc: "+25%" },
+    semestral: { label: "Semestral", desc: "+11%" },
+    annual: { label: "Anual", desc: "0% — Referência" },
+    bienal: { label: "Bienal", desc: "-10%" },
+  };
+  const selFreq = freqMap[data.paymentPlan] || freqMap["annual"];
+  doc.setFontSize(6.5);
+  doc.setTextColor(...hexToRgb(C.text));
+  doc.setFont("helvetica", "normal");
+  doc.text("Frequência de Pagamento:", M + 12, Y + 40);
+  doc.setTextColor(...hexToRgb(C.pink));
+  doc.setFont("helvetica", "bold");
+  const freqLabel = `${selFreq.label} (${selFreq.desc})`;
+  const freqPrefW = doc.getTextWidth("Frequência de Pagamento: ");
+  doc.text(freqLabel, M + 12 + freqPrefW, Y + 40);
+
+  Y += PLAN_BLOCK_H + GAP;
 
   // ============================================
   // --- 7. INVESTIMENTO TABLE ---
@@ -748,23 +718,9 @@ export async function generateProposalPDFClient(
       TABLE_X,
       Y,
       TABLE_W,
-      `Imob - ${(data.imobPlan || "K").toUpperCase()}`,
+      `Kenlo IMOB – ${(data.imobPlan || "K").toUpperCase()}`,
       fmt(data.imobPrice)
     );
-    // Highlight plan name in red
-    if (data.imobPlan) {
-      const prefix = "Imob - ";
-      doc.setFontSize(6.5);
-      doc.setFont("helvetica", "normal");
-      const prefixW = doc.getTextWidth(prefix);
-      doc.setTextColor(...hexToRgb(C.red));
-      doc.setFont("helvetica", "bold");
-      doc.text(
-        data.imobPlan.toUpperCase(),
-        TABLE_X + 8 + prefixW,
-        Y - ROW_H + 9
-      );
-    }
   }
   if (showLoc && data.locPrice !== undefined) {
     Y = tableRow(
@@ -772,22 +728,9 @@ export async function generateProposalPDFClient(
       TABLE_X,
       Y,
       TABLE_W,
-      `Loc - ${(data.locPlan || "K").toUpperCase()}`,
+      `Kenlo Locação – ${(data.locPlan || "K").toUpperCase()}`,
       fmt(data.locPrice)
     );
-    if (data.locPlan) {
-      const prefix = "Loc - ";
-      doc.setFontSize(6.5);
-      doc.setFont("helvetica", "normal");
-      const prefixW = doc.getTextWidth(prefix);
-      doc.setTextColor(...hexToRgb(C.red));
-      doc.setFont("helvetica", "bold");
-      doc.text(
-        data.locPlan.toUpperCase(),
-        TABLE_X + 8 + prefixW,
-        Y - ROW_H + 9
-      );
-    }
   }
 
   // Add-ons
@@ -867,6 +810,20 @@ export async function generateProposalPDFClient(
     }
   }
 
+  // Cross-product premium benefits note
+  if ((hasVip || hasCS || anyK2) && showImob && showLoc) {
+    Y += 2;
+    doc.setFontSize(5);
+    doc.setTextColor(...hexToRgb(C.textLight));
+    doc.setFont("helvetica", "italic");
+    doc.text(
+      "Os benefícios de Suporte VIP, CS Dedicado e Treinamentos se aplicam a toda a operação Kenlo do cliente.",
+      TABLE_X + 4,
+      Y + 4
+    );
+    Y += 10;
+  }
+
   // Summary rows
   Y = tableRow(
     doc,
@@ -885,17 +842,6 @@ export async function generateProposalPDFClient(
     "Implantação",
     fmt(data.implantationFee)
   );
-  const annualEquivalent = data.totalMonthly * 12 + data.implantationFee;
-  Y = tableRow(
-    doc,
-    TABLE_X,
-    Y,
-    TABLE_W,
-    "Anual Equivalente",
-    fmt(annualEquivalent),
-    { bold: true, bgColor: C.bgLight, fontSize: 7 }
-  );
-
   Y += GAP;
 
   // ============================================
@@ -945,6 +891,25 @@ export async function generateProposalPDFClient(
   );
   doc.text(fmt(monthlyRecurring), M + CW, Y + 5, { align: "right" });
   Y += 13;
+
+  // Anual Equivalente — pedagogical comparison block (never as base of charge)
+  if (data.paymentPlan !== "annual") {
+    const annualEquivalent = data.totalMonthly * 12 + data.implantationFee;
+    Y += 2;
+    doc.setFillColor(...hexToRgb(C.bgLight));
+    doc.roundedRect(M, Y, CW, 22, 3, 3, "F");
+    doc.setFontSize(5.5);
+    doc.setTextColor(...hexToRgb(C.textLight));
+    doc.setFont("helvetica", "italic");
+    doc.text("Anual Equivalente (referência de comparação)", M + 8, Y + 8);
+    doc.setFontSize(5);
+    doc.text("Inclui 12 meses + implantação (1x). Não é o valor cobrado.", M + 8, Y + 16);
+    doc.setFontSize(6.5);
+    doc.setTextColor(...hexToRgb(C.text));
+    doc.setFont("helvetica", "bold");
+    doc.text(fmt(annualEquivalent), M + CW - 8, Y + 12, { align: "right" });
+    Y += 26;
+  }
 
   // ============================================
   // Determine if page 2 has content
