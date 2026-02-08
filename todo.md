@@ -2170,3 +2170,8 @@
 - [x] Keep server-side PDFKit as fallback (do not delete)
 - [x] Test PDF output quality - single page for simple scenarios, 2 pages when revenue data present
 - [x] Verify all 179 existing tests still pass
+
+## PDF Improvements - Logo and 2-Page Testing
+- [x] Embed Kenlo PNG logo in the jsPDF header (white logo on red gradient, both pages)
+- [x] Test 2-page PDF with Locação + Pay/Seguros scenario (post-paid + revenue breakdown)
+- [x] Fix data parsing for selectedAddons, postPaidBreakdown, addonPrices (handle both string and object inputs)

@@ -8,6 +8,7 @@
  */
 
 import { jsPDF } from "jspdf";
+import { KENLO_LOGO_WHITE_BASE64 } from "./kenloLogoBase64";
 
 // Re-export the data interface for consumers
 export interface ProposalPrintData {
@@ -362,14 +363,23 @@ export async function generateProposalPDFClient(
   doc.setFillColor(...hexToRgb(C.red));
   doc.rect(0, 0, PAGE_W, HDR_H, "F");
 
-  // Logo text (since we can't easily load SVG in jsPDF client-side)
-  doc.setFontSize(16);
-  doc.setTextColor(...hexToRgb(C.white));
-  doc.setFont("helvetica", "bold");
-  doc.text("Kenlo", M, 25);
+  // Kenlo logo image (white PNG on red header)
+  const LOGO_H = 20;
+  const LOGO_W = LOGO_H * 3.48; // aspect ratio 209:60
+  try {
+    doc.addImage(KENLO_LOGO_WHITE_BASE64, "PNG", M, 8, LOGO_W, LOGO_H);
+  } catch (_) {
+    // Fallback to text if image fails
+    doc.setFontSize(16);
+    doc.setTextColor(...hexToRgb(C.white));
+    doc.setFont("helvetica", "bold");
+    doc.text("Kenlo", M, 25);
+  }
 
   doc.setFontSize(12);
-  doc.text("Orçamento Comercial", M + 60, 25);
+  doc.setTextColor(...hexToRgb(C.white));
+  doc.setFont("helvetica", "bold");
+  doc.text("Orçamento Comercial", M + LOGO_W + 12, 25);
 
   const issueDate = new Date().toLocaleDateString("pt-BR");
   doc.setFontSize(5.5);
@@ -573,17 +583,26 @@ export async function generateProposalPDFClient(
   ];
   let selAddons: string[] = [];
   try {
-    const parsed = JSON.parse(data.selectedAddons);
-    if (Array.isArray(parsed))
-      selAddons = parsed.map((a: string) => a.trim().toLowerCase());
-    else
-      selAddons = data.selectedAddons
-        .split(",")
-        .map((a) => a.trim().toLowerCase());
+    // Handle both array and string inputs
+    if (Array.isArray(data.selectedAddons)) {
+      selAddons = (data.selectedAddons as unknown as string[]).map((a: string) => a.trim().toLowerCase());
+    } else if (typeof data.selectedAddons === 'string') {
+      try {
+        const parsed = JSON.parse(data.selectedAddons);
+        if (Array.isArray(parsed))
+          selAddons = parsed.map((a: string) => a.trim().toLowerCase());
+        else
+          selAddons = data.selectedAddons
+            .split(",")
+            .map((a) => a.trim().toLowerCase());
+      } catch {
+        selAddons = data.selectedAddons
+          .split(",")
+          .map((a) => a.trim().toLowerCase());
+      }
+    }
   } catch {
-    selAddons = data.selectedAddons
-      .split(",")
-      .map((a) => a.trim().toLowerCase());
+    selAddons = [];
   }
 
   const ADDON_H = 22;
@@ -712,7 +731,13 @@ export async function generateProposalPDFClient(
 
   let addonPricesMap: Record<string, number> = {};
   try {
-    if (data.addonPrices) addonPricesMap = JSON.parse(data.addonPrices);
+    if (data.addonPrices) {
+      if (typeof data.addonPrices === 'string') {
+        addonPricesMap = JSON.parse(data.addonPrices);
+      } else if (typeof data.addonPrices === 'object') {
+        addonPricesMap = data.addonPrices as unknown as Record<string, number>;
+      }
+    }
   } catch {}
 
   // Produtos
@@ -891,8 +916,13 @@ export async function generateProposalPDFClient(
   // ============================================
   let ppBreakdownPre: PostPaidBreakdown | null = null;
   try {
-    if (data.postPaidBreakdown)
-      ppBreakdownPre = JSON.parse(data.postPaidBreakdown);
+    if (data.postPaidBreakdown) {
+      if (typeof data.postPaidBreakdown === 'string') {
+        ppBreakdownPre = JSON.parse(data.postPaidBreakdown);
+      } else if (typeof data.postPaidBreakdown === 'object') {
+        ppBreakdownPre = data.postPaidBreakdown as unknown as PostPaidBreakdown;
+      }
+    }
   } catch {}
   const hasPostPaidPre = data.postPaidTotal && data.postPaidTotal > 0;
   const hasRevenuePre =
@@ -931,12 +961,19 @@ export async function generateProposalPDFClient(
   doc.setFillColor(...hexToRgb(C.red));
   doc.rect(0, 0, PAGE_W, HDR_H, "F");
 
-  doc.setFontSize(16);
+  // Kenlo logo image (white PNG on red header)
+  try {
+    doc.addImage(KENLO_LOGO_WHITE_BASE64, "PNG", M, 8, LOGO_W, LOGO_H);
+  } catch (_) {
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text("Kenlo", M, 25);
+  }
+  doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("Kenlo", M, 25);
-  doc.setFontSize(12);
-  doc.text("Detalhamento Financeiro", M + 60, 25);
+  doc.text("Detalhamento Financeiro", M + LOGO_W + 12, 25);
 
   doc.setFontSize(5.5);
   doc.setTextColor(255, 255, 255);
