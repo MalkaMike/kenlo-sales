@@ -4090,6 +4090,57 @@ export default function CalculadoraPage() {
                     }
                     return JSON.stringify(bd);
                   })(),
+                  // Kombo comparison data for Section 6 table
+                  komboComparison: (() => {
+                    const comparison: Array<{ name: string; discount: number; totalMonthly: number; savings: number; isSelected: boolean; isAvailable: boolean }> = [];
+                    // Calculate base total without any kombo
+                    const lineItems = getLineItems();
+                    const baseTotalNoKombo = lineItems.reduce((sum, item) => sum + item.priceSemKombo, 0);
+                    
+                    // "Sem Kombo" entry
+                    comparison.push({
+                      name: 'Sem Kombo',
+                      discount: 0,
+                      totalMonthly: baseTotalNoKombo,
+                      savings: 0,
+                      isSelected: activeKombo === 'none',
+                      isAvailable: true,
+                    });
+                    
+                    // Each Kombo
+                    Object.entries(KOMBOS).forEach(([key, kombo]) => {
+                      const isAvailable = kombo.requiredProducts.includes(product);
+                      const discountFactor = 1 - kombo.discount;
+                      const komboTotal = Math.round(baseTotalNoKombo * discountFactor);
+                      comparison.push({
+                        name: kombo.name,
+                        discount: Math.round(kombo.discount * 100),
+                        totalMonthly: komboTotal,
+                        savings: baseTotalNoKombo - komboTotal,
+                        isSelected: activeKombo === key,
+                        isAvailable,
+                      });
+                    });
+                    return JSON.stringify(comparison);
+                  })(),
+                  // Frequency comparison data for Section 5
+                  frequencyComparison: (() => {
+                    const lineItems = getLineItems();
+                    const baseTotalNoKombo = lineItems.reduce((sum, item) => sum + item.priceSemKombo, 0);
+                    const komboFactor = komboInfo ? (1 - komboInfo.discount) : 1;
+                    const baseAnnual = Math.round(baseTotalNoKombo * komboFactor);
+                    const freqs = [
+                      { name: 'Mensal', key: 'monthly', multiplier: PAYMENT_FREQUENCY_MULTIPLIERS.monthly },
+                      { name: 'Semestral', key: 'semestral', multiplier: PAYMENT_FREQUENCY_MULTIPLIERS.semestral },
+                      { name: 'Anual', key: 'annual', multiplier: PAYMENT_FREQUENCY_MULTIPLIERS.annual },
+                      { name: 'Bienal', key: 'biennial', multiplier: PAYMENT_FREQUENCY_MULTIPLIERS.biennial },
+                    ];
+                    return JSON.stringify(freqs.map(f => ({
+                      name: f.name,
+                      monthlyEquivalent: roundToEndIn7(Math.round(baseAnnual * f.multiplier)),
+                      isSelected: frequency === f.key,
+                    })));
+                  })(),
                 };
 
                 // Generate PDF using client-side html2pdf.js for pixel-perfect output

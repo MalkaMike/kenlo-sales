@@ -2237,3 +2237,39 @@
 - [x] ERRO 5: Assinaturas Digitais — grupo "Add-ons Compartilhados (IMOB + LOC)" + item "Assinaturas Digitais (compartilhado)" (ambos geradores)
 - [x] AJUSTE 6: Treinamentos K2 padronizados — "Treinamentos acumulados: benefícios de ambos os planos K2 são somados (4 online/ano ou 2 presenciais)." (ambos geradores)
 - [x] Visual verification: Test 1 (boleto+split) e Test 2 (boleto only) confirmados visualmente
+
+## PDF Visual Redesign (Calculator-level quality)
+- [ ] REDESIGN 1: Topo = mini-calculadora — bloco âncora grande com Plano, Produtos, Frequência, Valor mensal equivalente
+- [ ] REDESIGN 2: Menos bordas, mais espaço — remover linhas/caixas desnecessárias, aumentar espaçamento vertical, mais branco
+- [ ] REDESIGN 3: Hierarquia visual clara — cor só para decisão (rosa=seleção, verde=ganho, cinza=neutro), destaques proporcionais à importância
+- [ ] REDESIGN 4: Cards em vez de tabelas pesadas — converter seções densas em blocos/cards visuais
+- [ ] REDESIGN 5: Última seção = venda pura — economia grande, clara, inevitável ("Quanto você economiza escolhendo anual ou bienal")
+- [ ] REDESIGN 6: Aplicar mesmas mudanças no server-side PDF
+- [x] Visual verification com PDFs de teste
+
+## PDF Complete Redesign (Master Prompt v1)
+- [x] NEW STRUCTURE: 1. Capa simples (logo, nome, data, "Proposta Comercial")
+- [x] NEW STRUCTURE: 2. Resumo da Configuração (mini-calculadora) — cards visuais com produtos, planos, add-ons, frequência, valor mensal/anual
+- [x] NEW STRUCTURE: 3. Produtos Contratados — só o que foi selecionado, com plano e valor
+- [x] NEW STRUCTURE: 4. Add-ons Contratados — cards simples, valor ou regra de cobrança
+- [x] NEW STRUCTURE: 5. Frequência de Pagamento — UMA vez, antes da tabela comparativa
+- [x] NEW STRUCTURE: 6. Seleção vs Kombos — tabela comparativa com economia % e R$
+- [x] NEW STRUCTURE: 7. Kenlo Receita Extra — Pay + Seguros, verde, sem Cash
+- [x] NEW STRUCTURE: 8. Investimento Total — fixo vs variável, mensal e anual equivalente
+- [x] NEW STRUCTURE: 9. Conclusão — 1 bloco confiante
+- [x] DESIGN: Fundo branco, muito espaço, SaaS moderno, nada de planilha
+- [x] DESIGN: Cor primária só para seleção/destaque, verde para ganho, cinza para neutro, nunca vermelho para preço
+- [x] DESIGN: Cards em vez de tabelas pesadas
+- [x] DESIGN: Disclaimer ROI mantido
+- [ ] Aplicar mesma estrutura no server-side PDF
+- [x] Visual verification com PDFs de teste
+
+## PDF Bug Fixes (Text Duplication + NaN)
+- [x] FIX: Text duplication in "Resumo da sua Configuração" section headers — removed duplicate doc.text() calls after helper functions
+- [x] FIX: Text duplication in "Frequência de Pagamento" labels — removed duplicate centered text draws
+- [x] FIX: Text duplication in "Investimento Total" section — removed duplicate header and value draws
+- [x] FIX: Text duplication in "Ganho Líquido Mensal Estimado" — removed duplicate centered text draws
+- [x] FIX: Text duplication in ROI indicator labels — removed duplicate centered text draws
+- [x] FIX: R$ NaN in Kombo comparison table — fixed field name mismatch (totalMonthly vs monthlyTotal) in parseKomboComparison function
+- [x] VERIFIED: All 189 tests passing after fixes
+- [x] VERIFIED: Generated test PDF with IMOB K2 + LOC K, Elite kombo, Semestral — all values correct, no duplication, no NaN
