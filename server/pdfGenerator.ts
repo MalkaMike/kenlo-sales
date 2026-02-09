@@ -88,6 +88,7 @@ interface ProposalData {
   hasPremiumServices?: boolean;
   premiumServicesPrice?: number;
   installments?: number;
+  validityDays?: number;
   businessType?: string;
   hasWebsite?: boolean;
   websiteUrl?: string;
@@ -765,11 +766,24 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const CONC_H = 50;
     doc.roundedRect(M, Y, CW, CONC_H, 4).fill(C.dark);
     doc.fontSize(12).fillColor("#FFFFFF").font("Helvetica-Bold")
-      .text("Kenlo — Quem usa, lidera.", M, Y + 12, { width: CW, align: "center" });
+      .text("Kenlo \u2014 Quem usa, lidera.", M, Y + 12, { width: CW, align: "center" });
     doc.fontSize(7).fillColor("#CBD5E1").font("Helvetica")
       .text("A Kenlo e a unica plataforma que pode se pagar enquanto voce usa.", M, Y + 30, { width: CW, align: "center" });
 
-    // ── Page number footer on ALL pages ──────────────────────────
+    // Validity disclaimer
+    Y += CONC_H + 12;
+    const vDays = data.validityDays || 3;
+    const today = new Date();
+    const expiryDate = new Date(today);
+    expiryDate.setDate(today.getDate() + vDays);
+    const fmtDateStr = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    doc.fontSize(6.5).fillColor(C.textMuted).font("Helvetica")
+      .text(
+        `Proposta valida por ${vDays} dia${vDays > 1 ? "s" : ""} a partir da data de emissao (${fmtDateStr(today)}). Validade ate ${fmtDateStr(expiryDate)}.`,
+        M, Y, { width: CW, align: "center" }
+      );
+
+    // \u2500\u2500 Page number footer on ALL pages────────────────────────
     const range = doc.bufferedPageRange();
     const totalPages = range.start + range.count;
     for (let i = range.start; i < totalPages; i++) {

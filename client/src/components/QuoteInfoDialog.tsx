@@ -14,6 +14,7 @@ export interface QuoteInfo {
   vendorRole: string;
   salespersonId?: number;
   installments: number; // Número de parcelas (1 = à vista)
+  validityDays: number; // Validade da proposta em dias (1-7)
 }
 
 interface QuoteInfoDialogProps {
@@ -29,6 +30,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
   const { user: oauthUser, logout } = useAuth();
   
   const [installments, setInstallments] = useState<number>(1);
+  const [validityDays, setValidityDays] = useState<number>(3);
 
   // Determine the current user info (salesperson takes priority over OAuth user)
   const currentUser = salesperson 
@@ -76,15 +78,26 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
   const installmentOptions = getInstallmentOptions();
   const showInstallmentOptions = installmentOptions.length > 0;
 
+  // Validity options (1-7 days)
+  const validityOptions = [
+    { value: 1, label: "1 dia" },
+    { value: 2, label: "2 dias" },
+    { value: 3, label: "3 dias" },
+    { value: 4, label: "4 dias" },
+    { value: 5, label: "5 dias" },
+    { value: 6, label: "6 dias" },
+    { value: 7, label: "7 dias" },
+  ];
+
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      setInstallments(1); // Reset to "À vista" when dialog opens
+      setInstallments(1);
+      setValidityDays(3); // Default: 3 days
     }
   }, [open]);
 
   const handleSubmit = () => {
-    // Use logged-in user data (salesperson or OAuth user)
     onSubmit({
       vendorName: currentUser?.name || "",
       vendorEmail: currentUser?.email || "",
@@ -92,10 +105,12 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
       vendorRole: currentUser?.role || "Colaborador Kenlo",
       salespersonId: currentUser?.source === "salesperson" ? currentUser.id : undefined,
       installments: installments,
+      validityDays: validityDays,
     });
 
     // Reset form
     setInstallments(1);
+    setValidityDays(3);
   };
 
   const handleLogout = async () => {
@@ -176,6 +191,38 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
               Para planos mensais e semestrais, o pagamento é realizado à vista.
             </div>
           )}
+
+          {/* Proposal Validity Selection */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold">
+              Validade da Proposta
+            </Label>
+            <RadioGroup
+              value={validityDays.toString()}
+              onValueChange={(value) => setValidityDays(parseInt(value))}
+              className="grid grid-cols-7 gap-2"
+            >
+              {validityOptions.map((option) => (
+                <Label
+                  key={option.value}
+                  htmlFor={`validity-${option.value}`}
+                  className={`relative flex flex-col items-center justify-center rounded-lg border-2 p-2 cursor-pointer transition-all ${
+                    validityDays === option.value
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <RadioGroupItem
+                    value={option.value.toString()}
+                    id={`validity-${option.value}`}
+                    className="sr-only"
+                  />
+                  <span className="font-bold text-sm">{option.value}</span>
+                  <span className="text-[10px] text-muted-foreground">{option.value === 1 ? "dia" : "dias"}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </div>
         </div>
 
         <DialogFooter>

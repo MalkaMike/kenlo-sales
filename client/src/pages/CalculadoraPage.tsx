@@ -3963,6 +3963,8 @@ export default function CalculadoraPage() {
                   premiumServicesPrice: premiumServicesPrice,
                   // Installment options (from QuoteInfoDialog)
                   installments: quoteInfo.installments,
+                  // Proposal validity (from QuoteInfoDialog)
+                  validityDays: quoteInfo.validityDays,
                   // V8: Individual line item prices for Investimento table
                   imobPrice: (() => {
                     if (product !== 'imob' && product !== 'both') return undefined;

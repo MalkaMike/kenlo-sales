@@ -2396,3 +2396,11 @@
 - [x] Adicionar rodapé "Página X de Y" em todas as páginas do client-side PDF
 - [x] Adicionar rodapé "Página X de Y" em todas as páginas do server-side PDF
 - [x] Verificar no browser e rodar testes — 222 testes passando
+
+## PDF — Validade da proposta (1-7 dias)
+
+- [x] Adicionar seletor de validade (1-7 dias) no QuoteInfoDialog
+- [x] Passar validityDays para o client-side PDF e exibir na Conclusão
+- [x] Passar validityDays para o server-side PDF e exibir na Conclusão
+- [x] Atualizar interface ProposalPrintData com campo validityDays
+- [x] Verificar no browser e rodar testes — 222 testes passando

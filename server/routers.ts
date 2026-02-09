@@ -444,6 +444,8 @@ export const appRouter = router({
         premiumServicesPrice: z.number().optional(),
         // Installment options
         installments: z.number().optional(),
+        // Proposal validity
+        validityDays: z.number().optional(),
         // Business nature
         businessType: z.string().optional(),
         monthlyLicenseBase: z.number().optional(),

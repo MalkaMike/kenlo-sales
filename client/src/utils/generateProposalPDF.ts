@@ -64,6 +64,7 @@ export interface ProposalPrintData {
   hasPremiumServices?: boolean;
   premiumServicesPrice?: number;
   installments?: number;
+  validityDays?: number;
   imobPrice?: number;
   locPrice?: number;
   addonPrices?: string;
@@ -866,13 +867,28 @@ export async function generateProposalPDFClient(
   doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("Kenlo — Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
+  doc.text("Kenlo \u2014 Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
   doc.setFontSize(7);
   doc.setTextColor(...rgb("#CBD5E1"));
   doc.setFont("helvetica", "normal");
-  doc.text("A Kenlo é a única plataforma que pode se pagar enquanto você usa.", M + CW / 2, Y + 36, { align: "center" });
+  doc.text("A Kenlo \u00e9 a \u00fanica plataforma que pode se pagar enquanto voc\u00ea usa.", M + CW / 2, Y + 36, { align: "center" });
 
-  // ── Page number footer on ALL pages ───────────────────────────────
+  // Validity disclaimer
+  Y += CONC_H + 12;
+  const vDays = data.validityDays || 3;
+  const today = new Date();
+  const expiryDate = new Date(today);
+  expiryDate.setDate(today.getDate() + vDays);
+  const fmtDate = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  doc.setFontSize(6.5);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    `Proposta v\u00e1lida por ${vDays} dia${vDays > 1 ? "s" : ""} a partir da data de emiss\u00e3o (${fmtDate(today)}). Validade at\u00e9 ${fmtDate(expiryDate)}.`,
+    M + CW / 2, Y, { align: "center" }
+  );
+
+  // \u2500\u2500 Page number footer on ALL pages──────────────────────────
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
