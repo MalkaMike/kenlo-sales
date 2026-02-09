@@ -2610,3 +2610,15 @@
 - [x] Changed input type from "number" to "text" to support formatted display
 - [x] Handle edge cases: empty input, invalid input, already formatted input
 - [ ] Test formatting behavior across different input scenarios - TO BE TESTED
+
+## Visual Validation Feedback
+
+- [x] Add green checkmark icon to integer fields when valid value is entered (> minimum)
+- [x] Add green checkmark icon to currency fields when valid value is entered (> 0)
+- [x] Position checkmark icon inside input field on the right side (absolute positioning)
+- [x] Use lucide-react Check icon with green color (text-green-600)
+- [x] Show checkmark only when field has valid non-empty value
+- [x] Applied to all 7 validated fields:
+  - Integer fields (5): imobUsers (≥1), closingsPerMonth (>0), leadsPerMonth (>0), contractsUnderManagement (≥1), newContractsPerMonth (>0)
+  - Currency fields (2): boletoAmount (>0), splitAmount (>0)
+- [x] Added pr-8 padding to inputs to prevent text overlap with checkmark icon

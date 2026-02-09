@@ -34,6 +34,7 @@ import {
   Eye,
   Shuffle,
   Loader2,
+  Check,
 } from "lucide-react";
 
 // Types
@@ -1808,51 +1809,66 @@ export default function CalculadoraPage() {
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
                             <Label htmlFor="imobUsers" className="text-xs text-gray-600">Usuários</Label>
-                            <Input
-                              id="imobUsers"
-                              type="number"
-                              inputMode="numeric"
-                              value={metrics.imobUsers}
-                              onChange={(e) => {
-                                const parsed = parseIntegerInput(e.target.value, 1);
-                                setMetrics({ ...metrics, imobUsers: parsed });
-                              }}
-                              placeholder="Ex: 5 usuários"
-                              min="1"
-                              className="mt-0.5 h-8 text-xs"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="imobUsers"
+                                type="number"
+                                inputMode="numeric"
+                                value={metrics.imobUsers}
+                                onChange={(e) => {
+                                  const parsed = parseIntegerInput(e.target.value, 1);
+                                  setMetrics({ ...metrics, imobUsers: parsed });
+                                }}
+                                placeholder="Ex: 5 usuários"
+                                min="1"
+                                className="mt-0.5 h-8 text-xs pr-8"
+                              />
+                              {toNum(metrics.imobUsers) >= 1 && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.25 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                           <div>
                             <Label htmlFor="closings" className="text-xs text-gray-600">Fechamentos/mês</Label>
-                            <Input
-                              id="closings"
-                              type="number"
-                              inputMode="numeric"
-                              value={metrics.closingsPerMonth}
-                              onChange={(e) => {
-                                const parsed = parseIntegerInput(e.target.value, 0);
-                                setMetrics({ ...metrics, closingsPerMonth: parsed });
-                              }}
-                              placeholder="Ex: 10"
-                              min="0"
-                              className="mt-0.5 h-8 text-xs"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="closings"
+                                type="number"
+                                inputMode="numeric"
+                                value={metrics.closingsPerMonth}
+                                onChange={(e) => {
+                                  const parsed = parseIntegerInput(e.target.value, 0);
+                                  setMetrics({ ...metrics, closingsPerMonth: parsed });
+                                }}
+                                placeholder="Ex: 10"
+                                min="0"
+                                className="mt-0.5 h-8 text-xs pr-8"
+                              />
+                              {toNum(metrics.closingsPerMonth) > 0 && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.25 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                           <div>
                             <Label htmlFor="leadsPerMonth" className="text-xs text-gray-600">Leads/mês</Label>
-                            <Input
-                              id="leadsPerMonth"
-                              type="number"
-                              inputMode="numeric"
-                              value={metrics.leadsPerMonth}
-                              onChange={(e) => {
-                                const parsed = parseIntegerInput(e.target.value, 0);
-                                setMetrics({ ...metrics, leadsPerMonth: parsed });
-                              }}
-                              placeholder="Ex: 500"
-                              min="0"
-                              className="mt-0.5 h-8 text-xs"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="leadsPerMonth"
+                                type="number"
+                                inputMode="numeric"
+                                value={metrics.leadsPerMonth}
+                                onChange={(e) => {
+                                  const parsed = parseIntegerInput(e.target.value, 0);
+                                  setMetrics({ ...metrics, leadsPerMonth: parsed });
+                                }}
+                                placeholder="Ex: 500"
+                                min="0"
+                                className="mt-0.5 h-8 text-xs pr-8"
+                              />
+                              {toNum(metrics.leadsPerMonth) > 0 && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.25 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                           <div className="flex flex-col gap-1">
                             <div className="flex items-center justify-between p-1.5 bg-white rounded border border-blue-100">
@@ -1918,35 +1934,45 @@ export default function CalculadoraPage() {
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
                             <Label htmlFor="contracts" className="text-xs text-gray-600">Contratos</Label>
-                            <Input
-                              id="contracts"
-                              type="number"
-                              inputMode="numeric"
-                              value={metrics.contractsUnderManagement}
-                              onChange={(e) => {
-                                const parsed = parseIntegerInput(e.target.value, 1);
-                                setMetrics({ ...metrics, contractsUnderManagement: parsed });
-                              }}
-                              placeholder="Ex: 1200 contratos"
-                              min="1"
-                              className="mt-0.5 h-8 text-xs"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="contracts"
+                                type="number"
+                                inputMode="numeric"
+                                value={metrics.contractsUnderManagement}
+                                onChange={(e) => {
+                                  const parsed = parseIntegerInput(e.target.value, 1);
+                                  setMetrics({ ...metrics, contractsUnderManagement: parsed });
+                                }}
+                                placeholder="Ex: 1200 contratos"
+                                min="1"
+                                className="mt-0.5 h-8 text-xs pr-8"
+                              />
+                              {toNum(metrics.contractsUnderManagement) >= 1 && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.25 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                           <div>
                             <Label htmlFor="newContracts" className="text-xs text-gray-600">Novos/mês</Label>
-                            <Input
-                              id="newContracts"
-                              type="number"
-                              inputMode="numeric"
-                              value={metrics.newContractsPerMonth}
-                              onChange={(e) => {
-                                const parsed = parseIntegerInput(e.target.value, 0);
-                                setMetrics({ ...metrics, newContractsPerMonth: parsed });
-                              }}
-                              placeholder="Ex: 50"
-                              min="0"
-                              className="mt-0.5 h-8 text-xs"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="newContracts"
+                                type="number"
+                                inputMode="numeric"
+                                value={metrics.newContractsPerMonth}
+                                onChange={(e) => {
+                                  const parsed = parseIntegerInput(e.target.value, 0);
+                                  setMetrics({ ...metrics, newContractsPerMonth: parsed });
+                                }}
+                                placeholder="Ex: 50"
+                                min="0"
+                                className="mt-0.5 h-8 text-xs pr-8"
+                              />
+                              {toNum(metrics.newContractsPerMonth) > 0 && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.25 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                         </div>
                         {/* Plan selector inline */}
@@ -3070,23 +3096,28 @@ export default function CalculadoraPage() {
                             {metrics.chargesBoletoToTenant && (
                               <div className="pl-2">
                                 <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto você cobra por boleto? (R$)</Label>
-                                <Input
-                                  id="boletoAmount"
-                                  type="text"
-                                  inputMode="decimal"
-                                  value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : formatCurrency(metrics.boletoChargeAmount, 2)}
-                                  onChange={(e) => {
-                                    // Allow typing, store as string temporarily
-                                    setMetrics({ ...metrics, boletoChargeAmount: e.target.value as any });
-                                  }}
-                                  onBlur={(e) => {
-                                    // On blur, parse and format as currency
-                                    const parsed = parseCurrency(e.target.value);
-                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
-                                  }}
-                                  placeholder="Ex: R$ 10,00"
-                                  className="mt-1 h-8 text-sm"
-                                />
+                                <div className="relative">
+                                  <Input
+                                    id="boletoAmount"
+                                    type="text"
+                                    inputMode="decimal"
+                                    value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : formatCurrency(metrics.boletoChargeAmount, 2)}
+                                    onChange={(e) => {
+                                      // Allow typing, store as string temporarily
+                                      setMetrics({ ...metrics, boletoChargeAmount: e.target.value as any });
+                                    }}
+                                    onBlur={(e) => {
+                                      // On blur, parse and format as currency
+                                      const parsed = parseCurrency(e.target.value);
+                                      setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
+                                    }}
+                                    placeholder="Ex: R$ 10,00"
+                                    className="mt-1 h-8 text-sm pr-8"
+                                  />
+                                  {(typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount > 0) && (
+                                    <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
+                                  )}
+                                </div>
                               </div>
                             )}
                             <div className="flex items-center justify-between p-2 bg-white rounded-lg">
@@ -3100,23 +3131,28 @@ export default function CalculadoraPage() {
                             {metrics.chargesSplitToOwner && (
                               <div className="pl-2">
                                 <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto você cobra por split? (R$)</Label>
-                                <Input
-                                  id="splitAmount"
-                                  type="text"
-                                  inputMode="decimal"
-                                  value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : formatCurrency(metrics.splitChargeAmount, 2)}
-                                  onChange={(e) => {
-                                    // Allow typing, store as string temporarily
-                                    setMetrics({ ...metrics, splitChargeAmount: e.target.value as any });
-                                  }}
-                                  onBlur={(e) => {
-                                    // On blur, parse and format as currency
-                                    const parsed = parseCurrency(e.target.value);
-                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
-                                  }}
-                                  placeholder="Ex: R$ 5,00"
-                                  className="mt-1 h-8 text-sm"
-                                />
+                                <div className="relative">
+                                  <Input
+                                    id="splitAmount"
+                                    type="text"
+                                    inputMode="decimal"
+                                    value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : formatCurrency(metrics.splitChargeAmount, 2)}
+                                    onChange={(e) => {
+                                      // Allow typing, store as string temporarily
+                                      setMetrics({ ...metrics, splitChargeAmount: e.target.value as any });
+                                    }}
+                                    onBlur={(e) => {
+                                      // On blur, parse and format as currency
+                                      const parsed = parseCurrency(e.target.value);
+                                      setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
+                                    }}
+                                    placeholder="Ex: R$ 5,00"
+                                    className="mt-1 h-8 text-sm pr-8"
+                                  />
+                                  {(typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount > 0) && (
+                                    <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
