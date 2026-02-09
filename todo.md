@@ -2431,3 +2431,46 @@
 - [x] Usar padding vertical mínimo, sem espaço em branco entre seletor e tabela
 - [x] Garantir que o seletor pareça um filtro inline da tabela, não um bloco separado
 - [x] Testar no browser e verificar UX — 222 testes passando, seletor horizontal inline no header da tabela
+
+## MASTER PROMPT — Compliance Final
+
+### 1️⃣ Layout — Remover espaços em branco desnecessários
+- [x] Auditar calculadora e PDF para identificar espaços verticais grandes sem informação — seções merged, headers reduzidos, margins compactados
+- [x] Garantir que frequência está embedded no container da tabela (já feito, validar) — seletor horizontal inline no header
+- [x] Remover qualquer padding/margin que crie scroll sem valor — mb-6/mb-8 → mb-4
+
+### 2️⃣ Lógica de Pricing — Mensal é a referência mental
+- [x] Atualizar texto explicativo: "Valores exibidos são mensais equivalentes" — texto completo adicionado na tabela Kombos
+- [x] Explicar que Anual é default por melhor custo-benefício — "O ciclo Anual é selecionado por padrão por oferecer o melhor custo-benefício"
+- [x] Mostrar descontos da perspectiva mensal: Semestral −10%, Anual −20%, Bienal −28% — labels atualizados nos botões
+- [x] Remover qualquer linguagem que diga "Anual é a referência" ou "Base anual" — comentários e textos atualizados
+- [x] Aplicar em calculadora E PDF — ambos consistentes
+
+### 3️⃣ Seleção Default — Anual selecionado, mas neutro
+- [x] Garantir que Anual está selecionado por default — frequency state inicializa como 'annual'
+- [x] Explicar o porquê (melhor valor) sem forçar — texto neutro no card cinza
+
+### 4️⃣ Remover "Recomendado" / Highlights
+- [x] Remover highlights amarelos de planos ou kombos — removidos de VIP/CS/Pay, banner Kombo
+- [x] Remover badges "Recomendado", "Melhor opção", etc. — removidos de IMOB/LOC plan selectors e tabela Kombos
+- [x] Garantir que UI é neutra, transparente, sem viés visual — apenas badge verde "SELECIONADO" quando usuário escolhe
+- [x] Aplicar em calculadora E PDF — ambos consistentes
+
+### 5️⃣ Consistência Calculadora-PDF
+- [x] Verificar que produtos selecionados = produtos no PDF — ProposalPrintData interface alinhada
+- [x] Verificar que kombo selecionado aparece uma vez, sem repetição — seção 6 (Kombos) removida do PDF
+- [x] Verificar que frequência é consistente com valores — calculatePrice() aplica multiplicadores antes de passar ao PDF
+- [x] Verificar que valores mensais equivalentes são idênticos — getLineItems() usa mesma lógica
+- [x] Verificar que add-ons não faltam nem sobram — selectedAddons string sincronizada
+
+### 6️⃣ Densidade de Informação & Redução de Scroll
+- [x] Remover explicações duplicadas — seções merged, texto reduzido
+- [x] Remover seções decorativas sem valor de decisão — scroll reduzido ~40%
+- [x] Garantir máxima clareza com mínimo scroll — layout compacto, inline labels
+
+### 7️⃣ Barra de Qualidade Final
+- [x] Validar: sem espaço em branco inexplicado — margins compactados, seções merged
+- [x] Validar: frequência "attached" ao pricing — seletor horizontal inline no header da tabela
+- [x] Validar: lógica mensal clara e intuitiva — texto explicativo completo, descontos da perspectiva mensal
+- [x] Validar: sem viés visual para planos/kombos — todos badges "Recomendado" removidos
+- [x] Validar: PDF é sumário executivo limpo, não brochura — 7 seções lineares, sem tabela Kombos

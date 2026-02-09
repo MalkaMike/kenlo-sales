@@ -1,15 +1,14 @@
 /**
  * Client-side PDF generation — Redesign v2
  *
- * Structure (8 sections):
+ * Structure (7 sections):
  *   1. Capa (cover — full page)
  *   2. Resumo da Configuração (single linear block, no cards)
  *   3. Detalhamento (products, addons, implantation, installments)
  *   4. Benefícios Inclusos (VIP, CS, Training)
  *   5. Variáveis pós-pago (only if relevant)
- *   6. Sua Seleção vs Kombos (frequency at top, then comparison table)
- *   7. Kenlo Receita Extra + ROI (no Cash)
- *   8. Conclusão
+ *   6. Kenlo Receita Extra + ROI (no Cash)
+ *   7. Conclusão
  *
  * Design: linear 1-column layout, full-width blocks, clean document (not dashboard),
  *         minimal text, no duplication, primary color for selection only.

@@ -1868,9 +1868,6 @@ export default function CalculadoraPage() {
                                   }`}
                                 >
                                   <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                  {isRecommended && (
-                                    <div className="text-[9px] text-primary mt-0.5">★ Recomendado</div>
-                                  )}
                                 </button>
                               );
                             })}
@@ -1937,9 +1934,6 @@ export default function CalculadoraPage() {
                                   }`}
                                 >
                                   <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                  {isRecommended && (
-                                    <div className="text-[9px] text-primary mt-0.5">★ Recomendado</div>
-                                  )}
                                 </button>
                               );
                             })}
@@ -3484,12 +3478,7 @@ export default function CalculadoraPage() {
                         </div>
                       )}
 
-                      {/* Kombo Recommendation Banner */}
-                      {komboRecommendation && (
-                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
-                          💡 {komboRecommendation.message}
-                        </div>
-                      )}
+
 
                       {/* Add-ons Badge */}
                       {(() => {

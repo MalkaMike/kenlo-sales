@@ -58,12 +58,12 @@ type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao
 type ViewMode = "monthly" | "semestral" | "annual" | "biennial";
 
 // Frequency options for the selector
-// Anual is the reference (0%), others are relative to annual
+// Monthly is the mental reference for clients, discounts shown from monthly perspective
 const FREQUENCY_OPTIONS: { id: ViewMode; label: string; discount: string }[] = [
-  { id: "monthly", label: "Mensal", discount: "+25%" },
-  { id: "semestral", label: "Semestral", discount: "+11%" },
-  { id: "annual", label: "Anual", discount: "0% - Referência" },
-  { id: "biennial", label: "Bienal", discount: "-10%" },
+  { id: "monthly", label: "Mensal", discount: "Ref." },
+  { id: "semestral", label: "Semestral", discount: "−10%" },
+  { id: "annual", label: "Anual", discount: "−20%" },
+  { id: "biennial", label: "Bienal", discount: "−28%" },
 ];
 
 interface KomboColumnData {
@@ -786,12 +786,22 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               </div>
             </div>
           </div>
+          
+          {/* Pricing Explanation */}
+          <div className="mb-3 p-2.5 bg-gray-50 rounded-md">
+            <p className="text-[11px] text-gray-600 leading-relaxed">
+              Os valores exibidos são <strong>mensais equivalentes</strong>, para facilitar a comparação. 
+              O ciclo <strong>Anual</strong> é selecionado por padrão por oferecer o melhor custo-benefício. 
+              Pagamentos mais longos geram desconto sobre o valor mensal de referência: 
+              <span className="font-medium">Semestral −10%</span>, <span className="font-medium">Anual −20%</span>, <span className="font-medium">Bienal −28%</span>.
+            </p>
+          </div>
 
           {/* Comparison Table */}
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed">
               <thead>
-                {/* Row 1: Badges (Recomendado fixo, Selecionado clicável) */}
+                {/* Row 1: Badges (Selecionado clicável) */}
                 <tr className="border-b border-gray-100">
                   <th className="py-2 px-2"></th>
                   {columns.map((col) => (
@@ -977,8 +987,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Legend */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              <strong>Anual Equivalente:</strong> Inclui 12 meses de mensalidade + custo de implantação (única vez).
-              {viewMode === "annual" && " Valores exibidos em base anual."}
+              <strong>Anual Equivalente:</strong> Inclui 12 meses de mensalidade + custo de implantação (única vez). Valores exibidos são mensais equivalentes para facilitar a comparação.
             </p>
           </div>
 

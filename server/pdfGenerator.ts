@@ -765,10 +765,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     Y += 10;
     const CONC_H = 50;
     doc.roundedRect(M, Y, CW, CONC_H, 4).fill(C.dark);
-    doc.fontSize(12).fillColor("#FFFFFF").font("Helvetica-Bold")
-      .text("Kenlo \u2014 Quem usa, lidera.", M, Y + 12, { width: CW, align: "center" });
-    doc.fontSize(7).fillColor("#CBD5E1").font("Helvetica")
-      .text("A Kenlo e a unica plataforma que pode se pagar enquanto voce usa.", M, Y + 30, { width: CW, align: "center" });
+    doc.fontSize(12).fillColor("#FFFFFF").font("Helvetica-Bold").text("Kenlo — Quem usa, lidera.", M, Y + 12, { width: CW, align: "center" });
+    doc.fontSize(7).fillColor("#CBD5E1").font("Helvetica").text("A Kenlo e a unica plataforma que pode se pagar enquanto voce usa.", M, Y + 30, { width: CW, align: "center" });
 
     // Validity disclaimer
     Y += CONC_H + 12;
