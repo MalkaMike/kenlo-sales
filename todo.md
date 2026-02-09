@@ -2390,3 +2390,9 @@
 - [x] Aplicar em client-side PDF (generateProposalPDF.ts)
 - [x] Aplicar em server-side PDF (pdfGenerator.ts)
 - [x] Atualizar testes — 222 testes passando
+
+## PDF — Rodapé com número de página
+
+- [x] Adicionar rodapé "Página X de Y" em todas as páginas do client-side PDF
+- [x] Adicionar rodapé "Página X de Y" em todas as páginas do server-side PDF
+- [x] Verificar no browser e rodar testes — 222 testes passando

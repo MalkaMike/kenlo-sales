@@ -872,6 +872,16 @@ export async function generateProposalPDFClient(
   doc.setFont("helvetica", "normal");
   doc.text("A Kenlo é a única plataforma que pode se pagar enquanto você usa.", M + CW / 2, Y + 36, { align: "center" });
 
+  // ── Page number footer on ALL pages ───────────────────────────────
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(6);
+    doc.setTextColor(...rgb(C.textLight));
+    doc.setFont("helvetica", "normal");
+    doc.text(`P\u00e1gina ${i} de ${totalPages}`, PW / 2, PH - 12, { align: "center" });
+  }
+
   // ── Generate blob ─────────────────────────────────────────────
   const pdfBlob = doc.output("blob");
   const filename = `Cotacao_Kenlo_${data.clientName.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`;

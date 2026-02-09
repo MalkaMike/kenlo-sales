@@ -769,6 +769,15 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.fontSize(7).fillColor("#CBD5E1").font("Helvetica")
       .text("A Kenlo e a unica plataforma que pode se pagar enquanto voce usa.", M, Y + 30, { width: CW, align: "center" });
 
+    // ── Page number footer on ALL pages ──────────────────────────
+    const range = doc.bufferedPageRange();
+    const totalPages = range.start + range.count;
+    for (let i = range.start; i < totalPages; i++) {
+      doc.switchToPage(i);
+      doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
+        .text(`P\u00e1gina ${i + 1} de ${totalPages}`, 0, PH - 16, { width: PW, align: "center" });
+    }
+
     doc.end();
   });
 }
