@@ -2423,3 +2423,11 @@
 - [x] Mover seletor de frequência para dentro do Card da tabela (como toolbar/filter no topo)
 - [x] Garantir que o seletor pareça um controle da tabela, não uma etapa de configuração
 - [x] Testar no browser e verificar UX — 222 testes passando, seletor agora está dentro do Card como toolbar
+
+## Ciclo de Pagamento — Integrar horizontalmente no header da tabela
+
+- [x] Mover seletor de frequência para a mesma linha horizontal do título "Sua Seleção vs Kombos"
+- [x] Layout: título à esquerda, seletor à direita (ou centralizado)
+- [x] Usar padding vertical mínimo, sem espaço em branco entre seletor e tabela
+- [x] Garantir que o seletor pareça um filtro inline da tabela, não um bloco separado
+- [x] Testar no browser e verificar UX — 222 testes passando, seletor horizontal inline no header da tabela

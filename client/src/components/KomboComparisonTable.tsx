@@ -760,41 +760,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
   return (
     <div className="mb-6">
-      <h2 className="text-sm font-semibold text-gray-700 mb-2">Sua Seleção vs Kombos</h2>
-      <p className="text-xs text-muted-foreground mb-3">
-        Valores em base mensal. Anual é referência. Pagamentos mais longos = desconto.
-      </p>
-
       <Card>
         <CardContent className="p-4">
-          {/* Payment Frequency Selector - Inside table as toolbar */}
-          <div className="pb-3 mb-3 border-b border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-600 mb-2">Ciclo de Pagamento</div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {FREQUENCY_OPTIONS.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleFrequencyChange(option.id)}
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
-                    viewMode === option.id
-                      ? "bg-pink-50 border-primary text-primary"
-                      : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  <span className={`text-sm font-semibold ${
-                    viewMode === option.id ? "text-primary" : "text-gray-900"
-                  }`}>
+          {/* Table Header: Title + Frequency Selector (horizontal) */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 mb-3 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700">Sua Seleção vs Kombos</h3>
+            
+            {/* Frequency Selector - Horizontal inline */}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-medium text-gray-500">Ciclo:</span>
+              <div className="flex gap-1.5">
+                {FREQUENCY_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleFrequencyChange(option.id)}
+                    className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all ${
+                      viewMode === option.id
+                        ? "bg-pink-50 border-primary text-primary"
+                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
+                    }`}
+                  >
                     {option.label}
-                  </span>
-                  <span className={`text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full ${
-                    viewMode === option.id
-                      ? "bg-pink-100 text-primary"
-                      : "bg-gray-100 text-gray-500"
-                  }`}>
-                    {option.discount}
-                  </span>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
