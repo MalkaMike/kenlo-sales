@@ -7,7 +7,7 @@
  *   3. Detalhamento (products, addons, implantation, installments)
  *   4. Benefícios Inclusos (VIP, CS, Training)
  *   5. Variáveis pós-pago (only if relevant)
- *   6. Sua Seleção vs Kombos (frequency at top, then comparison table)
+ *   6. (Removed — Kombos shown only in Resumo)
  *   7. Kenlo Receita Extra + ROI (no Cash)
  *   8. Conclusão
  *
@@ -627,104 +627,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       Y += GAP + 6;
     }
 
-    // ================================================================
-    // SECTION 6 — SUA SELEÇÃO vs KOMBOS
-    // ================================================================
-    if (komboComparison.length > 0) {
-      const estRows = 2 + komboComparison.length;
-      const estHeight = estRows * 22 + 80;
-      if (needsNewPage(Y, estHeight)) Y = newPage();
-      Y = sectionTitle("Sua Selecao vs Kombos", Y);
-
-      // Frequency bar at TOP of this section
-      const FREQ_OPTIONS = [
-        { key: "monthly", label: "Mensal", adj: "+25%", color: C.textMuted },
-        { key: "semestral", label: "Semestral", adj: "+11%", color: C.textMuted },
-        { key: "annual", label: "Anual", adj: "0%", color: C.green },
-        { key: "bienal", label: "Bienal", adj: "-10%", color: C.green },
-      ];
-
-      const FREQ_W = (CW - 3 * 8) / 4;
-      const FREQ_H = 30;
-      FREQ_OPTIONS.forEach((f, i) => {
-        const fx = M + i * (FREQ_W + 8);
-        const isSelected = f.key === data.paymentPlan?.toLowerCase() ||
-          (f.key === "annual" && data.paymentPlan?.toLowerCase() === "anual") ||
-          (f.key === "monthly" && data.paymentPlan?.toLowerCase() === "mensal");
-        card(fx, Y, FREQ_W, FREQ_H, { selected: isSelected, fill: isSelected ? undefined : C.bgSoft });
-        doc.fontSize(8).fillColor(isSelected ? C.primary : C.text).font("Helvetica-Bold")
-          .text(f.label, fx, Y + 6, { width: FREQ_W, align: "center" });
-        doc.fontSize(7).fillColor(isSelected ? C.primary : f.color).font("Helvetica-Bold")
-          .text(f.adj, fx, Y + 18, { width: FREQ_W, align: "center" });
-      });
-      Y += FREQ_H + 10;
-
-      // Comparison table
-      const TBL_W = CW;
-      const COL_NAME_W = TBL_W * 0.35;
-      const COL_DISC_W = TBL_W * 0.15;
-      const COL_TOTAL_W = TBL_W * 0.25;
-      const ROW_H = 22;
-
-      const drawTableHeader = () => {
-        doc.roundedRect(M, Y, TBL_W, ROW_H, 3).fill(C.dark);
-        doc.rect(M, Y + ROW_H / 2, TBL_W, ROW_H / 2).fill(C.dark);
-        doc.fontSize(7).fillColor("#FFFFFF").font("Helvetica-Bold");
-        doc.text("Kombo", M + 10, Y + 7, { lineBreak: false });
-        doc.text("Desconto", M + COL_NAME_W + 10, Y + 7, { lineBreak: false });
-        doc.text("Mensal Equiv.", M + COL_NAME_W + COL_DISC_W + 10, Y + 7, { lineBreak: false });
-        doc.text("Economia/mes", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
-        Y += ROW_H;
-      };
-
-      drawTableHeader();
-
-      // "Sua selecao" row (current)
-      doc.rect(M, Y, TBL_W, ROW_H).fill(C.primaryLight);
-      divider(Y + ROW_H);
-      doc.fontSize(7).fillColor(C.primary).font("Helvetica-Bold")
-        .text(isKombo ? `> ${komboLabel}` : "> Sua Selecao Atual", M + 10, Y + 7, { lineBreak: false });
-      doc.fontSize(7).fillColor(C.dark).font("Helvetica-Bold")
-        .text(komboDiscount > 0 ? `${komboDiscount}%` : "—", M + COL_NAME_W + 10, Y + 7, { lineBreak: false });
-      doc.text(fmt(monthlyRecurring), M + COL_NAME_W + COL_DISC_W + 10, Y + 7, { lineBreak: false });
-      doc.fontSize(7).fillColor(C.green).font("Helvetica-Bold")
-        .text("Selecionado", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
-      Y += ROW_H;
-
-      // Other kombos
-      let renderedIdx = 0;
-      komboComparison.forEach((k) => {
-        const kNorm = k.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_");
-        if (kNorm === normalizedKombo) return;
-        if (!isKombo && kNorm === "sem_kombo") return;
-
-        if (needsNewPage(Y, ROW_H + 4)) {
-          Y = newPage();
-          drawTableHeader();
-        }
-
-        if (renderedIdx % 2 === 0) {
-          doc.rect(M, Y, TBL_W, ROW_H).fill(C.bgSoft);
-        }
-        divider(Y + ROW_H);
-
-        doc.fontSize(7).fillColor(C.text).font("Helvetica")
-          .text(k.name, M + 10, Y + 7, { lineBreak: false });
-        doc.text(`${k.discount}%`, M + COL_NAME_W + 10, Y + 7, { lineBreak: false });
-        doc.text(fmt(k.monthlyTotal), M + COL_NAME_W + COL_DISC_W + 10, Y + 7, { lineBreak: false });
-        if (k.savings > 0) {
-          doc.fontSize(7).fillColor(C.green).font("Helvetica-Bold")
-            .text(`${fmt(k.savings)}/mes`, M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
-        } else {
-          doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
-            .text("—", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 7, { lineBreak: false });
-        }
-        Y += ROW_H;
-        renderedIdx++;
-      });
-
-      Y += GAP;
-    }
+    // SECTION 6 — REMOVED (Kombos comparison table eliminated to reduce redundancy)
+    // Kombo info is shown only in Resumo da Configuração (Section 2)
 
     // ================================================================
     // SECTION 7 — KENLO RECEITA EXTRA + ROI (no Cash)

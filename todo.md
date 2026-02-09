@@ -2380,3 +2380,13 @@
 - [x] Reestruturar server-side PDF (pdfGenerator.ts)
 - [x] Atualizar testes para nova estrutura — 222 testes passando (35 pdfGenerator + 53 pdf.validation)
 - [x] Checklist automática: produto/plano/addons/kombo/frequência batem 100% com portal
+
+## PDF Fix — Frequência nos valores + Remover Kombos duplicados
+
+- [x] Garantir que valor mensal equivalente reflete desconto/acréscimo da frequência — confirmado: calculatePrice() aplica PAYMENT_FREQUENCY_MULTIPLIERS antes de passar ao PDF
+- [x] Nunca mostrar valores calculados com outra frequência — getLineItems() usa frequência selecionada em todos os cálculos
+- [x] Remover seção "Sua Seleção vs Kombos" inteira (tabela comparativa + barra de frequência)
+- [x] Kombo aparece APENAS no Resumo da Configuração
+- [x] Aplicar em client-side PDF (generateProposalPDF.ts)
+- [x] Aplicar em server-side PDF (pdfGenerator.ts)
+- [x] Atualizar testes — 222 testes passando
