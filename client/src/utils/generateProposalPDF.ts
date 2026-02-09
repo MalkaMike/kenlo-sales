@@ -1,20 +1,18 @@
 /**
- * Client-side PDF generation — Master Prompt v1
+ * Client-side PDF generation — Redesign v2
  *
- * Structure (9 sections):
- *   1. Capa (cover)
- *   2. Resumo da Configuração (mini-calculator)
- *   3. Produtos Contratados
- *   4. Add-ons Contratados
- *   5. Frequência de Pagamento
- *   6. Seleção vs Kombos (comparison)
- *   7. Kenlo Receita Extra (value proof)
- *   8. Investimento Total
- *   9. Conclusão
+ * Structure (8 sections):
+ *   1. Capa (cover — full page)
+ *   2. Resumo da Configuração (single linear block, no cards)
+ *   3. Detalhamento (products, addons, implantation, installments)
+ *   4. Benefícios Inclusos (VIP, CS, Training)
+ *   5. Variáveis pós-pago (only if relevant)
+ *   6. Sua Seleção vs Kombos (frequency at top, then comparison table)
+ *   7. Kenlo Receita Extra + ROI (no Cash)
+ *   8. Conclusão
  *
- * Design: white bg, lots of whitespace, SaaS-modern, cards not heavy tables,
- *         primary color for selection only, green for gains, grey for neutral,
- *         NEVER red for prices.
+ * Design: linear 1-column layout, full-width blocks, clean document (not dashboard),
+ *         minimal text, no duplication, primary color for selection only.
  */
 
 import { jsPDF } from "jspdf";
@@ -74,15 +72,14 @@ export interface ProposalPrintData {
   vipPrice?: number;
   csPrice?: number;
   postPaidBreakdown?: string;
-  // Kombo comparison data (all kombos for the comparison table)
-  komboComparison?: string; // JSON: KomboComparisonData[]
+  komboComparison?: string;
 }
 
 interface KomboComparisonData {
   name: string;
-  discount: number; // percentage e.g. 10
+  discount: number;
   monthlyTotal: number;
-  savings: number; // monthly savings vs no-kombo
+  savings: number;
 }
 
 // ── Post-paid types ─────────────────────────────────────────────
@@ -107,24 +104,20 @@ interface PostPaidBreakdown {
 }
 
 // ── Constants ───────────────────────────────────────────────────
-const PW = 595.28; // A4 width in pt
+const PW = 595.28;
 const PH = 841.89;
-const M = 48; // generous margin
-const CW = PW - M * 2; // content width
-const GAP = 14;
+const M = 48;
+const CW = PW - M * 2;
+const GAP = 12;
 const MAX_Y = PH - 50;
 
-// Design-system colors — restrained palette
 const C = {
-  // Primary (Kenlo rose) — only for selection / contracted items
   primary: "#E11D48",
   primaryLight: "#FFF1F2",
   primaryMuted: "#FECDD3",
-  // Greens — gains / economy
   green: "#059669",
   greenLight: "#ECFDF5",
   greenBorder: "#6EE7B7",
-  // Neutrals
   dark: "#0F172A",
   text: "#334155",
   textMuted: "#64748B",
@@ -133,7 +126,6 @@ const C = {
   borderLight: "#F1F5F9",
   bg: "#FFFFFF",
   bgSoft: "#F8FAFC",
-  // Accent
   blue: "#2563EB",
   blueLight: "#EFF6FF",
 };
@@ -158,7 +150,6 @@ function rgb(hex: string): [number, number, number] {
   ];
 }
 
-/** Rounded rect with optional fill + stroke */
 function card(
   doc: jsPDF,
   x: number,
@@ -181,9 +172,8 @@ function card(
   }
 }
 
-/** Section title — clean, with subtle left accent */
-function section(doc: jsPDF, title: string, y: number): number {
-  // Subtle left accent bar
+/** Section title with subtle left accent */
+function sectionTitle(doc: jsPDF, title: string, y: number): number {
   doc.setFillColor(...rgb(C.primary));
   doc.rect(M, y, 3, 12, "F");
   doc.setFontSize(11);
@@ -193,47 +183,52 @@ function section(doc: jsPDF, title: string, y: number): number {
   return y + 22;
 }
 
-/** Small label text */
-function label(doc: jsPDF, text: string, x: number, y: number, opts: { color?: string; size?: number; bold?: boolean } = {}) {
+function lbl(doc: jsPDF, text: string, x: number, y: number, opts: { color?: string; size?: number; bold?: boolean } = {}) {
   doc.setFontSize(opts.size ?? 7);
   doc.setTextColor(...rgb(opts.color ?? C.textMuted));
   doc.setFont("helvetica", opts.bold ? "bold" : "normal");
   doc.text(text, x, y);
 }
 
-/** Value text */
-function value(doc: jsPDF, text: string, x: number, y: number, opts: { color?: string; size?: number; align?: "left" | "right" | "center" } = {}) {
+function val(doc: jsPDF, text: string, x: number, y: number, opts: { color?: string; size?: number; align?: "left" | "right" | "center" } = {}) {
   doc.setFontSize(opts.size ?? 9);
   doc.setTextColor(...rgb(opts.color ?? C.dark));
   doc.setFont("helvetica", "bold");
   doc.text(text, x, y, { align: opts.align ?? "left" });
 }
 
-/** Thin horizontal divider */
 function divider(doc: jsPDF, y: number, x1?: number, x2?: number) {
   doc.setDrawColor(...rgb(C.border));
   doc.setLineWidth(0.3);
   doc.line(x1 ?? M, y, x2 ?? (M + CW), y);
 }
 
-/** Check if we need a new page */
 function needsNewPage(y: number, needed: number): boolean {
   return y + needed > MAX_Y;
 }
 
-/** Add a new page with consistent footer */
 function newPage(doc: jsPDF, data: ProposalPrintData): number {
   doc.addPage();
-  // Subtle top line
   doc.setFillColor(...rgb(C.primary));
   doc.rect(0, 0, PW, 3, "F");
-  // Footer info
   doc.setFontSize(6);
   doc.setTextColor(...rgb(C.textLight));
   doc.setFont("helvetica", "normal");
-  doc.text(`${data.agencyName || "Imobiliaria"} - Proposta Comercial`, M, PH - 20);
-  doc.text(`Vendedor: ${data.salesPersonName}`, PW - M, PH - 20, { align: "right" });
-  return 30; // starting Y
+  doc.text(`${data.agencyName || "Imobiliária"} — Proposta Comercial`, M, PH - 20);
+  doc.text(`Consultor: ${data.salesPersonName}`, PW - M, PH - 20, { align: "right" });
+  return 30;
+}
+
+/** Draw a row in a table: label left, value right */
+function tableRow(doc: jsPDF, label: string, value: string, y: number, opts: { labelColor?: string; valueColor?: string; bold?: boolean; size?: number } = {}) {
+  const sz = opts.size ?? 7.5;
+  doc.setFontSize(sz);
+  doc.setTextColor(...rgb(opts.labelColor ?? C.text));
+  doc.setFont("helvetica", "normal");
+  doc.text(label, M + 14, y);
+  doc.setTextColor(...rgb(opts.valueColor ?? C.dark));
+  doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+  doc.text(value, M + CW - 14, y, { align: "right" });
 }
 
 // ── Parse helpers ───────────────────────────────────────────────
@@ -267,7 +262,6 @@ function parseKomboComparison(raw?: string): KomboComparisonData[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
-    // Normalize field names: CalculadoraPage sends "totalMonthly" but interface expects "monthlyTotal"
     return parsed.map((k: any) => ({
       name: k.name || '',
       discount: k.discount || 0,
@@ -285,7 +279,7 @@ export async function generateProposalPDFClient(
 ): Promise<{ blob: Blob; filename: string }> {
   const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
 
-  // Derived flags
+  // ── Derived flags ──────────────────────────────────────────────
   const showImob = ["imob", "both", "imob_loc", "ambos"].includes(data.productType?.toLowerCase() || "");
   const showLoc = ["loc", "both", "imob_loc", "ambos"].includes(data.productType?.toLowerCase() || "");
   const selAddons = parseAddons(data.selectedAddons);
@@ -299,7 +293,10 @@ export async function generateProposalPDFClient(
 
   const imobIsK2 = showImob && data.imobPlan?.toLowerCase() === "k2";
   const locIsK2 = showLoc && data.locPlan?.toLowerCase() === "k2";
+  const imobIsK = showImob && data.imobPlan?.toLowerCase() === "k";
+  const locIsK = showLoc && data.locPlan?.toLowerCase() === "k";
   const anyK2 = imobIsK2 || locIsK2;
+  const anyK = imobIsK || locIsK || anyK2;
   const bothK2 = imobIsK2 && locIsK2;
 
   const hasVip = data.vipIncluded || (data.vipPrice !== undefined && data.vipPrice > 0);
@@ -317,30 +314,46 @@ export async function generateProposalPDFClient(
   const komboLabel = komboDisplayMap[normalizedKombo] || rawKombo;
   const isKombo = komboDiscount > 0 || (komboLabel !== "" && normalizedKombo !== "sem_kombo");
 
+  const addonLabels = [
+    { key: "leads", label: "Leads" },
+    { key: "inteligencia", label: "Inteligência" },
+    { key: "assinatura", label: "Assinatura" },
+    { key: "pay", label: "Pay" },
+    { key: "seguros", label: "Seguros" },
+  ];
+  const activeAddons = addonLabels.filter(a => selAddons.includes(a.key));
+
   // Frequency
   const freqMap: Record<string, { label: string; adj: string }> = {
     monthly: { label: "Mensal", adj: "+25%" },
     mensal: { label: "Mensal", adj: "+25%" },
     semestral: { label: "Semestral", adj: "+11%" },
-    annual: { label: "Anual", adj: "0% (referência)" },
-    anual: { label: "Anual", adj: "0% (referência)" },
+    annual: { label: "Anual", adj: "referência" },
+    anual: { label: "Anual", adj: "referência" },
     bienal: { label: "Bienal", adj: "-10%" },
   };
   const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || freqMap["annual"];
 
+  // Premium benefit level: highest plan between IMOB and LOC
+  const planLevel = (plan?: string): number => {
+    const p = plan?.toLowerCase();
+    if (p === "k2") return 3;
+    if (p === "k") return 2;
+    if (p === "prime") return 1;
+    return 0;
+  };
+  const highestPlan = Math.max(planLevel(data.imobPlan), planLevel(data.locPlan));
+  const highestPlanLabel = highestPlan === 3 ? "K2" : highestPlan === 2 ? "K" : "Prime";
+
   // ════════════════════════════════════════════════════════════════
-  // PAGE 1 — COVER
+  // SECTION 1 — CAPA (full page, keep as-is)
   // ════════════════════════════════════════════════════════════════
   let Y = 0;
-
-  // Full white page, centered content
   const coverCenterX = PW / 2;
 
-  // Top accent line
   doc.setFillColor(...rgb(C.primary));
   doc.rect(0, 0, PW, 4, "F");
 
-  // Logo centered
   const LOGO_H = 32;
   const LOGO_W = LOGO_H * 3.48;
   try {
@@ -352,35 +365,29 @@ export async function generateProposalPDFClient(
     doc.text("Kenlo", coverCenterX, 200, { align: "center" });
   }
 
-  // "Proposta Comercial"
   doc.setFontSize(26);
   doc.setTextColor(...rgb(C.dark));
   doc.setFont("helvetica", "bold");
   doc.text("Proposta Comercial", coverCenterX, 260, { align: "center" });
 
-  // Thin divider
   doc.setDrawColor(...rgb(C.border));
   doc.setLineWidth(0.5);
   doc.line(coverCenterX - 60, 280, coverCenterX + 60, 280);
 
-  // Agency name
   doc.setFontSize(16);
   doc.setTextColor(...rgb(C.text));
   doc.setFont("helvetica", "normal");
   doc.text(data.agencyName || data.clientName, coverCenterX, 310, { align: "center" });
 
-  // Contact name
   doc.setFontSize(11);
   doc.setTextColor(...rgb(C.textMuted));
   doc.text(data.clientName, coverCenterX, 335, { align: "center" });
 
-  // Date
   const dateStr = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
   doc.setFontSize(10);
   doc.setTextColor(...rgb(C.textLight));
   doc.text(dateStr, coverCenterX, 370, { align: "center" });
 
-  // Seller info at bottom
   doc.setFontSize(8);
   doc.setTextColor(...rgb(C.textMuted));
   doc.setFont("helvetica", "normal");
@@ -395,241 +402,375 @@ export async function generateProposalPDFClient(
   if (data.vendorEmail) doc.text(data.vendorEmail, coverCenterX, PH - 90, { align: "center" });
   if (data.vendorPhone) doc.text(data.vendorPhone, coverCenterX, PH - 78, { align: "center" });
 
-  // Bottom accent line
   doc.setFillColor(...rgb(C.primary));
   doc.rect(0, PH - 4, PW, 4, "F");
 
   // ════════════════════════════════════════════════════════════════
-  // PAGE 2 — RESUMO DA CONFIGURAÇÃO (mini-calculator)
+  // SECTION 2 — RESUMO DA CONFIGURAÇÃO (single linear block)
   // ════════════════════════════════════════════════════════════════
   Y = newPage(doc, data);
+  Y = sectionTitle(doc, "Resumo da Configuração", Y);
 
-  Y = section(doc, "Resumo da sua Configuração", Y);
+  // Background block
+  const resumoStartY = Y;
+  // We'll draw the background after calculating height
+  let rY = Y + 12;
 
-  // Build summary cards row 1: Products + Plans
-  const CARD_W = (CW - GAP) / 2;
-  const CARD_H = 60;
-
-  // Card: Produtos
-  card(doc, M, Y, CARD_W, CARD_H, { selected: true });
-  label(doc, "PRODUTOS CONTRATADOS", M + 14, Y + 16, { size: 6, bold: true, color: C.primary });
+  // Line 1: Produto(s) + Plano(s)
   const prodParts: string[] = [];
   if (showImob) prodParts.push(`IMOB ${(data.imobPlan || "").toUpperCase()}`);
   if (showLoc) prodParts.push(`LOC ${(data.locPlan || "").toUpperCase()}`);
-  value(doc, prodParts.join("  +  "), M + 14, Y + 34, { size: 13, color: C.dark });
+  val(doc, prodParts.join("  +  "), M + 14, rY, { size: 14, color: C.dark });
+  rY += 18;
+
+  // Line 2: Kombo (only if selected)
   if (isKombo) {
-    const badgeText = komboDiscount > 0 ? `${komboLabel} (${komboDiscount}% OFF)` : komboLabel;
-    const bw = doc.getTextWidth(badgeText) * 0.85 + 14;
-    doc.setFillColor(...rgb(C.primary));
-    doc.roundedRect(M + 14, Y + 40, bw, 13, 3, 3, "F");
-    doc.setFontSize(7);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text(badgeText, M + 21, Y + 49);
-  }
-
-  // Card: Investimento
-  const cx2 = M + CARD_W + GAP;
-  card(doc, cx2, Y, CARD_W, CARD_H, { fill: C.bgSoft });
-  label(doc, "INVESTIMENTO MENSAL EQUIVALENTE", cx2 + 14, Y + 16, { size: 6, bold: true, color: C.textMuted });
-  value(doc, fmt(monthlyRecurring), cx2 + 14, Y + 36, { size: 16, color: C.dark });
-  label(doc, `${selFreq.label} (${selFreq.adj})`, cx2 + 14, Y + 50, { size: 7, color: C.textMuted });
-
-  Y += CARD_H + GAP;
-
-  // Row 2: Add-ons summary + Frequency
-  const CARD_H2 = 42;
-
-  // Card: Add-ons ativos
-  const addonLabels = [
-    { key: "leads", label: "Leads" },
-    { key: "inteligencia", label: "Inteligência" },
-    { key: "assinatura", label: "Assinatura" },
-    { key: "pay", label: "Pay" },
-    { key: "seguros", label: "Seguros" },
-  ];
-  const activeAddons = addonLabels.filter(a => selAddons.includes(a.key));
-
-  card(doc, M, Y, CARD_W, CARD_H2, { fill: C.bgSoft });
-  label(doc, "ADD-ONS ATIVOS", M + 14, Y + 14, { size: 6, bold: true, color: C.textMuted });
-  if (activeAddons.length > 0) {
-    const addonText = activeAddons.map(a => a.label).join("  |  ");
-    value(doc, addonText, M + 14, Y + 30, { size: 8, color: C.text });
-  } else {
-    label(doc, "Nenhum add-on selecionado", M + 14, Y + 30, { size: 8, color: C.textLight });
-  }
-
-  // Card: Frequência (simple reference — detailed breakdown in Section 5)
-  card(doc, cx2, Y, CARD_W, CARD_H2, { fill: C.bgSoft });
-  label(doc, "FREQUÊNCIA DE PAGAMENTO", cx2 + 14, Y + 14, { size: 6, bold: true, color: C.textMuted });
-  value(doc, selFreq.label, cx2 + 14, Y + 30, { size: 10, color: C.dark });
-
-  Y += CARD_H2 + GAP + 4;
-
-  // ════════════════════════════════════════════════════════════════
-  // SECTION 3 — PRODUTOS CONTRATADOS
-  // ════════════════════════════════════════════════════════════════
-  Y = section(doc, "Produtos Contratados", Y);
-
-  const PROD_CARD_H = 52;
-  const prodCards: { name: string; plan: string; desc: string; price: number }[] = [];
-  if (showImob) {
-    prodCards.push({
-      name: "Kenlo IMOB",
-      plan: (data.imobPlan || "K").toUpperCase(),
-      desc: "CRM + Site para vendas de imóveis",
-      price: data.imobPrice || 0,
-    });
-  }
-  if (showLoc) {
-    prodCards.push({
-      name: "Kenlo Locação",
-      plan: (data.locPlan || "K").toUpperCase(),
-      desc: "ERP para gestão de contratos de locação",
-      price: data.locPrice || 0,
-    });
-  }
-
-  const prodColW = prodCards.length === 1 ? CW : CARD_W;
-  prodCards.forEach((p, i) => {
-    const px = M + i * (prodColW + GAP);
-    card(doc, px, Y, prodColW, PROD_CARD_H, { selected: true });
-    value(doc, p.name, px + 14, Y + 18, { size: 10, color: C.dark });
-    // Plan badge
-    const planBadge = `Plano ${p.plan}`;
-    const pbw = doc.getTextWidth(planBadge) + 12;
-    const nameW = doc.getTextWidth(p.name);
-    doc.setFillColor(...rgb(C.primary));
-    doc.roundedRect(px + 18 + nameW, Y + 9, pbw, 14, 3, 3, "F");
-    doc.setFontSize(7);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text(planBadge, px + 24 + nameW, Y + 19);
-    // Description
-    label(doc, p.desc, px + 14, Y + 32, { size: 7, color: C.textMuted });
-    // Price
-    value(doc, fmt(p.price) + "/mês", px + prodColW - 14, Y + 44, { size: 9, color: C.text, align: "right" });
-  });
-
-  Y += PROD_CARD_H + GAP;
-
-  // Premium benefits note (when K2)
-  if (anyK2 || hasVip || hasCS) {
-    const PREM_H = bothK2 ? 50 : 38;
-    card(doc, M, Y, CW, PREM_H, { fill: C.blueLight, stroke: C.border });
-    label(doc, "BENEFÍCIOS PREMIUM", M + 14, Y + 14, { size: 6, bold: true, color: C.blue });
-    label(doc, "Ao contratar plano K ou K2 em qualquer produto, os benefícios premium são automaticamente estendidos a toda a operação (IMOB e LOCAÇÃO).", M + 14, Y + 26, { size: 7, color: C.text });
-    if (bothK2) {
-      label(doc, ">> Treinamentos acumulados: beneficios de ambos os planos K2 sao somados (4 online/ano ou 2 presenciais).", M + 14, Y + 38, { size: 7, color: C.blue, bold: true });
-    }
-    Y += PREM_H + GAP;
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // SECTION 4 — ADD-ONS CONTRATADOS
-  // ════════════════════════════════════════════════════════════════
-  if (activeAddons.length > 0) {
-    if (needsNewPage(Y, 120)) Y = newPage(doc, data);
-    Y = section(doc, "Add-ons Contratados", Y);
-
-    const ADDON_H = 40;
-    const addonMeta: Record<string, { desc: string; pricing: string }> = {
-      leads: { desc: "Automação de leads ativa independentemente do uso de WhatsApp", pricing: "Pré-pago mensal" },
-      inteligencia: { desc: "BI de KPIs e analytics avançado", pricing: "Pré-pago mensal" },
-      assinatura: { desc: "Assinatura digital embutida", pricing: "Pós-pago por uso" },
-      pay: { desc: "Boleto e Split digital embutido", pricing: "Direito do plano" },
-      seguros: { desc: "Seguros embutido no boleto", pricing: "Direito do plano" },
-    };
-
-    const cols = Math.min(activeAddons.length, 3);
-    const addonColW = (CW - (cols - 1) * 8) / cols;
-
-    activeAddons.forEach((a, i) => {
-      const row = Math.floor(i / 3);
-      const col = i % 3;
-      const ax = M + col * (addonColW + 8);
-      const ay = Y + row * (ADDON_H + 6);
-      const meta = addonMeta[a.key] || { desc: "", pricing: "" };
-      const price = addonPrices[a.key] || 0;
-
-      card(doc, ax, ay, addonColW, ADDON_H, { fill: C.bgSoft, stroke: C.border });
-      // Checkmark dot
-      doc.setFillColor(...rgb(C.green));
-      doc.circle(ax + 14, ay + 14, 4, "F");
-      doc.setFontSize(5);
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.text("v", ax + 12.5, ay + 16);
-
-      value(doc, `Kenlo ${a.label}`, ax + 24, ay + 16, { size: 8, color: C.dark });
-      label(doc, meta.desc, ax + 14, ay + 28, { size: 6, color: C.textMuted });
-      if (price > 0) {
-        value(doc, fmt(price) + "/mês", ax + addonColW - 10, ay + 16, { size: 7, color: C.text, align: "right" });
-      } else {
-        // Draw pricing label right-aligned (only once)
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textLight));
-        doc.setFont("helvetica", "normal");
-        doc.text(meta.pricing, ax + addonColW - 10, ay + 16, { align: "right" });
-      }
-    });
-
-    const addonRows = Math.ceil(activeAddons.length / 3);
-    Y += addonRows * (ADDON_H + 6) + GAP;
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // SECTION 5 — FREQUÊNCIA DE PAGAMENTO (once, before comparison)
-  // ════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 100)) Y = newPage(doc, data);
-  Y = section(doc, "Frequência de Pagamento", Y);
-
-  const FREQ_OPTIONS = [
-    { key: "monthly", label: "Mensal", adj: "+25%", color: C.textMuted },
-    { key: "semestral", label: "Semestral", adj: "+11%", color: C.textMuted },
-    { key: "annual", label: "Anual", adj: "0%", color: C.green },
-    { key: "bienal", label: "Bienal", adj: "-10%", color: C.green },
-  ];
-
-  const FREQ_W = (CW - 3 * 8) / 4;
-  const FREQ_H = 36;
-  FREQ_OPTIONS.forEach((f, i) => {
-    const fx = M + i * (FREQ_W + 8);
-    const isSelected = f.key === data.paymentPlan?.toLowerCase() ||
-      (f.key === "annual" && data.paymentPlan?.toLowerCase() === "anual") ||
-      (f.key === "monthly" && data.paymentPlan?.toLowerCase() === "mensal");
-    card(doc, fx, Y, FREQ_W, FREQ_H, { selected: isSelected, fill: isSelected ? undefined : C.bgSoft });
-    value(doc, f.label, fx + FREQ_W / 2, Y + 16, { size: 9, color: isSelected ? C.primary : C.text, align: "center" });
-    // Draw adj text centered (only once)
+    const komboText = komboDiscount > 0 ? `${komboLabel} (–${komboDiscount}%)` : komboLabel;
+    // Badge
     doc.setFontSize(8);
-    doc.setTextColor(...rgb(isSelected ? C.primary : f.color));
+    const bw = doc.getTextWidth(komboText) + 16;
+    doc.setFillColor(...rgb(C.primary));
+    doc.roundedRect(M + 14, rY - 8, bw, 14, 3, 3, "F");
+    doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.text(f.adj, fx + FREQ_W / 2, Y + 28, { align: "center" });
-  });
-  Y += FREQ_H + 6;
+    doc.text(komboText, M + 22, rY, {});
+    rY += 14;
+  }
 
-  label(doc, "Valores exibidos em base mensal equivalente. Planos mais longos geram economia.", M, Y + 4, { size: 6.5, color: C.textLight });
+  // Line 3: Add-ons ativos
+  if (activeAddons.length > 0) {
+    const addonText = "Add-ons: " + activeAddons.map(a => a.label).join(" | ");
+    lbl(doc, addonText, M + 14, rY, { size: 7.5, color: C.text });
+    rY += 12;
+  }
+
+  // Line 4: Frequência + Investimento mensal equivalente (TOGETHER)
+  val(doc, `${fmt(monthlyRecurring)} / mês`, M + 14, rY, { size: 12, color: C.primary });
+  lbl(doc, `  ·  Contrato ${selFreq.label.toLowerCase()} (${selFreq.adj})`, M + 14 + doc.getTextWidth(fmt(monthlyRecurring) + " / mês") * 1.33 + 4, rY, { size: 7.5, color: C.textMuted });
+  rY += 10;
+
+  // Draw background behind the resumo block
+  const resumoH = rY - resumoStartY + 4;
+  // Draw it behind (we need to re-draw since jsPDF doesn't support z-order easily)
+  // Instead, we'll draw a subtle left border
+  doc.setFillColor(...rgb(C.primaryLight));
+  doc.rect(M, resumoStartY, CW, resumoH, "F");
+  doc.setFillColor(...rgb(C.primary));
+  doc.rect(M, resumoStartY, 3, resumoH, "F");
+
+  // Re-draw text on top of background
+  rY = resumoStartY + 12;
+  val(doc, prodParts.join("  +  "), M + 14, rY, { size: 14, color: C.dark });
+  rY += 18;
+
+  if (isKombo) {
+    const komboText = komboDiscount > 0 ? `${komboLabel} (–${komboDiscount}%)` : komboLabel;
+    doc.setFontSize(8);
+    const bw = doc.getTextWidth(komboText) + 16;
+    doc.setFillColor(...rgb(C.primary));
+    doc.roundedRect(M + 14, rY - 8, bw, 14, 3, 3, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text(komboText, M + 22, rY, {});
+    rY += 14;
+  }
+
+  if (activeAddons.length > 0) {
+    const addonText = "Add-ons: " + activeAddons.map(a => a.label).join(" | ");
+    lbl(doc, addonText, M + 14, rY, { size: 7.5, color: C.text });
+    rY += 12;
+  }
+
+  // Price + frequency line
+  doc.setFontSize(12);
+  doc.setTextColor(...rgb(C.primary));
+  doc.setFont("helvetica", "bold");
+  const priceText = `${fmt(monthlyRecurring)} / mês`;
+  doc.text(priceText, M + 14, rY);
+  const priceWidth = doc.getTextWidth(priceText);
+  doc.setFontSize(7.5);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "normal");
+  doc.text(`  ·  Contrato ${selFreq.label.toLowerCase()} (${selFreq.adj})`, M + 14 + priceWidth + 4, rY);
+  rY += 10;
+
+  Y = rY + GAP;
+
+  // ════════════════════════════════════════════════════════════════
+  // SECTION 3 — DETALHAMENTO
+  // ════════════════════════════════════════════════════════════════
+  Y = sectionTitle(doc, "Detalhamento", Y);
+
+  lbl(doc, "Valores em base mensal equivalente para a frequência escolhida.", M + 10, Y, { size: 6.5, color: C.textLight });
+  Y += 12;
+
+  // Products
+  if (showImob && data.imobPrice !== undefined) {
+    tableRow(doc, `Kenlo IMOB — Plano ${(data.imobPlan || "K").toUpperCase()}`, fmt(data.imobPrice) + "/mês", Y);
+    Y += 14;
+  }
+  if (showLoc && data.locPrice !== undefined) {
+    tableRow(doc, `Kenlo Locação — Plano ${(data.locPlan || "K").toUpperCase()}`, fmt(data.locPrice) + "/mês", Y);
+    Y += 14;
+  }
+
+  // Add-ons with prices
+  const addonNameMap: Record<string, string> = {
+    leads: "Kenlo Leads", inteligencia: "Kenlo Inteligência",
+    assinatura: "Kenlo Assinatura", pay: "Kenlo Pay", seguros: "Kenlo Seguros",
+  };
+  const paidAddons = Object.entries(addonPrices).filter(([_, p]) => p > 0);
+  for (const [key, price] of paidAddons) {
+    tableRow(doc, addonNameMap[key] || key, fmt(price) + "/mês", Y);
+    Y += 14;
+  }
+
+  // VIP / CS (if applicable)
+  if (hasVip) {
+    const vipVal = data.vipIncluded ? "Incluído" : fmt(data.vipPrice || 97) + "/mês";
+    tableRow(doc, "Suporte VIP", vipVal, Y, { valueColor: data.vipIncluded ? C.green : C.text });
+    Y += 14;
+  }
+  if (hasCS) {
+    const csVal = data.csIncluded ? "Incluído" : fmt(data.csPrice || 197) + "/mês";
+    tableRow(doc, "CS Dedicado", csVal, Y, { valueColor: data.csIncluded ? C.green : C.text });
+    Y += 14;
+  }
+
+  // K2 Training
+  if (anyK2) {
+    const trainText = bothK2
+      ? "Treinamentos (4 Online ou 2 Presenciais)"
+      : "Treinamentos (2 Online ou 1 Presencial)";
+    tableRow(doc, trainText, "Incluído", Y, { valueColor: C.green });
+    Y += 14;
+  }
+
+  // Divider before totals
+  Y += 2;
+  divider(doc, Y);
+  Y += 10;
+
+  // Total mensal
+  doc.setFontSize(9);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Total Mensal Equivalente", M + 14, Y);
+  doc.text(fmt(monthlyRecurring), M + CW - 14, Y, { align: "right" });
   Y += 16;
 
+  // Implantação
+  tableRow(doc, "Implantação (pagamento único)", fmt(data.implantationFee), Y);
+  Y += 10;
+  lbl(doc, "Custo único, não recorrente — não entra no cálculo do ROI mensal.", M + 14, Y, { size: 5.5, color: C.textLight });
+  Y += 14;
+
+  // Payment condition with installment breakdown
+  const normPlan = data.paymentPlan?.toLowerCase() || "annual";
+  doc.setFontSize(7.5);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Condição de Pagamento", M + 14, Y);
+  Y += 12;
+
+  if (normPlan === "monthly" || normPlan === "mensal") {
+    lbl(doc, `Cobrado mensalmente: ${fmt(data.totalMonthly || installmentValue)}/mês`, M + 14, Y, { size: 7.5, color: C.text });
+    Y += 14;
+  } else if (normPlan === "semestral") {
+    lbl(doc, `Pago semestralmente: ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`, M + 14, Y, { size: 7.5, color: C.text });
+    Y += 14;
+  } else {
+    // Annual or Bienal — show installment pills
+    const periodLabel = normPlan === "bienal" ? "bienal (24 meses)" : "anual";
+    const maxInstallments = normPlan === "bienal" ? 6 : 3;
+    const PILL_W = (CW - 28 - (maxInstallments - 1) * 6) / maxInstallments;
+    const PILL_H = 28;
+
+    for (let n = 1; n <= maxInstallments; n++) {
+      const px = M + 14 + (n - 1) * (PILL_W + 6);
+      const isSel = n === installments;
+      if (isSel) {
+        doc.setFillColor(...rgb(C.primary));
+      } else {
+        doc.setFillColor(...rgb(C.bgSoft));
+      }
+      doc.roundedRect(px, Y, PILL_W, PILL_H, 4, 4, "F");
+      if (isSel) {
+        doc.setDrawColor(...rgb(C.primary));
+        doc.roundedRect(px, Y, PILL_W, PILL_H, 4, 4, "S");
+      }
+      const pillLabel = n === 1 ? "À vista" : `${n}x`;
+      doc.setFontSize(6.5);
+      doc.setTextColor(...rgb(isSel ? "#FFFFFF" : C.text));
+      doc.setFont("helvetica", isSel ? "bold" : "normal");
+      doc.text(pillLabel, px + PILL_W / 2, Y + 10, { align: "center" });
+      const pillValue = fmt(totalInvestment / n);
+      doc.setFontSize(6);
+      doc.setTextColor(...rgb(isSel ? "#FFFFFF" : C.textMuted));
+      doc.setFont("helvetica", "normal");
+      doc.text(pillValue, px + PILL_W / 2, Y + 20, { align: "center" });
+    }
+    Y += PILL_H + 4;
+    lbl(doc, `Pagamento ${periodLabel} — Total: ${fmt(totalInvestment)}`, M + 14, Y, { size: 6, color: C.textMuted });
+    Y += 14;
+  }
+
+  Y += GAP;
+
   // ════════════════════════════════════════════════════════════════
-  // SECTION 6 — SELEÇÃO vs KOMBOS (comparison table)
+  // SECTION 4 — BENEFÍCIOS INCLUSOS
+  // ════════════════════════════════════════════════════════════════
+  if (anyK || hasVip || hasCS) {
+    if (needsNewPage(Y, 120)) Y = newPage(doc, data);
+    Y = sectionTitle(doc, "Benefícios Inclusos", Y);
+
+    // Propagation rule explanation
+    if (showImob && showLoc) {
+      lbl(doc, `Nível de benefício: determinado pelo maior plano contratado (${highestPlanLabel}). Benefícios premium se propagam para todos os produtos.`, M + 10, Y, { size: 6.5, color: C.textMuted });
+      Y += 12;
+    }
+
+    // VIP
+    const vipStatus = hasVip ? (data.vipIncluded ? "Incluído no plano" : "Contratado") : "Não contratado";
+    const vipColor = hasVip ? (data.vipIncluded ? C.green : C.text) : C.textLight;
+    doc.setFontSize(7.5);
+    doc.setTextColor(...rgb(C.dark));
+    doc.setFont("helvetica", "bold");
+    doc.text("Suporte VIP", M + 14, Y);
+    doc.setTextColor(...rgb(vipColor));
+    doc.setFont("helvetica", "normal");
+    doc.text(vipStatus, M + CW - 14, Y, { align: "right" });
+    Y += 10;
+    lbl(doc, "Atendimento prioritário com SLA reduzido para chamados críticos.", M + 14, Y, { size: 6, color: C.textMuted });
+    Y += 14;
+
+    // CS Dedicado
+    const csStatus = hasCS ? (data.csIncluded ? "Incluído no plano" : "Contratado") : "Não contratado";
+    const csColor = hasCS ? (data.csIncluded ? C.green : C.text) : C.textLight;
+    doc.setFontSize(7.5);
+    doc.setTextColor(...rgb(C.dark));
+    doc.setFont("helvetica", "bold");
+    doc.text("CS Dedicado", M + 14, Y);
+    doc.setTextColor(...rgb(csColor));
+    doc.setFont("helvetica", "normal");
+    doc.text(csStatus, M + CW - 14, Y, { align: "right" });
+    Y += 10;
+    lbl(doc, "Customer Success dedicado para acompanhamento estratégico da operação.", M + 14, Y, { size: 6, color: C.textMuted });
+    Y += 14;
+
+    // Treinamentos
+    if (anyK2) {
+      divider(doc, Y - 4);
+      Y += 6;
+      doc.setFontSize(7.5);
+      doc.setTextColor(...rgb(C.dark));
+      doc.setFont("helvetica", "bold");
+      doc.text("Treinamentos Inclusos", M + 14, Y);
+      Y += 12;
+
+      if (bothK2) {
+        // Both K2: accumulated
+        tableRow(doc, "Treinamento Online (4 sessões)", "Ref: R$ 2.000 cada", Y, { valueColor: C.green });
+        Y += 12;
+        tableRow(doc, "Treinamento Presencial (2 sessões)", "Ref: R$ 3.000 cada", Y, { valueColor: C.green });
+        Y += 10;
+        lbl(doc, "Benefícios acumulados: IMOB K2 + LOC K2 somam treinamentos.", M + 14, Y, { size: 6, color: C.blue, bold: true });
+        Y += 12;
+      } else {
+        // Single K2
+        tableRow(doc, "Treinamento Online (2 sessões)", "Ref: R$ 2.000 cada", Y, { valueColor: C.green });
+        Y += 12;
+        tableRow(doc, "Treinamento Presencial (1 sessão)", "Ref: R$ 3.000", Y, { valueColor: C.green });
+        Y += 12;
+      }
+    }
+
+    Y += GAP;
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // SECTION 5 — VARIÁVEIS (PÓS-PAGO) — only if relevant
+  // ════════════════════════════════════════════════════════════════
+  if (hasPostPaid && ppBreakdown) {
+    if (needsNewPage(Y, 100)) Y = newPage(doc, data);
+    Y = sectionTitle(doc, "Custos Variáveis (Pós-pago)", Y);
+
+    lbl(doc, "Cobrado apenas pelo uso excedente ao incluído no plano.", M + 10, Y, { size: 6.5, color: C.textMuted });
+    Y += 12;
+
+    const renderGroup = (group: PostPaidGroup) => {
+      // Group header
+      lbl(doc, group.groupLabel, M + 14, Y, { size: 7, bold: true, color: C.dark });
+      Y += 12;
+      for (const item of group.items) {
+        if (needsNewPage(Y, 30)) Y = newPage(doc, data);
+        doc.setFontSize(7);
+        doc.setTextColor(...rgb(C.text));
+        doc.setFont("helvetica", "normal");
+        doc.text(`${item.label}: ${fmtNum(item.included)} incluídos, ${fmtNum(item.additional)} adicionais`, M + 20, Y);
+        doc.setTextColor(...rgb(C.dark));
+        doc.setFont("helvetica", "bold");
+        doc.text(fmt(item.total) + "/mês", M + CW - 14, Y, { align: "right" });
+        Y += 11;
+      }
+      Y += 4;
+    };
+
+    if (ppBreakdown.imobAddons) renderGroup(ppBreakdown.imobAddons);
+    if (ppBreakdown.locAddons) renderGroup(ppBreakdown.locAddons);
+    if (ppBreakdown.sharedAddons) renderGroup(ppBreakdown.sharedAddons);
+
+    // Total pós-pago
+    divider(doc, Y);
+    Y += 10;
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.dark));
+    doc.setFont("helvetica", "bold");
+    doc.text("Total Variável Estimado", M + 14, Y);
+    doc.text(fmt(data.postPaidTotal || 0) + "/mês", M + CW - 14, Y, { align: "right" });
+    Y += GAP + 6;
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // SECTION 6 — SUA SELEÇÃO vs KOMBOS
   // ════════════════════════════════════════════════════════════════
   if (komboComparison.length > 0) {
-    // Estimate table height: header + current row + all kombo rows
     const estRows = 2 + komboComparison.length;
-    const estHeight = estRows * 22 + 30;
+    const estHeight = estRows * 22 + 80; // extra for frequency bar
     if (needsNewPage(Y, estHeight)) Y = newPage(doc, data);
-    Y = section(doc, "Sua Sele\u00e7\u00e3o vs Kombos", Y);
+    Y = sectionTitle(doc, "Sua Seleção vs Kombos", Y);
 
-    // Table config
+    // Frequency bar at TOP of this section (per prompt requirement)
+    const FREQ_OPTIONS = [
+      { key: "monthly", label: "Mensal", adj: "+25%", color: C.textMuted },
+      { key: "semestral", label: "Semestral", adj: "+11%", color: C.textMuted },
+      { key: "annual", label: "Anual", adj: "0%", color: C.green },
+      { key: "bienal", label: "Bienal", adj: "-10%", color: C.green },
+    ];
+
+    const FREQ_W = (CW - 3 * 8) / 4;
+    const FREQ_H = 30;
+    FREQ_OPTIONS.forEach((f, i) => {
+      const fx = M + i * (FREQ_W + 8);
+      const isSelected = f.key === data.paymentPlan?.toLowerCase() ||
+        (f.key === "annual" && data.paymentPlan?.toLowerCase() === "anual") ||
+        (f.key === "monthly" && data.paymentPlan?.toLowerCase() === "mensal");
+      card(doc, fx, Y, FREQ_W, FREQ_H, { selected: isSelected, fill: isSelected ? undefined : C.bgSoft });
+      val(doc, f.label, fx + FREQ_W / 2, Y + 13, { size: 8, color: isSelected ? C.primary : C.text, align: "center" });
+      doc.setFontSize(7);
+      doc.setTextColor(...rgb(isSelected ? C.primary : f.color));
+      doc.setFont("helvetica", "bold");
+      doc.text(f.adj, fx + FREQ_W / 2, Y + 24, { align: "center" });
+    });
+    Y += FREQ_H + 10;
+
+    // Comparison table
     const TBL_W = CW;
     const COL_NAME_W = TBL_W * 0.35;
     const COL_DISC_W = TBL_W * 0.15;
     const COL_TOTAL_W = TBL_W * 0.25;
-    const COL_SAVE_W = TBL_W * 0.25;
     const ROW_H = 22;
 
-    // Helper to draw table header row
     const drawTableHeader = () => {
       doc.setFillColor(...rgb(C.dark));
       doc.roundedRect(M, Y, TBL_W, ROW_H, 3, 3, "F");
@@ -640,45 +781,36 @@ export async function generateProposalPDFClient(
       doc.text("Kombo", M + 10, Y + 14);
       doc.text("Desconto", M + COL_NAME_W + 10, Y + 14);
       doc.text("Mensal Equiv.", M + COL_NAME_W + COL_DISC_W + 10, Y + 14);
-      doc.text("Economia/m\u00eas", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
+      doc.text("Economia/mês", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
       Y += ROW_H;
     };
 
-    // Draw initial header
-    console.log('[PDF-DEBUG] Before drawTableHeader, Y=', Y, 'page=', doc.getNumberOfPages());
     drawTableHeader();
-    console.log('[PDF-DEBUG] After drawTableHeader, Y=', Y);
 
-    // "Sua sele\u00e7\u00e3o" row (current)
+    // "Sua seleção" row
     doc.setFillColor(...rgb(C.primaryLight));
     doc.rect(M, Y, TBL_W, ROW_H, "F");
     divider(doc, Y + ROW_H);
     doc.setFontSize(7);
     doc.setTextColor(...rgb(C.primary));
     doc.setFont("helvetica", "bold");
-    doc.text(isKombo ? `> ${komboLabel}` : "> Sua Selecao Atual", M + 10, Y + 14);
+    doc.text(isKombo ? `▸ ${komboLabel}` : "▸ Sua Seleção Atual", M + 10, Y + 14);
     doc.setTextColor(...rgb(C.dark));
-    doc.text(komboDiscount > 0 ? `${komboDiscount}%` : "-", M + COL_NAME_W + 10, Y + 14);
+    doc.text(komboDiscount > 0 ? `${komboDiscount}%` : "—", M + COL_NAME_W + 10, Y + 14);
     doc.text(fmt(monthlyRecurring), M + COL_NAME_W + COL_DISC_W + 10, Y + 14);
     doc.setTextColor(...rgb(C.green));
     doc.text("Selecionado", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
     Y += ROW_H;
 
-    // Other kombos (skip current selection AND "Sem Kombo" when no kombo is selected)
-    console.log('[PDF-DEBUG] Before kombo loop, Y=', Y, 'komboComparison.length=', komboComparison.length, 'normalizedKombo=', normalizedKombo, 'isKombo=', isKombo);
+    // Other kombos
     let renderedIdx = 0;
     komboComparison.forEach((k) => {
       const kNorm = k.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_");
-      // Skip the current kombo selection
       if (kNorm === normalizedKombo) return;
-      // Skip "Sem Kombo" when user selected "Sua Sele\u00e7\u00e3o" (no kombo) to avoid redundancy
       if (!isKombo && kNorm === "sem_kombo") return;
 
-      // Page break check per row — re-draw header on new page
       if (needsNewPage(Y, ROW_H + 4)) {
-        console.log('[PDF-DEBUG] PAGE BREAK at row', k.name, 'Y=', Y, 'page=', doc.getNumberOfPages());
         Y = newPage(doc, data);
-        console.log('[PDF-DEBUG] After newPage, Y=', Y, 'page=', doc.getNumberOfPages());
         drawTableHeader();
       }
 
@@ -697,346 +829,141 @@ export async function generateProposalPDFClient(
       if (k.savings > 0) {
         doc.setTextColor(...rgb(C.green));
         doc.setFont("helvetica", "bold");
-        doc.text(`${fmt(k.savings)}/m\u00eas`, M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
+        doc.text(`${fmt(k.savings)}/mês`, M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
       } else {
         doc.setTextColor(...rgb(C.textLight));
-        doc.text("-", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
+        doc.text("—", M + COL_NAME_W + COL_DISC_W + COL_TOTAL_W + 10, Y + 14);
       }
       Y += ROW_H;
       renderedIdx++;
-      console.log('[PDF-DEBUG] Rendered row', k.name, 'Y=', Y);
     });
-    console.log('[PDF-DEBUG] After kombo loop, Y=', Y, 'renderedIdx=', renderedIdx, 'page=', doc.getNumberOfPages());
 
     Y += GAP;
   }
 
   // ════════════════════════════════════════════════════════════════
-  // SECTION 7 — KENLO RECEITA EXTRA (value proof)
+  // SECTION 7 — KENLO RECEITA EXTRA + ROI
   // ════════════════════════════════════════════════════════════════
   if (hasRevenue) {
     if (needsNewPage(Y, 180)) Y = newPage(doc, data);
-    Y = section(doc, "Kenlo Receita Extra", Y);
+    Y = sectionTitle(doc, "Kenlo Receita Extra", Y);
 
-    label(doc, "Pay e Seguros são direitos do plano. O uso é opcional e ativado durante o onboarding, conforme sua estratégia operacional.", M + 10, Y, { size: 6.5, color: C.textMuted });
+    lbl(doc, "Pay e Seguros ficam disponíveis por padrão. O uso é habilitado no onboarding.", M + 10, Y, { size: 6.5, color: C.textMuted });
     Y += 10;
-    label(doc, "Os valores abaixo consideram o modelo informado pelo cliente durante a simulação (quem paga boleto, split e respectivos valores).", M + 10, Y, { size: 6, color: C.textLight });
+    lbl(doc, "Seguros: receita para a imobiliária a partir de R$ 10 por contrato/mês.", M + 10, Y, { size: 6.5, color: C.textMuted });
     Y += 14;
 
-    // Pay card
-    const REV_W = CARD_W;
-    const REV_H = 80;
-
+    // Pay revenue
     if ((data.revenueFromBoletos || 0) > 0) {
-      card(doc, M, Y, REV_W, REV_H, { fill: C.greenLight, stroke: C.greenBorder });
-      label(doc, "KENLO PAY", M + 14, Y + 16, { size: 7, bold: true, color: C.green });
-      label(doc, "Receita de boletos e split digital", M + 14, Y + 26, { size: 6.5, color: C.textMuted });
+      doc.setFontSize(7.5);
+      doc.setTextColor(...rgb(C.dark));
+      doc.setFont("helvetica", "bold");
+      doc.text("Kenlo Pay", M + 14, Y);
+      doc.setTextColor(...rgb(C.green));
+      doc.text(`+ ${fmt(data.revenueFromBoletos || 0)}/mês`, M + CW - 14, Y, { align: "right" });
+      Y += 10;
 
-      let detY = Y + 38;
       if (data.chargesBoletoToTenant && data.boletoAmount && data.boletoAmount > 0) {
-        label(doc, `Boleto cobrado do inquilino: ${fmt(data.boletoAmount)}`, M + 14, detY, { size: 6.5, color: C.text });
-        detY += 9;
-        const boletoRev = (data.contracts || 0) * data.boletoAmount;
-        label(doc, `${fmtNum(data.contracts || 0)} contratos × ${fmt(data.boletoAmount)} = ${fmt(boletoRev)}`, M + 14, detY, { size: 6, color: C.textMuted });
-        detY += 9;
+        lbl(doc, `Boleto: ${fmtNum(data.contracts || 0)} contratos × ${fmt(data.boletoAmount)} = ${fmt((data.contracts || 0) * data.boletoAmount)}`, M + 20, Y, { size: 6.5, color: C.textMuted });
+        Y += 9;
       }
       if (data.chargesSplitToOwner && data.splitAmount && data.splitAmount > 0) {
-        label(doc, `Split cobrado do proprietário: ${fmt(data.splitAmount)}`, M + 14, detY, { size: 6.5, color: C.text });
-        detY += 9;
-        const splitRev = (data.contracts || 0) * data.splitAmount;
-        label(doc, `${fmtNum(data.contracts || 0)} contratos × ${fmt(data.splitAmount)} = ${fmt(splitRev)}`, M + 14, detY, { size: 6, color: C.textMuted });
+        lbl(doc, `Split: ${fmtNum(data.contracts || 0)} contratos × ${fmt(data.splitAmount)} = ${fmt((data.contracts || 0) * data.splitAmount)}`, M + 20, Y, { size: 6.5, color: C.textMuted });
+        Y += 9;
       }
-
-      value(doc, `+ ${fmt(data.revenueFromBoletos || 0)}/mês`, M + REV_W - 14, Y + REV_H - 12, { size: 11, color: C.green, align: "right" });
+      Y += 4;
     }
 
-    // Seguros card
+    // Seguros revenue
     if ((data.revenueFromInsurance || 0) > 0) {
-      const sx = M + REV_W + GAP;
-      card(doc, sx, Y, REV_W, REV_H, { fill: C.greenLight, stroke: C.greenBorder });
-      label(doc, "KENLO SEGUROS", sx + 14, Y + 16, { size: 7, bold: true, color: C.green });
-      label(doc, "Seguros embutido no boleto de locação", sx + 14, Y + 26, { size: 6.5, color: C.textMuted });
-      label(doc, "Ganho mínimo: R$ 10,00 por contrato/mês", sx + 14, Y + 38, { size: 6.5, color: C.text });
-      label(doc, `${fmtNum(data.contracts || 0)} contratos × R$ 10,00 = ${fmt(data.revenueFromInsurance || 0)}`, sx + 14, Y + 48, { size: 6, color: C.textMuted });
-      value(doc, `+ ${fmt(data.revenueFromInsurance || 0)}/mês`, sx + REV_W - 14, Y + REV_H - 12, { size: 11, color: C.green, align: "right" });
+      doc.setFontSize(7.5);
+      doc.setTextColor(...rgb(C.dark));
+      doc.setFont("helvetica", "bold");
+      doc.text("Kenlo Seguros", M + 14, Y);
+      doc.setTextColor(...rgb(C.green));
+      doc.text(`+ ${fmt(data.revenueFromInsurance || 0)}/mês`, M + CW - 14, Y, { align: "right" });
+      Y += 10;
+      lbl(doc, `${fmtNum(data.contracts || 0)} contratos × R$ 10,00 = ${fmt(data.revenueFromInsurance || 0)}`, M + 20, Y, { size: 6.5, color: C.textMuted });
+      Y += 14;
     }
 
-    Y += REV_H + GAP;
-  }
-
-  // ════════════════════════════════════════════════════════════════
-  // SECTION 8 — INVESTIMENTO TOTAL
-  // ════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 260)) Y = newPage(doc, data);
-  Y = section(doc, "Investimento Total", Y);
-
-  // Fixed costs card — calculate dynamic height
-  // Base: header(14) + sub-header(14) + divider(14) + total(16) + implantation(20) + payment label(12) + padding(14)
-  let dynH = 14 + 14 + 14 + 16 + 20 + 12 + 14;
-  // Product lines
-  if (showImob && data.imobPrice !== undefined) dynH += 12;
-  if (showLoc && data.locPrice !== undefined) dynH += 12;
-  // Add-on lines
-  const paidAddonsCount = Object.entries(parseAddonPrices(data.addonPrices)).filter(([_, p]) => p > 0).length;
-  dynH += paidAddonsCount * 12;
-  // VIP / CS / K2
-  if (hasVip) dynH += 12;
-  if (hasCS) dynH += 12;
-  if (anyK2) dynH += 12;
-  // Payment condition height
-  const normPlanEst = data.paymentPlan?.toLowerCase() || "annual";
-  if (normPlanEst === "monthly" || normPlanEst === "mensal" || normPlanEst === "semestral") {
-    dynH += 12; // single line
-  } else {
-    dynH += 28 + 4 + 10; // pills(28) + gap(4) + total label(10)
-  }
-  const INV_H = Math.max(dynH, 140);
-  card(doc, M, Y, CW, INV_H, { fill: C.bgSoft, stroke: C.border });
-
-  let iY = Y + 14;
-
-  // Sub-header: Custos Fixos (Pré-pago)
-  label(doc, "CUSTOS FIXOS (PRÉ-PAGO)", M + 14, iY, { size: 7, bold: true, color: C.dark });
-  iY += 14;
-
-  // Product lines
-  if (showImob && data.imobPrice !== undefined) {
-    label(doc, `Kenlo IMOB - ${(data.imobPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
-    value(doc, fmt(data.imobPrice), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
-    iY += 12;
-  }
-  if (showLoc && data.locPrice !== undefined) {
-    label(doc, `Kenlo Locacao - ${(data.locPlan || "K").toUpperCase()}`, M + 14, iY, { size: 7, color: C.text });
-    value(doc, fmt(data.locPrice), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
-    iY += 12;
-  }
-
-  // Add-on lines
-  const paidAddons = Object.entries(addonPrices).filter(([_, p]) => p > 0);
-  const addonNameMap: Record<string, string> = {
-    leads: "Kenlo Leads", inteligencia: "Kenlo Inteligência",
-    assinatura: "Kenlo Assinatura", pay: "Kenlo Pay", seguros: "Kenlo Seguros",
-  };
-  for (const [key, price] of paidAddons) {
-    label(doc, addonNameMap[key] || key, M + 14, iY, { size: 7, color: C.text });
-    value(doc, fmt(price), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
-    iY += 12;
-  }
-
-  // VIP / CS
-  if (hasVip) {
-    const vipVal = data.vipIncluded ? "Incluído" : fmt(data.vipPrice || 97);
-    label(doc, "Suporte VIP", M + 14, iY, { size: 7, color: C.text });
-    value(doc, vipVal, M + CW - 14, iY, { size: 7, color: data.vipIncluded ? C.green : C.text, align: "right" });
-    iY += 12;
-  }
-  if (hasCS) {
-    const csVal = data.csIncluded ? "Incluído" : fmt(data.csPrice || 197);
-    label(doc, "CS Dedicado", M + 14, iY, { size: 7, color: C.text });
-    value(doc, csVal, M + CW - 14, iY, { size: 7, color: data.csIncluded ? C.green : C.text, align: "right" });
-    iY += 12;
-  }
-
-  // K2 Training
-  if (anyK2) {
-    const trainText = bothK2
-      ? "4 Treinamentos Online ou 2 Presenciais"
-      : "2 Treinamentos Online ou 1 Presencial";
-    label(doc, trainText, M + 14, iY, { size: 7, color: C.text });
-    value(doc, "Incluído", M + CW - 14, iY, { size: 7, color: C.green, align: "right" });
-    iY += 12;
-  }
-
-  // Divider before totals
-  iY += 4;
-  divider(doc, iY, M + 10, M + CW - 10);
-  iY += 10;
-
-  // Total mensal
-  label(doc, "Total Mensal Equivalente", M + 14, iY, { size: 8, bold: true, color: C.dark });
-  value(doc, fmt(monthlyRecurring), M + CW - 14, iY, { size: 10, color: C.dark, align: "right" });
-  iY += 16;
-
-  // Implantação
-  label(doc, "Implantação (única vez)", M + 14, iY, { size: 7, color: C.text });
-  value(doc, fmt(data.implantationFee), M + CW - 14, iY, { size: 7, color: C.text, align: "right" });
-  iY += 10;
-  label(doc, "A implantação é um custo único e não recorrente, por isso não entra no cálculo do ROI mensal.", M + 14, iY, { size: 5.5, color: C.textLight });
-  iY += 10;
-
-  // Payment condition with installment breakdown
-  const normPlan = data.paymentPlan?.toLowerCase() || "annual";
-  label(doc, "Condi\u00e7\u00e3o de Pagamento", M + 14, iY, { size: 7, bold: true, color: C.dark });
-  iY += 12;
-
-  if (normPlan === "monthly" || normPlan === "mensal") {
-    label(doc, `Cobrado mensalmente: ${fmt(data.totalMonthly || installmentValue)}/mes`, M + 14, iY, { size: 7, color: C.text });
-  } else if (normPlan === "semestral") {
-    label(doc, `Pago semestralmente: ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`, M + 14, iY, { size: 7, color: C.text });
-  } else {
-    // Annual or Bienal — show installment breakdown
-    const periodLabel = normPlan === "bienal" ? "bienal (24 meses)" : "anual";
-    const maxInstallments = normPlan === "bienal" ? 6 : 3;
-    const PILL_W = (CW - 28 - (maxInstallments - 1) * 6) / maxInstallments;
-    const PILL_H = 28;
-
-    for (let n = 1; n <= maxInstallments; n++) {
-      const px = M + 14 + (n - 1) * (PILL_W + 6);
-      const isSel = n === installments;
-      // Pill background
-      if (isSel) {
-        doc.setFillColor(...rgb(C.primary));
-      } else {
-        doc.setFillColor(...rgb(C.bgSoft));
-      }
-      doc.roundedRect(px, iY, PILL_W, PILL_H, 4, 4, "F");
-      if (isSel) {
-        doc.setDrawColor(...rgb(C.primary));
-        doc.roundedRect(px, iY, PILL_W, PILL_H, 4, 4, "S");
-      }
-
-      // Label (e.g., "1x" or "A vista")
-      const pillLabel = n === 1 ? "A vista" : `${n}x`;
-      doc.setFontSize(6.5);
-      doc.setTextColor(...rgb(isSel ? "#FFFFFF" : C.text));
-      doc.setFont("helvetica", isSel ? "bold" : "normal");
-      doc.text(pillLabel, px + PILL_W / 2, iY + 10, { align: "center" });
-
-      // Value
-      const pillValue = fmt(totalInvestment / n);
-      doc.setFontSize(6);
-      doc.setTextColor(...rgb(isSel ? "#FFFFFF" : C.textMuted));
-      doc.setFont("helvetica", "normal");
-      doc.text(pillValue, px + PILL_W / 2, iY + 20, { align: "center" });
-    }
-    iY += PILL_H + 4;
-    label(doc, `Pagamento ${periodLabel} - Total: ${fmt(totalInvestment)}`, M + 14, iY, { size: 6, color: C.textMuted });
-  }
-
-  Y += INV_H + GAP;
-
-  // Variable costs card (if post-paid exists)
-  if (hasPostPaid) {
-    const VAR_H = 50;
-    card(doc, M, Y, CW, VAR_H, { fill: C.bgSoft, stroke: C.border });
-    label(doc, "CUSTOS VARIÁVEIS (PÓS-PAGO ESTIMADO)", M + 14, Y + 14, { size: 7, bold: true, color: C.dark });
-    label(doc, "Sem surpresas - so o que voce usar alem do incluido no plano.", M + 14, Y + 26, { size: 6.5, color: C.textMuted });
-    value(doc, fmt(data.postPaidTotal || 0) + "/mês", M + CW - 14, Y + 38, { size: 9, color: C.text, align: "right" });
-    Y += VAR_H + GAP;
-  }
-
-  // Net gain summary (if revenue exists)
-  if (hasRevenue) {
+    // Net gain summary
     const totalRevenue = (data.revenueFromBoletos || 0) + (data.revenueFromInsurance || 0);
     const netGain = data.netGain || totalRevenue - monthlyRecurring - (data.postPaidTotal || 0);
     const isPositive = netGain > 0;
 
-    if (needsNewPage(Y, 100)) Y = newPage(doc, data);
+    divider(doc, Y);
+    Y += 12;
 
-    const NET_H = 60;
-    card(doc, M, Y, CW, NET_H, {
-      fill: isPositive ? C.greenLight : "#FEF2F2",
-      stroke: isPositive ? C.greenBorder : "#FCA5A5",
-      lw: 1.5,
-    });
-
-    value(doc, "Ganho Líquido Mensal Estimado", M + CW / 2, Y + 18, { size: 9, color: C.dark, align: "center" });
-
-    doc.setFontSize(22);
-    doc.setTextColor(...rgb(isPositive ? C.green : "#EF4444"));
+    // Net gain line
+    doc.setFontSize(10);
+    doc.setTextColor(...rgb(C.dark));
     doc.setFont("helvetica", "bold");
-    doc.text(fmt(netGain), M + CW / 2, Y + 42, { align: "center" });
-
-    // Draw subtitle centered (only once)
-    const subtitleText = isPositive
+    doc.text("Ganho Líquido Mensal Estimado", M + 14, Y);
+    doc.setFontSize(14);
+    doc.setTextColor(...rgb(isPositive ? C.green : "#EF4444"));
+    doc.text(fmt(netGain), M + CW - 14, Y, { align: "right" });
+    Y += 8;
+    lbl(doc, isPositive
       ? "Receita extra supera o investimento na plataforma"
-      : "Investimento na plataforma supera receita extra";
-    doc.setFontSize(6.5);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text(subtitleText, M + CW / 2, Y + 54, { align: "center" });
+      : "Investimento na plataforma supera receita extra",
+      M + 14, Y, { size: 6, color: C.textMuted });
+    Y += 16;
 
-    Y += NET_H + 6;
-
-    // ROI indicators — always shown when revenue exists (positive or negative)
+    // ROI indicators
     if (monthlyRecurring > 0) {
       const totalCost = monthlyRecurring + (data.postPaidTotal || 0);
       const IND_W = (CW - 16) / 3;
       const IND_H = 44;
 
+      if (needsNewPage(Y, IND_H + 20)) Y = newPage(doc, data);
+
       if (isPositive) {
-        // POSITIVE: show ROI %, Payback, Annual Gain
         const roiPercent = ((totalRevenue / monthlyRecurring) * 100 - 100).toFixed(0);
         const paybackMonths = monthlyRecurring > 0 ? Math.ceil((data.implantationFee || 0) / netGain) : 0;
         const annualGain = netGain * 12;
 
-        // ROI
         card(doc, M, Y, IND_W, IND_H, { fill: C.bgSoft });
-        value(doc, `${roiPercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("ROI (Receita vs Investimento)", M + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, `${roiPercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
+        lbl(doc, "ROI (Receita vs Investimento)", M + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
+        doc.text("", 0, 0); // reset
 
-        // Payback
         const px = M + IND_W + 8;
         card(doc, px, Y, IND_W, IND_H, { fill: C.bgSoft });
-        value(doc, `${paybackMonths} ${paybackMonths === 1 ? "m\u00eas" : "meses"}`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("Payback da Implanta\u00e7\u00e3o", px + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, `${paybackMonths} ${paybackMonths === 1 ? "mês" : "meses"}`, px + IND_W / 2, Y + 20, { size: 14, color: C.blue, align: "center" });
+        lbl(doc, "Payback da Implantação", px + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
 
-        // Annual gain
         const ax = M + (IND_W + 8) * 2;
         card(doc, ax, Y, IND_W, IND_H, { fill: C.bgSoft });
-        value(doc, fmt(annualGain), ax + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("Ganho Anual Estimado", ax + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, fmt(annualGain), ax + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
+        lbl(doc, "Ganho Anual Estimado", ax + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
       } else {
-        // NEGATIVE: show Efeito Kenlo (coverage %), Receita Mensal, Custo Descoberto
         const coveragePercent = totalCost > 0 ? Math.round((totalRevenue / totalCost) * 100) : 0;
         const uncoveredCost = Math.abs(netGain);
 
-        // Efeito Kenlo — coverage percentage
         card(doc, M, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
-        value(doc, `${coveragePercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("Efeito Kenlo (cobertura do custo)", M + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, `${coveragePercent}%`, M + IND_W / 2, Y + 20, { size: 16, color: C.green, align: "center" });
+        lbl(doc, "Efeito Kenlo (cobertura do custo)", M + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
 
-        // Receita Mensal Gerada
         const px = M + IND_W + 8;
         card(doc, px, Y, IND_W, IND_H, { fill: C.greenLight, stroke: C.greenBorder });
-        value(doc, fmt(totalRevenue), px + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("Receita Mensal Gerada", px + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, fmt(totalRevenue), px + IND_W / 2, Y + 20, { size: 12, color: C.green, align: "center" });
+        lbl(doc, "Receita Mensal Gerada", px + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
 
-        // Custo Líquido Descoberto
         const ax = M + (IND_W + 8) * 2;
         card(doc, ax, Y, IND_W, IND_H, { fill: C.bgSoft });
-        value(doc, fmt(uncoveredCost), ax + IND_W / 2, Y + 20, { size: 12, color: C.text, align: "center" });
-        doc.setFontSize(6);
-        doc.setTextColor(...rgb(C.textMuted));
-        doc.setFont("helvetica", "normal");
-        doc.text("Custo L\u00edquido Descoberto/m\u00eas", ax + IND_W / 2, Y + 34, { align: "center" });
+        val(doc, fmt(uncoveredCost), ax + IND_W / 2, Y + 20, { size: 12, color: C.text, align: "center" });
+        lbl(doc, "Custo Líquido Descoberto/mês", ax + IND_W / 2, Y + 34, { size: 6, color: C.textMuted });
       }
 
       Y += IND_H + 6;
-
-      // Disclaimer — always shown
-      label(doc, "Estimativas baseadas nas informa\u00e7\u00f5es declaradas pelo cliente. Os resultados podem variar conforme uso efetivo da plataforma.", M, Y + 3, { size: 5, color: C.textLight });
+      lbl(doc, "Estimativas baseadas nas informações declaradas. Resultados podem variar conforme uso efetivo.", M, Y + 3, { size: 5, color: C.textLight });
       Y += 12;
     }
   }
 
   // ════════════════════════════════════════════════════════════════
-  // SECTION 9 — CONCLUSÃO
+  // SECTION 8 — CONCLUSÃO
   // ════════════════════════════════════════════════════════════════
   if (needsNewPage(Y, 80)) Y = newPage(doc, data);
 
@@ -1046,7 +973,7 @@ export async function generateProposalPDFClient(
   doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.text("Kenlo - Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
+  doc.text("Kenlo — Quem usa, lidera.", M + CW / 2, Y + 22, { align: "center" });
   doc.setFontSize(7);
   doc.setTextColor(...rgb("#CBD5E1"));
   doc.setFont("helvetica", "normal");

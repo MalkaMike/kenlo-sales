@@ -2321,3 +2321,62 @@
 - [x] Add installment/parcelamento breakdown table to client-side PDF — already implemented as pill-based selector showing À vista/2x/3x (annual) or up to 6x (bienal) with selected option highlighted
 - [x] Add installment/parcelamento breakdown table to server-side PDF — same pill-based installment breakdown implemented in pdfGenerator.ts
 - [x] Test installment display in generated PDF — 20 new tests added covering IMOB-only scenarios and all installment options (annual 1x/2x/3x, bienal 1x-6x, monthly, semestral)
+
+## PDF Redesign — Layout Linear, Sem Duplicação, Documento Limpo
+
+### Estrutura Geral
+- [x] Mudar layout de cards/dashboard para linear (1 coluna, blocos horizontais full-width)
+- [x] Eliminar espaços vazios e colunas com buracos
+- [x] Reduzir texto explicativo desnecessário (frases curtas, sem poluição)
+
+### Seção 1 — Capa (manter como está)
+- [x] Manter capa full-page existente (logo, cliente, data, vendedor)
+
+### Seção 2 — Resumo da Configuração (UM bloco único)
+- [x] Refazer Resumo como bloco linear único (não 4 cards separados)
+- [x] Produto(s) + Plano(s) em uma linha (ex: "LOC K2" ou "IMOB Prime + LOC K2")
+- [x] Kombo em linha única: "Kombo X (–Y%)" — só se selecionado, só aqui
+- [x] Add-ons ativos em linha: separados por "|"
+- [x] Frequência + Investimento mensal equivalente JUNTOS (nunca separados)
+- [x] Eliminar card separado de Frequência
+- [x] Eliminar card separado de Add-ons (já está no resumo)
+
+### Seção 3 — Detalhamento (sem repetir título do resumo)
+- [x] Produtos contratados com valor mensal equivalente (linear, não cards)
+- [x] Add-ons com valor mensal equivalente
+- [x] Implantação (valor único)
+- [x] Condição de pagamento com pills de parcelas (manter)
+- [x] Microtexto: "Valores em base mensal equivalente para a frequência escolhida"
+- [x] NÃO repetir frequência aqui
+
+### Seção 4 — Benefícios Inclusos (NOVA)
+- [x] VIP ON/OFF com regra do maior plano
+- [x] CS Dedicado ON/OFF com regra do maior plano
+- [x] Treinamentos inclusos com valores de referência (Online: R$2.000, Presencial: R$3.000)
+- [x] Regra de propagação: benefício premium = maior plano entre IMOB/LOC
+- [x] Regra de soma: se ambos K2, treinamentos acumulam
+
+### Seção 5 — Variáveis (pós-pago) — só se relevante
+- [x] Mostrar apenas se existirem itens configurados
+- [x] Pay (boletos/split) com faixas
+- [x] Contratos adicionais, assinaturas adicionais, leads WhatsApp
+- [x] NÃO listar variáveis de produtos não selecionados
+
+### Seção 6 — Sua Seleção vs Kombos
+- [x] Frequência no TOPO desta seção (antes da tabela)
+- [x] Tabela comparativa (Sua seleção + Kombos)
+- [x] Remover seção separada de Frequência (antiga Seção 5)
+
+### Seção 7 — Kenlo Receita Extra + ROI
+- [x] Manter Receita Extra (sem Cash)
+- [x] Manter ROI/Ganho Líquido/Efeito Kenlo
+- [x] Textos obrigatórios sobre Pay e Seguros
+
+### Seção 8 — Conclusão (manter)
+- [x] Manter conclusão existente
+
+### Aplicar a ambos os PDFs
+- [x] Reestruturar client-side PDF (generateProposalPDF.ts)
+- [x] Reestruturar server-side PDF (pdfGenerator.ts)
+- [x] Atualizar testes para nova estrutura — 222 testes passando (35 pdfGenerator + 53 pdf.validation)
+- [x] Checklist automática: produto/plano/addons/kombo/frequência batem 100% com portal
