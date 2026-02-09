@@ -2600,3 +2600,13 @@
 - [x] Created parseIntegerInput() helper function
 - [x] Applied to all 5 integer fields: imobUsers, closingsPerMonth, leadsPerMonth, contractsUnderManagement, newContractsPerMonth
 - [ ] Test edge cases: paste, keyboard input, autofill - TO BE TESTED
+
+## Currency Auto-Formatting Enhancement
+
+- [x] Implement onBlur handler for Boleto amount field to auto-format as R$ X,XX
+- [x] Implement onBlur handler for Split amount field to auto-format as R$ X,XX
+- [x] Updated existing formatCurrency() helper to default to 2 decimals for currency fields
+- [x] Created parseCurrency() helper to parse formatted currency back to numbers
+- [x] Changed input type from "number" to "text" to support formatted display
+- [x] Handle edge cases: empty input, invalid input, already formatted input
+- [ ] Test formatting behavior across different input scenarios - TO BE TESTED

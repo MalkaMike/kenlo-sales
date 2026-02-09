@@ -261,6 +261,14 @@ export default function CalculadoraPage() {
     return Math.max(min, Math.round(parsed));
   };
 
+  // Helper: Parse currency string to number (e.g., "R$ 10,00" → 10, "1.234,50" → 1234.5)
+  const parseCurrency = (value: string): number => {
+    // Remove currency symbol, spaces, and convert comma to dot
+    const cleaned = value.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
   // Step 3: Metrics (conditional based on product) - Start empty (CEO Verdict Round 2)
   const [metrics, setMetrics] = useState({
     // Imob metrics - empty by default, user must enter values
@@ -1492,7 +1500,7 @@ export default function CalculadoraPage() {
     return name;
   };
 
-  const formatCurrency = (value: number, decimals: number = 0) => {
+  const formatCurrency = (value: number, decimals: number = 2) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -3064,15 +3072,20 @@ export default function CalculadoraPage() {
                                 <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto você cobra por boleto? (R$)</Label>
                                 <Input
                                   id="boletoAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.boletoChargeAmount}
+                                  type="text"
+                                  inputMode="decimal"
+                                  value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : formatCurrency(metrics.boletoChargeAmount, 2)}
                                   onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, value) });
+                                    // Allow typing, store as string temporarily
+                                    setMetrics({ ...metrics, boletoChargeAmount: e.target.value as any });
                                   }}
+                                  onBlur={(e) => {
+                                    // On blur, parse and format as currency
+                                    const parsed = parseCurrency(e.target.value);
+                                    setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
+                                  }}
+                                  placeholder="Ex: R$ 10,00"
                                   className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
                                 />
                               </div>
                             )}
@@ -3089,15 +3102,20 @@ export default function CalculadoraPage() {
                                 <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto você cobra por split? (R$)</Label>
                                 <Input
                                   id="splitAmount"
-                                  type="number" inputMode="numeric"
-                                  value={metrics.splitChargeAmount}
+                                  type="text"
+                                  inputMode="decimal"
+                                  value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : formatCurrency(metrics.splitChargeAmount, 2)}
                                   onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0;
-                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, value) });
+                                    // Allow typing, store as string temporarily
+                                    setMetrics({ ...metrics, splitChargeAmount: e.target.value as any });
                                   }}
+                                  onBlur={(e) => {
+                                    // On blur, parse and format as currency
+                                    const parsed = parseCurrency(e.target.value);
+                                    setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
+                                  }}
+                                  placeholder="Ex: R$ 5,00"
                                   className="mt-1 h-8 text-sm"
-                                  step="0.01"
-                                  min="0"
                                 />
                               </div>
                             )}
