@@ -1586,6 +1586,44 @@ export default function CalculadoraPage() {
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-4">
                 <div className="space-y-4">
+                  {/* Natureza do Negócio */}
+                  <div className="mb-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Natureza do Negócio *</h3>
+                    <div className="flex items-center gap-1.5 mb-4">
+                      {([
+                        { value: "broker", label: "Corretora" },
+                        { value: "rental_admin", label: "Administradora" },
+                        { value: "both", label: "Ambos" },
+                      ] as const).map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => {
+                            setBusinessNature(prev => ({
+                              ...prev,
+                              businessType: opt.value as BusinessType,
+                              // Reset questions to null when changing business type
+                              hasWebsite: null,
+                              websiteUrl: "",
+                              hasCRM: null,
+                              crmSystem: "" as CRMSystem | "",
+                              crmOther: "",
+                              hasERP: null,
+                              erpSystem: "" as ERPSystem | "",
+                              erpOther: "",
+                            }));
+                          }}
+                          className={`px-4 py-2 text-sm rounded-lg transition-all border ${
+                            businessNature.businessType === opt.value
+                              ? "bg-primary text-white font-semibold border-primary shadow-sm"
+                              : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Company Information */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -1640,43 +1678,8 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
-                  {/* Natureza do Negócio */}
+                  {/* Conditional questions based on business type */}
                   <div className="mt-2">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Natureza do Negócio *</h3>
-                    <div className="flex items-center gap-1.5 mb-4">
-                      {([
-                        { value: "broker", label: "Corretora" },
-                        { value: "rental_admin", label: "Administradora" },
-                        { value: "both", label: "Ambos" },
-                      ] as const).map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => {
-                            setBusinessNature(prev => ({
-                              ...prev,
-                              businessType: opt.value as BusinessType,
-                              // Reset questions to null when changing business type
-                              hasWebsite: null,
-                              websiteUrl: "",
-                              hasCRM: null,
-                              crmSystem: "" as CRMSystem | "",
-                              crmOther: "",
-                              hasERP: null,
-                              erpSystem: "" as ERPSystem | "",
-                              erpOther: "",
-                            }));
-                          }}
-                          className={`px-4 py-2 text-sm rounded-lg transition-all border ${
-                            businessNature.businessType === opt.value
-                              ? "bg-primary text-white font-semibold border-primary shadow-sm"
-                              : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
-                          }`}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-
                     {/* Conditional questions based on business type */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Tem site? - Show for Corretora or Ambos */}

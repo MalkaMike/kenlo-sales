@@ -2688,3 +2688,7 @@
 - [x] All yes/no toggles must start unselected (null state) - no default value assumed
 - [x] Add new "hasERP" state variable for the ERP question (already existed)
 - [x] Ensure toggles require explicit user confirmation (no auto-assumed "Não") - replaced Switch with Sim/Não buttons
+
+## Move Natureza do Negócio Above Company Info
+
+- [x] Move "Natureza do Negócio *" title and 3 selector buttons (Corretora/Administradora/Ambos) to above the "Nome da Imobiliária" field
