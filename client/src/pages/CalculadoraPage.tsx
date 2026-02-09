@@ -250,7 +250,15 @@ export default function CalculadoraPage() {
   });
 
   // Helper: Convert empty string metrics to numbers for calculations (CEO Verdict Round 2)
-  const toNum = (val: number | ""): number => (typeof val === "number" ? val : 0);
+  // Also handles arbitrary strings (e.g., currency-formatted "R$ 10,00" during typing)
+  const toNum = (val: number | string): number => {
+    if (typeof val === "number") return val;
+    if (val === "" || val == null) return 0;
+    // Try parsing as currency string first (handles "R$ 10,00" format)
+    const cleaned = String(val).replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  };
 
   // Helper: Validate and parse integer-only input (strips non-numeric, rounds decimals)
   const parseIntegerInput = (value: string, min: number = 0): number | "" => {
@@ -868,8 +876,8 @@ export default function CalculadoraPage() {
     ].join(''));
     
     // Pay charge amounts
-    params.set('ba', metrics.boletoChargeAmount.toString());
-    params.set('sa', metrics.splitChargeAmount.toString());
+    params.set('ba', String(toNum(metrics.boletoChargeAmount)));
+    params.set('sa', String(toNum(metrics.splitChargeAmount)));
     
     const baseUrl = window.location.origin + '/cotacao';
     return `${baseUrl}?${params.toString()}`;
@@ -1578,7 +1586,7 @@ export default function CalculadoraPage() {
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-4">
                 <h2 className="text-sm font-semibold text-gray-700 mb-2">
-                  Natureza do Negócio
+                  Natureza do Negócio <span className="text-red-500">*</span>
                 </h2>
                 <div className="space-y-4">
                   {/* Business Type */}
@@ -3191,10 +3199,10 @@ export default function CalculadoraPage() {
                             <span className="text-sm font-medium text-slate-900">Boletos & Split</span>
                             <span className="text-xs text-gray-500 italic">
                               {metrics.chargesBoletoToTenant && metrics.chargesSplitToOwner 
-                                ? `${metrics.contractsUnderManagement} boletos × R$ ${metrics.boletoChargeAmount.toFixed(2)} + ${metrics.contractsUnderManagement} splits × R$ ${metrics.splitChargeAmount.toFixed(2)}`
+                                ? `${metrics.contractsUnderManagement} boletos × R$ ${Number(toNum(metrics.boletoChargeAmount)).toFixed(2)} + ${metrics.contractsUnderManagement} splits × R$ ${Number(toNum(metrics.splitChargeAmount)).toFixed(2)}`
                                 : metrics.chargesBoletoToTenant 
-                                  ? `${metrics.contractsUnderManagement} boletos × R$ ${metrics.boletoChargeAmount.toFixed(2)}`
-                                  : `${metrics.contractsUnderManagement} splits × R$ ${metrics.splitChargeAmount.toFixed(2)}`
+                                  ? `${metrics.contractsUnderManagement} boletos × R$ ${Number(toNum(metrics.boletoChargeAmount)).toFixed(2)}`
+                                  : `${metrics.contractsUnderManagement} splits × R$ ${Number(toNum(metrics.splitChargeAmount)).toFixed(2)}`
                               }
                             </span>
                           </div>
@@ -3950,8 +3958,8 @@ export default function CalculadoraPage() {
                   wantsWhatsApp: metrics.wantsWhatsApp,
                   chargesSplitToOwner: metrics.chargesSplitToOwner,
                   chargesBoletoToTenant: metrics.chargesBoletoToTenant,
-                  boletoAmount: metrics.boletoChargeAmount,
-                  splitAmount: metrics.splitChargeAmount,
+                  boletoAmount: toNum(metrics.boletoChargeAmount),
+                  splitAmount: toNum(metrics.splitChargeAmount),
                   businessType: businessNature.businessType,
                   email: businessNature.email,
                   cellphone: businessNature.cellphone,
@@ -4225,7 +4233,6 @@ export default function CalculadoraPage() {
             }
           }}
         />
-
 
       {/* Sticky Summary Bar */}
       <div

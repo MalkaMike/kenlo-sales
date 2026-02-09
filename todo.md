@@ -2654,3 +2654,9 @@
 - [x] Frosted glass effect (bg-white/95 backdrop-blur-md)
 - [x] Shows Kombo name and discount when active
 - [x] Must not interfere with existing layout or logic
+
+## Bug Fixes (Feb 9, 2026)
+
+- [x] Fix JSX nesting error in sticky bar implementation (div nesting/fragment closing mismatch in CalculadoraPage.tsx)
+- [x] Add asterisk (*) to "Natureza do Negócio" section title to indicate required field (already present)
+- [x] Fix TypeError: v.boletoChargeAmount.toFixed is not a function - made toNum() helper robust to handle arbitrary strings including currency-formatted values ("R$ 10,00")
