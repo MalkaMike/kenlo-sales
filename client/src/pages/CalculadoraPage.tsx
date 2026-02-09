@@ -246,20 +246,23 @@ export default function CalculadoraPage() {
     cash: false,
   });
 
-  // Step 3: Metrics (conditional based on product) - Minimal defaults
+  // Helper: Convert empty string metrics to numbers for calculations (CEO Verdict Round 2)
+  const toNum = (val: number | ""): number => (typeof val === "number" ? val : 0);
+
+  // Step 3: Metrics (conditional based on product) - Start empty (CEO Verdict Round 2)
   const [metrics, setMetrics] = useState({
-    // Imob metrics - defaults: 1 user, 1 closing, 0 leads
-    imobUsers: 1,
-    closingsPerMonth: 1,
-    leadsPerMonth: 0,  // Number of leads received per month for WhatsApp calculation
+    // Imob metrics - empty by default, user must enter values
+    imobUsers: "" as number | "",
+    closingsPerMonth: "" as number | "",
+    leadsPerMonth: "" as number | "",  // Number of leads received per month for WhatsApp calculation
     usesExternalAI: false,
     wantsWhatsApp: false,  // WhatsApp disabled by default
     imobVipSupport: false,  // VIP Support for IMOB
     imobDedicatedCS: false, // Dedicated CS for IMOB
     
-    // Loc metrics - defaults: 1 contract, 1 new contract
-    contractsUnderManagement: 1,
-    newContractsPerMonth: 1,
+    // Loc metrics - empty by default, user must enter values
+    contractsUnderManagement: "" as number | "",
+    newContractsPerMonth: "" as number | "",
     locVipSupport: false,   // VIP Support for LOC
     locDedicatedCS: false,  // Dedicated CS for LOC
     
@@ -1242,7 +1245,7 @@ export default function CalculadoraPage() {
   // This sets BOTH the user-selected plan AND the recommended plan tracker
   useEffect(() => {
     if (product === "imob" || product === "both") {
-      const users = metrics.imobUsers;
+      const users = toNum(metrics.imobUsers);
       
       // IMOB: Baseado em número de usuários (V9)
       // Prime: 1-4 usuários
@@ -1263,7 +1266,7 @@ export default function CalculadoraPage() {
     }
 
     if (product === "loc" || product === "both") {
-      const contracts = metrics.contractsUnderManagement;
+      const contracts = toNum(metrics.contractsUnderManagement);
       
       // LOC: Baseado em número de contratos (V9)
       // Prime: 1-199 contratos
@@ -1398,7 +1401,7 @@ export default function CalculadoraPage() {
     if ((product === 'imob' || product === 'both') && prepayAdditionalUsers) {
       const plan = imobPlan;
       const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-      const additional = Math.max(0, metrics.imobUsers - included);
+      const additional = Math.max(0, toNum(metrics.imobUsers) - included);
       if (additional > 0) {
         let monthlyCost = 0;
         if (plan === 'prime') monthlyCost = additional * 57;
@@ -1422,7 +1425,7 @@ export default function CalculadoraPage() {
     if ((product === 'loc' || product === 'both') && prepayAdditionalContracts) {
       const plan = locPlan;
       const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-      const additional = Math.max(0, metrics.contractsUnderManagement - included);
+      const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
       if (additional > 0) {
         let monthlyCost = 0;
         if (plan === 'prime') monthlyCost = additional * 3;
@@ -1459,7 +1462,7 @@ export default function CalculadoraPage() {
   const calculatePayPostPago = () => {
     if (!addons.pay || !(product === "loc" || product === "both")) return 0;
     const avgRent = 2000;
-    const monthlyVolume = metrics.contractsUnderManagement * avgRent;
+    const monthlyVolume = toNum(metrics.contractsUnderManagement) * avgRent;
     return Math.round(monthlyVolume * 0.015); // 1.5%
   };
 
@@ -1754,24 +1757,23 @@ export default function CalculadoraPage() {
 
               {/* §1+2: Configuração Compacta (Merged: Informações do Negócio + Nossa Recomendação + Product selection) */}
               <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-semibold text-gray-700">Configuração</h2>
-                  {/* Product switcher inline */}
-                  <div className="flex items-center gap-1.5">
-                    {["imob", "loc", "both"].map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => setProduct(opt as ProductSelection)}
-                        className={`px-2.5 py-1 text-xs rounded-full transition-all ${
-                          product === opt
-                            ? "bg-primary text-white font-semibold"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                        }`}
-                      >
-                        {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
-                      </button>
-                    ))}
-                  </div>
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">Configuração</h2>
+                
+                {/* Product filter: left-aligned, directly above config cards (CEO Verdict Round 2) */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  {["imob", "loc", "both"].map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setProduct(opt as ProductSelection)}
+                      className={`px-2.5 py-1 text-xs rounded-full transition-all ${
+                        product === opt
+                          ? "bg-primary text-white font-semibold"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -1792,9 +1794,10 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.imobUsers}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
+                                const val = e.target.value;
+                                setMetrics({ ...metrics, imobUsers: val === "" ? "" : Math.max(1, parseInt(val) || 1) });
                               }}
+                              placeholder="Ex: 5 usuários"
                               min="1"
                               className="mt-0.5 h-8 text-xs"
                             />
@@ -1807,9 +1810,10 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.closingsPerMonth}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
+                                const val = e.target.value;
+                                setMetrics({ ...metrics, closingsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
                               }}
+                              placeholder="Ex: 10"
                               min="0"
                               className="mt-0.5 h-8 text-xs"
                             />
@@ -1822,9 +1826,10 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.leadsPerMonth}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
+                                const val = e.target.value;
+                                setMetrics({ ...metrics, leadsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
                               }}
+                              placeholder="Ex: 500"
                               min="0"
                               className="mt-0.5 h-8 text-xs"
                             />
@@ -1872,11 +1877,11 @@ export default function CalculadoraPage() {
                               );
                             })}
                           </div>
-                          {/* Scope clarity */}
+                          {/* Allowance + Overage (CEO Verdict Round 2) */}
                           <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
-                            {imobPlan === "prime" && "Inclui usuários ilimitados, funcionalidades essenciais de CRM e Site personalizável, onboarding padrão e acesso ao ecossistema Kenlo."}
-                            {imobPlan === "k" && "Inclui usuários ilimitados, funcionalidades avançadas de CRM e Site personalizável, onboarding completo, VIP e acesso ao ecossistema Kenlo."}
-                            {imobPlan === "k2" && "Inclui usuários ilimitados, funcionalidades premium de CRM e Site personalizável, onboarding premium, VIP, CS Dedicado, treinamentos e acesso ao ecossistema Kenlo."}
+                            {imobPlan === "prime" && "Inclui até 2 usuários · Usuários adicionais cobrados conforme tabela"}
+                            {imobPlan === "k" && "Inclui até 5 usuários · Usuários adicionais cobrados conforme tabela"}
+                            {imobPlan === "k2" && "Inclui até 10 usuários · Usuários adicionais cobrados conforme tabela"}
                           </div>
                         </div>
                       </CardContent>
@@ -1899,9 +1904,10 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.contractsUnderManagement}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
+                                const val = e.target.value;
+                                setMetrics({ ...metrics, contractsUnderManagement: val === "" ? "" : Math.max(1, parseInt(val) || 1) });
                               }}
+                              placeholder="Ex: 1200 contratos"
                               min="1"
                               className="mt-0.5 h-8 text-xs"
                             />
@@ -1914,9 +1920,10 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.newContractsPerMonth}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
+                                const val = e.target.value;
+                                setMetrics({ ...metrics, newContractsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
                               }}
+                              placeholder="Ex: 50"
                               min="0"
                               className="mt-0.5 h-8 text-xs"
                             />
@@ -1944,11 +1951,11 @@ export default function CalculadoraPage() {
                               );
                             })}
                           </div>
-                          {/* Scope clarity */}
+                          {/* Allowance + Overage (CEO Verdict Round 2) */}
                           <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
-                            {locPlan === "prime" && "Inclui contratos ilimitados, funcionalidades essenciais de gestão de locação, onboarding padrão e acesso ao ecossistema Kenlo."}
-                            {locPlan === "k" && "Inclui contratos ilimitados, funcionalidades avançadas de gestão de locação, onboarding completo, VIP e acesso ao ecossistema Kenlo."}
-                            {locPlan === "k2" && "Inclui contratos ilimitados, funcionalidades premium de gestão de locação, onboarding premium, VIP, CS Dedicado, treinamentos e acesso ao ecossistema Kenlo."}
+                            {locPlan === "prime" && "Inclui até 100 contratos · Contratos adicionais cobrados conforme uso"}
+                            {locPlan === "k" && "Inclui até 150 contratos · Contratos adicionais cobrados conforme uso"}
+                            {locPlan === "k2" && "Inclui até 500 contratos · Contratos adicionais cobrados conforme uso"}
                           </div>
                         </div>
                       </CardContent>
@@ -1960,12 +1967,9 @@ export default function CalculadoraPage() {
 
               {/* §3: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
               <div className="mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                <h2 className="text-sm font-semibold text-gray-700 mb-4">
                   Benefícios Inclusos
                 </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Já incluídos na sua configuração.
-                </p>
                 
                 {/* Compute highest plan once for the whole section */}
                 {(() => {
@@ -2354,7 +2358,7 @@ export default function CalculadoraPage() {
                         // Additional Users (only if NOT prepaid)
                         const plan = imobPlan;
                         const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                        const additional = Math.max(0, metrics.imobUsers - included);
+                        const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                         if (additional > 0 && !prepayAdditionalUsers) {
                           if (plan === 'prime') imobSubtotal += additional * 57;
                           else if (plan === 'k') {
@@ -2374,7 +2378,7 @@ export default function CalculadoraPage() {
                         // WhatsApp Messages
                         if (addons.leads && metrics.wantsWhatsApp) {
                           const included = 100;
-                          const additional = Math.max(0, metrics.leadsPerMonth - included);
+                          const additional = Math.max(0, toNum(metrics.leadsPerMonth) - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 200);
                             const tier2 = Math.min(Math.max(0, additional - 200), 150);
@@ -2401,7 +2405,7 @@ export default function CalculadoraPage() {
                         const plan = imobPlan;
                         // Usuários inclusos: Prime 2, K 5, K2 10
                         const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                        const additional = Math.max(0, metrics.imobUsers - included);
+                        const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                         const totalCost = (() => {
                           // V9: Prime: R$57 fixo, K: 1-5=R$47/6+=R$37, K2: 1-10=R$37/11-100=R$27/101+=R$17
                           if (plan === 'prime') return additional * 57;
@@ -2466,7 +2470,7 @@ export default function CalculadoraPage() {
                       {/* Leads WhatsApp */}
                       {addons.leads && metrics.wantsWhatsApp && (() => {
                         const included = 100;
-                        const totalLeads = metrics.leadsPerMonth;
+                        const totalLeads = toNum(metrics.leadsPerMonth);
                         const additional = Math.max(0, totalLeads - included);
                         const totalCost = (() => {
                           const tier1 = Math.min(additional, 200);
@@ -2507,7 +2511,7 @@ export default function CalculadoraPage() {
                         // Additional Contracts (only if NOT prepaid)
                         const plan = locPlan;
                         const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                        const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                        const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                         if (additional > 0 && !prepayAdditionalContracts) {
                           if (plan === 'prime') locSubtotal += additional * 3;
                           else if (plan === 'k') {
@@ -2526,7 +2530,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesBoletoToTenant) {
                           const plan = locPlan;
                           const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          const additionalBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - includedBoletos);
                           if (additionalBoletos > 0) {
                             if (plan === 'prime') locSubtotal += additionalBoletos * 4;
                             else if (plan === 'k') {
@@ -2546,7 +2550,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesSplitToOwner) {
                           const plan = locPlan;
                           const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          const additionalSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - includedSplits);
                           if (additionalSplits > 0) {
                             if (plan === 'prime') locSubtotal += additionalSplits * 4;
                             else if (plan === 'k') {
@@ -2578,7 +2582,7 @@ export default function CalculadoraPage() {
                       {(product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
                         const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                        const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                        const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                         const totalCost = (() => {
                           if (plan === 'prime') return additional * 3;
                           else if (plan === 'k') {
@@ -2644,7 +2648,7 @@ export default function CalculadoraPage() {
                       {addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
                         const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                        const totalBoletos = metrics.contractsUnderManagement;
+                        const totalBoletos = toNum(metrics.contractsUnderManagement);
                         const additionalBoletos = Math.max(0, totalBoletos - includedBoletos);
                         
                         const totalCost = (() => {
@@ -2689,7 +2693,7 @@ export default function CalculadoraPage() {
                       {addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both') && (() => {
                         const plan = locPlan;
                         const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                        const totalSplits = metrics.contractsUnderManagement;
+                        const totalSplits = toNum(metrics.contractsUnderManagement);
                         const additionalSplits = Math.max(0, totalSplits - includedSplits);
                         
                         const totalCost = (() => {
@@ -2741,9 +2745,9 @@ export default function CalculadoraPage() {
                         if (addons.assinatura) {
                           const included = 15;
                           let totalSignatures = 0;
-                          if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
-                          else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
-                          else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                          if (product === 'imob') totalSignatures = toNum(toNum(metrics.closingsPerMonth));
+                          else if (product === 'loc') totalSignatures = toNum(toNum(metrics.newContractsPerMonth));
+                          else totalSignatures = toNum(toNum(metrics.closingsPerMonth)) + toNum(toNum(metrics.newContractsPerMonth));
                           
                           const additional = Math.max(0, totalSignatures - included);
                           if (additional > 0) {
@@ -2770,9 +2774,9 @@ export default function CalculadoraPage() {
                       {addons.assinatura && (() => {
                         const included = 15;
                         let totalSignatures = 0;
-                        if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
-                        else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
-                        else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                        if (product === 'imob') totalSignatures = toNum(toNum(metrics.closingsPerMonth));
+                        else if (product === 'loc') totalSignatures = toNum(toNum(metrics.newContractsPerMonth));
+                        else totalSignatures = toNum(toNum(metrics.closingsPerMonth)) + toNum(toNum(metrics.newContractsPerMonth));
                         const additional = Math.max(0, totalSignatures - included);
                         const totalCost = (() => {
                           const tier1 = Math.min(additional, 20);
@@ -2881,7 +2885,7 @@ export default function CalculadoraPage() {
                         if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
                           const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                          const additional = Math.max(0, metrics.imobUsers - included);
+                          const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                           if (additional > 0) {
                             if (plan === 'prime') {
                               totalPostPaid += additional * 57;
@@ -2905,7 +2909,7 @@ export default function CalculadoraPage() {
                         if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
                           const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                          const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                          const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 250);
                             const tier2 = Math.min(Math.max(0, additional - 250), 500);
@@ -2917,7 +2921,7 @@ export default function CalculadoraPage() {
                         // WhatsApp Messages (Leads)
                         if (addons.leads && metrics.wantsWhatsApp) {
                           const included = 100;
-                          const additional = Math.max(0, metrics.leadsPerMonth - included);
+                          const additional = Math.max(0, toNum(metrics.leadsPerMonth) - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 200);
                             const tier2 = Math.min(Math.max(0, additional - 200), 150);
@@ -2931,8 +2935,8 @@ export default function CalculadoraPage() {
                         if (addons.assinatura) {
                           const included = 15;
                           let totalSignatures = 0;
-                          if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
-                          if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
+                          if (product === 'imob' || product === 'both') totalSignatures += toNum(metrics.closingsPerMonth);
+                          if (product === 'loc' || product === 'both') totalSignatures += toNum(metrics.newContractsPerMonth);
                           const additional = Math.max(0, totalSignatures - included);
                           if (additional > 0) {
                             // V9: 1-20=R$1.80, 21-40=R$1.70, 41+=R$1.50
@@ -2947,7 +2951,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
                           const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          const additionalBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - includedBoletos);
                           if (additionalBoletos > 0) {
                             if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
                             else if (plan === 'k') {
@@ -2967,7 +2971,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
                           const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          const additionalSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - includedSplits);
                           if (additionalSplits > 0) {
                             if (plan === 'prime') totalPostPaid += additionalSplits * 4;
                             else if (plan === 'k') {
@@ -3116,10 +3120,10 @@ export default function CalculadoraPage() {
                               +{formatCurrency((() => {
                                 let revenue = 0;
                                 if (metrics.chargesBoletoToTenant) {
-                                  revenue += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
+                                  revenue += toNum(metrics.contractsUnderManagement) * toNum(metrics.boletoChargeAmount);
                                 }
                                 if (metrics.chargesSplitToOwner) {
-                                  revenue += metrics.contractsUnderManagement * metrics.splitChargeAmount;
+                                  revenue += toNum(metrics.contractsUnderManagement) * toNum(metrics.splitChargeAmount);
                                 }
                                 return revenue;
                               })())}/mês
@@ -3137,7 +3141,7 @@ export default function CalculadoraPage() {
                           </div>
                           <div className="flex flex-col items-end">
                             <span className="text-sm font-semibold text-green-600">
-                              +{formatCurrency(metrics.contractsUnderManagement * 10)}/mês
+                              +{formatCurrency(toNum(metrics.contractsUnderManagement) * 10)}/mês
                             </span>
                           </div>
                         </div>
@@ -3174,7 +3178,7 @@ export default function CalculadoraPage() {
                               if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                                 const plan = imobPlan;
                                 const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                                const additional = Math.max(0, metrics.imobUsers - included);
+                                const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 57;
                                   else if (plan === 'k') {
@@ -3195,7 +3199,7 @@ export default function CalculadoraPage() {
                               if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                                 const plan = locPlan;
                                 const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                                const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                                const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                                 if (additional > 0) {
                                   if (plan === 'prime') totalPostPaid += additional * 3;
                                   else if (plan === 'k') {
@@ -3212,7 +3216,7 @@ export default function CalculadoraPage() {
                             }
                             if (addons.leads && metrics.wantsWhatsApp) {
                                 const included = 100;
-                                const totalLeads = metrics.leadsPerMonth;
+                                const totalLeads = toNum(metrics.leadsPerMonth);
                                 const additional = Math.max(0, totalLeads - included);
                                 if (additional > 0) {
                                   const tier1 = Math.min(additional, 200);
@@ -3225,9 +3229,9 @@ export default function CalculadoraPage() {
                               if (addons.assinatura) {
                                 const included = 15;
                                 let totalSignatures = 0;
-                                if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
-                                else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
-                                else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                                if (product === 'imob') totalSignatures = toNum(metrics.closingsPerMonth);
+                                else if (product === 'loc') totalSignatures = toNum(metrics.newContractsPerMonth);
+                                else totalSignatures = toNum(metrics.closingsPerMonth) + toNum(metrics.newContractsPerMonth);
                                 const additional = Math.max(0, totalSignatures - included);
                                 if (additional > 0) {
                                   const tier1 = Math.min(additional, 20);
@@ -3239,7 +3243,7 @@ export default function CalculadoraPage() {
                               if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                                 const plan = locPlan;
                                 const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                                const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                                const additionalBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - includedBoletos);
                                 if (additionalBoletos > 0) {
                                   if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
                                   else if (plan === 'k') {
@@ -3257,7 +3261,7 @@ export default function CalculadoraPage() {
                               if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                                 const plan = locPlan;
                                 const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                                const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                                const additionalSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - includedSplits);
                                 if (additionalSplits > 0) {
                                   if (plan === 'prime') totalPostPaid += additionalSplits * 4;
                                   else if (plan === 'k') {
@@ -3295,7 +3299,7 @@ export default function CalculadoraPage() {
                         if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                           const plan = imobPlan;
                           const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                          const additional = Math.max(0, metrics.imobUsers - included);
+                          const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 57;
                             else if (plan === 'k') {
@@ -3316,7 +3320,7 @@ export default function CalculadoraPage() {
                         if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                           const plan = locPlan;
                           const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                          const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                          const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                           if (additional > 0) {
                             if (plan === 'prime') totalPostPaid += additional * 3;
                             else if (plan === 'k') {
@@ -3334,7 +3338,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
                           const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const totalBoletos = metrics.contractsUnderManagement;
+                          const totalBoletos = toNum(metrics.contractsUnderManagement);
                           const additionalBoletos = Math.max(0, totalBoletos - includedBoletos);
                           if (additionalBoletos > 0) {
                             if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
@@ -3352,7 +3356,7 @@ export default function CalculadoraPage() {
                         }
                         if (addons.leads && metrics.wantsWhatsApp) {
                           const included = 100;
-                          const totalLeads = metrics.leadsPerMonth;
+                          const totalLeads = toNum(metrics.leadsPerMonth);
                           const additional = Math.max(0, totalLeads - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 200);
@@ -3365,9 +3369,9 @@ export default function CalculadoraPage() {
                         if (addons.assinatura) {
                           const included = 15;
                           let totalSignatures = 0;
-                          if (product === 'imob') totalSignatures = metrics.closingsPerMonth;
-                          else if (product === 'loc') totalSignatures = metrics.newContractsPerMonth;
-                          else totalSignatures = metrics.closingsPerMonth + metrics.newContractsPerMonth;
+                          if (product === 'imob') totalSignatures = toNum(toNum(metrics.closingsPerMonth));
+                          else if (product === 'loc') totalSignatures = toNum(toNum(metrics.newContractsPerMonth));
+                          else totalSignatures = toNum(toNum(metrics.closingsPerMonth)) + toNum(toNum(metrics.newContractsPerMonth));
                           const additional = Math.max(0, totalSignatures - included);
                           if (additional > 0) {
                             const tier1 = Math.min(additional, 20);
@@ -3379,7 +3383,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
                           const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                          const additionalBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - includedBoletos);
                           if (additionalBoletos > 0) {
                             if (plan === 'prime') totalPostPaid += additionalBoletos * 4;
                             else if (plan === 'k') {
@@ -3397,7 +3401,7 @@ export default function CalculadoraPage() {
                         if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                           const plan = locPlan;
                           const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                          const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                          const additionalSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - includedSplits);
                           if (additionalSplits > 0) {
                             if (plan === 'prime') totalPostPaid += additionalSplits * 4;
                             else if (plan === 'k') {
@@ -3422,14 +3426,14 @@ export default function CalculadoraPage() {
                         let totalRevenue = 0;
                         if (addons.pay && (product === 'loc' || product === 'both')) {
                           if (metrics.chargesBoletoToTenant) {
-                            totalRevenue += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
+                            totalRevenue += toNum(metrics.contractsUnderManagement) * toNum(metrics.boletoChargeAmount);
                           }
                           if (metrics.chargesSplitToOwner) {
-                            totalRevenue += metrics.contractsUnderManagement * metrics.splitChargeAmount;
+                            totalRevenue += toNum(metrics.contractsUnderManagement) * toNum(metrics.splitChargeAmount);
                           }
                         }
                         if (addons.seguros && (product === 'loc' || product === 'both')) {
-                          totalRevenue += metrics.contractsUnderManagement * 10;
+                          totalRevenue += toNum(metrics.contractsUnderManagement) * 10;
                         }
                         const total = totalRevenue - recurring - totalPostPaid;
                         const isProfit = total > 0;
@@ -3658,7 +3662,7 @@ export default function CalculadoraPage() {
                 if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                   const plan = imobPlan;
                   const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                  const additional = Math.max(0, metrics.imobUsers - included);
+                  const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                   if (additional > 0) {
                     if (plan === 'prime') {
                       postPaidTotal += additional * 57;
@@ -3679,7 +3683,7 @@ export default function CalculadoraPage() {
                 if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                   const plan = locPlan;
                   const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                  const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                  const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 250);
                     const tier2 = Math.min(Math.max(0, additional - 250), 500);
@@ -3691,7 +3695,7 @@ export default function CalculadoraPage() {
                 // WhatsApp Messages (Leads)
                 if (addons.leads && metrics.wantsWhatsApp) {
                   const included = 100;
-                  const additional = Math.max(0, metrics.leadsPerMonth - included);
+                  const additional = Math.max(0, toNum(metrics.leadsPerMonth) - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 200);
                     const tier2 = Math.min(Math.max(0, additional - 200), 150);
@@ -3705,8 +3709,8 @@ export default function CalculadoraPage() {
                 if (addons.assinatura) {
                   const included = 15;
                   let totalSignatures = 0;
-                  if (product === 'imob' || product === 'both') totalSignatures += metrics.closingsPerMonth;
-                  if (product === 'loc' || product === 'both') totalSignatures += metrics.newContractsPerMonth;
+                  if (product === 'imob' || product === 'both') totalSignatures += toNum(metrics.closingsPerMonth);
+                  if (product === 'loc' || product === 'both') totalSignatures += toNum(metrics.newContractsPerMonth);
                   const additional = Math.max(0, totalSignatures - included);
                   if (additional > 0) {
                     const tier1 = Math.min(additional, 20);
@@ -3720,7 +3724,7 @@ export default function CalculadoraPage() {
                 if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                   const plan = locPlan;
                   const includedBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                  const additionalBoletos = Math.max(0, metrics.contractsUnderManagement - includedBoletos);
+                  const additionalBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - includedBoletos);
                   if (additionalBoletos > 0) {
                     if (plan === 'prime') postPaidTotal += additionalBoletos * 4;
                     else if (plan === 'k') {
@@ -3740,7 +3744,7 @@ export default function CalculadoraPage() {
                 if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                   const plan = locPlan;
                   const includedSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                  const additionalSplits = Math.max(0, metrics.contractsUnderManagement - includedSplits);
+                  const additionalSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - includedSplits);
                   if (additionalSplits > 0) {
                     if (plan === 'prime') postPaidTotal += additionalSplits * 4;
                     else if (plan === 'k') {
@@ -3760,15 +3764,15 @@ export default function CalculadoraPage() {
                 let revenueFromBoletos = 0;
                 if (addons.pay && (product === 'loc' || product === 'both')) {
                   if (metrics.chargesBoletoToTenant) {
-                    revenueFromBoletos += metrics.contractsUnderManagement * metrics.boletoChargeAmount;
+                    revenueFromBoletos += toNum(metrics.contractsUnderManagement) * toNum(metrics.boletoChargeAmount);
                   }
                   if (metrics.chargesSplitToOwner) {
-                    revenueFromBoletos += metrics.contractsUnderManagement * metrics.splitChargeAmount;
+                    revenueFromBoletos += toNum(metrics.contractsUnderManagement) * toNum(metrics.splitChargeAmount);
                   }
                 }
                 
                 const revenueFromInsurance = (addons.seguros && (product === 'loc' || product === 'both'))
-                  ? metrics.contractsUnderManagement * 10
+                  ? toNum(metrics.contractsUnderManagement) * 10
                   : 0;
                 const netGain = revenueFromBoletos + revenueFromInsurance - totalMonthly - (postPaidTotal || 0);
 
@@ -3854,11 +3858,11 @@ export default function CalculadoraPage() {
                   komboDiscount: komboInfo ? Math.round(komboInfo.discount * 100) : undefined,
                   imobPlan: (product === "imob" || product === "both") ? imobPlan : undefined,
                   locPlan: (product === "loc" || product === "both") ? locPlan : undefined,
-                  imobUsers: metrics.imobUsers,
-                  closings: metrics.closingsPerMonth,
-                  contracts: metrics.contractsUnderManagement,
-                  newContracts: metrics.newContractsPerMonth,
-                  leadsPerMonth: metrics.leadsPerMonth,
+                  imobUsers: typeof metrics.imobUsers === "number" ? metrics.imobUsers : 0,
+                  closings: typeof metrics.closingsPerMonth === "number" ? metrics.closingsPerMonth : 0,
+                  contracts: typeof metrics.contractsUnderManagement === "number" ? metrics.contractsUnderManagement : 0,
+                  newContracts: typeof metrics.newContractsPerMonth === "number" ? metrics.newContractsPerMonth : 0,
+                  leadsPerMonth: typeof metrics.leadsPerMonth === "number" ? metrics.leadsPerMonth : 0,
                   usesExternalAI: metrics.usesExternalAI,
                   wantsWhatsApp: metrics.wantsWhatsApp,
                   chargesSplitToOwner: metrics.chargesSplitToOwner,
@@ -3932,7 +3936,7 @@ export default function CalculadoraPage() {
                     if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
                       const plan = imobPlan;
                       const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
-                      const additional = Math.max(0, metrics.imobUsers - included);
+                      const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                       if (additional > 0) {
                         let userCost = 0;
                         if (plan === 'prime') userCost = additional * 57;
@@ -3952,7 +3956,7 @@ export default function CalculadoraPage() {
                     if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
                       const plan = locPlan;
                       const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
-                      const additional = Math.max(0, metrics.contractsUnderManagement - included);
+                      const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
                       if (additional > 0) {
                         let cost = 0;
                         if (plan === 'prime') { cost = additional * 3; }
@@ -3967,7 +3971,7 @@ export default function CalculadoraPage() {
                     if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
                       const plan = locPlan;
                       const inclBoletos = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                      const addBoletos = Math.max(0, metrics.contractsUnderManagement - inclBoletos);
+                      const addBoletos = Math.max(0, toNum(metrics.contractsUnderManagement) - inclBoletos);
                       if (addBoletos > 0) {
                         let cost = 0;
                         if (plan === 'prime') { cost = addBoletos * 4; }
@@ -3982,7 +3986,7 @@ export default function CalculadoraPage() {
                     if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
                       const plan = locPlan;
                       const inclSplits = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
-                      const addSplits = Math.max(0, metrics.contractsUnderManagement - inclSplits);
+                      const addSplits = Math.max(0, toNum(metrics.contractsUnderManagement) - inclSplits);
                       if (addSplits > 0) {
                         let cost = 0;
                         if (plan === 'prime') { cost = addSplits * 4; }
@@ -3997,8 +4001,8 @@ export default function CalculadoraPage() {
                     if (addons.assinatura) {
                       const included = 15;
                       let totalSigs = 0;
-                      if (product === 'imob' || product === 'both') totalSigs += metrics.closingsPerMonth;
-                      if (product === 'loc' || product === 'both') totalSigs += metrics.newContractsPerMonth;
+                      if (product === 'imob' || product === 'both') totalSigs += toNum(metrics.closingsPerMonth);
+                      if (product === 'loc' || product === 'both') totalSigs += toNum(metrics.newContractsPerMonth);
                       const additional = Math.max(0, totalSigs - included);
                       if (additional > 0) {
                         const st1 = Math.min(additional, 20); const st2 = Math.min(Math.max(0, additional - 20), 20); const st3 = Math.max(0, additional - 40);
@@ -4011,7 +4015,7 @@ export default function CalculadoraPage() {
                     // Shared: WhatsApp Messages (V9: tiered 1-200=R$2, 201-350=R$1.80, 351-1000=R$1.50, 1001+=R$1.20)
                     if (addons.leads && metrics.wantsWhatsApp) {
                       const included = 100;
-                      const additional = Math.max(0, metrics.leadsPerMonth - included);
+                      const additional = Math.max(0, toNum(metrics.leadsPerMonth) - included);
                       if (additional > 0) {
                         const wt1 = Math.min(additional, 200); const wt2 = Math.min(Math.max(0, additional - 200), 150); const wt3 = Math.min(Math.max(0, additional - 350), 650); const wt4 = Math.max(0, additional - 1000);
                         const cost = wt1 * 2 + wt2 * 1.8 + wt3 * 1.5 + wt4 * 1.2;

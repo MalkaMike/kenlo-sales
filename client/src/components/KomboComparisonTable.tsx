@@ -842,8 +842,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         className={`text-center py-3 px-1 transition-all ${
                           selectedPlan === col.id
                             ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
-                            : col.isRecommended
-                            ? "bg-amber-50 border-t-2 border-l-2 border-r-2 border-amber-400 rounded-t-xl"
                             : ""
                         }`}
                       >
@@ -889,18 +887,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     <td key={`select-btn-${col.id}`} className={`text-center py-3 px-1 transition-all ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
-                        : col.isRecommended
-                        ? "bg-amber-50 border-l-2 border-r-2 border-amber-400"
                         : ""
                     }`}>
                       <Button
                         onClick={() => handlePlanSelect(col.id)}
-                        variant={selectedPlan === col.id ? "default" : col.isRecommended ? "default" : "outline"}
+                        variant={selectedPlan === col.id ? "default" : "outline"}
                         className={`w-full text-xs transition-all duration-300 ${
                           selectedPlan === col.id 
                             ? "bg-green-600 hover:bg-green-700" 
-                            : col.isRecommended && !selectedPlan
-                            ? "bg-primary hover:bg-primary/90 text-white animate-pulse shadow-lg shadow-primary/30 ring-2 ring-primary/50 ring-offset-2"
                             : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"
                         }`}
                         size="sm"
@@ -956,8 +950,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           className={`text-center py-3 px-3 transition-all ${
                             selectedPlan === col.id
                               ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
-                              : col.isRecommended
-                              ? "bg-amber-50 border-l-2 border-r-2 border-amber-400"
                               : ""
                           } ${
                             row.isTotal || row.isHeaderWithValue
@@ -980,8 +972,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     <td key={`footer-${col.id}`} className={`py-2 transition-all ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
-                        : col.isRecommended
-                        ? "bg-amber-50 border-l-2 border-r-2 border-b-2 border-amber-400 rounded-b-xl"
                         : ""
                     }`}>
                     </td>

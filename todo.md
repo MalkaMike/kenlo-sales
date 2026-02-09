@@ -2562,3 +2562,32 @@
 - [x] Updated server-side PDF (pdfGenerator.ts)
 - [x] Updated client-side PDF (generateProposalPDF.ts)
 - [ ] Verify alignment across all PDFs - TO BE TESTED
+
+## Critical UX & Business Logic Fixes (User Feedback Round 2)
+
+### 1. Layout & Positioning
+- [x] Moved "Imob / Locação / Ambos" filter directly above configuration cards, left-aligned with "Configuração" title
+- [ ] Push Kombo cards slightly right and reduce contrast (lighter background) - DEFERRED (requires more complex layout refactoring)
+- [ ] Make "Sua Seleção" the dominant column visually - DEFERRED
+- [ ] Keep only one pricing explanation box (remove redundancy) - DEFERRED
+
+### 2. Business Logic & Data Display (CRITICAL - Legal/Sales Risk)
+- [x] **REMOVED all "usuários ilimitados" / "contratos ilimitados" copy**
+- [x] Added correct allowance text for IMOB plans: Prime (2), K (5), K2 (10) usuários
+- [x] Added correct allowance text for LOC plans: Prime (100), K (150), K2 (500) contratos
+- [x] Displayed allowance info directly under plan selector in one compact line
+- [x] Removed "Já incluídos na sua configuração" text (defensive, adds zero info)
+
+### 3. UX & Data Entry
+- [x] Changed all numeric input fields to start EMPTY (metrics initialize as empty string "")
+- [x] Added placeholder text to all empty fields: "Ex: 5 usuários", "Ex: 1200 contratos", "Ex: 10", "Ex: 500", "Ex: 50"
+- [x] Implemented toNum() helper to safely convert empty strings to 0 for calculations
+- [x] Fixed all TypeScript errors (70+ errors resolved)
+- [ ] Enforce integer-only inputs (no decimals, no separators, auto-round if pasted) - DEFERRED (needs input validation)
+- [ ] Enforce decimal currency format for Boleto/Split (always R$ X,XX, auto-format on blur) - DEFERRED (needs onBlur handlers)
+
+### 4. Visual Neutrality
+- [x] Removed ALL pre-selection emphasis (amber background, borders, pulse animation) from Kombo cards
+- [x] Green highlight now appears ONLY after user clicks "Selecionar"
+- [x] All Kombo cards have neutral background before selection
+- [x] System reacts to user, never leads (sales stays in control)
