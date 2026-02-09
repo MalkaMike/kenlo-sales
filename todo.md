@@ -2416,3 +2416,10 @@
 - [x] Adicionar tooltips para substituir parágrafos explicativos — textos longos reduzidos, inline labels adicionados
 - [ ] Medir altura final e confirmar redução de 25%+
 - [ ] Testar no browser e verificar usabilidade
+
+## Ciclo de Pagamento — Mover para dentro do Card da tabela Kombos
+
+- [x] Remover Ciclo de Pagamento como seção separada acima da tabela
+- [x] Mover seletor de frequência para dentro do Card da tabela (como toolbar/filter no topo)
+- [x] Garantir que o seletor pareça um controle da tabela, não uma etapa de configuração
+- [x] Testar no browser e verificar UX — 222 testes passando, seletor agora está dentro do Card como toolbar

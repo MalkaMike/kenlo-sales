@@ -765,39 +765,39 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         Valores em base mensal. Anual é referência. Pagamentos mais longos = desconto.
       </p>
 
-      {/* Payment Frequency Selector - Sticky */}
-      <div className="sticky top-0 z-10 bg-white pb-3 mb-3 border-b border-gray-200">
-        <div className="text-[10px] font-semibold text-gray-600 mb-2">Ciclo de Pagamento</div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {FREQUENCY_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => handleFrequencyChange(option.id)}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
-                viewMode === option.id
-                  ? "bg-pink-50 border-primary text-primary"
-                  : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              <span className={`text-sm font-semibold ${
-                viewMode === option.id ? "text-primary" : "text-gray-900"
-              }`}>
-                {option.label}
-              </span>
-              <span className={`text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full ${
-                viewMode === option.id
-                  ? "bg-pink-100 text-primary"
-                  : "bg-gray-100 text-gray-500"
-              }`}>
-                {option.discount}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       <Card>
         <CardContent className="p-4">
+          {/* Payment Frequency Selector - Inside table as toolbar */}
+          <div className="pb-3 mb-3 border-b border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-600 mb-2">Ciclo de Pagamento</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {FREQUENCY_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleFrequencyChange(option.id)}
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all ${
+                    viewMode === option.id
+                      ? "bg-pink-50 border-primary text-primary"
+                      : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <span className={`text-sm font-semibold ${
+                    viewMode === option.id ? "text-primary" : "text-gray-900"
+                  }`}>
+                    {option.label}
+                  </span>
+                  <span className={`text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full ${
+                    viewMode === option.id
+                      ? "bg-pink-100 text-primary"
+                      : "bg-gray-100 text-gray-500"
+                  }`}>
+                    {option.discount}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Comparison Table */}
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed">
