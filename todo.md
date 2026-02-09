@@ -2665,3 +2665,7 @@
 
 - [x] Remove "Natureza do Negócio *" section title/header
 - [x] Remove "Tipo de Negócio *" label and business type selector buttons (Corretora / Administrador de Aluguel / Ambos)
+
+## Bug Fix: Missing key prop on /kombos page
+
+- [x] Fix React warning "Each child in a list should have a unique key prop" in KombosPage component - replaced bare <> fragment with <Fragment key=...> in .map() iteration

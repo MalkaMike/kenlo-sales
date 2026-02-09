@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Fragment } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Sparkles, FileText, ArrowRight, Star, Info } from "lucide-react";
@@ -235,8 +236,8 @@ export default function KombosPage() {
               </thead>
               <tbody>
                 {comparisonData.sections.map((section, sectionIndex) => (
-                  <>
-                    <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                  <Fragment key={`section-${sectionIndex}`}>
+                    <tr className="bg-muted/30">
                       <td
                         colSpan={6}
                         className="py-3 px-4 font-semibold text-foreground"
@@ -271,7 +272,7 @@ export default function KombosPage() {
                         ))}
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
