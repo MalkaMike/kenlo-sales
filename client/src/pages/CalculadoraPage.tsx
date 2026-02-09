@@ -35,6 +35,8 @@ import {
   Shuffle,
   Loader2,
   Check,
+  FileText,
+  ChevronUp,
 } from "lucide-react";
 
 // Types
@@ -309,6 +311,8 @@ export default function CalculadoraPage() {
   const [animateMetrics, setAnimateMetrics] = useState(false);
   const [isGeneratingExamples, setIsGeneratingExamples] = useState(false);
   const prevProductRef = useRef<ProductSelection>(product);
+  const configSectionRef = useRef<HTMLDivElement>(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
   
   // tRPC mutations for PDF generation and proposal creation
   const generatePDF = trpc.proposals.generatePDF.useMutation();
@@ -1359,6 +1363,21 @@ export default function CalculadoraPage() {
     }
   }, [businessNature.businessType]);
 
+  // Scroll observer for sticky summary bar
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Show sticky bar when config section scrolls out of view
+        setShowStickyBar(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: '-80px 0px 0px 0px' }
+    );
+    if (configSectionRef.current) {
+      observer.observe(configSectionRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   // Detect which Kombo is active and return discount percentage
   // Old detectKombo function removed - now using new Kombo system above
 
@@ -1781,7 +1800,7 @@ export default function CalculadoraPage() {
 
 
               {/* §1+2: Configuração Compacta (Merged: Informações do Negócio + Nossa Recomendação + Product selection) */}
-              <div className="mb-4">
+              <div className="mb-4" ref={configSectionRef}>
                 <h2 className="text-sm font-semibold text-gray-700 mb-2">Configuração</h2>
                 
                 {/* Product filter: left-aligned, directly above config cards (CEO Verdict Round 2) */}
@@ -4208,6 +4227,95 @@ export default function CalculadoraPage() {
         />
 
 
+      {/* Sticky Summary Bar */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+          showStickyBar ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+        }`}
+      >
+        <div className="bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div className="container max-w-6xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between gap-4">
+              {/* Left: Plan info */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Calculator className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-medium text-gray-500">
+                        {product === 'imob' ? 'IMOB' : product === 'loc' ? 'LOC' : 'IMOB + LOC'}
+                      </span>
+                      <span className="text-xs text-gray-300">|</span>
+                      <span className="text-xs font-medium text-gray-500">
+                        {product === 'imob' || product === 'both' ? imobPlan.toUpperCase() : ''}
+                        {product === 'both' ? ' + ' : ''}
+                        {product === 'loc' || product === 'both' ? locPlan.toUpperCase() : ''}
+                      </span>
+                      {komboInfo && (
+                        <>
+                          <span className="text-xs text-gray-300">|</span>
+                          <span className="text-xs font-semibold text-primary">{komboInfo.name}</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-gray-400">
+                      {frequencyLabels[frequency]} {frequency !== 'annual' ? `(${frequencyBadges[frequency]})` : '(referência)'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Center: Total price */}
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Total Mensal</span>
+                <span className="text-lg sm:text-xl font-bold text-gray-900">
+                  {formatCurrency(calculateMonthlyRecurring(activeKombo !== 'none'))}
+                </span>
+                {activeKombo !== 'none' && (
+                  <span className="text-[10px] text-green-600 font-medium">
+                    {Math.round((komboInfo?.discount || 0) * 100)}% OFF com {komboInfo?.name}
+                  </span>
+                )}
+              </div>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs gap-1.5 hidden sm:flex"
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  <ChevronUp className="w-3.5 h-3.5" />
+                  Topo
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    if (!selectedPlan) {
+                      toast.error('Selecione um plano ou Kombo antes de exportar.');
+                      return;
+                    }
+                    if (!canExportPDF) {
+                      toast.error('Preencha todos os campos obrigatórios.');
+                      return;
+                    }
+                    setShowQuoteInfoDialog(true);
+                  }}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  Exportar PDF
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
   );
 }

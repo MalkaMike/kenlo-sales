@@ -2643,3 +2643,14 @@
 - [x] No new explanatory texts added
 - [x] No logic, pricing, or rule changes
 - [x] Focus on noise reduction, visual consistency, space gain
+
+## Sticky Summary Bar
+
+- [x] Implement fixed bottom bar on calculator page showing total monthly cost
+- [x] Show selected plan name, frequency, and total value
+- [x] Include "Exportar PDF" quick action button + "Topo" scroll-to-top button
+- [x] Bar appears only when user scrolls past the Configuração section (IntersectionObserver)
+- [x] Smooth slide-up/down animation with transition-all duration-300
+- [x] Frosted glass effect (bg-white/95 backdrop-blur-md)
+- [x] Shows Kombo name and discount when active
+- [x] Must not interfere with existing layout or logic
