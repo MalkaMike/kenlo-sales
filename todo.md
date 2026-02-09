@@ -2622,3 +2622,24 @@
   - Integer fields (5): imobUsers (≥1), closingsPerMonth (>0), leadsPerMonth (>0), contractsUnderManagement (≥1), newContractsPerMonth (>0)
   - Currency fields (2): boletoAmount (>0), splitAmount (>0)
 - [x] Added pr-8 padding to inputs to prevent text overlap with checkmark icon
+
+## UI/UX Layout Adjustments (No Logic Changes)
+
+### Fix 1: Compact Banner
+- [x] Reduced banner height significantly (horizontal layout instead of stacked)
+- [x] Keep only: Icon + Title "Cotação Kenlo" + Subtitle (inline)
+- [x] Moved "Resetar" button to top-right corner
+
+### Fix 2: Add-ons Section Cleanup
+- [x] Removed text "Ative conforme a necessidade — sem compromisso."
+- [x] Moved "Selecionar Todos" / "Deselecionar Todos" buttons inline with title (same style as Configuração section)
+
+### Fix 3: Sua Seleção vs Kombos - Remove Redundant Text
+- [x] Removed blue info box with pricing explanation text
+- [x] Removed "Descontos: Semestral −10% | Anual −20% | Bienal −28%" line
+- [x] Compacted vertical spacing (removed extra blank lines)
+
+### Fix 4: General Directive
+- [x] No new explanatory texts added
+- [x] No logic, pricing, or rule changes
+- [x] Focus on noise reduction, visual consistency, space gain

@@ -1527,23 +1527,27 @@ export default function CalculadoraPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-6 sm:py-12 px-4 sm:px-6">
         <div className="container max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mb-3">
-              <Calculator className="w-6 h-6 text-primary" />
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center justify-center w-10 h-10 bg-primary/10 rounded-xl">
+                <Calculator className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Cotação Kenlo
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Veja o investimento ideal para sua imobiliária — em tempo real
+                </p>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 px-4">
-              Cotação Kenlo
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
-              Veja o investimento ideal para sua imobiliária — em tempo real
-            </p>
             <Button
               variant="outline"
               size="sm"
               onClick={handleReset}
-              className="mt-4 gap-2"
+              className="gap-2 text-xs"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
               Resetar
             </Button>
           </div>
@@ -2168,15 +2172,9 @@ export default function CalculadoraPage() {
               {/* §4: Add-ons Opcionais */}
               <div className="mb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                  <h2 className="text-sm font-semibold text-gray-700">
                     Add-ons Opcionais
                   </h2>
-                  <p className="text-sm text-muted-foreground">
-                    Ative conforme a necessidade — sem compromisso.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <div></div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
