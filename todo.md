@@ -2673,3 +2673,7 @@
 ## Sticky Bar Design Regression
 
 - [x] Restore sticky bar to previous nicer design: dark background with colored badges (pink plan badge, dark frequency badge, dark metrics badge), centered layout with total and export button. Added Total price badge, Topo button, and Exportar PDF button to the dark bar. Removed duplicate white/frosted glass bar.
+
+## Sticky Bar: Restore White/Frosted Glass Design
+
+- [x] Remove the dark/black sticky bar and restore the white frosted glass sticky bar that the user preferred
