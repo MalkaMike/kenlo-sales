@@ -249,6 +249,18 @@ export default function CalculadoraPage() {
   // Helper: Convert empty string metrics to numbers for calculations (CEO Verdict Round 2)
   const toNum = (val: number | ""): number => (typeof val === "number" ? val : 0);
 
+  // Helper: Validate and parse integer-only input (strips non-numeric, rounds decimals)
+  const parseIntegerInput = (value: string, min: number = 0): number | "" => {
+    if (value === "") return "";
+    // Strip all non-numeric characters except decimal point
+    const cleaned = value.replace(/[^0-9.]/g, "");
+    if (cleaned === "") return "";
+    // Parse and round to integer
+    const parsed = parseFloat(cleaned);
+    if (isNaN(parsed)) return "";
+    return Math.max(min, Math.round(parsed));
+  };
+
   // Step 3: Metrics (conditional based on product) - Start empty (CEO Verdict Round 2)
   const [metrics, setMetrics] = useState({
     // Imob metrics - empty by default, user must enter values
@@ -1794,8 +1806,8 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.imobUsers}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                setMetrics({ ...metrics, imobUsers: val === "" ? "" : Math.max(1, parseInt(val) || 1) });
+                                const parsed = parseIntegerInput(e.target.value, 1);
+                                setMetrics({ ...metrics, imobUsers: parsed });
                               }}
                               placeholder="Ex: 5 usuários"
                               min="1"
@@ -1810,8 +1822,8 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.closingsPerMonth}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                setMetrics({ ...metrics, closingsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
+                                const parsed = parseIntegerInput(e.target.value, 0);
+                                setMetrics({ ...metrics, closingsPerMonth: parsed });
                               }}
                               placeholder="Ex: 10"
                               min="0"
@@ -1826,8 +1838,8 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.leadsPerMonth}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                setMetrics({ ...metrics, leadsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
+                                const parsed = parseIntegerInput(e.target.value, 0);
+                                setMetrics({ ...metrics, leadsPerMonth: parsed });
                               }}
                               placeholder="Ex: 500"
                               min="0"
@@ -1904,8 +1916,8 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.contractsUnderManagement}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                setMetrics({ ...metrics, contractsUnderManagement: val === "" ? "" : Math.max(1, parseInt(val) || 1) });
+                                const parsed = parseIntegerInput(e.target.value, 1);
+                                setMetrics({ ...metrics, contractsUnderManagement: parsed });
                               }}
                               placeholder="Ex: 1200 contratos"
                               min="1"
@@ -1920,8 +1932,8 @@ export default function CalculadoraPage() {
                               inputMode="numeric"
                               value={metrics.newContractsPerMonth}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                setMetrics({ ...metrics, newContractsPerMonth: val === "" ? "" : Math.max(0, parseInt(val) || 0) });
+                                const parsed = parseIntegerInput(e.target.value, 0);
+                                setMetrics({ ...metrics, newContractsPerMonth: parsed });
                               }}
                               placeholder="Ex: 50"
                               min="0"

@@ -2591,3 +2591,12 @@
 - [x] Green highlight now appears ONLY after user clicks "Selecionar"
 - [x] All Kombo cards have neutral background before selection
 - [x] System reacts to user, never leads (sales stays in control)
+
+## Input Validation Enhancement
+
+- [x] Implement integer-only validation for user/contract count fields
+- [x] Strip non-numeric characters on input (allow only 0-9)
+- [x] Auto-round decimals if pasted (e.g., "5.7" → "6")
+- [x] Created parseIntegerInput() helper function
+- [x] Applied to all 5 integer fields: imobUsers, closingsPerMonth, leadsPerMonth, contractsUnderManagement, newContractsPerMonth
+- [ ] Test edge cases: paste, keyboard input, autofill - TO BE TESTED
