@@ -2669,3 +2669,7 @@
 ## Bug Fix: Missing key prop on /kombos page
 
 - [x] Fix React warning "Each child in a list should have a unique key prop" in KombosPage component - replaced bare <> fragment with <Fragment key=...> in .map() iteration
+
+## Sticky Bar Design Regression
+
+- [x] Restore sticky bar to previous nicer design: dark background with colored badges (pink plan badge, dark frequency badge, dark metrics badge), centered layout with total and export button. Added Total price badge, Topo button, and Exportar PDF button to the dark bar. Removed duplicate white/frosted glass bar.

@@ -3502,18 +3502,18 @@ export default function CalculadoraPage() {
                 })()}
 
                 {/* Sticky Bottom Summary Bar - Kenlo Brand Colors */}
-                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700">
+                <div className={`fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-2xl border-t border-gray-700 transition-all duration-300 ease-in-out ${showStickyBar ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
                   <div className="container py-2 sm:py-3">
                     <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                       {/* Kombo Badge - Highlighted when active */}
-          {komboInfo ? (
-            <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
-              {activeKombo === "core_gestao" ? (
-                <>✨ {komboInfo.name} (Implantação IMOB Gratis)</>
-              ) : (
-                <>✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)</>
-              )}
-            </div>
+                      {komboInfo ? (
+                        <div className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1.5 rounded-full font-bold shadow-lg animate-pulse">
+                          {activeKombo === "core_gestao" ? (
+                            <>✨ {komboInfo.name} (Implantação IMOB Gratis)</>
+                          ) : (
+                            <>✨ {komboInfo.name} (-{Math.round(komboInfo.discount * 100)}%)</>
+                          )}
+                        </div>
                       ) : (
                         <div className="bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md">
                           {product === "imob" && `Imob-${imobPlan.toUpperCase()}`}
@@ -3521,8 +3521,6 @@ export default function CalculadoraPage() {
                           {product === "both" && `Imob-${imobPlan.toUpperCase()} + Loc-${locPlan.toUpperCase()}`}
                         </div>
                       )}
-
-
 
                       {/* Add-ons Badge */}
                       {(() => {
@@ -3532,7 +3530,6 @@ export default function CalculadoraPage() {
                         if (addons.assinatura) selectedAddons.push('Assinatura');
                         if (addons.pay) selectedAddons.push('Pay');
                         if (addons.seguros) selectedAddons.push('Seguros');
-                        // Cash removed from PDFs per business rule: Receita Extra = Pay + Seguros only
                         return selectedAddons.length > 0 && (
                           <div className="bg-secondary/80 text-white px-3 py-1.5 rounded-full font-medium">
                             Add-ons: {selectedAddons.join(', ')}
@@ -3558,6 +3555,43 @@ export default function CalculadoraPage() {
                           LOC: {metrics.contractsUnderManagement}c, {metrics.newContractsPerMonth}n/m
                         </div>
                       )}
+
+                      {/* Separator */}
+                      <div className="hidden sm:block w-px h-5 bg-gray-600" />
+
+                      {/* Total Price */}
+                      <div className="bg-white/10 text-white px-3 py-1.5 rounded-full font-bold border border-white/20">
+                        Total: {formatCurrency(calculateMonthlyRecurring(activeKombo !== 'none'))}/mês
+                      </div>
+
+                      {/* Separator */}
+                      <div className="hidden sm:block w-px h-5 bg-gray-600" />
+
+                      {/* Action Buttons */}
+                      <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        className="hidden sm:flex items-center gap-1 bg-gray-700/60 text-gray-100 px-3 py-1.5 rounded-full font-medium border border-gray-600/50 hover:bg-gray-600/60 transition-colors"
+                      >
+                        <ChevronUp className="w-3 h-3" />
+                        Topo
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!selectedPlan) {
+                            toast.error('Selecione um plano ou Kombo antes de exportar.');
+                            return;
+                          }
+                          if (!canExportPDF) {
+                            toast.error('Preencha todos os campos obrigatórios.');
+                            return;
+                          }
+                          setShowQuoteInfoDialog(true);
+                        }}
+                        className="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-full font-semibold shadow-md hover:bg-primary/90 transition-colors"
+                      >
+                        <FileText className="w-3 h-3" />
+                        Exportar PDF
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -4171,95 +4205,6 @@ export default function CalculadoraPage() {
           }}
         />
 
-      {/* Sticky Summary Bar */}
-      <div
-        className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
-          showStickyBar ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
-        }`}
-      >
-        <div className="bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-          <div className="container max-w-6xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              {/* Left: Plan info */}
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Calculator className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-medium text-gray-500">
-                        {product === 'imob' ? 'IMOB' : product === 'loc' ? 'LOC' : 'IMOB + LOC'}
-                      </span>
-                      <span className="text-xs text-gray-300">|</span>
-                      <span className="text-xs font-medium text-gray-500">
-                        {product === 'imob' || product === 'both' ? imobPlan.toUpperCase() : ''}
-                        {product === 'both' ? ' + ' : ''}
-                        {product === 'loc' || product === 'both' ? locPlan.toUpperCase() : ''}
-                      </span>
-                      {komboInfo && (
-                        <>
-                          <span className="text-xs text-gray-300">|</span>
-                          <span className="text-xs font-semibold text-primary">{komboInfo.name}</span>
-                        </>
-                      )}
-                    </div>
-                    <div className="text-[10px] text-gray-400">
-                      {frequencyLabels[frequency]} {frequency !== 'annual' ? `(${frequencyBadges[frequency]})` : '(referência)'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Center: Total price */}
-              <div className="flex flex-col items-center">
-                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Total Mensal</span>
-                <span className="text-lg sm:text-xl font-bold text-gray-900">
-                  {formatCurrency(calculateMonthlyRecurring(activeKombo !== 'none'))}
-                </span>
-                {activeKombo !== 'none' && (
-                  <span className="text-[10px] text-green-600 font-medium">
-                    {Math.round((komboInfo?.discount || 0) * 100)}% OFF com {komboInfo?.name}
-                  </span>
-                )}
-              </div>
-
-              {/* Right: Actions */}
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs gap-1.5 hidden sm:flex"
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                >
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  Topo
-                </Button>
-                <Button
-                  size="sm"
-                  className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
-                  onClick={() => {
-                    if (!selectedPlan) {
-                      toast.error('Selecione um plano ou Kombo antes de exportar.');
-                      return;
-                    }
-                    if (!canExportPDF) {
-                      toast.error('Preencha todos os campos obrigatórios.');
-                      return;
-                    }
-                    setShowQuoteInfoDialog(true);
-                  }}
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  Exportar PDF
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       </div>
   );
 }
