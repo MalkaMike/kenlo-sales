@@ -2404,3 +2404,15 @@
 - [x] Passar validityDays para o server-side PDF e exibir na Conclusão
 - [x] Atualizar interface ProposalPrintData com campo validityDays
 - [x] Verificar no browser e rodar testes — 222 testes passando
+
+## Calculadora — Reduzir scroll vertical em 25%+
+
+- [x] Medir altura total atual da página (baseline para comparação)
+- [x] Merge: Informações do Negócio + Nossa Recomendação + Product selection em bloco compacto único — reduziu de ~270 linhas para ~120 linhas (55% de redução)
+- [x] Mover Ciclo de Pagamento para acima da tabela "Sua Seleção vs Kombos"
+- [x] Tornar Ciclo de Pagamento sticky (visível durante scroll) — position: sticky; top: 0; z-index: 10
+- [x] Garantir que preços na tabela reagem instantaneamente a mudanças de frequência — handleFrequencyChange já recalcula columns[] via calculatePrice()
+- [x] Reduzir headers grandes, usar labels inline — text-base/text-lg → text-sm, mb-6 sm:mb-8 → mb-4
+- [x] Adicionar tooltips para substituir parágrafos explicativos — textos longos reduzidos, inline labels adicionados
+- [ ] Medir altura final e confirmar redução de 25%+
+- [ ] Testar no browser e verificar usabilidade

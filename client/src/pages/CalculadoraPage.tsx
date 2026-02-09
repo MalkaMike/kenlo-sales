@@ -1529,8 +1529,8 @@ export default function CalculadoraPage() {
             <CardContent className="p-4 sm:p-6">
 
               {/* Step 0: Business Nature */}
-              <div id="business-nature-section" className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+              <div id="business-nature-section" className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
                   Natureza do Negócio
                 </h2>
                 <div className="space-y-4">
@@ -1752,281 +1752,210 @@ export default function CalculadoraPage() {
               </div>
 
 
-              {/* §1: Informações do Negócio */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                    1. Informações do Negócio
-                </h2>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* Imob Questions - visible when businessType is broker or both */}
-                  {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-                  <Card className="bg-blue-50/30">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        Kenlo IMOB
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="imobUsers" className="text-sm">Número de usuários</Label>
-                          <Input
-                            id="imobUsers"
-                            type="number" inputMode="numeric"
-                            value={metrics.imobUsers}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
-                            }}
-                            min="1"
-                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="closings" className="text-sm">Fechamentos por mês</Label>
-                          <Input
-                            id="closings"
-                            type="number" inputMode="numeric"
-                            value={metrics.closingsPerMonth}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
-                            }}
-                            min="0"
-                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                      </div>
+              {/* §1+2: Configuração Compacta (Merged: Informações do Negócio + Nossa Recomendação + Product selection) */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-gray-700">Configuração</h2>
+                  {/* Product switcher inline */}
+                  <div className="flex items-center gap-1.5">
+                    {["imob", "loc", "both"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setProduct(opt as ProductSelection)}
+                        className={`px-2.5 py-1 text-xs rounded-full transition-all ${
+                          product === opt
+                            ? "bg-primary text-white font-semibold"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                      {/* Box: Leads */}
-                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-blue-800">Leads</span>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {/* Left: Metrics */}
+                  {(product === "imob" || product === "both") && (
+                    <Card className="bg-blue-50/20 border-blue-200/40">
+                      <CardContent className="pt-3 pb-3 space-y-2">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+                          <span className="font-semibold text-xs text-gray-900">Kenlo IMOB</span>
                         </div>
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <Label htmlFor="leadsPerMonth" className="text-sm">Leads recebidos por mês</Label>
+                            <Label htmlFor="imobUsers" className="text-xs text-gray-600">Usuários</Label>
+                            <Input
+                              id="imobUsers"
+                              type="number"
+                              inputMode="numeric"
+                              value={metrics.imobUsers}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, imobUsers: Math.max(1, value) });
+                              }}
+                              min="1"
+                              className="mt-0.5 h-8 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="closings" className="text-xs text-gray-600">Fechamentos/mês</Label>
+                            <Input
+                              id="closings"
+                              type="number"
+                              inputMode="numeric"
+                              value={metrics.closingsPerMonth}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, closingsPerMonth: Math.max(0, value) });
+                              }}
+                              min="0"
+                              className="mt-0.5 h-8 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="leadsPerMonth" className="text-xs text-gray-600">Leads/mês</Label>
                             <Input
                               id="leadsPerMonth"
-                              type="number" inputMode="numeric"
+                              type="number"
+                              inputMode="numeric"
                               value={metrics.leadsPerMonth}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value) || 0;
                                 setMetrics({ ...metrics, leadsPerMonth: Math.max(0, value) });
                               }}
                               min="0"
-                              className="mt-1"
+                              className="mt-0.5 h-8 text-xs"
                             />
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="externalAI" className="text-sm">IA SDR Externa (Ex: Lais)</Label>
-                            <Switch
-                              id="externalAI"
-                              checked={metrics.usesExternalAI}
-                              onCheckedChange={(checked) => {
-                                setMetrics({ ...metrics, usesExternalAI: checked });
-                              }}
-                            />
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center justify-between p-1.5 bg-white rounded border border-blue-100">
+                              <Label htmlFor="externalAI" className="text-[10px] text-gray-600">IA SDR</Label>
+                              <Switch
+                                id="externalAI"
+                                checked={metrics.usesExternalAI}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                                className="scale-75"
+                              />
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 bg-white rounded border border-blue-100">
+                              <Label htmlFor="whatsapp" className="text-[10px] text-gray-600">WhatsApp</Label>
+                              <Switch
+                                id="whatsapp"
+                                checked={metrics.wantsWhatsApp}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                                className="scale-75"
+                              />
+                            </div>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                            <Label htmlFor="whatsapp" className="text-sm">WhatsApp Integrado</Label>
-                            <Switch
-                              id="whatsapp"
-                              checked={metrics.wantsWhatsApp}
-                              onCheckedChange={(checked) => {
-                                setMetrics({ ...metrics, wantsWhatsApp: checked });
-                              }}
-                            />
+                        </div>
+                        {/* Plan selector inline */}
+                        <div className="pt-2 border-t border-blue-200/40">
+                          <div className="text-[10px] text-gray-500 mb-1.5">Plano</div>
+                          <div className="grid grid-cols-3 gap-1.5">
+                            {(["prime", "k", "k2"] as const).map((plan) => {
+                              const isSelected = imobPlan === plan;
+                              const isRecommended = recommendedImobPlan === plan;
+                              return (
+                                <button
+                                  key={plan}
+                                  onClick={() => setImobPlan(plan)}
+                                  className={`p-2 rounded border transition-all text-center ${
+                                    isSelected
+                                      ? "border-primary bg-primary/10 ring-1 ring-primary/30"
+                                      : "border-gray-200 hover:border-gray-300 bg-white"
+                                  }`}
+                                >
+                                  <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                  {isRecommended && (
+                                    <div className="text-[9px] text-primary mt-0.5">★ Recomendado</div>
+                                  )}
+                                </button>
+                              );
+                            })}
                           </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  )}
-
-                  {/* Loc Questions - visible when businessType is rental_admin or both */}
-                  {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-                  <Card className="bg-green-50/30">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Key className="w-4 h-4" />
-                        Kenlo Locação
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="contracts" className="text-sm">Contratos sob gestão</Label>
-                          <Input
-                            id="contracts"
-                            type="number" inputMode="numeric"
-                            value={metrics.contractsUnderManagement}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
-                            }}
-                            min="1"
-                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="newContracts" className="text-sm">Novos contratos por mês</Label>
-                          <Input
-                            id="newContracts"
-                            type="number" inputMode="numeric"
-                            value={metrics.newContractsPerMonth}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value) || 0;
-                              setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
-                            }}
-                            min="0"
-                            className={`mt-1 ${animateMetrics ? "metric-field-animated" : ""}`}
-                          />
-                        </div>
-                      </div>
-
-
-                    </CardContent>
-                  </Card>
-                  )}
-                
-                </div>
-              </div>
-
-
-              {/* §2: Solução e Plano Recomendados */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  2. Nossa Recomendação
-                </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Baseado no seu perfil, este é o melhor ponto de partida.
-                </p>
-                
-                <div className={`grid gap-4 ${product === "both" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1 max-w-lg"}`}>
-                  {/* IMOB Card — shown when product is imob or both */}
-                  {(product === "imob" || product === "both") && (
-                    <Card className="border-blue-200/60 bg-gradient-to-br from-blue-50/40 to-white">
-                      <CardContent className="pt-5 pb-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="p-1.5 rounded-lg bg-blue-100">
-                            <TrendingUp className="w-4 h-4 text-blue-600" />
-                          </div>
-                          <span className="font-bold text-sm text-gray-900">Kenlo IMOB</span>
-                          <span className="text-[10px] text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full font-medium">CRM + Site</span>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["prime", "k", "k2"] as const).map((plan) => {
-                            const isSelected = imobPlan === plan;
-                            const isRecommended = recommendedImobPlan === plan;
-                            const planOrder = { prime: 0, k: 1, k2: 2 };
-                            const isBelowRecommended = planOrder[plan] < planOrder[recommendedImobPlan];
-                            return (
-                              <button
-                                key={plan}
-                                onClick={() => setImobPlan(plan)}
-                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
-                                  isSelected
-                                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
-                                    : isBelowRecommended
-                                    ? "border-gray-200 bg-gray-50/80 opacity-50 hover:opacity-70 cursor-pointer"
-                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                                }`}
-                              >
-                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                {isRecommended && (
-                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
-                                    Recomendado
-                                  </Badge>
-                                )}
-                                {isSelected && !isRecommended && (
-                                  <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
-                                    Sua escolha
-                                  </Badge>
-                                )}
-                              </button>
-                            );
-                          })}
                         </div>
                       </CardContent>
                     </Card>
                   )}
 
-                  {/* LOC Card — shown when product is loc or both */}
                   {(product === "loc" || product === "both") && (
-                    <Card className="border-green-200/60 bg-gradient-to-br from-green-50/40 to-white">
-                      <CardContent className="pt-5 pb-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="p-1.5 rounded-lg bg-green-100">
-                            <Key className="w-4 h-4 text-green-600" />
-                          </div>
-                          <span className="font-bold text-sm text-gray-900">Kenlo Locação</span>
-                          <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">Gestão</span>
+                    <Card className="bg-green-50/20 border-green-200/40">
+                      <CardContent className="pt-3 pb-3 space-y-2">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Key className="w-3.5 h-3.5 text-green-600" />
+                          <span className="font-semibold text-xs text-gray-900">Kenlo Locação</span>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["prime", "k", "k2"] as const).map((plan) => {
-                            const isSelected = locPlan === plan;
-                            const isRecommended = recommendedLocPlan === plan;
-                            const planOrder = { prime: 0, k: 1, k2: 2 };
-                            const isBelowRecommended = planOrder[plan] < planOrder[recommendedLocPlan];
-                            return (
-                              <button
-                                key={plan}
-                                onClick={() => setLocPlan(plan)}
-                                className={`relative p-3 rounded-lg border-2 transition-all text-center ${
-                                  isSelected
-                                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
-                                    : isBelowRecommended
-                                    ? "border-gray-200 bg-gray-50/80 opacity-50 hover:opacity-70 cursor-pointer"
-                                    : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                                }`}
-                              >
-                                <div className="font-bold text-sm">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
-                                {isRecommended && (
-                                  <Badge className="mt-1 text-[10px] bg-primary/10 text-primary border-primary/20">
-                                    Recomendado
-                                  </Badge>
-                                )}
-                                {isSelected && !isRecommended && (
-                                  <Badge variant="outline" className="mt-1 text-[10px] border-gray-300 text-gray-600">
-                                    Sua escolha
-                                  </Badge>
-                                )}
-                              </button>
-                            );
-                          })}
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <Label htmlFor="contracts" className="text-xs text-gray-600">Contratos</Label>
+                            <Input
+                              id="contracts"
+                              type="number"
+                              inputMode="numeric"
+                              value={metrics.contractsUnderManagement}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, contractsUnderManagement: Math.max(1, value) });
+                              }}
+                              min="1"
+                              className="mt-0.5 h-8 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="newContracts" className="text-xs text-gray-600">Novos/mês</Label>
+                            <Input
+                              id="newContracts"
+                              type="number"
+                              inputMode="numeric"
+                              value={metrics.newContractsPerMonth}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0;
+                                setMetrics({ ...metrics, newContractsPerMonth: Math.max(0, value) });
+                              }}
+                              min="0"
+                              className="mt-0.5 h-8 text-xs"
+                            />
+                          </div>
+                        </div>
+                        {/* Plan selector inline */}
+                        <div className="pt-2 border-t border-green-200/40">
+                          <div className="text-[10px] text-gray-500 mb-1.5">Plano</div>
+                          <div className="grid grid-cols-3 gap-1.5">
+                            {(["prime", "k", "k2"] as const).map((plan) => {
+                              const isSelected = locPlan === plan;
+                              const isRecommended = recommendedLocPlan === plan;
+                              return (
+                                <button
+                                  key={plan}
+                                  onClick={() => setLocPlan(plan)}
+                                  className={`p-2 rounded border transition-all text-center ${
+                                    isSelected
+                                      ? "border-primary bg-primary/10 ring-1 ring-primary/30"
+                                      : "border-gray-200 hover:border-gray-300 bg-white"
+                                  }`}
+                                >
+                                  <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                                  {isRecommended && (
+                                    <div className="text-[9px] text-primary mt-0.5">★ Recomendado</div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
                   )}
-                </div>
-
-                {/* Subtle product switch — allows changing product without going back to §1 */}
-                <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>Ajustar:</span>
-                  {["imob", "loc", "both"].map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => setProduct(opt as ProductSelection)}
-                      className={`px-2.5 py-1 rounded-full transition-all ${
-                        product === opt
-                          ? "bg-primary/10 text-primary font-semibold"
-                          : "hover:bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
-                    </button>
-                  ))}
                 </div>
               </div>
 
 
               {/* §3: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
-                  3. Benefícios Inclusos
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                  Benefícios Inclusos
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Já incluídos na sua configuração.
@@ -2181,10 +2110,10 @@ export default function CalculadoraPage() {
 
 
               {/* §4: Add-ons Opcionais */}
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                    4. Add-ons Opcionais
+                  <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                    Add-ons Opcionais
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Ative conforme a necessidade — sem compromisso.
@@ -2404,8 +2333,8 @@ export default function CalculadoraPage() {
 
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
-                  <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    6. Custos Pós-Pago - Sem surpresas, só o que você usar
+                  <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                    Custos Pós-Pago
                   </h2>
                   
                   <Card>
@@ -3085,8 +3014,8 @@ export default function CalculadoraPage() {
                   
                   return (
                 <div className="mt-6 mb-4">
-                  <h2 className="text-lg font-bold text-gray-900 mb-3">
-                    7. Kenlo Receita Extra
+                  <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                    Receita Extra
                   </h2>
                   
                   <Card>
