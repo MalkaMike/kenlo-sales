@@ -2677,3 +2677,14 @@
 ## Sticky Bar: Restore White/Frosted Glass Design
 
 - [x] Remove the dark/black sticky bar and restore the white frosted glass sticky bar that the user preferred
+
+## Restore Natureza do Negócio Section with Conditional Logic
+
+- [x] Add back "Natureza do Negócio" section title
+- [x] Add 3 business type selector boxes: Corretora / Administradora / Ambos
+- [x] Corretora: show "Tem site?" + "Tem CRM?" toggles, pre-select Imob product
+- [x] Administradora: show "Tem ERP?" toggle, pre-select Locação product
+- [x] Ambos: show all 3 questions (Tem site? + Tem CRM? + Tem ERP?), pre-select Imob+Loc
+- [x] All yes/no toggles must start unselected (null state) - no default value assumed
+- [x] Add new "hasERP" state variable for the ERP question (already existed)
+- [x] Ensure toggles require explicit user confirmation (no auto-assumed "Não") - replaced Switch with Sim/Não buttons
