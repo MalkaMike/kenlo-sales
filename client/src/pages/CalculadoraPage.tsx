@@ -1585,70 +1585,7 @@ export default function CalculadoraPage() {
 
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 mb-2">
-                  Natureza do Negócio <span className="text-red-500">*</span>
-                </h2>
                 <div className="space-y-4">
-                  {/* Business Type */}
-                  <div>
-                    <Label className="text-sm font-semibold mb-4 block">Tipo de Negócio *</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
-                      {/* Corretora Box */}
-                      <button
-                        type="button"
-                        onClick={() => setBusinessNature({ ...businessNature, businessType: "broker" })}
-                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
-                          businessNature.businessType === "broker"
-                            ? "border-primary bg-primary/5 shadow-md"
-                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <TrendingUp className={`w-5 h-5 sm:w-4 sm:h-4 ${
-                            businessNature.businessType === "broker" ? "text-primary" : "text-gray-400"
-                          }`} />
-                          <div className="font-semibold text-sm sm:text-xs">Corretora</div>
-                        </div>
-                      </button>
-
-                      {/* Administrador de Aluguel Box */}
-                      <button
-                        type="button"
-                        onClick={() => setBusinessNature({ ...businessNature, businessType: "rental_admin" })}
-                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
-                          businessNature.businessType === "rental_admin"
-                            ? "border-primary bg-primary/5 shadow-md"
-                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Key className={`w-5 h-5 sm:w-4 sm:h-4 ${
-                            businessNature.businessType === "rental_admin" ? "text-primary" : "text-gray-400"
-                          }`} />
-                          <div className="font-semibold text-sm sm:text-xs">Administrador de Aluguel</div>
-                        </div>
-                      </button>
-
-                      {/* Ambos Box */}
-                      <button
-                        type="button"
-                        onClick={() => setBusinessNature({ ...businessNature, businessType: "both" })}
-                        className={`relative p-4 sm:p-3 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-0 ${
-                          businessNature.businessType === "both"
-                            ? "border-primary bg-primary/5 shadow-md"
-                            : "border-gray-200 hover:border-gray-300 active:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Zap className={`w-5 h-5 sm:w-4 sm:h-4 ${
-                            businessNature.businessType === "both" ? "text-primary" : "text-gray-400"
-                          }`} />
-                          <div className="font-semibold text-sm sm:text-xs">Ambos</div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Company Information */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

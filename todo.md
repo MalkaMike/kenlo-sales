@@ -2660,3 +2660,8 @@
 - [x] Fix JSX nesting error in sticky bar implementation (div nesting/fragment closing mismatch in CalculadoraPage.tsx)
 - [x] Add asterisk (*) to "Natureza do Negócio" section title to indicate required field (already present)
 - [x] Fix TypeError: v.boletoChargeAmount.toFixed is not a function - made toNum() helper robust to handle arbitrary strings including currency-formatted values ("R$ 10,00")
+
+## UI Cleanup: Remove Natureza do Negócio
+
+- [x] Remove "Natureza do Negócio *" section title/header
+- [x] Remove "Tipo de Negócio *" label and business type selector buttons (Corretora / Administrador de Aluguel / Ambos)
