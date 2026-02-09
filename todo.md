@@ -2474,3 +2474,91 @@
 - [x] Validar: lógica mensal clara e intuitiva — texto explicativo completo, descontos da perspectiva mensal
 - [x] Validar: sem viés visual para planos/kombos — todos badges "Recomendado" removidos
 - [x] Validar: PDF é sumário executivo limpo, não brochura — 7 seções lineares, sem tabela Kombos
+
+## CEO-Level Verdict — Final Precision Fixes
+
+### 1. Content Completeness (Clarity Safeguards)
+
+#### A. Scope Clarity ("What exactly am I buying?")
+- [ ] Add 1-line scope sentence for each plan (Prime/K/K2) in calculator
+- [ ] Add scope sentence to PDF for each selected plan
+- [ ] Example: "Includes X users, Y core features, standard onboarding, and access to Kenlo ecosystem"
+
+#### B. Users/Contracts Logic (Edge-case Clarity)
+- [ ] Add "Commercial rules" block in PDF footer or appendix
+- [ ] Text: "Valores consideram o volume informado. Crescimentos futuros seguem a tabela de excedentes vigente."
+- [ ] Explain what happens if client exceeds included users/contracts
+
+#### C. Payment Frequency Logic (Very Important)
+- [ ] Add consistent explanation across Calculator UI, Cotação PDF, and Sales Portal PDF
+- [ ] Recommended phrasing: "Os valores apresentados partem do preço mensal de referência. Pagamentos semestrais e anuais oferecem descontos progressivos."
+- [ ] Do not explain math — explain logic
+
+#### D. One-time vs Recurring (Visual + Semantic)
+- [ ] Add clear visual separation in PDF between: One-time, Recurring, Usage-based
+- [ ] Group Implantação separately from Mensalidade and Add-ons recorrentes
+
+#### E. What Happens After Signature?
+- [ ] Add "Próximos passos após a contratação" section to PDF
+- [ ] Steps: Assinatura → Onboarding → Go-live → CS/acompanhamento
+
+### 2. Design & Visual Clarity
+
+#### A. One Clear "Price Anchor"
+- [ ] Pick one dominant number: "Total mensal equivalente" or "Total anual contratado"
+- [ ] Make it visually dominant (larger font, bold, color)
+- [ ] Everything else becomes contextual
+
+#### B. Grouping by Mental Model
+- [ ] Visually cluster products by client intent, not just system logic
+- [ ] Example: "Gestão e Vendas" (Imob + Sites + Leads), "Locação e Financeiro" (Locação + Pay + Cash + Seguros)
+
+#### C. Reduce Repetition, Increase Scannability
+- [ ] Use icons/tags instead of repeating text
+- [ ] Use checkmarks consistently (same meaning everywhere)
+
+#### D. Stop "AI Recommendation" Behavior (Critical)
+- [ ] Already done — validate no "recommended" badges remain
+- [ ] Ensure all wording is neutral: "Configuração selecionada" not "Melhor escolha"
+
+#### E. Storytelling Upgrade (Light, Executive-level)
+- [ ] Enforce sequence in PDF: Context → Solution summary → Financials → Operational next steps
+- [ ] Make PDF feel board-ready
+
+### 3. Alignment Rule: Sales Portal PDF = Cotação PDF
+- [ ] Create shared field dictionary (same field names, labels, order)
+- [ ] Add QA checklist: "If it appears in Sales Portal, it must appear in Cotação (and vice versa)"
+- [ ] Enforce alignment mechanisms to prevent silent divergence
+
+
+## CEO Verdict Precision Fixes (Feb 2026)
+
+### Category 1: Scope Clarity
+- [x] Add one-line scope descriptions below Prime/K/K2 plan selectors for IMOB
+- [x] Add one-line scope descriptions below Prime/K/K2 plan selectors for LOC
+
+### Category 2: Pricing Transparency
+- [x] Add fixed explanation text: "O valor mensal é o preço de referência. Pagamentos semestrais e anuais oferecem descontos progressivos sobre esse valor."
+- [x] Ensure monthly value is always visible and labeled as "Preço de referência"
+- [x] Show frequency comparison explicitly: Mensal (referência), Semestral (–X%), Anual (–Y%), Bienal (–Y%)
+- [x] Highlight selected frequency visually (border/background + ring) without "recommended" label
+- [x] Never show formulas or explain percentages in prose - only final values + discount label
+- [x] Updated calculator UI (KomboComparisonTable.tsx)
+- [x] Updated server-side PDF (pdfGenerator.ts)
+- [x] Updated client-side PDF (generateProposalPDF.ts)
+
+### Category 3: Design & Hierarchy
+- [x] Visually separate one-time fees (implantação) with "PAGAMENTO ÚNICO" label + extra spacing
+- [x] Updated server-side PDF (pdfGenerator.ts)
+- [x] Updated client-side PDF (generateProposalPDF.ts)
+- [ ] Implement single price anchor rule - DEFERRED (requires more complex refactoring)
+- [ ] Make all other numbers secondary - DEFERRED
+- [ ] Enforce strict PDF section order - DEFERRED
+- [ ] Remove yellow boxes/"Recomendado" - NOT NEEDED (UI already uses neutral language)
+
+### Category 4: Content Completeness
+- [x] Add commercial rules micro-block in light gray box before conclusion (exact CEO verdict text)
+- [x] Add "Próximos passos" section with 4 numbered bullets
+- [x] Updated server-side PDF (pdfGenerator.ts)
+- [x] Updated client-side PDF (generateProposalPDF.ts)
+- [ ] Verify alignment across all PDFs - TO BE TESTED

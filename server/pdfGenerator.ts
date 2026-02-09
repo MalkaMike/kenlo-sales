@@ -283,12 +283,12 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const isKombo = komboDiscount > 0 || (komboLabel !== "" && normalizedKombo !== "sem_kombo");
 
     const freqMap: Record<string, { label: string; adj: string }> = {
-      monthly: { label: "Mensal", adj: "+25%" },
-      mensal: { label: "Mensal", adj: "+25%" },
-      semestral: { label: "Semestral", adj: "+11%" },
-      annual: { label: "Anual", adj: "0% (referencia)" },
-      anual: { label: "Anual", adj: "0% (referencia)" },
-      bienal: { label: "Bienal", adj: "-10%" },
+      monthly: { label: "Mensal", adj: "(referência)" },
+      mensal: { label: "Mensal", adj: "(referência)" },
+      semestral: { label: "Semestral", adj: "−10%" },
+      annual: { label: "Anual", adj: "−20%" },
+      anual: { label: "Anual", adj: "−20%" },
+      bienal: { label: "Bienal", adj: "−28%" },
     };
     const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || freqMap["annual"];
 
@@ -424,8 +424,11 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // ================================================================
     Y = sectionTitle("Detalhamento", Y);
 
-    lbl("Valores em base mensal equivalente para a frequencia escolhida.", M + 10, Y, { size: 6.5, color: C.textLight });
-    Y += 12;
+    // CEO Verdict pricing transparency text
+    lbl("O valor mensal é o preço de referência. Pagamentos semestrais e anuais oferecem descontos progressivos sobre esse valor.", M + 10, Y, { size: 6.5, color: C.text });
+    Y += 10;
+    lbl("Descontos: Semestral −10% | Anual −20% | Bienal −28%", M + 10, Y, { size: 6, color: C.textMuted });
+    Y += 14;
 
     // Products
     if (showImob && data.imobPrice !== undefined) {
@@ -481,10 +484,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       .text(fmt(monthlyRecurring), M + 14, Y, { width: CW - 28, align: "right" });
     Y += 16;
 
-    // Implantação
-    tableRow("Implantacao (pagamento unico)", fmt(data.implantationFee), Y);
+    // Implantação - CEO Verdict: clearly labeled as "Pagamento único"
+    Y += 4; // Extra spacing to visually separate from monthly fees
+    doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
+      .text("PAGAMENTO ÚNICO", M + 14, Y, { lineBreak: false });
+    Y += 12;
+    tableRow("Implantação", fmt(data.implantationFee), Y);
     Y += 10;
-    lbl("Custo unico, nao recorrente — nao entra no calculo do ROI mensal.", M + 14, Y, { size: 5.5, color: C.textLight });
+    lbl("Custo único, não recorrente — não entra no cálculo do ROI mensal.", M + 14, Y, { size: 5.5, color: C.textLight });
     Y += 14;
 
     // Payment condition with installment breakdown
@@ -756,6 +763,43 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         Y += 12;
       }
     }
+
+    // ================================================================
+    // SECTION 7.5 — PRÓXIMOS PASSOS (CEO Verdict Category 4)
+    // ================================================================
+    if (needsNewPage(Y, 120)) Y = newPage();
+    
+    Y = sectionTitle("Próximos passos", Y);
+    
+    const steps = [
+      "Assinatura da proposta",
+      "Onboarding e configuração",
+      "Go-live",
+      "Acompanhamento por CS"
+    ];
+    
+    steps.forEach((step, idx) => {
+      doc.fontSize(8).fillColor(C.text).font("Helvetica")
+        .text(`${idx + 1}. ${step}`, M + 14, Y, { lineBreak: false });
+      Y += 14;
+    });
+    
+    Y += GAP;
+
+    // ================================================================
+    // SECTION 7.6 — COMMERCIAL RULES MICRO-BLOCK (CEO Verdict Category 4)
+    // ================================================================
+    if (needsNewPage(Y, 60)) Y = newPage();
+    
+    // Light gray box with commercial rules text
+    const rulesH = 36;
+    doc.roundedRect(M, Y, CW, rulesH, 4).fill("#F8FAFC");
+    doc.fontSize(6.5).fillColor(C.text).font("Helvetica")
+      .text(
+        "Os valores consideram o volume informado no momento da cotação. Crescimentos futuros seguem a tabela vigente de excedentes ou upgrade de plano.",
+        M + 10, Y + 10, { width: CW - 20, align: "left", lineGap: 2 }
+      );
+    Y += rulesH + GAP;
 
     // ================================================================
     // SECTION 8 — CONCLUSÃO

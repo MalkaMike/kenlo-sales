@@ -776,24 +776,31 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     onClick={() => handleFrequencyChange(option.id)}
                     className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all ${
                       viewMode === option.id
-                        ? "bg-pink-50 border-primary text-primary"
+                        ? "bg-pink-50 border-primary text-primary ring-2 ring-primary/20"
                         : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
                     }`}
                   >
-                    {option.label}
+                    <div className="flex flex-col items-center">
+                      <span>{option.label}</span>
+                      <span className={`text-[9px] ${
+                        viewMode === option.id ? "text-primary" : "text-gray-500"
+                      }`}>
+                        {option.id === "monthly" ? "(referência)" : option.discount}
+                      </span>
+                    </div>
                   </button>
                 ))}
               </div>
             </div>
           </div>
           
-          {/* Pricing Explanation */}
-          <div className="mb-3 p-2.5 bg-gray-50 rounded-md">
-            <p className="text-[11px] text-gray-600 leading-relaxed">
-              Os valores exibidos são <strong>mensais equivalentes</strong>, para facilitar a comparação. 
-              O ciclo <strong>Anual</strong> é selecionado por padrão por oferecer o melhor custo-benefício. 
-              Pagamentos mais longos geram desconto sobre o valor mensal de referência: 
-              <span className="font-medium">Semestral −10%</span>, <span className="font-medium">Anual −20%</span>, <span className="font-medium">Bienal −28%</span>.
+          {/* Pricing Explanation - CEO Verdict exact text */}
+          <div className="mb-3 p-2.5 bg-blue-50 rounded-md border border-blue-100">
+            <p className="text-[11px] text-gray-700 leading-relaxed">
+              <strong>O valor mensal é o preço de referência.</strong> Pagamentos semestrais e anuais oferecem descontos progressivos sobre esse valor.
+            </p>
+            <p className="text-[10px] text-gray-600 mt-1.5">
+              Descontos: <span className="font-medium">Semestral −10%</span> | <span className="font-medium">Anual −20%</span> | <span className="font-medium">Bienal −28%</span>
             </p>
           </div>
 

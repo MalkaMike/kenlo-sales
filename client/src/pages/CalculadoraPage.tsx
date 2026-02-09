@@ -1872,6 +1872,12 @@ export default function CalculadoraPage() {
                               );
                             })}
                           </div>
+                          {/* Scope clarity */}
+                          <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
+                            {imobPlan === "prime" && "Inclui usuários ilimitados, funcionalidades essenciais de CRM e Site personalizável, onboarding padrão e acesso ao ecossistema Kenlo."}
+                            {imobPlan === "k" && "Inclui usuários ilimitados, funcionalidades avançadas de CRM e Site personalizável, onboarding completo, VIP e acesso ao ecossistema Kenlo."}
+                            {imobPlan === "k2" && "Inclui usuários ilimitados, funcionalidades premium de CRM e Site personalizável, onboarding premium, VIP, CS Dedicado, treinamentos e acesso ao ecossistema Kenlo."}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -1937,6 +1943,12 @@ export default function CalculadoraPage() {
                                 </button>
                               );
                             })}
+                          </div>
+                          {/* Scope clarity */}
+                          <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
+                            {locPlan === "prime" && "Inclui contratos ilimitados, funcionalidades essenciais de gestão de locação, onboarding padrão e acesso ao ecossistema Kenlo."}
+                            {locPlan === "k" && "Inclui contratos ilimitados, funcionalidades avançadas de gestão de locação, onboarding completo, VIP e acesso ao ecossistema Kenlo."}
+                            {locPlan === "k2" && "Inclui contratos ilimitados, funcionalidades premium de gestão de locação, onboarding premium, VIP, CS Dedicado, treinamentos e acesso ao ecossistema Kenlo."}
                           </div>
                         </div>
                       </CardContent>

@@ -325,12 +325,12 @@ export async function generateProposalPDFClient(
 
   // Frequency
   const freqMap: Record<string, { label: string; adj: string }> = {
-    monthly: { label: "Mensal", adj: "+25%" },
-    mensal: { label: "Mensal", adj: "+25%" },
-    semestral: { label: "Semestral", adj: "+11%" },
-    annual: { label: "Anual", adj: "referência" },
-    anual: { label: "Anual", adj: "referência" },
-    bienal: { label: "Bienal", adj: "-10%" },
+    monthly: { label: "Mensal", adj: "(referência)" },
+    mensal: { label: "Mensal", adj: "(referência)" },
+    semestral: { label: "Semestral", adj: "−10%" },
+    annual: { label: "Anual", adj: "−20%" },
+    anual: { label: "Anual", adj: "−20%" },
+    bienal: { label: "Bienal", adj: "−28%" },
   };
   const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || freqMap["annual"];
 
@@ -501,8 +501,11 @@ export async function generateProposalPDFClient(
   // ════════════════════════════════════════════════════════════════
   Y = sectionTitle(doc, "Detalhamento", Y);
 
-  lbl(doc, "Valores em base mensal equivalente para a frequência escolhida.", M + 10, Y, { size: 6.5, color: C.textLight });
-  Y += 12;
+  // CEO Verdict pricing transparency text
+  lbl(doc, "O valor mensal é o preço de referência. Pagamentos semestrais e anuais oferecem descontos progressivos sobre esse valor.", M + 10, Y, { size: 6.5, color: C.text });
+  Y += 10;
+  lbl(doc, "Descontos: Semestral −10% | Anual −20% | Bienal −28%", M + 10, Y, { size: 6, color: C.textMuted });
+  Y += 14;
 
   // Products
   if (showImob && data.imobPrice !== undefined) {
@@ -559,8 +562,14 @@ export async function generateProposalPDFClient(
   doc.text(fmt(monthlyRecurring), M + CW - 14, Y, { align: "right" });
   Y += 16;
 
-  // Implantação
-  tableRow(doc, "Implantação (pagamento único)", fmt(data.implantationFee), Y);
+  // Implantação - CEO Verdict: clearly labeled as "Pagamento único"
+  Y += 4; // Extra spacing to visually separate from monthly fees
+  doc.setFontSize(7);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "bold");
+  doc.text("PAGAMENTO ÚNICO", M + 14, Y);
+  Y += 12;
+  tableRow(doc, "Implantação", fmt(data.implantationFee), Y);
   Y += 10;
   lbl(doc, "Custo único, não recorrente — não entra no cálculo do ROI mensal.", M + 14, Y, { size: 5.5, color: C.textLight });
   Y += 14;
@@ -854,6 +863,47 @@ export async function generateProposalPDFClient(
       Y += 12;
     }
   }
+
+  // ════════════════════════════════════════════════════════════════
+  // SECTION 7.5 — PRÓXIMOS PASSOS (CEO Verdict Category 4)
+  // ════════════════════════════════════════════════════════════════
+  if (needsNewPage(Y, 120)) Y = newPage(doc, data);
+  
+  Y = sectionTitle(doc, "Próximos passos", Y);
+  
+  const steps = [
+    "Assinatura da proposta",
+    "Onboarding e configuração",
+    "Go-live",
+    "Acompanhamento por CS"
+  ];
+  
+  steps.forEach((step, idx) => {
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.text));
+    doc.setFont("helvetica", "normal");
+    doc.text(`${idx + 1}. ${step}`, M + 14, Y);
+    Y += 14;
+  });
+  
+  Y += GAP;
+
+  // ════════════════════════════════════════════════════════════════
+  // SECTION 7.6 — COMMERCIAL RULES MICRO-BLOCK (CEO Verdict Category 4)
+  // ════════════════════════════════════════════════════════════════
+  if (needsNewPage(Y, 60)) Y = newPage(doc, data);
+  
+  // Light gray box with commercial rules text
+  const rulesH = 36;
+  card(doc, M, Y, CW, rulesH, { fill: "#F8FAFC", stroke: "#F8FAFC" });
+  doc.setFontSize(6.5);
+  doc.setTextColor(...rgb(C.text));
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    "Os valores consideram o volume informado no momento da cotação. Crescimentos futuros seguem a tabela vigente de excedentes ou upgrade de plano.",
+    M + 10, Y + 14, { maxWidth: CW - 20, align: "left" }
+  );
+  Y += rulesH + GAP;
 
   // ════════════════════════════════════════════════════════════════
   // SECTION 8 — CONCLUSÃO
