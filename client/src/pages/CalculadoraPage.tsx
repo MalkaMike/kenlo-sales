@@ -236,6 +236,9 @@ export default function CalculadoraPage() {
     erpOther: "",
   });
   
+  // Validation state - when true, shows red borders on empty required fields
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+
   // Step 1: Product selection - Default: IMOB only
   const [product, setProduct] = useState<ProductSelection>("imob");
   
@@ -1622,71 +1625,14 @@ export default function CalculadoraPage() {
                         </button>
                       ))}
                     </div>
-                  </div>
 
-                  {/* Company Information */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="companyName" className="text-sm font-semibold mb-2 block">Nome da Imobiliária *</Label>
-                      <Input
-                        id="companyName"
-                        value={businessNature.companyName}
-                        onChange={(e) => setBusinessNature({ ...businessNature, companyName: e.target.value })}
-                        placeholder="Ex: Imobiliária XYZ"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="ownerName" className="text-sm font-semibold mb-2 block">Nome do Proprietário *</Label>
-                      <Input
-                        id="ownerName"
-                        value={businessNature.ownerName}
-                        onChange={(e) => setBusinessNature({ ...businessNature, ownerName: e.target.value })}
-                        placeholder="Ex: João Silva"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="email" className="text-sm font-semibold mb-2 block">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={businessNature.email}
-                        onChange={(e) => setBusinessNature({ ...businessNature, email: e.target.value })}
-                        placeholder="contato@imobiliaria.com"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="cellphone" className="text-sm font-semibold mb-2 block">Celular *</Label>
-                      <Input
-                        id="cellphone"
-                        value={businessNature.cellphone}
-                        onChange={(e) => setBusinessNature({ ...businessNature, cellphone: e.target.value })}
-                        placeholder="(11) 98765-4321"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="landline" className="text-sm font-semibold mb-2 block">Telefone Fixo</Label>
-                      <Input
-                        id="landline"
-                        value={businessNature.landline}
-                        onChange={(e) => setBusinessNature({ ...businessNature, landline: e.target.value })}
-                        placeholder="(11) 3456-7890"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Conditional questions based on business type */}
-                  <div className="mt-2">
                     {/* Conditional questions based on business type */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Tem site? - Show for Corretora or Ambos */}
                       {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
                         <div>
-                          <Label className="text-sm font-medium mb-2 block">Tem site? *</Label>
-                          <div className="flex items-center gap-2 mb-2">
+                          <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasWebsite === null ? "text-red-600" : ""}`}>Tem site? *</Label>
+                          <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasWebsite === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                             <button
                               onClick={() => setBusinessNature({ ...businessNature, hasWebsite: true })}
                               className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -1725,8 +1671,8 @@ export default function CalculadoraPage() {
                       {/* Tem CRM? - Show for Corretora or Ambos */}
                       {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
                         <div>
-                          <Label className="text-sm font-medium mb-2 block">Já usa CRM? *</Label>
-                          <div className="flex items-center gap-2 mb-2">
+                          <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasCRM === null ? "text-red-600" : ""}`}>Já usa CRM? *</Label>
+                          <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasCRM === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                             <button
                               onClick={() => setBusinessNature({ ...businessNature, hasCRM: true })}
                               className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -1782,8 +1728,8 @@ export default function CalculadoraPage() {
                       {/* Tem ERP? - Show for Administradora or Ambos */}
                       {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
                         <div>
-                          <Label className="text-sm font-medium mb-2 block">Já usa ERP? *</Label>
-                          <div className="flex items-center gap-2 mb-2">
+                          <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasERP === null ? "text-red-600" : ""}`}>Já usa ERP? *</Label>
+                          <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasERP === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                             <button
                               onClick={() => setBusinessNature({ ...businessNature, hasERP: true })}
                               className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -1837,6 +1783,65 @@ export default function CalculadoraPage() {
                       )}
                     </div>
                   </div>
+
+                  {/* Company Information */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="companyName" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.companyName.trim() ? "text-red-600" : ""}`}>Nome da Imobiliária *</Label>
+                      <Input
+                        id="companyName"
+                        value={businessNature.companyName}
+                        onChange={(e) => setBusinessNature({ ...businessNature, companyName: e.target.value })}
+                        placeholder="Ex: Imobiliária XYZ"
+                        className={showValidationErrors && !businessNature.companyName.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="ownerName" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.ownerName.trim() ? "text-red-600" : ""}`}>Nome do Proprietário *</Label>
+                      <Input
+                        id="ownerName"
+                        value={businessNature.ownerName}
+                        onChange={(e) => setBusinessNature({ ...businessNature, ownerName: e.target.value })}
+                        placeholder="Ex: João Silva"
+                        className={showValidationErrors && !businessNature.ownerName.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="email" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.email.trim() ? "text-red-600" : ""}`}>Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={businessNature.email}
+                        onChange={(e) => setBusinessNature({ ...businessNature, email: e.target.value })}
+                        placeholder="contato@imobiliaria.com"
+                        className={showValidationErrors && !businessNature.email.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cellphone" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.cellphone.trim() ? "text-red-600" : ""}`}>Celular *</Label>
+                      <Input
+                        id="cellphone"
+                        value={businessNature.cellphone}
+                        onChange={(e) => setBusinessNature({ ...businessNature, cellphone: e.target.value })}
+                        placeholder="(11) 98765-4321"
+                        className={showValidationErrors && !businessNature.cellphone.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="landline" className="text-sm font-semibold mb-2 block">Telefone Fixo</Label>
+                      <Input
+                        id="landline"
+                        value={businessNature.landline}
+                        onChange={(e) => setBusinessNature({ ...businessNature, landline: e.target.value })}
+                        placeholder="(11) 3456-7890"
+                      />
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
@@ -3649,8 +3654,10 @@ export default function CalculadoraPage() {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
                           return;
                         }
-                        if (!isBusinessNatureComplete()) {
-                          toast.error("Por favor, responda todas as perguntas obrigatórias sobre a natureza do negócio (Tem site? Já usa CRM? Já usa ERP?).");
+                        const hasCompanyErrors = !businessNature.companyName.trim() || !businessNature.ownerName.trim() || !businessNature.email.trim() || !businessNature.cellphone.trim();
+                        if (!isBusinessNatureComplete() || hasCompanyErrors) {
+                          setShowValidationErrors(true);
+                          toast.error("Preencha todos os campos obrigatórios marcados com * antes de exportar.");
                           const businessNatureSection = document.getElementById('business-nature-section');
                           if (businessNatureSection) {
                             businessNatureSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3665,6 +3672,7 @@ export default function CalculadoraPage() {
                           }
                           return;
                         }
+                        setShowValidationErrors(false);
                         setShowQuoteInfoDialog(true);
                       }}
                       variant={selectedPlan && canExportPDF ? "default" : "outline"}
@@ -4279,14 +4287,25 @@ export default function CalculadoraPage() {
                   size="sm"
                   className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
                   onClick={() => {
+                    if (!canExportPDF) {
+                      toast.error('Faça login como vendedor autorizado para exportar cotações.');
+                      return;
+                    }
+                    const hasCompanyErrors = !businessNature.companyName.trim() || !businessNature.ownerName.trim() || !businessNature.email.trim() || !businessNature.cellphone.trim();
+                    if (!isBusinessNatureComplete() || hasCompanyErrors) {
+                      setShowValidationErrors(true);
+                      toast.error('Preencha todos os campos obrigatórios marcados com * antes de exportar.');
+                      const businessNatureSection = document.getElementById('business-nature-section');
+                      if (businessNatureSection) {
+                        businessNatureSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                      return;
+                    }
                     if (!selectedPlan) {
                       toast.error('Selecione um plano ou Kombo antes de exportar.');
                       return;
                     }
-                    if (!canExportPDF) {
-                      toast.error('Preencha todos os campos obrigatórios.');
-                      return;
-                    }
+                    setShowValidationErrors(false);
                     setShowQuoteInfoDialog(true);
                   }}
                 >

@@ -2692,3 +2692,8 @@
 ## Move Natureza do Negócio Above Company Info
 
 - [x] Move "Natureza do Negócio *" title and 3 selector buttons (Corretora/Administradora/Ambos) to above the "Nome da Imobiliária" field
+
+## UX Improvements (Feb 9, 2026 - Round 2)
+
+- [x] Move conditional questions (Tem site? / Já usa CRM? / Já usa ERP?) to right below Natureza do Negócio buttons, before company info fields
+- [x] Add red visual validation highlighting on required fields when user tries to export PDF without filling them (labels turn red, inputs get red border/ring, Sim/Não buttons get red ring when null)
