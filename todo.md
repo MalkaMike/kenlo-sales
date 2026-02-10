@@ -2805,3 +2805,11 @@
 ## Tooltip Treinamentos — Ajuste de Texto (Feb 10, 2026)
 
 - [x] Update Treinamentos tooltip to show reference prices: Online R$2.000 and Presencial R$3.000
+
+## Hierarquia Visual da Tabela de Kombos (Feb 10, 2026)
+
+- [x] Add subscriptionCount field to KomboColumnData (count of products + add-ons, excluding premium services)
+- [x] Add secondary row below Total Mensal showing "X assinaturas incluídas" with smaller font and gray color
+- [x] Transform Implantação cell into mini vertical block: label "Implantação (único)" above + bold value below
+- [x] Ensure subscription count row does not compete visually with Total Mensal
+- [x] Maintain clean layout with no unnecessary spacing

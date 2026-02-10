@@ -85,6 +85,8 @@ interface KomboColumnData {
   vipSupportPrice: number | string | null; // number, "Incluído", or null
   dedicatedCSPrice: number | string | null;
   trainingPrice: string | null; // "Incluído (2x online ou 1 presencial)", "Incluído (4x online ou 2 presencial)", or null
+  // Subscription count (products + add-ons, excluding premium services)
+  subscriptionCount: number;
   // Totals
   totalMonthly: number;
   implementation: number;
@@ -484,6 +486,17 @@ const calculateKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
+  // Count subscriptions: products + add-ons (excluding premium services)
+  let subscriptionCount = 0;
+  if (imobPrice !== null) subscriptionCount++;
+  if (locPrice !== null) subscriptionCount++;
+  if (leadsPrice !== null) subscriptionCount++;
+  if (inteligenciaPrice !== null) subscriptionCount++;
+  if (assinaturaPrice !== null) subscriptionCount++;
+  if (payPrice !== null) subscriptionCount++;
+  if (segurosPrice !== null) subscriptionCount++;
+  if (cashPrice !== null) subscriptionCount++;
+
   return {
     id: komboId,
     name: kombo.name,
@@ -502,6 +515,7 @@ const calculateKomboColumn = (
     vipSupportPrice,
     dedicatedCSPrice,
     trainingPrice,
+    subscriptionCount,
     totalMonthly,
     implementation,
     annualEquivalent,
@@ -607,6 +621,17 @@ const calculateNoKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
+  // Count subscriptions: products + add-ons (excluding premium services)
+  let subscriptionCount = 0;
+  if (imobPrice !== null) subscriptionCount++;
+  if (locPrice !== null) subscriptionCount++;
+  if (leadsPrice !== null) subscriptionCount++;
+  if (inteligenciaPrice !== null) subscriptionCount++;
+  if (assinaturaPrice !== null) subscriptionCount++;
+  if (payPrice !== null) subscriptionCount++;
+  if (segurosPrice !== null) subscriptionCount++;
+  if (cashPrice !== null) subscriptionCount++;
+
   return {
     id: "none",
     name: "Sua Seleção (Sem Kombo)",
@@ -625,6 +650,7 @@ const calculateNoKomboColumn = (
     vipSupportPrice,
     dedicatedCSPrice,
     trainingPrice,
+    subscriptionCount,
     totalMonthly,
     implementation,
     annualEquivalent,
@@ -656,6 +682,7 @@ const createUnavailableColumn = (
   vipSupportPrice: null,
   dedicatedCSPrice: null,
   trainingPrice: null,
+  subscriptionCount: 0,
   totalMonthly: 0,
   implementation: 0,
   annualEquivalent: 0,
@@ -730,7 +757,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
     { key: "totalMonthly", label: "Total Mensal", isTotal: true },
-    { key: "implementation", label: "Implantação", isHeaderWithValue: true },
+    { key: "subscriptionCount", label: "", isSubRow: true },
+    { key: "implementation", label: "Implantação", isTotal: true },
     { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
   ];
 
@@ -784,8 +812,19 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return <span className="text-gray-300">—</span>;
       case "totalMonthly":
         return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
+      case "subscriptionCount":
+        return (
+          <span className="text-[11px] text-gray-400 font-normal">
+            {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
+          </span>
+        );
       case "implementation":
-        return <span className="font-medium">R$ {formatCurrency(column.implementation)}</span>;
+        return (
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-[10px] text-gray-400 font-normal leading-tight">Implantação (único)</span>
+            <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
+          </div>
+        );
       case "annualEquivalent":
         return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
       default:
@@ -891,20 +930,24 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   <tr
                     key={row.key}
                     className={
-                      row.isHeader || row.isHeaderWithValue
+                      row.isHeader
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
                         ? "bg-gray-100/70 border-b border-gray-200"
+                        : row.isSubRow
+                        ? "border-b border-gray-100"
                         : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}
-                      className={`py-3 px-4 ${row.indent ? "pl-8" : ""} ${
-                        row.isHeader || row.isHeaderWithValue
+                      className={`${row.isSubRow ? "py-0.5 px-4" : "py-3 px-4"} ${row.indent ? "pl-8" : ""} ${
+                        row.isHeader
                           ? "font-semibold text-gray-700 text-sm" 
                           : row.isTotal
                           ? "font-bold text-gray-700"
+                          : row.isSubRow
+                          ? "text-gray-400 text-[11px]"
                           : "text-gray-600"
                       }`}
                     >
@@ -938,7 +981,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
                           onClick={() => handlePlanSelect(col.id)}
-                          className={`text-center py-3 px-3 cursor-pointer transition-colors duration-150 ${
+                          className={`text-center ${row.isSubRow ? "py-0.5 px-3" : "py-3 px-3"} cursor-pointer transition-colors duration-150 ${
                             selectedPlan === col.id
                               ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
                               : hoveredColumn === col.id && selectedPlan !== col.id
@@ -947,8 +990,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               ? "bg-gray-50/50"
                               : ""
                           } ${
-                            row.isTotal || row.isHeaderWithValue
+                            row.isTotal
                               ? "font-bold text-gray-700"
+                              : row.isSubRow
+                              ? "text-gray-400"
                               : "text-gray-700"
                           }`}
                         >
