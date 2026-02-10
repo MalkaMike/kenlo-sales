@@ -2729,3 +2729,25 @@
 - [x] Ao iniciar digitação, apagar automaticamente o valor existente (ex: "R$ 0,00")
 - [x] Aceitar vírgula como separador decimal (ex: 10,50)
 - [x] Aplicar formatação monetária automática após digitação
+
+## UX Adjustments - Kombos Table (Feb 9, 2026 - Round 4)
+
+### Adjustment 1 — Remove "Selecionado" badge
+- [x] Remove "SELECIONADO" text/badge completely from the table
+- [x] Keep only the green column highlight as selection indicator
+- [x] Never duplicate state signaling (text + color)
+
+### Adjustment 2 — Selecionar buttons position
+- [x] Confirm Selecionar buttons are below "Anual Equivalente" row (already done in Round 3)
+- [x] Table must present 100% financial info before action buttons
+
+### Adjustment 3 — Add-ons "Selecionar" button default state
+- [x] "Selecionar" button has neutral/inactive white appearance by default
+- [x] Active state (strong color) only after effective selection
+- [x] Selection state communicated only by column highlight, not additional text
+
+### Adjustment 4 — Duplicated frequency selector below table
+- [x] Add second frequency selector (Mensal/Semestral/Anual/Bienal) below the Kombos table
+- [x] Both selectors perfectly synchronized (single source of truth via viewMode state)
+- [x] Visually identical to the one above the table
+- [x] Clicking either one updates the other automatically

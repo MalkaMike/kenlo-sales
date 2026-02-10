@@ -2255,7 +2255,7 @@ export default function CalculadoraPage() {
                           cash: isAddonAvailable("cash"),
                         });
                       }}
-                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-primary text-white font-semibold border-primary shadow-sm"
+                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-white hover:bg-primary hover:text-white hover:border-primary text-gray-600 border-gray-200 font-medium"
                     >
                       Selecionar
                     </button>

@@ -791,26 +791,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed">
               <thead>
-                {/* Row 1: Badges (Selecionado clicável) */}
-                <tr className="border-b border-gray-100">
-                  <th className="py-2 px-2"></th>
-                  {columns.map((col) => (
-                    <th key={`badge-${col.id}`} className="text-center py-2 px-1">
-                      <div className="flex flex-col items-center gap-1 min-h-[40px] justify-center">
-                        {/* Badge SELECIONADO - aparece quando o usuário clica */}
-                        {selectedPlan === col.id && (
-                          <Badge className="bg-green-600 text-white text-[10px] px-2 py-0.5 font-semibold">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            SELECIONADO
-                          </Badge>
-                        )}
-
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-                
-                {/* Row 2: Nome do Kombo + Tooltip + Badge de Desconto */}
+                {/* Row 1: Nome do Kombo + Tooltip + Badge de Desconto */}
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-2"></th>
                   {columns.map((col) => {
@@ -926,20 +907,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         variant={selectedPlan === col.id ? "default" : "outline"}
                         className={`w-full text-xs transition-all duration-300 ${
                           selectedPlan === col.id 
-                            ? "bg-green-600 hover:bg-green-700" 
-                            : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"
+                            ? "bg-green-600 hover:bg-green-700 text-white" 
+                            : "bg-white text-gray-600 border-gray-300 hover:bg-green-50 hover:border-green-500 hover:text-green-700"
                         }`}
                         size="sm"
                       >
-                        {selectedPlan === col.id ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Selecionado
-                          </>
-                        ) : col.isRecommended && !selectedPlan ? (
+                        {col.isRecommended && !selectedPlan ? (
                           <>
                             <Star className="w-3 h-3 mr-1 fill-current" />
                             Selecionar
+                          </>
+                        ) : selectedPlan === col.id ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Selecionado
                           </>
                         ) : (
                           "Selecionar"
@@ -950,6 +931,26 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 </tr>
               </tfoot>
             </table>
+          </div>
+
+          {/* Duplicated Frequency Selector - Below table for easy adjustment after viewing all values */}
+          <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-gray-200">
+            {FREQUENCY_OPTIONS.map((option) => (
+              <button
+                key={`bottom-${option.id}`}
+                onClick={() => handleFrequencyChange(option.id)}
+                className={`px-4 py-2 text-sm rounded-lg transition-all border ${
+                  viewMode === option.id
+                    ? "bg-primary text-white font-semibold border-primary shadow-sm"
+                    : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
+                }`}
+              >
+                {option.label}
+                {option.id !== "monthly" && (
+                  <span className="ml-1 text-xs opacity-80">{option.discount}</span>
+                )}
+              </button>
+            ))}
           </div>
 
           {/* Legend */}
