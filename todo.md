@@ -2820,3 +2820,7 @@
 - [x] Show savings only when Kombo has a discount (not on Sem Kombo column itself)
 - [x] Use green color for savings indicator to reinforce positive value
 - [x] Follow same compact sub-row pattern as subscriptionCount row
+
+## Fix subscriptionCount — Excluir Pay, Seguros, Cash (Feb 10, 2026)
+
+- [x] Remove Pay, Seguros, Cash from subscriptionCount (only count: Imob, Loc, Leads, Inteligência, Assinatura)

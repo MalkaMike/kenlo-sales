@@ -486,16 +486,13 @@ const calculateKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
-  // Count subscriptions: products + add-ons (excluding premium services)
+  // Count subscriptions: products + add-ons (excluding premium services, Pay, Seguros, Cash)
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
   if (leadsPrice !== null) subscriptionCount++;
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
-  if (payPrice !== null) subscriptionCount++;
-  if (segurosPrice !== null) subscriptionCount++;
-  if (cashPrice !== null) subscriptionCount++;
 
   return {
     id: komboId,
@@ -621,16 +618,13 @@ const calculateNoKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
-  // Count subscriptions: products + add-ons (excluding premium services)
+  // Count subscriptions: products + add-ons (excluding premium services, Pay, Seguros, Cash)
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
   if (leadsPrice !== null) subscriptionCount++;
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
-  if (payPrice !== null) subscriptionCount++;
-  if (segurosPrice !== null) subscriptionCount++;
-  if (cashPrice !== null) subscriptionCount++;
 
   return {
     id: "none",
