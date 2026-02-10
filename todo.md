@@ -2853,3 +2853,7 @@
 - [x] Rename "Anual Equivalente" to "Anual"
 - [x] Add single footnote below table explaining equivalent values concept
 - [x] Keep table cells clean (no inline explanations or parentheses)
+
+## Correção Footnote — Anual = 12x Mensalidades + Implantação (Feb 10, 2026)
+
+- [x] Update footnote to explain that "Anual" = 12x monthly fees + implementation cost (first year only)

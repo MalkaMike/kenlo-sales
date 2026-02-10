@@ -1148,7 +1148,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Footnote */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              Os valores exibidos representam mensalidades equivalentes ou valores anuais equivalentes, conforme a condição de pagamento selecionada.
+              <strong>Mensalidades:</strong> Valor mensal recorrente. <strong>Anual:</strong> 12x mensalidades + taxa de implantação (cobrada apenas no primeiro ano).
             </p>
           </div>
 
