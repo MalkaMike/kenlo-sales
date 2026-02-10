@@ -874,7 +874,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         <CardContent className="p-4">
           {/* Table Header: Title */}
           <div className="pb-2 mb-2">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
             
             {/* Frequency Selector - Right below title */}
             <div className="flex items-center gap-1.5 mb-3">
