@@ -2794,3 +2794,10 @@
 ## Tooltip Treinamentos na Tabela Comparativa (Feb 10, 2026)
 
 - [x] Add tooltip to Treinamentos row label in KomboComparisonTable showing R$ 2.000/online and R$ 3.000/presencial
+
+## Sticky Header na Tabela de Kombos (Feb 10, 2026)
+
+- [x] Implement sticky thead on KomboComparisonTable so plan names stay visible during vertical scroll
+- [x] Ensure proper z-index so sticky header stays above body rows
+- [x] Add bottom border/shadow to sticky header for visual separation when scrolling
+- [x] Maintain all existing hover, selection, and click behaviors on sticky header cells

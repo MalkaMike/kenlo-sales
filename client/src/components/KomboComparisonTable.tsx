@@ -825,10 +825,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Comparison Table */}
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed" onMouseLeave={() => setHoveredColumn(null)}>
-              <thead>
+              <thead className="sticky top-0 z-10 shadow-[0_2px_4px_-1px_rgba(0,0,0,0.1)]">
                 {/* Row 1: Nome do Kombo + Tooltip + Badge de Desconto */}
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-2"></th>
+                <tr className="border-b border-gray-200 bg-white">
+                  <th className="text-left py-3 px-2 bg-white"></th>
                   {columns.map((col, colIndex) => {
                     // Get tooltip data only for valid kombo keys (not "none")
                     const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
@@ -847,7 +847,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             ? "bg-blue-50/70"
                             : colIndex % 2 === 1
                             ? "bg-gray-50/50"
-                            : ""
+                            : "bg-white"
                         }`}
                       >
                         <div className="flex flex-col items-center gap-1.5">
