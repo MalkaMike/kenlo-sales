@@ -760,6 +760,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "subscriptionCount", label: "", isSubRow: true },
     { key: "implementation", label: "Implantação", isTotal: true },
     { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
+    { key: "savings", label: "", isSubRow: true },
   ];
 
   /**
@@ -827,6 +828,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         );
       case "annualEquivalent":
         return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
+      case "savings": {
+        // Compare against "Sem Kombo" column (first column = columns[0])
+        const semKombo = columns[0];
+        if (column.id === "none" || semKombo.annualEquivalent === 0) {
+          return null; // No savings to show for Sem Kombo itself
+        }
+        const savings = semKombo.annualEquivalent - column.annualEquivalent;
+        if (savings <= 0) return null;
+        return (
+          <span className="text-[11px] text-green-600 font-semibold">
+            Economia de R$ {formatCurrency(savings)}/ano
+          </span>
+        );
+      }
       default:
         return null;
     }

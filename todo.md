@@ -2813,3 +2813,10 @@
 - [x] Transform Implantação cell into mini vertical block: label "Implantação (único)" above + bold value below
 - [x] Ensure subscription count row does not compete visually with Total Mensal
 - [x] Maintain clean layout with no unnecessary spacing
+
+## Indicador de Economia no Anual Equivalente (Feb 10, 2026)
+
+- [x] Add savings sub-row below Anual Equivalente showing "Economia de R$ X" vs Sem Kombo
+- [x] Show savings only when Kombo has a discount (not on Sem Kombo column itself)
+- [x] Use green color for savings indicator to reinforce positive value
+- [x] Follow same compact sub-row pattern as subscriptionCount row
