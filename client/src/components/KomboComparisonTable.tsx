@@ -1005,6 +1005,40 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             </Tooltip>
                           </TooltipProvider>
                         </span>
+                      ) : row.key === "vipSupport" ? (
+                        <span className="inline-flex items-center gap-1">
+                          {row.label}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[240px] p-3">
+                                <div className="space-y-1.5 text-left">
+                                  <p className="font-semibold text-sm">Preço de ref:</p>
+                                  <p className="text-xs"><span className="font-bold">R$97</span>/mês</p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </span>
+                      ) : row.key === "dedicatedCS" ? (
+                        <span className="inline-flex items-center gap-1">
+                          {row.label}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[240px] p-3">
+                                <div className="space-y-1.5 text-left">
+                                  <p className="font-semibold text-sm">Preço de ref:</p>
+                                  <p className="text-xs"><span className="font-bold">R$197</span>/mês</p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </span>
                       ) : (
                         row.label
                       )}

@@ -2839,3 +2839,9 @@
 ## Implantação — Remover Linha Economia (Feb 10, 2026)
 
 - [x] Remove green "Economia: −R$ X" line from Implantação block, keep only "Sem combo: R$ X" (gray) + bold final value
+
+## Tooltips Suporte VIP e CS Dedicado — Preço Mensal (Feb 10, 2026)
+
+- [x] Add tooltip to Suporte VIP row label with monthly reference price
+- [x] Add tooltip to CS Dedicado row label with monthly reference price
+- [x] Follow same visual pattern as Treinamentos tooltip (info icon + price)
