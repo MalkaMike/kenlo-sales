@@ -2755,3 +2755,10 @@
 
 - [x] Restore "Selecionar" button to active/primary appearance by default (not neutral)
 - [x] All available add-ons should start ON by default when page loads
+
+## Kombos Table Column Visual Clarity (Feb 9, 2026)
+
+- [x] Option A: Add subtle alternating column backgrounds (gray-50/50 on odd columns) for visual separation
+- [x] Option B: Add column hover highlight (blue-50/60) that follows the mouse across full column height (thead, tbody, tfoot)
+- [x] Hover highlight does not compete with green selection highlight (hover = blue temporary, selection = green persistent)
+- [x] Improved horizontal scannability with alternating backgrounds + hover + onMouseLeave cleanup

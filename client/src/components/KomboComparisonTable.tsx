@@ -651,6 +651,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Selected Plan for export (user confirms their choice)
   const [selectedPlan, setSelectedPlan] = useState<KomboId | null>(null);
 
+  // Hovered column for temporary visual focus
+  const [hoveredColumn, setHoveredColumn] = useState<KomboId | null>(null);
+
   // Handle frequency change - update local state AND notify parent
   const handleFrequencyChange = (newFrequency: ViewMode) => {
     setViewMode(newFrequency);
@@ -789,12 +792,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
           {/* Comparison Table */}
           <div className="w-full">
-            <table className="w-full text-sm border-collapse table-fixed">
+            <table className="w-full text-sm border-collapse table-fixed" onMouseLeave={() => setHoveredColumn(null)}>
               <thead>
                 {/* Row 1: Nome do Kombo + Tooltip + Badge de Desconto */}
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-2"></th>
-                  {columns.map((col) => {
+                  {columns.map((col, colIndex) => {
                     // Get tooltip data only for valid kombo keys (not "none")
                     const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
                       ? KOMBO_DEFINITIONS[col.id as Exclude<KomboId, "none">]?.tooltipInfo
@@ -803,9 +806,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     return (
                       <th
                         key={col.id}
-                        className={`text-center py-3 px-1 transition-all ${
+                        onMouseEnter={() => setHoveredColumn(col.id)}
+                        className={`text-center py-3 px-1 transition-colors duration-150 ${
                           selectedPlan === col.id
                             ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
+                            : hoveredColumn === col.id && selectedPlan !== col.id
+                            ? "bg-blue-50/60"
+                            : colIndex % 2 === 1
+                            ? "bg-gray-50/50"
                             : ""
                         }`}
                       >
@@ -875,9 +883,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       return (
                         <td
                           key={`${row.key}-${col.id}`}
-                          className={`text-center py-3 px-3 transition-all ${
+                          onMouseEnter={() => setHoveredColumn(col.id)}
+                          className={`text-center py-3 px-3 transition-colors duration-150 ${
                             selectedPlan === col.id
                               ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
+                              : hoveredColumn === col.id && selectedPlan !== col.id
+                              ? "bg-blue-50/60"
+                              : colIndex % 2 === 1
+                              ? "bg-gray-50/50"
                               : ""
                           } ${
                             row.isTotal || row.isHeaderWithValue
@@ -897,9 +910,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr className="border-t-2 border-gray-200 bg-gray-50/50">
                   <td className="py-3 px-2"></td>
                   {columns.map((col) => (
-                    <td key={`select-btn-${col.id}`} className={`text-center py-3 px-1 transition-all ${
+                    <td key={`select-btn-${col.id}`} onMouseEnter={() => setHoveredColumn(col.id)} className={`text-center py-3 px-1 transition-colors duration-150 ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
+                        : hoveredColumn === col.id && selectedPlan !== col.id
+                        ? "bg-blue-50/60"
+                        : columns.indexOf(col) % 2 === 1
+                        ? "bg-gray-50/50"
                         : ""
                     }`}>
                       <Button
