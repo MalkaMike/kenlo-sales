@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, FileText, Package, Layers, User, LogOut } from "lucide-react";
+import { Menu, FileText, Package, Layers, User, LogOut, Settings } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -270,6 +270,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <li><Link href="/kombos" className="footer-link-hover inline-block">Kombos</Link></li>
                 <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
                 <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
+                <li><Link href="/admin/pricing" className="footer-link-hover inline-block flex items-center gap-1"><Settings className="w-3 h-3" />Configurar Preços</Link></li>
               </ul>
             </div>
           </div>

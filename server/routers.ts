@@ -7,6 +7,7 @@ import { generateProposalPDF } from "./pdfGenerator";
 import { saveQuote, getQuotes, getQuoteStats, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics, getQuotesByUser } from "./quotes";
 import { getSalespersonByEmail, getSalespersonById, getAllSalespeople, updateUserProfile, getUserById } from "./db";
 import { storagePut } from "./storage";
+import { pricingAdminRouter } from "./pricingAdmin";
 import { z } from "zod";
 import * as jose from "jose";
 
@@ -78,6 +79,7 @@ async function getSalespersonFromContext(ctx: any): Promise<{ id: number; isMast
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
+  pricingAdmin: pricingAdminRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

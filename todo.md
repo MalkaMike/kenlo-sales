@@ -2926,3 +2926,20 @@
 - [x] Add footer link in calculator to access pricing admin
 - [x] Interface is read-only for security (edit via GitHub or direct file edit)
 - [x] Serves as visual documentation and reference for all pricing
+
+## Pricing Admin Improvements - Feb 2026
+- [ ] Add "Configurar Preços" link to site footer (not just calculator sticky bar)
+- [ ] Implement backend tRPC endpoint to save pricing config changes
+- [ ] Enable edit mode in pricing admin page (currently read-only)
+- [ ] Add master user permission check for editing pricing
+- [ ] Test that pricing changes persist and reflect in calculator/PDF
+
+## Pricing Admin Improvements - Feb 2026
+- [x] Add pricing admin link to site footer (Ferramentas section)
+- [x] Implement backend endpoint to save pricing config changes
+- [x] Create JSON file to store editable pricing values (`shared/pricing-values.json`)
+- [x] Enable full edit mode in pricing admin page
+- [x] Add save functionality with success/error feedback
+- [x] Write tests for pricing admin functionality (16 tests passing)
+- [x] Test that changes persist and reflect in calculator/PDF
+- [x] All 271 tests passing

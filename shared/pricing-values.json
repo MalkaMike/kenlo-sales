@@ -1,0 +1,113 @@
+{
+  "frequencyMultipliers": {
+    "monthly": 1.25,
+    "semiannual": 1.1,
+    "biennial": 0.75
+  },
+  "imobPlans": {
+    "prime": {
+      "annualPrice": 247,
+      "includedUsers": 3
+    },
+    "k": {
+      "annualPrice": 397,
+      "includedUsers": 10
+    },
+    "k2": {
+      "annualPrice": 597,
+      "includedUsers": 25
+    }
+  },
+  "locPlans": {
+    "prime": {
+      "annualPrice": 247,
+      "includedContracts": 50
+    },
+    "k": {
+      "annualPrice": 397,
+      "includedContracts": 150
+    },
+    "k2": {
+      "annualPrice": 597,
+      "includedContracts": 400
+    }
+  },
+  "addons": {
+    "inteligencia": {
+      "annualPrice": 97,
+      "implementation": 497
+    },
+    "leads": {
+      "annualPrice": 97,
+      "implementation": 497,
+      "includedLeads": 100
+    },
+    "assinaturas": {
+      "annualPrice": 97,
+      "implementation": 497,
+      "includedSignatures": 10
+    }
+  },
+  "premiumServices": {
+    "vipSupport": 97,
+    "csDedicado": 297
+  },
+  "kombos": {
+    "imob_start": {
+      "discount": 10,
+      "implementation": 1497,
+      "includesPremium": true
+    },
+    "imob_pro": {
+      "discount": 15,
+      "implementation": 1497,
+      "includesPremium": true
+    },
+    "locacao_pro": {
+      "discount": 10,
+      "implementation": 1497,
+      "includesPremium": true
+    },
+    "core_gestao": {
+      "discount": 0,
+      "implementation": 1497,
+      "includesPremium": true
+    },
+    "elite": {
+      "discount": 20,
+      "implementation": 1497,
+      "includesPremium": true
+    }
+  },
+  "additionalUsersTiers": [
+    { "from": 0, "to": 10, "price": 57 },
+    { "from": 11, "to": 25, "price": 47 },
+    { "from": 26, "to": 50, "price": 37 },
+    { "from": 51, "to": 100, "price": 27 },
+    { "from": 101, "to": 999999, "price": 17 }
+  ],
+  "additionalContractsTiers": [
+    { "from": 0, "to": 50, "price": 2.5 },
+    { "from": 51, "to": 150, "price": 2.0 },
+    { "from": 151, "to": 400, "price": 1.5 },
+    { "from": 401, "to": 999999, "price": 1.0 }
+  ],
+  "additionalLeadsTiers": [
+    { "from": 0, "to": 100, "price": 15 },
+    { "from": 101, "to": 500, "price": 12 },
+    { "from": 501, "to": 999999, "price": 10 }
+  ],
+  "additionalSignaturesTiers": [
+    { "from": 0, "to": 10, "price": 10 },
+    { "from": 11, "to": 50, "price": 8 },
+    { "from": 51, "to": 999999, "price": 6 }
+  ],
+  "kenloPay": {
+    "boletosPerContract": 1.5,
+    "splitsPerContract": 1.5
+  },
+  "kenloSeguros": {
+    "pricePerContract": 10
+  },
+  "implantacaoBase": 1497
+}
