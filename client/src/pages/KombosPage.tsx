@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { KOMBOS as PRICING_KOMBOS } from "@shared/pricing-config";
 
 // Kombo definitions with all details
 const kombos = [
@@ -18,8 +19,8 @@ const kombos = [
     discount: 10,
     badge: null,
     color: "bg-blue-500",
-    includesPremium: false,
-    tooltip: "IMOB + Leads + Assinatura. Ideal para imobiliárias focadas em vendas que querem captar e converter leads.",
+    includesPremium: true, // ⚠️ UPDATED: All Kombos now include Premium Services
+    tooltip: "IMOB + Leads + Assinatura + VIP + CS. Ideal para imobiliárias focadas em vendas que querem captar e converter leads.",
   },
   {
     id: "imob-pro",
@@ -87,8 +88,8 @@ const comparisonData = {
     {
       title: "Serviços Premium",
       rows: [
-        { feature: "Suporte VIP", values: [false, true, true, true, true], tooltip: "Atendimento prioritário com SLA reduzido" },
-        { feature: "CS Dedicado", values: [false, true, true, true, true], tooltip: "Customer Success exclusivo para sua conta" },
+        { feature: "Suporte VIP", values: [true, true, true, true, true], tooltip: "Atendimento prioritário com SLA reduzido. ⚠️ NOVO: Incluído em TODOS os Kombos" },
+        { feature: "CS Dedicado", values: [true, true, true, true, true], tooltip: "Customer Success exclusivo para sua conta. ⚠️ NOVO: Incluído em TODOS os Kombos" },
       ],
     },
     {
@@ -296,11 +297,10 @@ export default function KombosPage() {
                 <Star className="w-6 h-6 text-white" />
               </div>
               <h3 className="font-bold text-lg mb-2">Imob Start</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Imobiliárias focadas em vendas que precisam captar leads e digitalizar contratos. 
+              <p className="text-sm text-muted-foreground mb-2">
                 Ideal para quem está começando a transformação digital.
               </p>
-              <div className="text-primary font-bold">10% OFF</div>
+              <div className="text-primary font-bold">10% OFF + VIP + CS</div>
             </div>
             
             <div className="p-6 rounded-xl bg-card border-2 border-primary/50 relative">

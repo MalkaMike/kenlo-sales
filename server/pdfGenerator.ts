@@ -18,6 +18,7 @@
 import PDFDocument from "pdfkit";
 import path from "path";
 import fs from "fs";
+import { PREMIUM_SERVICES } from "@shared/pricing-config";
 
 // -- Data interfaces --
 interface PostPaidItem {
@@ -458,7 +459,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       Y += 14;
     }
     if (hasCS) {
-      const csVal = data.csIncluded ? "Incluido" : fmt(data.csPrice || 197) + "/mes";
+      const csVal = data.csIncluded ? "Incluido" : fmt(data.csPrice || PREMIUM_SERVICES.csDedicado.monthlyPrice) + "/mes";
       tableRow("CS Dedicado", csVal, Y, { valueColor: data.csIncluded ? C.green : C.text });
       Y += 14;
     }

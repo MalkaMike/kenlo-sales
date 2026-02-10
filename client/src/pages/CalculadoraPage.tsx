@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import * as Pricing from "@/utils/pricing";
 import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useSalesperson } from "@/hooks/useSalesperson";
@@ -51,8 +52,8 @@ type BusinessType = "broker" | "rental_admin" | "both";
  * KOMBO DEFINITIONS
  * 
  * includesPremiumServices: true = VIP Support + CS Dedicado INCLUDED in Kombo price
- * - Imob Start: NÃO inclui (cliente paga à parte se quiser)
- * - Imob Pro, Locação Pro, Core Gestão, Elite: INCLUI VIP + CS Dedicado
+ * ⚠️ NEW (Feb 2026): ALL 5 KOMBOS now include VIP + CS Dedicado
+ * - Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite: INCLUI VIP + CS Dedicado
  * 
  * freeImplementations: lista de implantações gratuitas no Kombo
  */
@@ -115,67 +116,41 @@ const KOMBOS = {
 /**
  * CRITICAL: All base prices are ANNUAL prices (when paying annually)
  * These are the "Licença mensal (plano anual)" prices from the pricing document
+ * 
+ * ⚠️ NOW USING CENTRALIZED PRICING CONFIG - DO NOT MODIFY HERE
+ * To update prices, edit shared/pricing-config.ts
  */
-const PLAN_ANNUAL_PRICES = {
-  prime: 247,  // R$247/month when paying annually
-  k: 497,      // R$497/month when paying annually
-  k2: 1197,    // R$1197/month when paying annually
-};
-
-const ADDON_ANNUAL_PRICES = {
-  leads: 497,        // R$497/month when paying annually
-  inteligencia: 297, // R$297/month when paying annually (BI/Analytics) - CORRECTED from 247
-  assinatura: 37,    // R$37/month when paying annually (Digital signature) - CORRECTED from 197
-  pay: 0,            // Pós-pago (postpaid), usage-based - shown separately
-  seguros: 0,        // Pós-pago (postpaid), percentage of premium - shown separately
-  cash: 0,           // FREE add-on - no cost
-};
-
-// Product-specific implementation costs (one-time fees)
-const IMPLEMENTATION_COSTS = {
-  imob: 1497,
-  loc: 1497,
-  leads: 497,
-  inteligencia: 497,  // BI/Analytics add-on
-  assinatura: 0,      // Digital signature add-on - CORRECTED from 297 to 0 (sem custo)
-  cash: 0,            // Cash management add-on - FREE (no implementation cost)
-  combo: 1497,        // ANY combo has fixed implementation cost
-};
+const PLAN_ANNUAL_PRICES = Pricing.PLAN_ANNUAL_PRICES;
+const ADDON_ANNUAL_PRICES = Pricing.ADDON_ANNUAL_PRICES;
+const IMPLEMENTATION_COSTS = Pricing.IMPLEMENTATION_COSTS;
 
 /**
  * Payment frequency multipliers
- * Base price is ANNUAL. Other frequencies are calculated from annual:
- * - Monthly (mês a mês): Annual ÷ (1 - 20%) = Annual ÷ 0.80 = Annual × 1.25 (25% MORE expensive)
- * - Semestral: Annual ÷ (1 - 10%) = Annual ÷ 0.90 ≈ Annual × 1.111 (11% more expensive)
- * - Annual: Base price (reference, no change)
- * - Biennial: Annual × (1 - 10%) = Annual × 0.90 (10% discount)
+ * ⚠️ NOW USING CENTRALIZED PRICING CONFIG - DO NOT MODIFY HERE
+ * To update multipliers, edit shared/pricing-config.ts
  */
 const PAYMENT_FREQUENCY_MULTIPLIERS = {
-  monthly: 1.25,      // 25% MORE expensive than annual
-  semestral: 1.1111,  // ~11% more expensive than annual (1 ÷ 0.90)
-  annual: 1.0,        // Base price (reference)
-  biennial: 0.90,     // 10% discount from annual
+  monthly: Pricing.getFrequencyMultiplier('monthly'),
+  semestral: Pricing.getFrequencyMultiplier('semiannual'),
+  annual: Pricing.getFrequencyMultiplier('annual'),
+  biennial: Pricing.getFrequencyMultiplier('biennial'),
 };
 
 /**
  * Round price UP to next value ending in 7
- * Rule applies ONLY for prices above R$ 100
- * Prices below R$ 100 use normal rounding
- * Example: 37 → 37, 490 → 497, 495 → 497, 502 → 507, 507 → 507
+ * ⚠️ NOW USING CENTRALIZED PRICING CONFIG - DO NOT MODIFY HERE
+ * To update rounding logic, edit shared/pricing-config.ts
  */
 const roundToEndIn7 = (price: number): number => {
-  // For prices below 100, use normal rounding
-  if (price < 100) return Math.round(price);
-  
-  // For prices >= 100, round to end in 7
-  const lastDigit = price % 10;
-  if (lastDigit === 7) {
-    return price; // Already ends in 7
-  } else if (lastDigit < 7) {
-    return price - lastDigit + 7; // Round up to 7 in current decade
-  } else {
-    return price - lastDigit + 17; // Round up to 7 in next decade
-  }
+  return Pricing.roundPrice(price);
+};
+
+/**
+ * Helper function to calculate additional users cost using centralized pricing
+ * ⚠️ Uses shared/pricing-config.ts for all pricing logic
+ */
+const calculateAdditionalUsersCost = (plan: PlanTier, additionalUsers: number): number => {
+  return Pricing.calculateAdditionalUsersCost(plan, additionalUsers);
 };
 
 export default function CalculadoraPage() {
@@ -551,18 +526,7 @@ export default function CalculadoraPage() {
           const included = iplan === "prime" ? 2 : iplan === "k" ? 5 : 10;
           const additional = Math.max(0, imobUsers - included);
           if (additional > 0) {
-            let userCost = 0;
-            if (iplan === "prime") userCost = additional * 57;
-            else if (iplan === "k") {
-              const t1 = Math.min(additional, 5);
-              const t2 = Math.max(0, additional - 5);
-              userCost = t1 * 47 + t2 * 37;
-            } else {
-              const t1 = Math.min(additional, 10);
-              const t2 = Math.min(Math.max(0, additional - 10), 90);
-              const t3 = Math.max(0, additional - 100);
-              userCost = t1 * 37 + t2 * 27 + t3 * 17;
-            }
+            const userCost = calculateAdditionalUsersCost(iplan, additional);
             postPaidTotal += userCost;
             if (!ppBreakdown.imobAddons) ppBreakdown.imobAddons = { groupLabel: "IMOB", groupTotal: 0, items: [] };
             ppBreakdown.imobAddons.items.push({
@@ -1171,8 +1135,8 @@ export default function CalculadoraPage() {
 
       // Add cost of missing add-ons (with Kombo discount)
       missingAddons.forEach(addon => {
-        if (addon === "leads") projectedCost += 97 * komboDiscount;
-        if (addon === "inteligencia") projectedCost += 197 * komboDiscount;
+        if (addon === "leads") projectedCost += Pricing.getAddonAnnualPrice('leads') * komboDiscount;
+        if (addon === "inteligencia") projectedCost += Pricing.getAddonAnnualPrice('inteligencia') * komboDiscount;
         if (addon === "assinatura") projectedCost += 0; // Pos-pago
         if (addon === "pay") projectedCost += 0; // Pos-pago
       });
@@ -1223,21 +1187,7 @@ export default function CalculadoraPage() {
     // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
     let additionalCost = 0;
     if (additional > 0) {
-      if (plan === 'prime') {
-        // Prime: R$57 fixo por usuário adicional
-        additionalCost = additional * 57;
-      } else if (plan === 'k') {
-        // K: 1-5 = R$47, 6+ = R$37
-        const tier1 = Math.min(additional, 5);
-        const tier2 = Math.max(0, additional - 5);
-        additionalCost = (tier1 * 47) + (tier2 * 37);
-      } else {
-        // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
-        const tier1 = Math.min(additional, 10);
-        const tier2 = Math.min(Math.max(0, additional - 10), 90); // 11-100 (90 usuários)
-        const tier3 = Math.max(0, additional - 100);
-        additionalCost = (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-      }
+      additionalCost = calculateAdditionalUsersCost(plan, additional);
     }
     
     return baseCost + additionalCost;
@@ -1454,20 +1404,7 @@ export default function CalculadoraPage() {
       const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
       const additional = Math.max(0, toNum(metrics.imobUsers) - included);
       if (additional > 0) {
-        let monthlyCost = 0;
-        if (plan === 'prime') monthlyCost = additional * 57;
-        else if (plan === 'k') {
-          // K: 1-5 = R$47, 6+ = R$37
-          const tier1 = Math.min(additional, 5);
-          const tier2 = Math.max(0, additional - 5);
-          monthlyCost = (tier1 * 47) + (tier2 * 37);
-        } else {
-          // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
-          const tier1 = Math.min(additional, 10);
-          const tier2 = Math.min(Math.max(0, additional - 10), 90);
-          const tier3 = Math.max(0, additional - 100);
-          monthlyCost = (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-        }
+        const monthlyCost = calculateAdditionalUsersCost(plan, additional);
         usersPrepayment = monthlyCost * months;
       }
     }
@@ -2134,7 +2071,7 @@ export default function CalculadoraPage() {
                             ) : isPrimeOnly ? (
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                  Opcional (R$97/mês)
+                                  Opcional (R$97/mês) ⚠️ Atualizar
                                 </Badge>
                                 <Switch
                                   checked={metrics.imobVipSupport}
@@ -2154,7 +2091,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Atendimento prioritário com SLA reduzido e canal exclusivo.
                           </p>
-                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês</p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês ⚠️ Atualizar</p>
                         </CardContent>
                       </Card>
 
@@ -2177,7 +2114,7 @@ export default function CalculadoraPage() {
                             ) : isPrimeOnly ? (
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                  Opcional (R$197/mês)
+                                  Opcional (R$297/mês)
                                 </Badge>
                                 <Switch
                                   checked={metrics.imobDedicatedCS}
@@ -2197,7 +2134,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Customer Success dedicado para acompanhamento estratégico.
                           </p>
-                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 297/mês</p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 297/mês ✓</p>
                         </CardContent>
                       </Card>
 
@@ -2481,19 +2418,7 @@ export default function CalculadoraPage() {
                         const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                         const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                         if (additional > 0 && !prepayAdditionalUsers) {
-                          if (plan === 'prime') imobSubtotal += additional * 57;
-                          else if (plan === 'k') {
-                            // K: 1-5 = R$47, 6+ = R$37
-                            const tier1 = Math.min(additional, 5);
-                            const tier2 = Math.max(0, additional - 5);
-                            imobSubtotal += (tier1 * 47) + (tier2 * 37);
-                          } else {
-                            // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
-                            const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.min(Math.max(0, additional - 10), 90);
-                            const tier3 = Math.max(0, additional - 100);
-                            imobSubtotal += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-                          }
+                          imobSubtotal += calculateAdditionalUsersCost(plan, additional);
                         }
                         
                         // WhatsApp Messages
@@ -2527,20 +2452,7 @@ export default function CalculadoraPage() {
                         // Usuários inclusos: Prime 2, K 5, K2 10
                         const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                         const additional = Math.max(0, toNum(metrics.imobUsers) - included);
-                        const totalCost = (() => {
-                          // V9: Prime: R$57 fixo, K: 1-5=R$47/6+=R$37, K2: 1-10=R$37/11-100=R$27/101+=R$17
-                          if (plan === 'prime') return additional * 57;
-                          else if (plan === 'k') {
-                            const tier1 = Math.min(additional, 5);
-                            const tier2 = Math.max(0, additional - 5);
-                            return (tier1 * 47) + (tier2 * 37);
-                          } else {
-                            const tier1 = Math.min(additional, 10);
-                            const tier2 = Math.min(Math.max(0, additional - 10), 90);
-                            const tier3 = Math.max(0, additional - 100);
-                            return (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-                          }
-                        })();
+                        const totalCost = calculateAdditionalUsersCost(plan, additional);
                         const pricePerUnit = additional > 0 ? totalCost / additional : 0;
 
                         // Calculate prepayment amount if applicable
@@ -2936,11 +2848,11 @@ export default function CalculadoraPage() {
                         if (product === 'imob' || product === 'both') {
                           // VIP Support: R$97/mês for Prime, free for K and K2
                           if (metrics.imobVipSupport && imobPlan === 'prime') {
-                            imobSupportCost += 97;
+                            imobSupportCost += Pricing.getVipSupportPrice();
                           }
                           // CS Dedicado: R$197/mês for Prime only (K=not available, K2=included)
                           if (metrics.imobDedicatedCS && imobPlan === 'prime') {
-                            imobSupportCost += 197;
+                            imobSupportCost += Pricing.getCSDedicadoPrice();
                           }
                         }
                         
@@ -2949,11 +2861,11 @@ export default function CalculadoraPage() {
                         if (product === 'loc' || product === 'both') {
                           // VIP Support: R$97/mês for Prime, free for K and K2
                           if (metrics.locVipSupport && locPlan === 'prime') {
-                            locSupportCost += 97;
+                            locSupportCost += Pricing.getVipSupportPrice();
                           }
                           // CS Dedicado: R$197/mês for Prime only (K=not available, K2=included)
                           if (metrics.locDedicatedCS && locPlan === 'prime') {
-                            locSupportCost += 197;
+                            locSupportCost += Pricing.getCSDedicadoPrice();
                           }
                         }
                         
@@ -2980,7 +2892,7 @@ export default function CalculadoraPage() {
                                 {formatCurrency(totalSupportCost)}
                               </span>
                               <span className="text-xs text-gray-500 italic">
-                                VIP R$97 | CS R$197
+                                VIP R$97 | CS R$297
                               </span>
                             </div>
                           </div>
@@ -2993,12 +2905,12 @@ export default function CalculadoraPage() {
                         
                         // Support Services
                         if (product === 'imob' || product === 'both') {
-                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
                         }
                         if (product === 'loc' || product === 'both') {
-                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
                         }
                         
                         // Additional Users (Imob) - V9: Prime: R$57 fixo, K: 1-5=R$47/6+=R$37, K2: 1-10=R$37/11-100=R$27/101+=R$17
@@ -3008,20 +2920,7 @@ export default function CalculadoraPage() {
                           const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                           const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                           if (additional > 0) {
-                            if (plan === 'prime') {
-                              totalPostPaid += additional * 57;
-                            } else if (plan === 'k') {
-                              // K: 1-5 = R$47, 6+ = R$37
-                              const tier1 = Math.min(additional, 5);
-                              const tier2 = Math.max(0, additional - 5);
-                              totalPostPaid += (tier1 * 47) + (tier2 * 37);
-                            } else {
-                              // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
-                              const tier1 = Math.min(additional, 10);
-                              const tier2 = Math.min(Math.max(0, additional - 10), 90);
-                              const tier3 = Math.max(0, additional - 100);
-                              totalPostPaid += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-                            }
+                            totalPostPaid += calculateAdditionalUsersCost(plan, additional);
                           }
                         }
                         
@@ -3345,19 +3244,7 @@ export default function CalculadoraPage() {
                                 const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                                 const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                                 if (additional > 0) {
-                                  if (plan === 'prime') totalPostPaid += additional * 57;
-                                  else if (plan === 'k') {
-                                    // K: 1-5 = R$47, 6+ = R$37
-                                    const tier1 = Math.min(additional, 5);
-                                    const tier2 = Math.max(0, additional - 5);
-                                    totalPostPaid += (tier1 * 47) + (tier2 * 37);
-                                  } else {
-                                    // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
-                                    const tier1 = Math.min(additional, 10);
-                                    const tier2 = Math.min(Math.max(0, additional - 10), 90);
-                                    const tier3 = Math.max(0, additional - 100);
-                                    totalPostPaid += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-                                  }
+                                  totalPostPaid += calculateAdditionalUsersCost(plan, additional);
                                 }
                               }
                               // Skip if prepaid
@@ -3443,12 +3330,12 @@ export default function CalculadoraPage() {
                               }
                               // Support Services
                               if (product === 'imob' || product === 'both') {
-                                if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                                if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
+                                if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                                if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
                               }
                               if (product === 'loc' || product === 'both') {
-                                if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                                if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
+                                if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                                if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
                               }
                               return totalPostPaid;
                             })())}/mês
@@ -3583,10 +3470,10 @@ export default function CalculadoraPage() {
                         }
                         // Support Services
                         if (product === 'imob' || product === 'both') {
-                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += 197;
-                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += 97;
-                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += 197;
+                          if (metrics.imobVipSupport && imobPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                          if (metrics.imobDedicatedCS && imobPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
+                          if (metrics.locVipSupport && locPlan === 'prime') totalPostPaid += Pricing.getVipSupportPrice();
+                          if (metrics.locDedicatedCS && locPlan === 'prime') totalPostPaid += Pricing.getCSDedicadoPrice();
                         }
                         let totalRevenue = 0;
                         if (addons.pay && (product === 'loc' || product === 'both')) {
@@ -3759,12 +3646,12 @@ export default function CalculadoraPage() {
                 
                 // Support Services
                 if (product === 'imob' || product === 'both') {
-                  if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += 97;
-                  if (metrics.imobDedicatedCS && imobPlan === 'prime') postPaidTotal += 197;
+                  if (metrics.imobVipSupport && imobPlan === 'prime') postPaidTotal += Pricing.getVipSupportPrice();
+                  if (metrics.imobDedicatedCS && imobPlan === 'prime') postPaidTotal += Pricing.getCSDedicadoPrice();
                 }
                 if (product === 'loc' || product === 'both') {
-                  if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += 97;
-                  if (metrics.locDedicatedCS && locPlan === 'prime') postPaidTotal += 197;
+                  if (metrics.locVipSupport && locPlan === 'prime') postPaidTotal += Pricing.getVipSupportPrice();
+                  if (metrics.locDedicatedCS && locPlan === 'prime') postPaidTotal += Pricing.getCSDedicadoPrice();
                 }
                 
                 // Additional Users (Imob) - Skip if prepaid (V9)
@@ -3773,18 +3660,7 @@ export default function CalculadoraPage() {
                   const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                   const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                   if (additional > 0) {
-                    if (plan === 'prime') {
-                      postPaidTotal += additional * 57;
-                    } else if (plan === 'k') {
-                      const tier1 = Math.min(additional, 5);
-                      const tier2 = Math.max(0, additional - 5);
-                      postPaidTotal += (tier1 * 47) + (tier2 * 37);
-                    } else {
-                      const tier1 = Math.min(additional, 10);
-                      const tier2 = Math.min(Math.max(0, additional - 10), 90);
-                      const tier3 = Math.max(0, additional - 100);
-                      postPaidTotal += (tier1 * 37) + (tier2 * 27) + (tier3 * 17);
-                    }
+                    postPaidTotal += calculateAdditionalUsersCost(plan, additional);
                   }
                 }
                 
@@ -3952,8 +3828,8 @@ export default function CalculadoraPage() {
                    komboInfo?.name === 'Kombo Locação Pro');
                 
                 const premiumServicesPrice = hasPremiumIncluded ? 0 : 
-                  ((metrics.imobVipSupport || metrics.locVipSupport) ? 97 : 0) +
-                  ((metrics.imobDedicatedCS || metrics.locDedicatedCS) ? 197 : 0);
+                  ((metrics.imobVipSupport || metrics.locVipSupport) ? Pricing.getVipSupportPrice() : 0) +
+                  ((metrics.imobDedicatedCS || metrics.locDedicatedCS) ? Pricing.getCSDedicadoPrice() : 0);
 
                 const proposalData = {
                   salesPersonName: quoteInfo.vendorName,
@@ -4037,7 +3913,7 @@ export default function CalculadoraPage() {
                   vipIncluded: hasPremiumIncluded && (metrics.imobVipSupport || metrics.locVipSupport),
                   csIncluded: hasPremiumIncluded && (metrics.imobDedicatedCS || metrics.locDedicatedCS),
                   vipPrice: !hasPremiumIncluded && (metrics.imobVipSupport || metrics.locVipSupport) ? 97 : 0,
-                  csPrice: !hasPremiumIncluded && (metrics.imobDedicatedCS || metrics.locDedicatedCS) ? 197 : 0,
+                  csPrice: !hasPremiumIncluded && (metrics.imobDedicatedCS || metrics.locDedicatedCS) ? Pricing.getCSDedicadoPrice() : 0,
                   // V8: P\u00f3s-pago breakdown
                   postPaidBreakdown: (() => {
                     const bd: any = { total: postPaidTotal };
@@ -4047,15 +3923,7 @@ export default function CalculadoraPage() {
                       const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
                       const additional = Math.max(0, toNum(metrics.imobUsers) - included);
                       if (additional > 0) {
-                        let userCost = 0;
-                        if (plan === 'prime') userCost = additional * 57;
-                        else if (plan === 'k') {
-                          const t1 = Math.min(additional, 5); const t2 = Math.max(0, additional - 5);
-                          userCost = t1 * 47 + t2 * 37;
-                        } else {
-                          const t1 = Math.min(additional, 10); const t2 = Math.min(Math.max(0, additional - 10), 90); const t3 = Math.max(0, additional - 100);
-                          userCost = t1 * 37 + t2 * 27 + t3 * 17;
-                        }
+                        const userCost = calculateAdditionalUsersCost(plan, additional);
                         if (!bd.imobAddons) bd.imobAddons = { groupLabel: 'IMOB', groupTotal: 0, items: [] };
                         bd.imobAddons.items.push({ label: 'Usuários Adicionais', included, additional, total: userCost, perUnit: plan === 'prime' ? 57 : plan === 'k' ? 47 : 37, unitLabel: 'usuário' });
                         bd.imobAddons.groupTotal += userCost;

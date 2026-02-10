@@ -2883,3 +2883,31 @@
 - [x] Rename "Custos Pós-Pago" to "Investimento pós-pago mensal (estimativo)"
 - [x] Verify KomboComparisonTable has consistent Card structure (already implemented)
 - [x] Apply consistent spacing (mb-2 for titles, pt-4 for CardContent) across all sections
+
+## New Pricing Rules Implementation (Feb 2026) - Complete Overhaul
+
+- [ ] Create centralized pricing configuration table (shared/pricing-config.ts) with all rules from MMPlanosH2-2025_2026Final PDF
+- [ ] Update Bienal discount from 28% to 25% (multiplier 0.72 → 0.75)
+- [ ] Update CS Dedicado price from R$ 197 to R$ 297
+- [ ] Implement Premium Services inclusion by plan tier (K includes VIP, K2 includes VIP+CS)
+- [ ] Implement cross-product benefit rule (if K/K2 in any product, benefit applies to all)
+- [ ] Update all 5 Kombos to include VIP + CS Dedicado automatically
+- [ ] Update calculator to use centralized pricing
+- [ ] Update product pages (IMOB, LOC) to use centralized pricing
+- [ ] Update add-on pages (Inteligência, Leads, Assinaturas) to use centralized pricing
+- [ ] Update PDF generator to use centralized pricing
+- [ ] Test all pricing calculations across website
+
+## Centralized Pricing Configuration - Feb 2026 ✅
+- [x] Created centralized pricing configuration table (`shared/pricing-config.ts`)
+- [x] Updated calculator to use centralized config (reduced 100+ hardcoded values)
+- [x] Updated KombosPage to reflect all Kombos include Premium Services
+- [x] Updated PDF generator to use centralized CS Dedicado price (R$297)
+- [x] Implemented all 4 critical pricing changes:
+  - [x] Biennial discount: 28% → 25% (multiplier 0.72 → 0.75)
+  - [x] CS Dedicado price: R$197 → R$297
+  - [x] Premium Services inclusion: ALL 5 Kombos now include VIP + CS
+  - [x] Plan-based Premium Services: K includes VIP, K2 includes VIP+CS (with cross-product benefit)
+- [x] Created comprehensive unit tests (33 tests) for pricing config
+- [x] All 255 tests passing
+- [x] Single source of truth: Future price changes only require editing `shared/pricing-config.ts`
