@@ -1358,7 +1358,7 @@ export default function CalculadoraPage() {
     });
   }, [imobPlan, locPlan, product]);
 
-  // WhatsApp and IA SDR are independent options - no dependency between them
+  // WhatsApp and IA SDR are mutually exclusive - cannot both be ON at the same time
 
   // Pre-select product based on businessType from §1
   // Corretora → imob, Administrador → loc, Ambos → both
@@ -1856,10 +1856,10 @@ export default function CalculadoraPage() {
                     <button
                       key={opt}
                       onClick={() => setProduct(opt as ProductSelection)}
-                      className={`px-2.5 py-1 text-xs rounded-full transition-all ${
+                      className={`px-4 py-2 text-sm rounded-lg transition-all border ${
                         product === opt
-                          ? "bg-primary text-white font-semibold"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                          ? "bg-primary text-white font-semibold border-primary shadow-sm"
+                          : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
                       }`}
                     >
                       {opt === "imob" ? "Imob" : opt === "loc" ? "Locação" : "Ambos"}
@@ -1946,7 +1946,7 @@ export default function CalculadoraPage() {
                               <Switch
                                 id="externalAI"
                                 checked={metrics.usesExternalAI}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked })}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}) })}
                                 className="scale-75"
                               />
                             </div>
@@ -1955,7 +1955,7 @@ export default function CalculadoraPage() {
                               <Switch
                                 id="whatsapp"
                                 checked={metrics.wantsWhatsApp}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked })}
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked, ...(checked ? { usesExternalAI: false } : {}) })}
                                 className="scale-75"
                               />
                             </div>
@@ -2149,6 +2149,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Atendimento prioritário com SLA reduzido e canal exclusivo.
                           </p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês</p>
                         </CardContent>
                       </Card>
 
@@ -2191,6 +2192,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Customer Success dedicado para acompanhamento estratégico.
                           </p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 297/mês</p>
                         </CardContent>
                       </Card>
 
@@ -2237,11 +2239,11 @@ export default function CalculadoraPage() {
 
               {/* §4: Add-ons Opcionais */}
               <div className="mb-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700">
+                <div className="mb-4">
+                  <h2 className="text-sm font-semibold text-gray-700 mb-3">
                     Add-ons Opcionais
                   </h2>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5 mb-4">
                     <button
                       onClick={() => {
                         setAddons({
@@ -2253,9 +2255,9 @@ export default function CalculadoraPage() {
                           cash: isAddonAvailable("cash"),
                         });
                       }}
-                      className="px-3 py-2 text-xs sm:text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white active:bg-primary active:text-white transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
+                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-primary text-white font-semibold border-primary shadow-sm"
                     >
-                      Selecionar Todos
+                      Selecionar
                     </button>
                     <button
                       onClick={() => {
@@ -2268,9 +2270,9 @@ export default function CalculadoraPage() {
                           cash: false,
                         });
                       }}
-                      className="px-3 py-2 text-xs sm:text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[44px] sm:min-h-0 flex-1 sm:flex-none"
+                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
                     >
-                      Deselecionar Todos
+                      Limpar
                     </button>
                   </div>
                 </div>
@@ -3163,20 +3165,32 @@ export default function CalculadoraPage() {
                                 <div className="relative">
                                   <Input
                                     id="boletoAmount"
-                                    type="text"
-                                    inputMode="decimal"
-                                    value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : formatCurrency(metrics.boletoChargeAmount, 2)}
-                                    onChange={(e) => {
-                                      // Allow typing, store as string temporarily
-                                      setMetrics({ ...metrics, boletoChargeAmount: e.target.value as any });
-                                    }}
-                                    onBlur={(e) => {
-                                      // On blur, parse and format as currency
-                                      const parsed = parseCurrency(e.target.value);
-                                      setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
-                                    }}
-                                    placeholder="Ex: R$ 10,00"
-                                    className="mt-1 h-8 text-sm pr-8"
+                                     type="text"
+                                     inputMode="decimal"
+                                     value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : `R$ ${formatCurrency(metrics.boletoChargeAmount, 2)}`}
+                                     onFocus={(e) => {
+                                       // Auto-clear "R$ 0,00" on focus so user can type directly
+                                       const val = toNum(metrics.boletoChargeAmount);
+                                       if (val === 0) {
+                                         setMetrics({ ...metrics, boletoChargeAmount: '' as any });
+                                       } else {
+                                         // Show raw number for editing
+                                         setMetrics({ ...metrics, boletoChargeAmount: String(val).replace('.', ',') as any });
+                                       }
+                                       e.target.select();
+                                     }}
+                                     onChange={(e) => {
+                                       // Allow typing with comma as decimal, filter non-numeric chars except comma
+                                       const raw = e.target.value.replace(/[^0-9,]/g, '');
+                                       setMetrics({ ...metrics, boletoChargeAmount: raw as any });
+                                     }}
+                                     onBlur={(e) => {
+                                       // On blur, parse and format as currency with R$ prefix
+                                       const parsed = parseCurrency(e.target.value);
+                                       setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
+                                     }}
+                                     placeholder="Ex: 10,00"
+                                     className="mt-1 h-8 text-sm pr-8"
                                   />
                                   {(typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount > 0) && (
                                     <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
@@ -3198,20 +3212,32 @@ export default function CalculadoraPage() {
                                 <div className="relative">
                                   <Input
                                     id="splitAmount"
-                                    type="text"
-                                    inputMode="decimal"
-                                    value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : formatCurrency(metrics.splitChargeAmount, 2)}
-                                    onChange={(e) => {
-                                      // Allow typing, store as string temporarily
-                                      setMetrics({ ...metrics, splitChargeAmount: e.target.value as any });
-                                    }}
-                                    onBlur={(e) => {
-                                      // On blur, parse and format as currency
-                                      const parsed = parseCurrency(e.target.value);
-                                      setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
-                                    }}
-                                    placeholder="Ex: R$ 5,00"
-                                    className="mt-1 h-8 text-sm pr-8"
+                                     type="text"
+                                     inputMode="decimal"
+                                     value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : `R$ ${formatCurrency(metrics.splitChargeAmount, 2)}`}
+                                     onFocus={(e) => {
+                                       // Auto-clear "R$ 0,00" on focus so user can type directly
+                                       const val = toNum(metrics.splitChargeAmount);
+                                       if (val === 0) {
+                                         setMetrics({ ...metrics, splitChargeAmount: '' as any });
+                                       } else {
+                                         // Show raw number for editing
+                                         setMetrics({ ...metrics, splitChargeAmount: String(val).replace('.', ',') as any });
+                                       }
+                                       e.target.select();
+                                     }}
+                                     onChange={(e) => {
+                                       // Allow typing with comma as decimal, filter non-numeric chars except comma
+                                       const raw = e.target.value.replace(/[^0-9,]/g, '');
+                                       setMetrics({ ...metrics, splitChargeAmount: raw as any });
+                                     }}
+                                     onBlur={(e) => {
+                                       // On blur, parse and format as currency with R$ prefix
+                                       const parsed = parseCurrency(e.target.value);
+                                       setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
+                                     }}
+                                     placeholder="Ex: 5,00"
+                                     className="mt-1 h-8 text-sm pr-8"
                                   />
                                   {(typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount > 0) && (
                                     <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />

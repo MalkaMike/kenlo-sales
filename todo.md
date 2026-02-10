@@ -2697,3 +2697,35 @@
 
 - [x] Move conditional questions (Tem site? / Já usa CRM? / Já usa ERP?) to right below Natureza do Negócio buttons, before company info fields
 - [x] Add red visual validation highlighting on required fields when user tries to export PDF without filling them (labels turn red, inputs get red border/ring, Sim/Não buttons get red ring when null)
+
+## UI/UX Adjustments - Calculadora Kenlo (Feb 9, 2026 - Round 3)
+
+### Comment 1 — Consistência visual (Configuração)
+- [x] Botões Imob/Locação/Ambos na seção Configuração devem usar o mesmo padrão visual dos botões Corretora/Administradora/Ambos da Natureza do Negócio
+
+### Comment 2 — Lógica de exclusão IA SDR / WhatsApp
+- [x] IA SDR e WhatsApp são mutuamente exclusivos - impedir ambos ligados ao mesmo tempo
+- [x] IA SDR ON → WhatsApp OFF, sem custo de leads WhatsApp
+- [x] WhatsApp ON → IA SDR OFF, cobra leads com WhatsApp
+- [x] Ambos OFF → permitido, leads sem WhatsApp e sem IA SDR
+- [x] Implementar na UI, cálculo de preços e PDF
+
+### Comment 3 — Benefícios Inclusos (preço de referência)
+- [x] Suporte VIP: exibir R$ 97/mês como preço de referência (informativo, não soma no total)
+- [x] CS Dedicado: exibir R$ 297/mês como preço de referência (informativo, não soma no total)
+
+### Comment 4 — Add-ons Opcionais (Selecionar/Deselecionar)
+- [x] Rótulos mais curtos: "Selecionar" / "Limpar" em vez de "Selecionar Todos" / "Deselecionar Todos"
+- [x] Usar mesmo padrão visual da seção Natureza do Negócio
+- [x] Posicionar logo abaixo do título "Add-ons Opcionais"
+
+### Comment 5 — Botões "Selecionar" na comparação de Kombos
+- [x] Mover botões "Selecionar" para abaixo da linha "Anual Equivalente" na tabela de Kombos
+
+### Comment 6 — Posição dos ciclos de pagamento
+- [x] Mover Mensal/Semestral/Anual/Bienal para logo abaixo do título "Sua Seleção vs Kombos"
+
+### Comment 7 — Inputs de valores em reais (boleto e split)
+- [x] Ao iniciar digitação, apagar automaticamente o valor existente (ex: "R$ 0,00")
+- [x] Aceitar vírgula como separador decimal (ex: 10,50)
+- [x] Aplicar formatação monetária automática após digitação

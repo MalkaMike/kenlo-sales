@@ -762,35 +762,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     <div className="mb-6">
       <Card>
         <CardContent className="p-4">
-          {/* Table Header: Title + Frequency Selector (horizontal) */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 mb-3 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700">Sua Seleção vs Kombos</h3>
+          {/* Table Header: Title */}
+          <div className="pb-2 mb-2">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos</h3>
             
-            {/* Frequency Selector - Horizontal inline */}
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium text-gray-500">Ciclo:</span>
-              <div className="flex gap-1.5">
-                {FREQUENCY_OPTIONS.map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => handleFrequencyChange(option.id)}
-                    className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all ${
-                      viewMode === option.id
-                        ? "bg-pink-50 border-primary text-primary ring-2 ring-primary/20"
-                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center">
-                      <span>{option.label}</span>
-                      <span className={`text-[9px] ${
-                        viewMode === option.id ? "text-primary" : "text-gray-500"
-                      }`}>
-                        {option.id === "monthly" ? "(referência)" : option.discount}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+            {/* Frequency Selector - Right below title */}
+            <div className="flex items-center gap-1.5 mb-3">
+              {FREQUENCY_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleFrequencyChange(option.id)}
+                  className={`px-4 py-2 text-sm rounded-lg transition-all border ${
+                    viewMode === option.id
+                      ? "bg-primary text-white font-semibold border-primary shadow-sm"
+                      : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
+                  }`}
+                >
+                  {option.label}
+                  {option.id !== "monthly" && (
+                    <span className="ml-1 text-xs opacity-80">{option.discount}</span>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -870,42 +863,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   })}
                 </tr>
 
-                {/* Row 3: Botões de Seleção (logo após o cabeçalho) */}
-                <tr className="border-b-2 border-gray-200 bg-gray-50/50">
-                  <td className="py-3 px-2"></td>
-                  {columns.map((col) => (
-                    <td key={`select-btn-${col.id}`} className={`text-center py-3 px-1 transition-all ${
-                      selectedPlan === col.id
-                        ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
-                        : ""
-                    }`}>
-                      <Button
-                        onClick={() => handlePlanSelect(col.id)}
-                        variant={selectedPlan === col.id ? "default" : "outline"}
-                        className={`w-full text-xs transition-all duration-300 ${
-                          selectedPlan === col.id 
-                            ? "bg-green-600 hover:bg-green-700" 
-                            : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"
-                        }`}
-                        size="sm"
-                      >
-                        {selectedPlan === col.id ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Selecionado
-                          </>
-                        ) : col.isRecommended && !selectedPlan ? (
-                          <>
-                            <Star className="w-3 h-3 mr-1 fill-current" />
-                            Selecionar
-                          </>
-                        ) : (
-                          "Selecionar"
-                        )}
-                      </Button>
-                    </td>
-                  ))}
-                </tr>
               </thead>
               <tbody>
                 {rows.map((row, rowIndex) => (
@@ -955,15 +912,39 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 ))}
               </tbody>
               <tfoot>
-                {/* Footer row to close the borders */}
-                <tr>
-                  <td className="py-2"></td>
+                {/* Selecionar buttons row (below Anual Equivalente) */}
+                <tr className="border-t-2 border-gray-200 bg-gray-50/50">
+                  <td className="py-3 px-2"></td>
                   {columns.map((col) => (
-                    <td key={`footer-${col.id}`} className={`py-2 transition-all ${
+                    <td key={`select-btn-${col.id}`} className={`text-center py-3 px-1 transition-all ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
                         : ""
                     }`}>
+                      <Button
+                        onClick={() => handlePlanSelect(col.id)}
+                        variant={selectedPlan === col.id ? "default" : "outline"}
+                        className={`w-full text-xs transition-all duration-300 ${
+                          selectedPlan === col.id 
+                            ? "bg-green-600 hover:bg-green-700" 
+                            : "hover:bg-green-50 hover:border-green-500 hover:text-green-700"
+                        }`}
+                        size="sm"
+                      >
+                        {selectedPlan === col.id ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Selecionado
+                          </>
+                        ) : col.isRecommended && !selectedPlan ? (
+                          <>
+                            <Star className="w-3 h-3 mr-1 fill-current" />
+                            Selecionar
+                          </>
+                        ) : (
+                          "Selecionar"
+                        )}
+                      </Button>
                     </td>
                   ))}
                 </tr>
