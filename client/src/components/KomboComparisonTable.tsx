@@ -769,10 +769,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Total Mensal", isTotal: true },
+    { key: "totalMonthly", label: "Mensalidades", isTotal: true },
     { key: "subscriptionCount", label: "", isSubRow: true },
     { key: "implementation", label: "Implantação", isTotal: true },
-    { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
+    { key: "annualEquivalent", label: "Anual", isTotal: true },
     { key: "savings", label: "", isSubRow: true },
   ];
 
@@ -900,6 +900,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Comparison Table */}
           <div className="w-full">
             <table className="w-full text-sm border-collapse table-fixed" onMouseLeave={() => setHoveredColumn(null)}>
+              <colgroup>
+                <col style={{ width: "180px" }} />
+                {columns.map((_, idx) => (
+                  <col key={idx} />
+                ))}
+              </colgroup>
               <thead className="sticky top-0 z-10 shadow-[0_2px_4px_-1px_rgba(0,0,0,0.1)]">
                 {/* Row 1: Nome do Kombo + Tooltip + Badge de Desconto */}
                 <tr className="border-b border-gray-200 bg-white">
@@ -1139,10 +1145,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             ))}
           </div>
 
-          {/* Legend */}
+          {/* Footnote */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              <strong>Anual Equivalente:</strong> Inclui 12 meses de mensalidade + custo de implantação (única vez). Valores exibidos são mensais equivalentes para facilitar a comparação.
+              Os valores exibidos representam mensalidades equivalentes ou valores anuais equivalentes, conforme a condição de pagamento selecionada.
             </p>
           </div>
 

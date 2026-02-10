@@ -2845,3 +2845,11 @@
 - [x] Add tooltip to Suporte VIP row label with monthly reference price
 - [x] Add tooltip to CS Dedicado row label with monthly reference price
 - [x] Follow same visual pattern as Treinamentos tooltip (info icon + price)
+
+## Ajuste Largura 1ª Coluna + Renomeação de Rótulos + Footnote (Feb 10, 2026)
+
+- [x] Increase first column width to prevent line breaks in labels
+- [x] Rename "Total Mensal" to "Mensalidades"
+- [x] Rename "Anual Equivalente" to "Anual"
+- [x] Add single footnote below table explaining equivalent values concept
+- [x] Keep table cells clean (no inline explanations or parentheses)
