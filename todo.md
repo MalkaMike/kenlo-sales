@@ -2824,3 +2824,14 @@
 ## Fix subscriptionCount — Excluir Pay, Seguros, Cash (Feb 10, 2026)
 
 - [x] Remove Pay, Seguros, Cash from subscriptionCount (only count: Imob, Loc, Leads, Inteligência, Assinatura)
+
+## Reestruturação Bloco Implantação (Feb 10, 2026)
+
+- [x] Add theoreticalImplementation field to KomboColumnData (sum of all individual impl. costs without combo)
+- [x] Calculate theoreticalImplementation: Imob R$1.497 + Loc R$1.497 + Leads R$497 + Inteligência R$497 (if selected)
+- [x] Update Implantação cell to show 3-line vertical block:
+  - Line 1: "Sem combo: R$ X" (small gray, theoretical total)
+  - Line 2: "Economia: -R$ X" (small green, savings)
+  - Line 3: "R$ X" (bold, final value to pay)
+- [x] Show savings line only when there is actual savings (combo columns, not Sem Kombo)
+- [x] Apply to all column calculation functions (Kombo, NoKombo, Unavailable)

@@ -89,7 +89,8 @@ interface KomboColumnData {
   subscriptionCount: number;
   // Totals
   totalMonthly: number;
-  implementation: number;
+  theoreticalImplementation: number; // Sum of all individual impl. costs without combo discount
+  implementation: number; // Actual amount charged
   annualEquivalent: number; // 12 months + implementation
 }
 
@@ -380,6 +381,21 @@ const calculateKomboColumn = (
   let totalMonthly = 0;
   let implementation = IMPLEMENTATION_COSTS.combo; // All Kombos have fixed R$1.497 implementation
 
+  // Calculate theoretical implementation (sum of all individual costs without combo)
+  let theoreticalImplementation = 0;
+  if (kombo.products.includes("imob" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
+    theoreticalImplementation += IMPLEMENTATION_COSTS.imob;
+  }
+  if (kombo.products.includes("loc" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
+    theoreticalImplementation += IMPLEMENTATION_COSTS.loc;
+  }
+  if (kombo.includedAddons.includes("leads")) {
+    theoreticalImplementation += IMPLEMENTATION_COSTS.leads;
+  }
+  if (kombo.includedAddons.includes("inteligencia")) {
+    theoreticalImplementation += IMPLEMENTATION_COSTS.inteligencia;
+  }
+
   // Products - always show prices based on Kombo definition, not user selection
   // This allows comparison even when Kombo is not applicable
   let imobPrice: number | null = null;
@@ -514,6 +530,7 @@ const calculateKomboColumn = (
     trainingPrice,
     subscriptionCount,
     totalMonthly,
+    theoreticalImplementation,
     implementation,
     annualEquivalent,
   };
@@ -646,6 +663,7 @@ const calculateNoKomboColumn = (
     trainingPrice,
     subscriptionCount,
     totalMonthly,
+    theoreticalImplementation: implementation, // Sem Kombo: theoretical = actual (no combo discount)
     implementation,
     annualEquivalent,
   };
@@ -678,6 +696,7 @@ const createUnavailableColumn = (
   trainingPrice: null,
   subscriptionCount: 0,
   totalMonthly: 0,
+  theoreticalImplementation: 0,
   implementation: 0,
   annualEquivalent: 0,
 });
@@ -813,13 +832,27 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
           </span>
         );
-      case "implementation":
+      case "implementation": {
+        const implSavings = column.theoreticalImplementation - column.implementation;
+        const hasSavings = implSavings > 0 && column.id !== "none";
         return (
           <div className="flex flex-col items-center gap-0.5">
-            <span className="text-[10px] text-gray-400 font-normal leading-tight">Implantação (único)</span>
+            {hasSavings ? (
+              <>
+                <span className="text-[10px] text-gray-400 font-normal leading-tight">
+                  Sem combo: R$ {formatCurrency(column.theoreticalImplementation)}
+                </span>
+                <span className="text-[10px] text-green-600 font-medium leading-tight">
+                  Economia: −R$ {formatCurrency(implSavings)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[10px] text-gray-400 font-normal leading-tight">Implantação (único)</span>
+            )}
             <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
           </div>
         );
+      }
       case "annualEquivalent":
         return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
       case "savings": {
