@@ -807,11 +807,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <th
                         key={col.id}
                         onMouseEnter={() => setHoveredColumn(col.id)}
-                        className={`text-center py-3 px-1 transition-colors duration-150 ${
+                        onClick={() => handlePlanSelect(col.id)}
+                        className={`text-center py-3 px-1 cursor-pointer transition-colors duration-150 ${
                           selectedPlan === col.id
                             ? "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
                             : hoveredColumn === col.id && selectedPlan !== col.id
-                            ? "bg-blue-50/60"
+                            ? "bg-blue-50/70"
                             : colIndex % 2 === 1
                             ? "bg-gray-50/50"
                             : ""
@@ -884,11 +885,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center py-3 px-3 transition-colors duration-150 ${
+                          onClick={() => handlePlanSelect(col.id)}
+                          className={`text-center py-3 px-3 cursor-pointer transition-colors duration-150 ${
                             selectedPlan === col.id
                               ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
                               : hoveredColumn === col.id && selectedPlan !== col.id
-                              ? "bg-blue-50/60"
+                              ? "bg-blue-50/70"
                               : colIndex % 2 === 1
                               ? "bg-gray-50/50"
                               : ""
@@ -910,11 +912,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr className="border-t-2 border-gray-200 bg-gray-50/50">
                   <td className="py-3 px-2"></td>
                   {columns.map((col) => (
-                    <td key={`select-btn-${col.id}`} onMouseEnter={() => setHoveredColumn(col.id)} className={`text-center py-3 px-1 transition-colors duration-150 ${
+                    <td key={`select-btn-${col.id}`} onMouseEnter={() => setHoveredColumn(col.id)} onClick={() => handlePlanSelect(col.id)} className={`text-center py-3 px-1 cursor-pointer transition-colors duration-150 ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
                         : hoveredColumn === col.id && selectedPlan !== col.id
-                        ? "bg-blue-50/60"
+                        ? "bg-blue-50/70"
                         : columns.indexOf(col) % 2 === 1
                         ? "bg-gray-50/50"
                         : ""

@@ -2762,3 +2762,11 @@
 - [x] Option B: Add column hover highlight (blue-50/60) that follows the mouse across full column height (thead, tbody, tfoot)
 - [x] Hover highlight does not compete with green selection highlight (hover = blue temporary, selection = green persistent)
 - [x] Improved horizontal scannability with alternating backgrounds + hover + onMouseLeave cleanup
+
+## Kombos Table Column Interactivity Affordance (Feb 9, 2026)
+
+- [x] Add cursor: pointer on all column cells (header, body, footer) to communicate clickability
+- [x] Make entire column clickable to select the plan (not just the Selecionar button)
+- [x] Hover state must be explicit and cover entire column height
+- [x] Hover (temporary) must not compete with selected state (persistent green)
+- [x] Consistent hover behavior across header, value rows, and footer
