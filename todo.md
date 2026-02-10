@@ -2751,3 +2751,7 @@
 - [x] Both selectors perfectly synchronized (single source of truth via viewMode state)
 - [x] Visually identical to the one above the table
 - [x] Clicking either one updates the other automatically
+## Add-ons Default State Fix (Feb 9, 2026)
+
+- [x] Restore "Selecionar" button to active/primary appearance by default (not neutral)
+- [x] All available add-ons should start ON by default when page loads

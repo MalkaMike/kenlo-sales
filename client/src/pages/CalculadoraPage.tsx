@@ -244,12 +244,12 @@ export default function CalculadoraPage() {
   
   // Step 2: Add-ons (all 6 add-ons) - All DISABLED by default
   const [addons, setAddons] = useState({
-    leads: false,
-    inteligencia: false, // BI/Analytics
-    assinatura: false, // Digital signature
-    pay: false,
-    seguros: false,
-    cash: false,
+    leads: true,
+    inteligencia: true, // BI/Analytics
+    assinatura: true, // Digital signature
+    pay: true,
+    seguros: true,
+    cash: true,
   });
 
   // Helper: Convert empty string metrics to numbers for calculations (CEO Verdict Round 2)
@@ -2255,7 +2255,7 @@ export default function CalculadoraPage() {
                           cash: isAddonAvailable("cash"),
                         });
                       }}
-                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-white hover:bg-primary hover:text-white hover:border-primary text-gray-600 border-gray-200 font-medium"
+                      className="px-4 py-2 text-sm rounded-lg transition-all border bg-primary text-white font-semibold border-primary shadow-sm"
                     >
                       Selecionar
                     </button>
