@@ -2972,3 +2972,25 @@
 - [x] Update backend schema to support nested tiered pricing
 - [x] Update tests to match new JSON structure
 - [x] All 271 tests passing
+
+## Pricing Admin Visual Improvements - Feb 2026 ✅
+- [x] Verify Kombo discounts against original PDF (all correct: 10%, 15%, 10%, 0%, 20%)
+- [x] Add thousand separators to all number inputs (formatNumber helper with pt-BR locale)
+- [x] Reduce input sizes for more compact visual (h-7 inputs, text-xs, smaller labels)
+- [x] Optimize spacing and padding throughout interface (py-6, mb-4, space-y-3)
+- [x] Test all changes and verify accuracy (all 271 tests passing)
+
+## Pricing Admin - Status Atual (Checkpoint c4ea8935)
+- [x] Interface de administração de preços criada e funcional
+- [x] Todos os preços corrigidos (Inteligência R$297, Leads R$497, Assinaturas R$37)
+- [x] Treinamento adicionado aos Serviços Premium
+- [x] Todas as faixas de preços pós-pago implementadas
+- [x] Link no rodapé do site (Ferramentas → Configuração de Preços)
+- [x] Sistema de salvamento via JSON (`shared/pricing-values.json`)
+- [x] Todos os 271 testes passando
+
+## Melhorias Visuais Pendentes (perdidas no reset)
+- [ ] Separadores de milhares nos inputs (1.497 em vez de 1497)
+- [ ] Inputs mais compactos (h-7 em vez de h-8)
+- [ ] Labels menores e uppercase
+- [ ] Espaçamento reduzido (space-y-3 em vez de space-y-4)
