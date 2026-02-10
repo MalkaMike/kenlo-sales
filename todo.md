@@ -2784,3 +2784,9 @@
 ## Treinamentos — Regra de Exibição Binária (Feb 9, 2026)
 
 - [x] Replace "Disponível no K2" with "—" dash when Treinamentos not included, matching Suporte VIP / CS Dedicado pattern
+
+## Treinamentos no PDF Exportado (Feb 9, 2026)
+
+- [x] Add Treinamentos line to PDF budget export when K2 plan is selected
+- [x] Follow same visual pattern as Suporte VIP and CS Dedicado in the PDF
+- [x] Update PDF tests to cover Treinamentos inclusion (existing tests cover K2 scenarios, all 222 pass)

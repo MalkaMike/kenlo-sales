@@ -571,28 +571,18 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       lbl("Customer Success dedicado para acompanhamento estrategico da operacao.", M + 14, Y, { size: 6, color: C.textMuted });
       Y += 14;
 
-      // Treinamentos
-      if (anyK2) {
-        divider(Y - 4);
-        Y += 6;
-        doc.fontSize(7.5).fillColor(C.dark).font("Helvetica-Bold")
-          .text("Treinamentos Inclusos", M + 14, Y, { lineBreak: false });
-        Y += 12;
-
-        if (bothK2) {
-          tableRow("Treinamento Online (4 sessoes)", "Ref: R$ 2.000 cada", Y, { valueColor: C.green });
-          Y += 12;
-          tableRow("Treinamento Presencial (2 sessoes)", "Ref: R$ 3.000 cada", Y, { valueColor: C.green });
-          Y += 10;
-          lbl("Beneficios acumulados: IMOB K2 + LOC K2 somam treinamentos.", M + 14, Y, { size: 6, color: C.blue, bold: true });
-          Y += 12;
-        } else {
-          tableRow("Treinamento Online (2 sessoes)", "Ref: R$ 2.000 cada", Y, { valueColor: C.green });
-          Y += 12;
-          tableRow("Treinamento Presencial (1 sessao)", "Ref: R$ 3.000", Y, { valueColor: C.green });
-          Y += 12;
-        }
-      }
+      // Treinamentos — same pattern as VIP / CS Dedicado
+      const trainingStatus = anyK2
+        ? (bothK2 ? "Incluido (4x online ou 2 presencial)" : "Incluido (2x online ou 1 presencial)")
+        : null;
+      const trainingColor = anyK2 ? C.green : C.textLight;
+      doc.fontSize(7.5).fillColor(C.dark).font("Helvetica-Bold")
+        .text("Treinamentos", M + 14, Y, { lineBreak: false });
+      doc.fontSize(7.5).fillColor(trainingColor).font("Helvetica")
+        .text(trainingStatus || "—", M + 14, Y, { width: CW - 28, align: "right" });
+      Y += 10;
+      lbl("Treinamentos online e presenciais inclusos no plano K2 (ref. R$ 2.000/online, R$ 3.000/presencial).", M + 14, Y, { size: 6, color: C.textMuted });
+      Y += 14;
 
       Y += GAP;
     }
