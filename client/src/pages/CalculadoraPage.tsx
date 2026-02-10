@@ -2460,7 +2460,7 @@ export default function CalculadoraPage() {
                   </h2>
                   
                   <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                     <div>
                       {/* IMOB ADD-ONS GROUP */}
                       {(product === 'imob' || product === 'both') && (() => {
@@ -3141,7 +3141,7 @@ export default function CalculadoraPage() {
                   </h2>
                   
                   <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                       {/* Pay Questions — moved here per master prompt §6 */}
                       {addons.pay && (product === 'loc' || product === 'both') && (
                         <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">

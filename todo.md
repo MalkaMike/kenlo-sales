@@ -2857,3 +2857,7 @@
 ## Correção Footnote — Anual = 12x Mensalidades + Implantação (Feb 10, 2026)
 
 - [x] Update footnote to explain that "Anual" = 12x monthly fees + implementation cost (first year only)
+
+## Custos Pós-Pago — Reduzir Espaçamento Superior (Feb 10, 2026)
+
+- [x] Reduce excessive top spacing in Custos Pós-Pago box so first item aligns close to top border (also applied to Receita Extra for consistency)
