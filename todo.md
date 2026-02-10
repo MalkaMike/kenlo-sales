@@ -2801,3 +2801,7 @@
 - [x] Ensure proper z-index so sticky header stays above body rows
 - [x] Add bottom border/shadow to sticky header for visual separation when scrolling
 - [x] Maintain all existing hover, selection, and click behaviors on sticky header cells
+
+## Tooltip Treinamentos — Ajuste de Texto (Feb 10, 2026)
+
+- [x] Update Treinamentos tooltip to show reference prices: Online R$2.000 and Presencial R$3.000

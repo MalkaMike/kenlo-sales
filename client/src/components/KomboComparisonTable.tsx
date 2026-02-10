@@ -917,11 +917,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                 <Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" />
                               </TooltipTrigger>
                               <TooltipContent side="top" className="max-w-[240px] p-3">
-                                <div className="space-y-1 text-left">
-                                  <p className="font-semibold text-sm">Valores de referência</p>
-                                  <p className="text-xs">Online: <span className="font-medium">R$ 2.000</span> por sessão</p>
-                                  <p className="text-xs">Presencial: <span className="font-medium">R$ 3.000</span> por sessão</p>
-                                  <p className="text-xs text-muted-foreground mt-1">Incluído sem custo adicional no plano K2.</p>
+                                <div className="space-y-1.5 text-left">
+                                  <p className="font-semibold text-sm">Preço de ref:</p>
+                                  <p className="text-xs">Online: <span className="font-bold">R$2.000</span></p>
+                                  <p className="text-xs">Presencial: <span className="font-bold">R$3.000</span></p>
                                 </div>
                               </TooltipContent>
                             </Tooltip>
