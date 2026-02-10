@@ -908,7 +908,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           : "text-gray-600"
                       }`}
                     >
-                      {row.label}
+                      {row.key === "training" ? (
+                        <span className="inline-flex items-center gap-1">
+                          {row.label}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[240px] p-3">
+                                <div className="space-y-1 text-left">
+                                  <p className="font-semibold text-sm">Valores de referência</p>
+                                  <p className="text-xs">Online: <span className="font-medium">R$ 2.000</span> por sessão</p>
+                                  <p className="text-xs">Presencial: <span className="font-medium">R$ 3.000</span> por sessão</p>
+                                  <p className="text-xs text-muted-foreground mt-1">Incluído sem custo adicional no plano K2.</p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </span>
+                      ) : (
+                        row.label
+                      )}
                     </td>
                     {columns.map((col, colIndex) => {
                       // Skip first column for header rows since we're using colSpan=2

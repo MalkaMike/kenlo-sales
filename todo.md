@@ -2790,3 +2790,7 @@
 - [x] Add Treinamentos line to PDF budget export when K2 plan is selected
 - [x] Follow same visual pattern as Suporte VIP and CS Dedicado in the PDF
 - [x] Update PDF tests to cover Treinamentos inclusion (existing tests cover K2 scenarios, all 222 pass)
+
+## Tooltip Treinamentos na Tabela Comparativa (Feb 10, 2026)
+
+- [x] Add tooltip to Treinamentos row label in KomboComparisonTable showing R$ 2.000/online and R$ 3.000/presencial
