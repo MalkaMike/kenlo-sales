@@ -833,19 +833,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </span>
         );
       case "implementation": {
-        const implSavings = column.theoreticalImplementation - column.implementation;
-        const hasSavings = implSavings > 0 && column.id !== "none";
+        const hasSavings = column.theoreticalImplementation > column.implementation && column.id !== "none";
         return (
           <div className="flex flex-col items-center gap-0.5">
             {hasSavings ? (
-              <>
-                <span className="text-[10px] text-gray-400 font-normal leading-tight">
-                  Sem combo: R$ {formatCurrency(column.theoreticalImplementation)}
-                </span>
-                <span className="text-[10px] text-green-600 font-medium leading-tight">
-                  Economia: −R$ {formatCurrency(implSavings)}
-                </span>
-              </>
+              <span className="text-[10px] text-gray-400 font-normal leading-tight">
+                Sem combo: R$ {formatCurrency(column.theoreticalImplementation)}
+              </span>
             ) : (
               <span className="text-[10px] text-gray-400 font-normal leading-tight">Implantação (único)</span>
             )}

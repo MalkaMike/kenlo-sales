@@ -2835,3 +2835,7 @@
   - Line 3: "R$ X" (bold, final value to pay)
 - [x] Show savings line only when there is actual savings (combo columns, not Sem Kombo)
 - [x] Apply to all column calculation functions (Kombo, NoKombo, Unavailable)
+
+## Implantação — Remover Linha Economia (Feb 10, 2026)
+
+- [x] Remove green "Economia: −R$ X" line from Implantação block, keep only "Sem combo: R$ X" (gray) + bold final value
