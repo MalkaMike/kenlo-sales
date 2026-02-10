@@ -781,7 +781,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         if (column.trainingPrice) {
           return <span className="text-green-600 font-semibold">{column.trainingPrice}</span>;
         }
-        return <span className="text-gray-400 text-xs">Disponível no K2</span>;
+        return <span className="text-gray-300">—</span>;
       case "totalMonthly":
         return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
       case "implementation":

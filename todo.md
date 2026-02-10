@@ -2780,3 +2780,7 @@
 - [x] Update getCellValue to handle "training" row key
 - [x] Update calculateKomboColumn and calculateNoKomboColumn to compute trainingPrice
 - [x] Update tests to cover new Treinamentos row (existing 222 tests pass, trainingPrice added to all column builders)
+
+## Treinamentos — Regra de Exibição Binária (Feb 9, 2026)
+
+- [x] Replace "Disponível no K2" with "—" dash when Treinamentos not included, matching Suporte VIP / CS Dedicado pattern
