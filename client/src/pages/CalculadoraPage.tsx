@@ -1588,10 +1588,9 @@ export default function CalculadoraPage() {
 
               {/* Step 0: Business Nature */}
               <div id="business-nature-section" className="mb-4">
-                <div className="space-y-4">
-                  {/* Natureza do Negócio */}
-                  <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Natureza do Negócio *</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Natureza do Negócio</h3>
+                <Card>
+                  <CardContent className="pt-4">
                     <div className="flex items-center gap-1.5 mb-4">
                       {([
                         { value: "broker", label: "Corretora" },
@@ -1782,7 +1781,6 @@ export default function CalculadoraPage() {
                         </div>
                       )}
                     </div>
-                  </div>
 
                   {/* Company Information */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1842,13 +1840,16 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
 
               {/* §1+2: Configuração Compacta (Merged: Informações do Negócio + Nossa Recomendação + Product selection) */}
               <div className="mb-4" ref={configSectionRef}>
                 <h2 className="text-sm font-semibold text-gray-700 mb-2">Configuração</h2>
+                <Card>
+                  <CardContent className="pt-4">
                 
                 {/* Product filter: left-aligned, directly above config cards (CEO Verdict Round 2) */}
                 <div className="flex items-center gap-1.5 mb-3">
@@ -2078,14 +2079,18 @@ export default function CalculadoraPage() {
                     </Card>
                   )}
                 </div>
+                  </CardContent>
+                </Card>
               </div>
 
 
               {/* §3: Benefícios Inclusos — HIGHEST-PLAN-WINS across products */}
               <div className="mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 mb-4">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
                   Benefícios Inclusos
                 </h2>
+                <Card>
+                  <CardContent className="pt-4">
                 
                 {/* Compute highest plan once for the whole section */}
                 {(() => {
@@ -2234,15 +2239,18 @@ export default function CalculadoraPage() {
                     </div>
                   );
                 })()}
+                  </CardContent>
+                </Card>
               </div>
 
 
               {/* §4: Add-ons Opcionais */}
               <div className="mb-4">
-                <div className="mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 mb-3">
-                    Add-ons Opcionais
-                  </h2>
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                  Add-ons Opcionais
+                </h2>
+                <Card>
+                  <CardContent className="pt-4">
                   <div className="flex items-center gap-1.5 mb-4">
                     <button
                       onClick={() => {
@@ -2275,7 +2283,6 @@ export default function CalculadoraPage() {
                       Limpar
                     </button>
                   </div>
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {/* Row 1: Leads, Inteligência, Assinatura */}
                   <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
@@ -2371,6 +2378,8 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
                 </div>
+                  </CardContent>
+                </Card>
               </div>
 
 
@@ -2456,7 +2465,7 @@ export default function CalculadoraPage() {
                 {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
                 <div className="mt-6 mb-4">
                   <h2 className="text-sm font-semibold text-gray-700 mb-2">
-                    Custos Pós-Pago
+                    Investimento pós-pago mensal (estimativo)
                   </h2>
                   
                   <Card>

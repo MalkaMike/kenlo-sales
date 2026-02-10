@@ -2861,3 +2861,25 @@
 ## Custos Pós-Pago — Reduzir Espaçamento Superior (Feb 10, 2026)
 
 - [x] Reduce excessive top spacing in Custos Pós-Pago box so first item aligns close to top border (also applied to Receita Extra for consistency)
+
+## Padronização Visual de Todas as Seções da Calculadora (Feb 10, 2026)
+
+- [ ] Wrap 'Natureza do Negócio' section in Card container with pt-4 padding
+- [ ] Ensure 'Configuração' section Card has consistent pt-4 padding (already has box)
+- [ ] Wrap 'Benefícios Inclusos' section in Card container with pt-4 padding
+- [ ] Wrap 'Add-ons Opcionais' section in Card container with pt-4 padding if not already wrapped
+- [ ] Ensure 'Sua Seleção vs Kombos' table Card has consistent structure (already has Card)
+- [ ] Rename 'Custos Pós-Pago' title to 'Investimento pós-pago mensal (estimativo)'
+- [ ] Verify all section titles are outside their Card containers
+- [ ] Verify all Cards use consistent border radius, padding, and background
+- [ ] Remove unnecessary empty vertical space at top of all Card containers
+
+## Visual Standardization - Calculator Sections
+
+- [x] Wrap "Natureza do Negócio" section in Card with CardContent pt-4, title outside
+- [x] Wrap "Configuração" section in Card with CardContent pt-4, title outside
+- [x] Wrap "Benefícios Inclusos" section in Card with CardContent pt-4, title outside
+- [x] Wrap "Add-ons Opcionais" section in Card with CardContent pt-4, title outside
+- [x] Rename "Custos Pós-Pago" to "Investimento pós-pago mensal (estimativo)"
+- [x] Verify KomboComparisonTable has consistent Card structure (already implemented)
+- [x] Apply consistent spacing (mb-2 for titles, pt-4 for CardContent) across all sections
