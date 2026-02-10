@@ -25,6 +25,7 @@ import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";
 import AcessoNegado from "./pages/AcessoNegado";
 import ProfilePage from "./pages/ProfilePage";
+import PricingAdminPage from "./pages/PricingAdminPage";
 
 // Protected Calculadora wrapper
 function ProtectedCalculadora() {
@@ -58,6 +59,15 @@ function ProtectedProfile() {
   return (
     <ProtectedRoute>
       <ProfilePage />
+    </ProtectedRoute>
+  );
+}
+
+// Protected Pricing Admin wrapper
+function ProtectedPricingAdmin() {
+  return (
+    <ProtectedRoute>
+      <PricingAdminPage />
     </ProtectedRoute>
   );
 }
@@ -98,6 +108,8 @@ function Router() {
             <Route path="/performance" component={ProtectedPerformance} />
             {/* Profile - PROTECTED */}
             <Route path="/perfil" component={ProtectedProfile} />
+            {/* Pricing Admin - PROTECTED */}
+            <Route path="/admin/pricing" component={ProtectedPricingAdmin} />
             {/* Fallback */}
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />

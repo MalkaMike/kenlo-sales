@@ -2911,3 +2911,18 @@
 - [x] Created comprehensive unit tests (33 tests) for pricing config
 - [x] All 255 tests passing
 - [x] Single source of truth: Future price changes only require editing `shared/pricing-config.ts`
+
+## Pricing Admin Interface - Feb 2026
+- [x] Analyze current pricing config structure (`shared/pricing-config.ts`)
+- [x] Design intuitive admin interface layout matching calculator design
+- [x] Create pricing admin page (`/admin/pricing`) with visual reference
+- [x] Implement sections:
+  - [x] Payment frequency multipliers
+  - [x] IMOB plans (Prime/K/K2) with prices, users
+  - [x] LOC plans with contracts
+  - [x] Add-ons (Inteligência, Leads, Assinatura) with prices
+  - [x] Premium Services (VIP Support, CS Dedicado) with inclusion rules
+  - [x] Kombos with discounts, implementations, premium services flags
+- [x] Add footer link in calculator to access pricing admin
+- [x] Interface is read-only for security (edit via GitHub or direct file edit)
+- [x] Serves as visual documentation and reference for all pricing

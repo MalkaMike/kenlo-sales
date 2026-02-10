@@ -38,6 +38,7 @@ import {
   Check,
   FileText,
   ChevronUp,
+  Settings,
 } from "lucide-react";
 
 // Types
@@ -4175,6 +4176,17 @@ export default function CalculadoraPage() {
 
               {/* Right: Actions */}
               <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs gap-1.5 hidden lg:flex text-muted-foreground hover:text-primary"
+                  onClick={() => {
+                    window.location.href = '/admin/pricing';
+                  }}
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                  Configurar Preços
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
