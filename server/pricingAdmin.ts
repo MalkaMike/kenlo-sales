@@ -53,6 +53,10 @@ const PricingValuesSchema = z.object({
   premiumServices: z.object({
     vipSupport: z.number(),
     csDedicado: z.number(),
+    treinamento: z.object({
+      online: z.number(),
+      presencial: z.number(),
+    }),
   }),
   kombos: z.object({
     imob_start: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
@@ -61,16 +65,46 @@ const PricingValuesSchema = z.object({
     core_gestao: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
     elite: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
   }),
-  additionalUsersTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
-  additionalContractsTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+  additionalUsersTiers: z.object({
+    prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    k: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    k2: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+  }),
+  additionalContractsTiers: z.object({
+    prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    k: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    k2: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+  }),
   additionalLeadsTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
   additionalSignaturesTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
   kenloPay: z.object({
-    boletosPerContract: z.number(),
-    splitsPerContract: z.number(),
+    boletosIncluded: z.object({
+      prime: z.number(),
+      k: z.number(),
+      k2: z.number(),
+    }),
+    splitsIncluded: z.object({
+      prime: z.number(),
+      k: z.number(),
+      k2: z.number(),
+    }),
+    boletosTiers: z.object({
+      prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+      k: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+      k2: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    }),
+    splitsTiers: z.object({
+      prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+      k: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+      k2: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
+    }),
   }),
   kenloSeguros: z.object({
-    pricePerContract: z.number(),
+    commissionRates: z.object({
+      prime: z.number(),
+      k: z.number(),
+      k2: z.number(),
+    }),
   }),
   implantacaoBase: z.number(),
 });

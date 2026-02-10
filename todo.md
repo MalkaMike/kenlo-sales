@@ -2943,3 +2943,32 @@
 - [x] Write tests for pricing admin functionality (16 tests passing)
 - [x] Test that changes persist and reflect in calculator/PDF
 - [x] All 271 tests passing
+
+## Pricing Admin Corrections - Feb 2026
+- [ ] Fix add-on prices in pricing-values.json (Inteligência R$297, Leads R$497, Assinaturas R$197)
+- [ ] Add Treinamento to premium services
+- [ ] Add complete tiered pricing data for:
+  - [ ] Usuários adicionais (por faixas Prime/K/K2)
+  - [ ] Contratos adicionais (por faixas Prime/K/K2)
+  - [ ] Leads WhatsApp adicionais (por faixas)
+  - [ ] Assinaturas adicionais (por faixas)
+  - [ ] Kenlo Pay - Boletos (por faixas)
+  - [ ] Kenlo Pay - Splits (por faixas)
+- [ ] Update pricing admin UI to display all tiered pricing sections
+- [ ] Test all corrections and verify accuracy
+
+## Pricing Admin Corrections - Feb 2026
+- [x] Fix add-on prices (Inteligência R$297, Leads R$497, Assinaturas R$37)
+- [x] Add Treinamento to Premium Services (Online R$2.000, Presencial R$3.000)
+- [x] Add complete tiered pricing sections:
+  - [x] Usuários adicionais (por plano: Prime/K/K2)
+  - [x] Contratos adicionais (por plano: Prime/K/K2)
+  - [x] Leads WhatsApp adicionais (por faixas)
+  - [x] Assinaturas adicionais (por faixas)
+  - [x] Kenlo Pay - Boletos (inclusos + faixas por plano)
+  - [x] Kenlo Pay - Splits (inclusos + faixas por plano)
+  - [x] Kenlo Seguros (comissões por plano)
+- [x] Update pricing admin UI to show all new sections
+- [x] Update backend schema to support nested tiered pricing
+- [x] Update tests to match new JSON structure
+- [x] All 271 tests passing

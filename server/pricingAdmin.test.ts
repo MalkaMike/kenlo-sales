@@ -110,13 +110,20 @@ describe("Pricing Admin", () => {
       const content = await fs.readFile(testConfigPath, "utf-8");
       const config = JSON.parse(content);
       
-      expect(Array.isArray(config.additionalUsersTiers)).toBe(true);
-      expect(Array.isArray(config.additionalContractsTiers)).toBe(true);
+      // Check tiered pricing is nested by plan
+      expect(config.additionalUsersTiers).toHaveProperty("prime");
+      expect(config.additionalUsersTiers).toHaveProperty("k");
+      expect(config.additionalUsersTiers).toHaveProperty("k2");
+      expect(Array.isArray(config.additionalUsersTiers.prime)).toBe(true);
+      
+      expect(config.additionalContractsTiers).toHaveProperty("prime");
+      expect(Array.isArray(config.additionalContractsTiers.prime)).toBe(true);
+      
       expect(Array.isArray(config.additionalLeadsTiers)).toBe(true);
       expect(Array.isArray(config.additionalSignaturesTiers)).toBe(true);
       
       // Check each tier has required fields
-      config.additionalUsersTiers.forEach((tier: any) => {
+      config.additionalUsersTiers.prime.forEach((tier: any) => {
         expect(tier).toHaveProperty("from");
         expect(tier).toHaveProperty("to");
         expect(tier).toHaveProperty("price");
@@ -127,15 +134,28 @@ describe("Pricing Admin", () => {
       const content = await fs.readFile(testConfigPath, "utf-8");
       const config = JSON.parse(content);
       
-      expect(config.kenloPay.boletosPerContract).toBe(1.5);
-      expect(config.kenloPay.splitsPerContract).toBe(1.5);
+      // Check included amounts per plan
+      expect(config.kenloPay.boletosIncluded).toHaveProperty("prime");
+      expect(config.kenloPay.boletosIncluded).toHaveProperty("k");
+      expect(config.kenloPay.boletosIncluded).toHaveProperty("k2");
+      expect(config.kenloPay.splitsIncluded).toHaveProperty("prime");
+      
+      // Check tiered pricing per plan
+      expect(config.kenloPay.boletosTiers).toHaveProperty("prime");
+      expect(Array.isArray(config.kenloPay.boletosTiers.prime)).toBe(true);
+      expect(config.kenloPay.splitsTiers).toHaveProperty("prime");
+      expect(Array.isArray(config.kenloPay.splitsTiers.prime)).toBe(true);
     });
 
     it("should have Kenlo Seguros pricing", async () => {
       const content = await fs.readFile(testConfigPath, "utf-8");
       const config = JSON.parse(content);
       
-      expect(config.kenloSeguros.pricePerContract).toBe(10);
+      // Check commission rates per plan
+      expect(config.kenloSeguros.commissionRates).toHaveProperty("prime");
+      expect(config.kenloSeguros.commissionRates).toHaveProperty("k");
+      expect(config.kenloSeguros.commissionRates).toHaveProperty("k2");
+      expect(typeof config.kenloSeguros.commissionRates.prime).toBe("number");
     });
 
     it("should have base implementation cost", async () => {
