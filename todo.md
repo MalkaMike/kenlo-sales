@@ -2770,3 +2770,13 @@
 - [x] Hover state must be explicit and cover entire column height
 - [x] Hover (temporary) must not compete with selected state (persistent green)
 - [x] Consistent hover behavior across header, value rows, and footer
+
+## Treinamentos na Seção Serviços Premium (Feb 9, 2026)
+
+- [x] Add "Treinamentos" row to KomboComparisonTable under Serviços Premium section
+- [x] Add trainingPrice field to KomboColumnData interface
+- [x] Implement per-plan/kombo logic: K2 plans include training, others show "—" or "Disponível no K2"
+- [x] Match visual pattern of Suporte VIP and CS Dedicado rows
+- [x] Update getCellValue to handle "training" row key
+- [x] Update calculateKomboColumn and calculateNoKomboColumn to compute trainingPrice
+- [x] Update tests to cover new Treinamentos row (existing 222 tests pass, trainingPrice added to all column builders)

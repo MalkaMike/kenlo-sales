@@ -84,6 +84,7 @@ interface KomboColumnData {
   cashPrice: string | null; // "Grátis" or null
   vipSupportPrice: number | string | null; // number, "Incluído", or null
   dedicatedCSPrice: number | string | null;
+  trainingPrice: string | null; // "Incluído (2x online ou 1 presencial)", "Incluído (4x online ou 2 presencial)", or null
   // Totals
   totalMonthly: number;
   implementation: number;
@@ -469,6 +470,18 @@ const calculateKomboColumn = (
     }
   }
 
+  // Treinamentos: included only for K2 plans (not a paid add-on, just a benefit)
+  // If both products are K2, cumulative: 4 online ou 2 presencial
+  // If one product is K2, 2 online ou 1 presencial
+  let trainingPrice: string | null = null;
+  const imobIsK2 = komboIncludesImob && imobPlan === "k2";
+  const locIsK2 = komboIncludesLoc && locPlan === "k2";
+  if (imobIsK2 && locIsK2) {
+    trainingPrice = "4x online ou 2 presencial";
+  } else if (imobIsK2 || locIsK2) {
+    trainingPrice = "2x online ou 1 presencial";
+  }
+
   const annualEquivalent = totalMonthly * 12 + implementation;
 
   return {
@@ -488,6 +501,7 @@ const calculateKomboColumn = (
     cashPrice,
     vipSupportPrice,
     dedicatedCSPrice,
+    trainingPrice,
     totalMonthly,
     implementation,
     annualEquivalent,
@@ -581,6 +595,16 @@ const calculateNoKomboColumn = (
     }
   }
 
+  // Treinamentos: included only for K2 plans
+  let trainingPrice: string | null = null;
+  const imobIsK2NoKombo = (product === "imob" || product === "both") && imobPlan === "k2";
+  const locIsK2NoKombo = (product === "loc" || product === "both") && locPlan === "k2";
+  if (imobIsK2NoKombo && locIsK2NoKombo) {
+    trainingPrice = "4x online ou 2 presencial";
+  } else if (imobIsK2NoKombo || locIsK2NoKombo) {
+    trainingPrice = "2x online ou 1 presencial";
+  }
+
   const annualEquivalent = totalMonthly * 12 + implementation;
 
   return {
@@ -600,6 +624,7 @@ const calculateNoKomboColumn = (
     cashPrice,
     vipSupportPrice,
     dedicatedCSPrice,
+    trainingPrice,
     totalMonthly,
     implementation,
     annualEquivalent,
@@ -630,6 +655,7 @@ const createUnavailableColumn = (
   cashPrice: null,
   vipSupportPrice: null,
   dedicatedCSPrice: null,
+  trainingPrice: null,
   totalMonthly: 0,
   implementation: 0,
   annualEquivalent: 0,
@@ -702,6 +728,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "premium", label: "Serviços Premium", isHeader: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
+    { key: "training", label: "Treinamentos", indent: true },
     { key: "totalMonthly", label: "Total Mensal", isTotal: true },
     { key: "implementation", label: "Implantação", isHeaderWithValue: true },
     { key: "annualEquivalent", label: "Anual Equivalente", isTotal: true },
@@ -750,6 +777,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return typeof column.dedicatedCSPrice === "number"
           ? <span className="font-medium">R$ {formatCurrency(column.dedicatedCSPrice)}</span>
           : <span className="text-gray-300">—</span>;
+      case "training":
+        if (column.trainingPrice) {
+          return <span className="text-green-600 font-semibold">{column.trainingPrice}</span>;
+        }
+        return <span className="text-gray-400 text-xs">Disponível no K2</span>;
       case "totalMonthly":
         return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
       case "implementation":
