@@ -1927,12 +1927,13 @@ export default function CalculadoraPage() {
                             const included = imobPlan === 'prime' ? 2 : imobPlan === 'k' ? 7 : 15;
                             const totalUsers = toNum(metrics.imobUsers);
                             const additional = Math.max(0, totalUsers - included);
-                            const perUserPrice = imobPlan === 'prime' ? 57 : imobPlan === 'k' ? 47 : 37;
+                            const totalCost = additional > 0 ? calculateAdditionalUsersCost(imobPlan, additional) : 0;
+                            const avgPrice = additional > 0 ? (totalCost / additional) : 0;
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
                                 <span><span className="font-bold text-red-600">{included}</span> usuários incluídos</span>
                                 {additional > 0 && (
-                                  <span className="block mt-0.5">{additional} serão cobrados pós-pago (R${perUserPrice}/usuário)</span>
+                                  <span className="block mt-0.5">{additional} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/usuário)</span>
                                 )}
                               </div>
                             );
@@ -2020,12 +2021,13 @@ export default function CalculadoraPage() {
                             const included = locPlan === 'prime' ? 100 : locPlan === 'k' ? 150 : 500;
                             const totalContracts = toNum(metrics.contractsUnderManagement);
                             const additional = Math.max(0, totalContracts - included);
-                            const perContractPrice = 3; // R$3/contrato for first tier across all plans
+                            const totalCost = additional > 0 ? Pricing.calculateAdditionalContractsCost(locPlan, additional) : 0;
+                            const avgPrice = additional > 0 ? (totalCost / additional) : 0;
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
                                 <span><span className="font-bold text-red-600">{included}</span> contratos incluídos</span>
                                 {additional > 0 && (
-                                  <span className="block mt-0.5">{additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${perContractPrice}/contrato)</span>
+                                  <span className="block mt-0.5">{additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/contrato)</span>
                                 )}
                               </div>
                             );
@@ -2110,7 +2112,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Atendimento prioritário com SLA reduzido e canal exclusivo.
                           </p>
-                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês</p>
+
                         </CardContent>
                       </Card>
 
@@ -2153,7 +2155,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Customer Success dedicado para acompanhamento estratégico.
                           </p>
-                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 297/mês ✓</p>
+
                         </CardContent>
                       </Card>
 

@@ -3591,3 +3591,11 @@
 - [x] Locação: Show "X contratos incluídos" with X in red, larger font
 - [x] Locação: Add post-paid sentence only when additional contracts exist: "Y serão cobrados pós-pago (R$Z/contrato)"
 - [x] Increase font size of the inclusion text (from text-[10px] to text-xs)
+
+## Bug Fix — Suporte VIP/CS Ref Lines + Tiered Pricing Display
+
+- [x] Remove "Ref. R$ 97/mês" line from Suporte VIP card
+- [x] Remove "Ref. R$ 297/mês ✓" line from CS Dedicado card
+- [x] Fix per-user price to calculate tiered average (not flat first-tier price)
+- [x] Fix per-contract price to calculate tiered average (not flat R$3)
+- [x] Show per-unit price with 2 decimal places (e.g., R$2,38/contrato)
