@@ -197,6 +197,18 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       return 30;
     };
 
+    const getAddonDescription = (addonLabel: string): string => {
+      const descriptions: Record<string, string> = {
+        "Leads": "Captação e gestão inteligente de leads com integração automática",
+        "Inteligência": "BI de KPIs de performance e analytics avançado",
+        "Assinatura": "Assinatura digital embutida na plataforma",
+        "Pay": "Boleto e Split digital embutido na plataforma",
+        "Seguros": "Seguros embutido no boleto - ganhe R$10/contrato/mês",
+        "Cash": "Antecipe até 24 meses de aluguel para proprietários",
+      };
+      return descriptions[addonLabel] || "";
+    };
+
     // -- Parse helpers --
     const parseAddons = (raw: string): string[] => {
       try {
@@ -323,29 +335,48 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     leftY = sectionTitle("Perfil Operacional do Cliente", leftY);
     
     const gridItemW = colWidth - 10;
-    gridRow("Natureza do Negócio", data.businessType || "Imobiliária", leftColX, leftY, gridItemW);
+    
+    // Fix "both" → "Ambos"
+    let businessTypeText = data.businessType || "Imobiliária";
+    if (businessTypeText.toLowerCase() === "both") {
+      businessTypeText = "Ambos";
+    }
+    gridRow("Natureza do Negócio", businessTypeText, leftColX, leftY, gridItemW);
     leftY += 32;
-    gridRow("Número de Usuários", fmtNum(data.imobUsers || 0), leftColX, leftY, gridItemW);
+    
+    // CORETAGEM section
+    lbl("CORETAGEM", leftColX, leftY, { size: 8, color: C.primary, bold: true });
+    leftY += 16;
+    gridRow("Número de usuários", fmtNum(data.imobUsers || 0), leftColX, leftY, gridItemW);
     leftY += 32;
     gridRow("Leads por mês", fmtNum(data.leadsPerMonth || 0), leftColX, leftY, gridItemW);
     leftY += 32;
     gridRow("Fechamentos por mês", fmtNum(data.closings || 0), leftColX, leftY, gridItemW);
     leftY += 32;
-    gridRow("Total de contratos", fmtNum(data.contracts || 0), leftColX, leftY, gridItemW);
-    leftY += 32;
-    gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), leftColX, leftY, gridItemW);
-    leftY += 32;
     
-    const splitText = data.chargesSplitToOwner ? (data.splitAmount ? `${data.splitAmount}%` : "Sim") : "Não";
-    const boletoText = data.chargesBoletoToTenant ? (data.boletoAmount ? fmt(data.boletoAmount) : "Sim") : "Não";
-    gridRow("Split aplicado", splitText, leftColX, leftY, gridItemW);
-    leftY += 32;
-    gridRow("Boleto aplicado", boletoText, leftColX, leftY, gridItemW);
-    leftY += 32;
-    
-    // RIGHT COLUMN - ESTRUTURA CONTRATADA
+    // RIGHT COLUMN - ADMINISTRAÇÃO DE ALUGUEL
     let rightY = Y;
-    rightY = sectionTitle("Estrutura Contratada", rightY, rightColX);
+    // Skip main title, add subsection title after Natureza do Negócio
+    rightY += 32; // align with first row
+    lbl("ADMINISTRAÇÃO DE ALUGUEL", rightColX, rightY, { size: 8, color: C.primary, bold: true });
+    rightY += 16;
+    gridRow("Número de contratos sob gestão", fmtNum(data.contracts || 0), rightColX, rightY, gridItemW);
+    rightY += 32;
+    gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), rightColX, rightY, gridItemW);
+    rightY += 32;
+    
+    const boletoText = data.chargesBoletoToTenant ? (data.boletoAmount ? `Sim (${fmt(data.boletoAmount)})` : "Sim") : "Não";
+    gridRow("Inquilino paga boleto?", boletoText, rightColX, rightY, gridItemW);
+    rightY += 32;
+    
+    const splitText = data.chargesSplitToOwner ? (data.splitAmount ? `Sim (${data.splitAmount}%)` : "Sim") : "Não";
+    gridRow("Proprietário paga split?", splitText, rightColX, rightY, gridItemW);
+    rightY += 32;
+    
+    // Continue from whichever column is taller, then add Estrutura Contratada section
+    Y = Math.max(leftY, rightY) + GAP;
+    if (needsNewPage(Y, 200)) Y = newPage();
+    Y = sectionTitle("Estrutura Contratada", Y);
 
     // Ciclo de pagamento
     const freqMap: Record<string, string> = {
@@ -355,55 +386,56 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       bienal: "Bienal",
     };
     const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || "Anual";
-    lbl("Ciclo de Pagamento", rightColX, rightY, { size: 6.5, color: C.textMuted });
-    val(selFreq, rightColX, rightY + 10, { size: 10, color: C.primary });
-    rightY += 28;
+    lbl("Ciclo de Pagamento", M, Y, { size: 6.5, color: C.textMuted });
+    val(selFreq, M, Y + 10, { size: 10, color: C.primary });
+    Y += 28;
 
     // Produtos e planos (use "&" between products)
     const prodParts: string[] = [];
     if (showImob) prodParts.push(`Imob ${(data.imobPlan || "K").toUpperCase()}`);
     if (showLoc) prodParts.push(`Loc ${(data.locPlan || "K").toUpperCase()}`);
-    lbl("Produtos e Planos", rightColX, rightY, { size: 6.5, color: C.textMuted });
-    val(prodParts.join(" & "), rightColX, rightY + 10, { size: 10, color: C.dark });
-    rightY += 28;
+    lbl("Produtos e Planos", M, Y, { size: 6.5, color: C.textMuted });
+    val(prodParts.join(" & "), M, Y + 10, { size: 10, color: C.dark });
+    Y += 28;
 
     // Kombo (if applicable)
     if (isKombo) {
-      lbl("Kombo Ativado", rightColX, rightY, { size: 6.5, color: C.textMuted });
-      val(komboLabel, rightColX, rightY + 10, { size: 10, color: C.green });
-      rightY += 28;
+      lbl("Kombo Ativado", M, Y, { size: 6.5, color: C.textMuted });
+      val(komboLabel, M, Y + 10, { size: 10, color: C.green });
+      Y += 28;
     }
 
-    // Add-ons selecionados (boxed style instead of bullets)
+    // Add-ons selecionados (boxed style with descriptions)
     if (activeAddons.length > 0) {
-      lbl("Add-ons Selecionados", rightColX, rightY, { size: 7, color: C.textMuted, bold: true });
-      rightY += 12;
+      lbl("Add-ons Selecionados", M, Y, { size: 7, color: C.textMuted, bold: true });
+      Y += 12;
       for (const addon of activeAddons) {
         // Box style
-        doc.rect(rightColX, rightY, colWidth - 10, 16).fillAndStroke(C.greenLight, C.green);
-        doc.fontSize(7).fillColor(C.green).font("Helvetica-Bold")
-          .text(`Kenlo ${addon.label}`, rightColX + 6, rightY + 4, { lineBreak: false });
-        rightY += 20;
+        doc.rect(M, Y, CW, 24).fillAndStroke(C.greenLight, C.green);
+        doc.fontSize(8).fillColor(C.green).font("Helvetica-Bold")
+          .text(`Kenlo ${addon.label}`, M + 6, Y + 4, { lineBreak: false });
+        // Add description (TODO: get from config)
+        const desc = getAddonDescription(addon.label);
+        doc.fontSize(6.5).fillColor(C.textMuted).font("Helvetica")
+          .text(desc, M + 6, Y + 14, { lineBreak: false });
+        Y += 28;
       }
-      rightY += 4;
+      Y += 4;
     }
 
     // Add-ons não incluídos (grayed boxes)
     if (allAddons.length > 0) {
-      lbl("Add-ons Não Incluídos", rightColX, rightY, { size: 7, color: C.textMuted, bold: true });
-      rightY += 12;
+      lbl("Add-ons Não Incluídos", M, Y, { size: 7, color: C.textMuted, bold: true });
+      Y += 12;
       for (const addon of allAddons) {
         // Grayed box
-        doc.rect(rightColX, rightY, colWidth - 10, 16).fillAndStroke("#F5F5F5", C.border);
+        doc.rect(M, Y, CW, 16).fillAndStroke("#F5F5F5", C.border);
         doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
-          .text(`Kenlo ${addon.label}`, rightColX + 6, rightY + 4, { lineBreak: false });
-        rightY += 20;
+          .text(`Kenlo ${addon.label}`, M + 6, Y + 4, { lineBreak: false });
+        Y += 20;
       }
-      rightY += 4;
+      Y += 4;
     }
-
-    // Continue from whichever column is taller
-    Y = Math.max(leftY, rightY) + GAP;
 
     // ================================================================
     // SECTION 4 — INVESTIMENTO CONTRATUAL
@@ -478,6 +510,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // WhatsApp
     if (data.wantsWhatsApp) {
       scopeItems.push("WhatsApp integrado");
+      scopeItems.push("100 conversas inclusas");
     }
     
     // Digital signatures (if Assinatura addon)
@@ -567,16 +600,17 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       const col1W = CW * 0.5;
       const col2W = CW * 0.25;
       const col3W = CW * 0.25;
+      const rowHeight = 16;
 
+      // Header background
+      doc.rect(M, Y, CW, 18).fill(C.bgSoft);
       doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-        .text("Funcionalidade", M, Y, { lineBreak: false });
+        .text("Funcionalidade", M + 6, Y + 5, { lineBreak: false });
       doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-        .text("Imob", M + col1W, Y, { width: col2W, align: "center" });
+        .text("Imob", M + col1W, Y + 5, { width: col2W, align: "center" });
       doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-        .text("Loc", M + col1W + col2W, Y, { width: col3W, align: "center" });
-      Y += 14;
-      divider(Y);
-      Y += 8;
+        .text("Loc", M + col1W + col2W, Y + 5, { width: col3W, align: "center" });
+      Y += 22;
 
       // Combine all features
       const allFeatureNames = Array.from(new Set([
@@ -584,41 +618,78 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         ...locFeatures.map(f => f.name)
       ]));
 
+      let rowIndex = 0;
       for (const fname of allFeatureNames) {
         const imobHas = imobFeatures.some(f => f.name === fname && f.included);
         const locHas = locFeatures.some(f => f.name === fname && f.included);
 
+        // Alternating row background
+        if (rowIndex % 2 === 0) {
+          doc.rect(M, Y, CW, rowHeight).fill("#FAFAFA");
+        }
+
         doc.fontSize(7).fillColor(C.text).font("Helvetica")
-          .text(fname, M, Y, { width: col1W - 10, lineBreak: false });
-        doc.fontSize(7).fillColor(imobHas ? C.green : C.textLight).font("Helvetica")
-          .text(imobHas ? "✔" : "—", M + col1W, Y, { width: col2W, align: "center" });
-        doc.fontSize(7).fillColor(locHas ? C.green : C.textLight).font("Helvetica")
-          .text(locHas ? "✔" : "—", M + col1W + col2W, Y, { width: col3W, align: "center" });
-        Y += 12;
+          .text(fname, M + 6, Y + 4, { width: col1W - 10, lineBreak: false });
+        
+        // Checkmark with background circle
+        if (imobHas) {
+          doc.circle(M + col1W + col2W / 2, Y + 8, 6).fill(C.greenLight);
+          doc.fontSize(8).fillColor(C.green).font("Helvetica-Bold")
+            .text("✔", M + col1W, Y + 3, { width: col2W, align: "center" });
+        } else {
+          doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+            .text("—", M + col1W, Y + 4, { width: col2W, align: "center" });
+        }
+        
+        if (locHas) {
+          doc.circle(M + col1W + col2W + col3W / 2, Y + 8, 6).fill(C.greenLight);
+          doc.fontSize(8).fillColor(C.green).font("Helvetica-Bold")
+            .text("✔", M + col1W + col2W, Y + 3, { width: col3W, align: "center" });
+        } else {
+          doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+            .text("—", M + col1W + col2W, Y + 4, { width: col3W, align: "center" });
+        }
+        
+        Y += rowHeight;
+        rowIndex++;
       }
     } else {
       // Single product: table format with single column
       const features = showImob ? imobFeatures : locFeatures;
       const col1W = CW * 0.7;
       const col2W = CW * 0.3;
+      const rowHeight = 16;
       
-      // Header row
+      // Header background
+      doc.rect(M, Y, CW, 18).fill(C.bgSoft);
       doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-        .text("Funcionalidade", M, Y, { lineBreak: false });
+        .text("Funcionalidade", M + 6, Y + 5, { lineBreak: false });
       doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-        .text("Status", M + col1W, Y, { width: col2W, align: "center" });
-      Y += 14;
-      divider(Y);
-      Y += 8;
+        .text("Status", M + col1W, Y + 5, { width: col2W, align: "center" });
+      Y += 22;
       
+      let rowIndex = 0;
       for (const feat of features) {
-        const symbol = feat.included ? "✔" : "—";
-        const color = feat.included ? C.green : C.textLight;
+        // Alternating row background
+        if (rowIndex % 2 === 0) {
+          doc.rect(M, Y, CW, rowHeight).fill("#FAFAFA");
+        }
+        
         doc.fontSize(7).fillColor(C.text).font("Helvetica")
-          .text(feat.name, M, Y, { width: col1W - 10, lineBreak: false });
-        doc.fontSize(7).fillColor(color).font("Helvetica")
-          .text(symbol, M + col1W, Y, { width: col2W, align: "center" });
-        Y += 12;
+          .text(feat.name, M + 6, Y + 4, { width: col1W - 10, lineBreak: false });
+        
+        // Checkmark with background circle
+        if (feat.included) {
+          doc.circle(M + col1W + col2W / 2, Y + 8, 6).fill(C.greenLight);
+          doc.fontSize(8).fillColor(C.green).font("Helvetica-Bold")
+            .text("✔", M + col1W, Y + 3, { width: col2W, align: "center" });
+        } else {
+          doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+            .text("—", M + col1W, Y + 4, { width: col2W, align: "center" });
+        }
+        
+        Y += rowHeight;
+        rowIndex++;
       }
     }
 

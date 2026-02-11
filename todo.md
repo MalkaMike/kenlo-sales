@@ -3375,3 +3375,31 @@
 - [x] 12. Test with test data (server-side generator verified)
 - [x] 13. Verify 2-column layouts working correctly
 - [x] 14. PDF reduced from 5 pages to 3 pages (40% reduction), professional feel achieved
+
+## PDF Redesign v3 - Executive 3-Column Layout with Visual Hierarchy
+
+### Page 1 - Perfil Operacional (2-Column Layout)
+- [x] Fix "both" → "Ambos" (Portuguese)
+- [x] Reorganize into 2 central columns: Coretagem (left) | Administração de Aluguel (right)
+- [x] Coretagem column: Número de usuários, Leads por mês, Fechamentos por mês
+- [x] Administração column: Número de contratos sob gestão, Novos contratos por mês, Inquilino paga boleto? (Sim/Não + valor), Proprietário paga split? (Sim/Não + valor)
+
+### Page 2 - Estrutura + Investimento
+- [x] Add descriptive phrases to all add-ons (e.g., "Kenlo Leads → Captação e gestão inteligente de leads com integração automática")
+- [x] Show "100 conversas inclusas" when WhatsApp is enabled
+- [x] Ensure add-ons are in visual boxes (green for selected, gray for not included)
+
+### Page 3 - Funcionalidades (Visual Table with Highlighting)
+- [x] Redesign features table to be more visual (inspired by https://kenlosales-jknnyfpj.manus.space/produtos/imob)
+- [x] Add alternating row backgrounds for better readability
+- [x] Improve spacing with larger row height (16px)
+- [x] Add checkmarks with green circular backgrounds
+- [x] Use ✔ and — symbols consistently
+
+### General Design Rules
+- [x] Verify no mixed bullet styles (• vs -)
+- [x] Eliminate large empty areas
+- [x] Use intelligent column layouts (not linear stacking)
+- [x] Ensure no overlapping text
+- [x] Verify perfect column alignment
+- [x] Apply soft backgrounds, borders, consistent spacing throughout
