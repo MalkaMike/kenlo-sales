@@ -67,7 +67,7 @@ describe("Pricing Admin - Deterministic Structure v2.0.0", () => {
       const config = JSON.parse(content);
       
       expect(config.paymentCycles.monthly.multiplier).toBe(1.25);
-      expect(config.paymentCycles.semiannual.multiplier).toBe(1.1);
+      expect(config.paymentCycles.semiannual.multiplier).toBe(1.111);
       expect(config.paymentCycles.annual.multiplier).toBe(1.0);
       expect(config.paymentCycles.biennial.multiplier).toBe(0.75);
     });

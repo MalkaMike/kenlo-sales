@@ -15,8 +15,8 @@
     },
     "semiannual": {
       "type": "desconto",
-      "formula": "Anual ÷ 1.10",
-      "multiplier": 1.1,
+      "formula": "Anual ÷ 1.111",
+      "multiplier": 1.111,
       "applyOrder": 1,
       "displayLabel": "desconto aplicado"
     },
@@ -155,8 +155,8 @@
         "monthlyPrice": 97,
         "defaultByPlan": {
           "prime": false,
-          "k": false,
-          "k2": false
+          "k": true,
+          "k2": true
         },
         "inheritanceRule": "independent",
         "_inheritanceNote": "Cada produto (IMOB/LOC) tem seu próprio Suporte VIP"
@@ -203,31 +203,31 @@
       "name": "Kombo Imob Start",
       "productsIncluded": ["imob"],
       "addonsIncluded": ["leads"],
-      "discount": 0.10,
+      "discount": 10,
       "discountOrder": 2,
       "freeImplementations": 1,
       "zeroedImplementationsList": ["leads"],
-      "premiumServicesIncluded": []
+      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
     },
     "imob_pro": {
       "name": "Kombo Imob Pro",
       "productsIncluded": ["imob"],
       "addonsIncluded": ["leads", "inteligencia"],
-      "discount": 0.15,
+      "discount": 15,
       "discountOrder": 2,
       "freeImplementations": 2,
       "zeroedImplementationsList": ["leads", "inteligencia"],
-      "premiumServicesIncluded": []
+      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
     },
     "locacao_pro": {
       "name": "Kombo Locação Pro",
       "productsIncluded": ["locacao"],
       "addonsIncluded": ["pay"],
-      "discount": 0.10,
+      "discount": 10,
       "discountOrder": 2,
       "freeImplementations": 1,
       "zeroedImplementationsList": ["pay"],
-      "premiumServicesIncluded": []
+      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
     },
     "core_gestao": {
       "name": "Kombo Core Gestão",
@@ -237,17 +237,17 @@
       "discountOrder": 2,
       "freeImplementations": 1,
       "zeroedImplementationsList": [],
-      "premiumServicesIncluded": []
+      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
     },
     "elite": {
       "name": "Kombo Elite",
       "productsIncluded": ["imob", "locacao"],
       "addonsIncluded": ["leads", "inteligencia", "pay", "assinaturas"],
-      "discount": 0.20,
+      "discount": 20,
       "discountOrder": 2,
       "freeImplementations": 3,
       "zeroedImplementationsList": ["leads", "inteligencia", "pay"],
-      "premiumServicesIncluded": []
+      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
     }
   },
 

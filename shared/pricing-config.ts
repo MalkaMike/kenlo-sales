@@ -1,34 +1,59 @@
 /**
- * Centralized Pricing Configuration
- * Source: MMPlanosH2-2025_2026Final(1).pdf
+ * Centralized Pricing Configuration — Adapter Layer
+ * Source: pricing-values.json v2.0.0 (Deterministic Structure)
  * Last Updated: Feb 2026
  * 
- * This is the single source of truth for all pricing across the website.
- * To update prices, modify this file only - all components will automatically use the new values.
+ * This file provides a backward-compatible API for the calculator while consuming
+ * the new deterministic pricing structure as the single source of truth.
+ * 
+ * DO NOT hardcode prices here. All prices come from pricing-values.json.
  */
 
+import pricingValues from "./pricing-values.json";
+
 // ============================================================================
-// PAYMENT FREQUENCY RULES
+// TYPE DEFINITIONS
 // ============================================================================
 
 export type PaymentFrequency = "monthly" | "semiannual" | "annual" | "biennial";
+export type KomboType = "imob-start" | "imob-pro" | "loc-pro" | "core-gestao" | "elite" | "none";
+export type PlanTier = "prime" | "k" | "k2";
+
+// Map JSON cycle names to calculator frequency names
+const CYCLE_TO_FREQUENCY: Record<string, PaymentFrequency> = {
+  "monthly": "monthly",
+  "semiannual": "semiannual",
+  "annual": "annual",
+  "biennial": "biennial",
+};
+
+const FREQUENCY_TO_CYCLE: Record<PaymentFrequency, string> = {
+  "monthly": "monthly",
+  "semiannual": "semiannual",
+  "annual": "annual",
+  "biennial": "biennial",
+};
+
+// ============================================================================
+// PAYMENT FREQUENCY RULES (from BLOCO A)
+// ============================================================================
 
 /**
  * Payment frequency multipliers (applied to ANNUAL price as reference)
  * Annual is the reference (1.0), others are calculated from it
  */
 export const FREQUENCY_MULTIPLIERS: Record<PaymentFrequency, number> = {
-  monthly: 1.25,    // Anual ÷ (1 - 20%) = Anual × 1.25
-  semiannual: 1.111, // Anual ÷ (1 - 10%) ≈ Anual × 1.111
-  annual: 1.0,      // Reference (0% discount)
-  biennial: 0.75,   // Anual × (1 - 25%) = Anual × 0.75 ⚠️ UPDATED from 0.72 (was 28%, now 25%)
+  monthly: pricingValues.paymentCycles.monthly.multiplier,
+  semiannual: pricingValues.paymentCycles.semiannual.multiplier,
+  annual: pricingValues.paymentCycles.annual.multiplier,
+  biennial: pricingValues.paymentCycles.biennial.multiplier,
 };
 
 export const FREQUENCY_LABELS: Record<PaymentFrequency, string> = {
-  monthly: "Mensal (0% - Referência)",
-  semiannual: "Semestral (-10%)",
-  annual: "Anual (-20%)",
-  biennial: "Bienal (-25%)", // ⚠️ UPDATED from -28%
+  monthly: pricingValues.paymentCycles.monthly.displayLabel,
+  semiannual: pricingValues.paymentCycles.semiannual.displayLabel,
+  annual: pricingValues.paymentCycles.annual.displayLabel,
+  biennial: pricingValues.paymentCycles.biennial.displayLabel,
 };
 
 // ============================================================================
@@ -50,199 +75,174 @@ export function roundToSeven(price: number): number {
 }
 
 // ============================================================================
-// CORE PRODUCTS - KENLO IMOB
+// CORE PRODUCTS - KENLO IMOB (from BLOCO B)
 // ============================================================================
 
 export const IMOB_PLANS = {
   prime: {
     name: "Prime",
-    description: "Até 4 usuários",
-    annualPrice: 247, // Already ends in 7
-    includedUsers: 2,
-    features: {
-      crm: true,
-      appCorretor: true,
-      landingPage: false,
-      blog: false,
-      training: false,
-      apiAccess: false,
-    },
+    description: pricingValues.basePlans.imob.prime.internalNote || "Até 4 usuários",
+    annualPrice: pricingValues.basePlans.imob.prime.annualPrice,
+    includedUsers: pricingValues.basePlans.imob.prime.includedUnits.quantity,
+    features: buildFeatures("imob", "prime"),
   },
   k: {
     name: "K",
-    description: "5 até 14 usuários",
-    annualPrice: 497, // Already ends in 7
-    includedUsers: 7,
-    features: {
-      crm: true,
-      appCorretor: true,
-      landingPage: true,
-      blog: false,
-      training: false,
-      apiAccess: false,
-    },
+    description: pricingValues.basePlans.imob.k.internalNote || "5 até 14 usuários",
+    annualPrice: pricingValues.basePlans.imob.k.annualPrice,
+    includedUsers: pricingValues.basePlans.imob.k.includedUnits.quantity,
+    features: buildFeatures("imob", "k"),
   },
   k2: {
     name: "K2",
-    description: "Acima de 15 usuários",
-    annualPrice: 1197, // Already ends in 7
-    includedUsers: 15,
-    features: {
-      crm: true,
-      appCorretor: true,
-      landingPage: true,
-      blog: true,
-      training: true, // 2 Online/year OR 1 Presencial
-      apiAccess: true, // Available Mar 2026
-    },
+    description: pricingValues.basePlans.imob.k2.internalNote || "Acima de 15 usuários",
+    annualPrice: pricingValues.basePlans.imob.k2.annualPrice,
+    includedUsers: pricingValues.basePlans.imob.k2.includedUnits.quantity,
+    features: buildFeatures("imob", "k2"),
   },
 } as const;
 
-export const IMOB_IMPLEMENTATION = 1497; // Fixed for all plans
+export const IMOB_IMPLEMENTATION = pricingValues._legacyFields.implantacaoBase;
 
 /**
- * Additional users pricing (post-paid or pre-paid, same price)
- * Tiered pricing: the bigger the plan, the cheaper the additional user
+ * Additional users pricing (from BLOCO F)
  */
 export const IMOB_ADDITIONAL_USERS = {
-  prime: [
-    { from: 1, to: Infinity, price: 57 }, // Fixed R$57 per user
-  ],
-  k: [
-    { from: 1, to: 5, price: 47 },
-    { from: 6, to: Infinity, price: 37 },
-  ],
-  k2: [
-    { from: 1, to: 10, price: 37 },
-    { from: 11, to: 100, price: 27 },
-    { from: 101, to: Infinity, price: 17 },
-  ],
+  prime: pricingValues.variableCosts.additionalUsers.tiers.prime.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k: pricingValues.variableCosts.additionalUsers.tiers.k.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k2: pricingValues.variableCosts.additionalUsers.tiers.k2.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
 } as const;
 
 // ============================================================================
-// CORE PRODUCTS - KENLO LOCAÇÃO
+// CORE PRODUCTS - KENLO LOCAÇÃO (from BLOCO B)
 // ============================================================================
 
 export const LOC_PLANS = {
   prime: {
     name: "Prime",
-    description: "Até 100 contratos",
-    annualPrice: 247, // Already ends in 7
-    includedContracts: 100,
-    includedBoletos: 2,
-    includedSplits: 2,
-    features: {
-      basicFeatures: true, // All basic features from page 8-9
-      advancedFeatures: false, // Features from page 10 (K+ only)
-      exclusiveK2: false, // Features from page 10 (K2 only)
-      training: false,
-    },
+    description: pricingValues.basePlans.locacao.prime.internalNote || "Até 100 contratos",
+    annualPrice: pricingValues.basePlans.locacao.prime.annualPrice,
+    includedContracts: pricingValues.basePlans.locacao.prime.includedUnits.quantity,
+    includedBoletos: 0, // Removed: all post-paid now
+    includedSplits: 0,  // Removed: all post-paid now
+    features: buildFeatures("locacao", "prime"),
   },
   k: {
     name: "K",
-    description: "101 contratos até 499",
-    annualPrice: 497, // Already ends in 7
-    includedContracts: 150,
-    includedBoletos: 5,
-    includedSplits: 5,
-    features: {
-      basicFeatures: true,
-      advancedFeatures: true,
-      exclusiveK2: false,
-      training: false,
-    },
+    description: pricingValues.basePlans.locacao.k.internalNote || "101 contratos até 499",
+    annualPrice: pricingValues.basePlans.locacao.k.annualPrice,
+    includedContracts: pricingValues.basePlans.locacao.k.includedUnits.quantity,
+    includedBoletos: 0, // Removed: all post-paid now
+    includedSplits: 0,  // Removed: all post-paid now
+    features: buildFeatures("locacao", "k"),
   },
   k2: {
     name: "K2",
-    description: "Acima de 500 contratos",
-    annualPrice: 1197, // Already ends in 7
-    includedContracts: 500,
-    includedBoletos: 15,
-    includedSplits: 15,
-    features: {
-      basicFeatures: true,
-      advancedFeatures: true,
-      exclusiveK2: true,
-      training: true, // 2 Online/year OR 1 Presencial
-    },
+    description: pricingValues.basePlans.locacao.k2.internalNote || "Acima de 500 contratos",
+    annualPrice: pricingValues.basePlans.locacao.k2.annualPrice,
+    includedContracts: pricingValues.basePlans.locacao.k2.includedUnits.quantity,
+    includedBoletos: 0, // Removed: all post-paid now
+    includedSplits: 0,  // Removed: all post-paid now
+    features: buildFeatures("locacao", "k2"),
   },
 } as const;
 
-export const LOC_IMPLEMENTATION = 1497; // Fixed for all plans
+export const LOC_IMPLEMENTATION = pricingValues._legacyFields.implantacaoBase;
 
 /**
- * Additional contracts pricing (post-paid or pre-paid, same price)
+ * Additional contracts pricing (from BLOCO F)
  */
 export const LOC_ADDITIONAL_CONTRACTS = {
-  prime: [
-    { from: 1, to: Infinity, price: 3.00 },
-  ],
-  k: [
-    { from: 1, to: 250, price: 3.00 },
-    { from: 251, to: Infinity, price: 2.50 },
-  ],
-  k2: [
-    { from: 1, to: 250, price: 3.00 },
-    { from: 251, to: 500, price: 2.50 },
-    { from: 501, to: Infinity, price: 2.00 },
-  ],
+  prime: pricingValues.variableCosts.additionalContracts.tiers.prime.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k: pricingValues.variableCosts.additionalContracts.tiers.k.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k2: pricingValues.variableCosts.additionalContracts.tiers.k2.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
 } as const;
 
 /**
- * Kenlo Pay - Boletos pricing (post-paid)
+ * Kenlo Pay - Boletos pricing (from BLOCO F)
  */
 export const PAY_BOLETOS = {
-  prime: [
-    { from: 1, to: Infinity, price: 4.00 },
-  ],
-  k: [
-    { from: 1, to: 250, price: 4.00 },
-    { from: 251, to: Infinity, price: 3.50 },
-  ],
-  k2: [
-    { from: 1, to: 250, price: 4.00 },
-    { from: 251, to: 500, price: 3.50 },
-    { from: 501, to: Infinity, price: 3.00 },
-  ],
+  prime: pricingValues.variableCosts.boletos.tiers.prime.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k: pricingValues.variableCosts.boletos.tiers.k.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k2: pricingValues.variableCosts.boletos.tiers.k2.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
 } as const;
 
 /**
- * Kenlo Pay - Split pricing (post-paid)
+ * Kenlo Pay - Split pricing (from BLOCO F)
  */
 export const PAY_SPLITS = {
-  prime: [
-    { from: 1, to: Infinity, price: 4.00 },
-  ],
-  k: [
-    { from: 1, to: 250, price: 4.00 },
-    { from: 251, to: Infinity, price: 3.50 },
-  ],
-  k2: [
-    { from: 1, to: 250, price: 4.00 },
-    { from: 251, to: 500, price: 3.50 },
-    { from: 501, to: Infinity, price: 3.00 },
-  ],
+  prime: pricingValues.variableCosts.splits.tiers.prime.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k: pricingValues.variableCosts.splits.tiers.k.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
+  k2: pricingValues.variableCosts.splits.tiers.k2.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  })),
 } as const;
 
 /**
- * Kenlo Seguros - Client commission percentage
+ * Kenlo Seguros - Client commission percentage (from BLOCO F)
  */
 export const SEGUROS_COMMISSION = {
-  prime: 0.35, // 35% of premium
-  k: 0.40,     // 40% of premium
-  k2: 0.45,    // 45% of premium
+  prime: pricingValues.variableCosts.segurosCommission.tiers.prime[0].rate / 100,
+  k: pricingValues.variableCosts.segurosCommission.tiers.k[0].rate / 100,
+  k2: pricingValues.variableCosts.segurosCommission.tiers.k2[0].rate / 100,
 } as const;
 
 // ============================================================================
-// ADD-ONS
+// ADD-ONS (from BLOCO C)
 // ============================================================================
 
 export const ADDONS = {
   inteligencia: {
     name: "Kenlo Inteligência",
-    annualPrice: 297, // Already ends in 7
-    implementation: 497, // Already ends in 7
-    availableFor: ["imob", "loc"] as const,
+    annualPrice: pricingValues.addons.inteligencia.annualPrice,
+    implementation: pricingValues.addons.inteligencia.implementation,
+    availableFor: pricingValues.addons.inteligencia.availability as readonly ("imob" | "loc")[],
     features: {
       basicReports: true,
       imobPricePerM2: true,
@@ -253,64 +253,53 @@ export const ADDONS = {
   },
   leads: {
     name: "Kenlo Leads",
-    annualPrice: 497, // Already ends in 7
-    implementation: 497, // Already ends in 7
-    availableFor: ["imob"] as const,
-    includedWhatsAppLeads: 100,
-    additionalLeadsTiers: [
-      { from: 1, to: 200, price: 1.50 },
-      { from: 201, to: 350, price: 1.30 },
-      { from: 351, to: 1000, price: 1.10 },
-      { from: 1001, to: Infinity, price: 0.90 },
-    ],
+    annualPrice: pricingValues.addons.leads.annualPrice,
+    implementation: pricingValues.addons.leads.implementation,
+    availableFor: pricingValues.addons.leads.availability as readonly ("imob" | "loc")[],
+    includedWhatsAppLeads: pricingValues.addons.leads.includedUnits?.quantity || 100,
+    additionalLeadsTiers: pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+      from: tier.from,
+      to: tier.to === 999999 ? Infinity : tier.to,
+      price: tier.price,
+    })),
     features: {
-      unlimitedDistribution: true, // If client doesn't want WhatsApp
+      unlimitedDistribution: true,
       whatsappIntegration: true,
-      aiIntegration: true, // With approved partner (Ex: Lais)
+      aiIntegration: true,
     },
   },
   assinaturas: {
     name: "Kenlo Assinaturas",
-    annualPrice: 37, // Already ends in 7
-    implementation: 0, // Free
-    availableFor: ["imob", "loc"] as const,
-    includedSignatures: 15,
-    additionalSignaturesTiers: [
-      { from: 1, to: 20, price: 1.80 },
-      { from: 21, to: 40, price: 1.70 },
-      { from: 41, to: Infinity, price: 1.50 },
-    ],
-    biometricValidation: 6.00, // Per validation (post-paid)
+    annualPrice: pricingValues.addons.assinaturas.annualPrice,
+    implementation: pricingValues.addons.assinaturas.implementation,
+    availableFor: pricingValues.addons.assinaturas.availability as readonly ("imob" | "loc")[],
+    includedSignatures: pricingValues.addons.assinaturas.includedUnits?.quantity || 15,
+    additionalSignaturesTiers: pricingValues.variableCosts.additionalSignatures.tiers.all_plans.map((tier: any) => ({
+      from: tier.from,
+      to: tier.to === 999999 ? Infinity : tier.to,
+      price: tier.price,
+    })),
+    biometricValidation: 6.00, // TODO: Add to variableCosts if needed
   },
 } as const;
 
 // ============================================================================
-// PREMIUM SERVICES
+// PREMIUM SERVICES (from BLOCO D)
 // ============================================================================
 
-/**
- * Premium Services pricing and inclusion rules
- * ⚠️ UPDATED: CS Dedicado from R$197 to R$297
- * ⚠️ NEW RULES: K includes VIP, K2 includes VIP+CS
- */
 export const PREMIUM_SERVICES = {
   vipSupport: {
     name: "Suporte VIP",
-    monthlyPrice: 97, // Already ends in 7
+    monthlyPrice: pricingValues.premiumServices.recurring.vipSupport.monthlyPrice,
     features: {
       responseTime: "15min",
       resolutionTime: "Até 8 horas úteis",
     },
-    // Inclusion rules by plan tier
-    includedIn: {
-      prime: false, // Disabled by default
-      k: true,      // ⚠️ NEW: Included automatically (no cost)
-      k2: true,     // ⚠️ NEW: Included automatically (no cost)
-    },
+    includedIn: pricingValues.premiumServices.recurring.vipSupport.defaultByPlan,
   },
   csDedicado: {
     name: "Customer Success Dedicado",
-    monthlyPrice: 297, // ⚠️ UPDATED from 197 to 297
+    monthlyPrice: pricingValues.premiumServices.recurring.csDedicado.monthlyPrice,
     features: {
       exclusiveWhatsApp: true,
       closeFollowUp: true,
@@ -319,85 +308,74 @@ export const PREMIUM_SERVICES = {
       internalFacilitation: true,
       valueGeneration: true,
     },
-    // Inclusion rules by plan tier
-    includedIn: {
-      prime: false, // Disabled by default
-      k: false,     // Disabled by default
-      k2: true,     // ⚠️ NEW: Included automatically (no cost)
-    },
+    includedIn: pricingValues.premiumServices.recurring.csDedicado.defaultByPlan,
   },
 } as const;
 
 /**
- * ⚠️ CROSS-PRODUCT BENEFIT RULE:
- * If client has VIP Support or CS Dedicado included in ANY product (IMOB or LOC),
- * the benefit applies to ALL Kenlo products used by the client.
- * 
- * Example: Client with IMOB K + LOC Prime → VIP Support included in both
- *          (because K from IMOB already includes it)
- */
-
-/**
- * Training pricing (optional, not included by default except K2)
+ * Training pricing (from BLOCO D)
  */
 export const TRAINING = {
-  online: 2000, // Per training
-  presencial: 3000, // Per training
+  online: pricingValues.premiumServices.nonRecurring.treinamentoOnline.unitPrice,
+  presencial: pricingValues.premiumServices.nonRecurring.treinamentoPresencial.unitPrice,
 } as const;
 
 // ============================================================================
-// KOMBOS
+// KOMBOS (from BLOCO E)
 // ============================================================================
-
-export type KomboType = "imob-start" | "imob-pro" | "loc-pro" | "core-gestao" | "elite" | "none";
 
 export const KOMBOS = {
   "imob-start": {
-    name: "Kombo Imob Start",
-    structure: ["imob", "leads", "assinaturas"] as const,
-    monthlyDiscount: 0.10, // 10% OFF all products/add-ons
-    implementation: 1497,
-    freeImplementations: ["leads"], // Leads impl. free (saves R$497)
-    premiumServicesIncluded: true, // ⚠️ NEW: All Kombos include VIP + CS
+    name: pricingValues.kombos.imob_start.name,
+    structure: pricingValues.kombos.imob_start.productsIncluded.concat(
+      pricingValues.kombos.imob_start.addonsIncluded
+    ) as readonly string[],
+    monthlyDiscount: pricingValues.kombos.imob_start.discount / 100,
+    implementation: pricingValues._legacyFields.implantacaoBase,
+    freeImplementations: pricingValues.kombos.imob_start.zeroedImplementationsList,
+    premiumServicesIncluded: pricingValues.kombos.imob_start.premiumServicesIncluded.length > 0,
   },
   "imob-pro": {
-    name: "Kombo Imob Pro",
-    structure: ["imob", "leads", "inteligencia", "assinaturas"] as const,
-    monthlyDiscount: 0.15, // 15% OFF all products/add-ons
-    implementation: 1497,
-    freeImplementations: ["leads", "inteligencia"], // Saves R$994
-    premiumServicesIncluded: true, // ⚠️ NEW: All Kombos include VIP + CS
+    name: pricingValues.kombos.imob_pro.name,
+    structure: pricingValues.kombos.imob_pro.productsIncluded.concat(
+      pricingValues.kombos.imob_pro.addonsIncluded
+    ) as readonly string[],
+    monthlyDiscount: pricingValues.kombos.imob_pro.discount / 100,
+    implementation: pricingValues._legacyFields.implantacaoBase,
+    freeImplementations: pricingValues.kombos.imob_pro.zeroedImplementationsList,
+    premiumServicesIncluded: pricingValues.kombos.imob_pro.premiumServicesIncluded.length > 0,
   },
   "loc-pro": {
-    name: "Kombo Locação Pro",
-    structure: ["loc", "inteligencia", "assinaturas"] as const,
-    monthlyDiscount: 0.10, // 10% OFF all products/add-ons
-    implementation: 1497,
-    freeImplementations: ["inteligencia"], // Saves R$497
-    premiumServicesIncluded: true, // ⚠️ NEW: All Kombos include VIP + CS
+    name: pricingValues.kombos.locacao_pro.name,
+    structure: pricingValues.kombos.locacao_pro.productsIncluded.concat(
+      pricingValues.kombos.locacao_pro.addonsIncluded
+    ) as readonly string[],
+    monthlyDiscount: pricingValues.kombos.locacao_pro.discount / 100,
+    implementation: pricingValues._legacyFields.implantacaoBase,
+    freeImplementations: pricingValues.kombos.locacao_pro.zeroedImplementationsList,
+    premiumServicesIncluded: pricingValues.kombos.locacao_pro.premiumServicesIncluded.length > 0,
   },
   "core-gestao": {
-    name: "Kombo Core Gestão",
-    structure: ["imob", "loc"] as const, // No add-ons
-    monthlyDiscount: 0, // "Conforme tabela" = 0% discount on monthly
-    implementation: 1497,
-    freeImplementations: ["imob"], // IMOB impl. free (saves R$1.497)
-    premiumServicesIncluded: true, // ⚠️ Already included, now explicit
+    name: pricingValues.kombos.core_gestao.name,
+    structure: pricingValues.kombos.core_gestao.productsIncluded.concat(
+      pricingValues.kombos.core_gestao.addonsIncluded
+    ) as readonly string[],
+    monthlyDiscount: pricingValues.kombos.core_gestao.discount / 100,
+    implementation: pricingValues._legacyFields.implantacaoBase,
+    freeImplementations: pricingValues.kombos.core_gestao.zeroedImplementationsList,
+    premiumServicesIncluded: pricingValues.kombos.core_gestao.premiumServicesIncluded.length > 0,
   },
   elite: {
-    name: "Kombo Elite",
-    structure: ["imob", "loc", "leads", "inteligencia", "assinaturas"] as const,
-    monthlyDiscount: 0.20, // 20% OFF all products/add-ons
-    implementation: 1497,
-    freeImplementations: ["imob", "leads", "inteligencia"], // Saves R$2.491
-    premiumServicesIncluded: true, // ⚠️ Already included, now explicit
+    name: pricingValues.kombos.elite.name,
+    structure: pricingValues.kombos.elite.productsIncluded.concat(
+      pricingValues.kombos.elite.addonsIncluded
+    ) as readonly string[],
+    monthlyDiscount: pricingValues.kombos.elite.discount / 100,
+    implementation: pricingValues._legacyFields.implantacaoBase,
+    freeImplementations: pricingValues.kombos.elite.zeroedImplementationsList,
+    premiumServicesIncluded: pricingValues.kombos.elite.premiumServicesIncluded.length > 0,
   },
 } as const;
-
-/**
- * ⚠️ IMPORTANT: ALL 5 KOMBOS now include Premium Services (VIP + CS Dedicado)
- * Previously only Core Gestão and Elite included them.
- */
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -423,7 +401,7 @@ export function calculateTieredPrice(
   for (const tier of tiers) {
     if (remaining <= 0) break;
 
-    const tierSize = tier.to - tier.from + 1;
+    const tierSize = tier.to === Infinity ? Infinity : tier.to - tier.from + 1;
     const quantityInTier = Math.min(remaining, tierSize);
     total += quantityInTier * tier.price;
     remaining -= quantityInTier;
@@ -477,8 +455,8 @@ export function detectKombo(selection: {
  */
 export function shouldIncludePremiumService(
   service: "vipSupport" | "csDedicado",
-  imobPlan: keyof typeof IMOB_PLANS | null,
-  locPlan: keyof typeof LOC_PLANS | null,
+  imobPlan: PlanTier | null,
+  locPlan: PlanTier | null,
   activeKombo: KomboType
 ): boolean {
   // All Kombos include both services
@@ -498,8 +476,108 @@ export function shouldIncludePremiumService(
     return true;
   }
 
-  // Cross-product benefit: if included in ANY product, applies to ALL
-  // (This is already covered by the checks above, but made explicit for clarity)
-
   return false;
+}
+
+// ============================================================================
+// NEW FUNCTIONS - FEATURE MATRIX (from BLOCO G)
+// ============================================================================
+
+/**
+ * Build features object from feature matrix
+ * featureMatrix structure: { imob: { prime: [features], k: [features], k2: [features] } }
+ */
+function buildFeatures(product: "imob" | "locacao", plan: PlanTier): Record<string, boolean> {
+  const productMatrix = pricingValues.featureMatrix[product];
+  const features: Record<string, boolean> = {};
+
+  // featureMatrix is structured as product.plan[array of features]
+  const planFeatures = productMatrix[plan];
+  if (Array.isArray(planFeatures)) {
+    planFeatures.forEach((feature: any) => {
+      // Use feature name as key (sanitized for use as object key)
+      const key = feature.name.toLowerCase().replace(/\s+/g, '_');
+      features[key] = feature.included;
+    });
+  }
+
+  return features;
+}
+
+/**
+ * Get all features for a product/plan from feature matrix
+ */
+export function getFeatures(product: "imob" | "locacao", plan: PlanTier): Record<string, boolean> {
+  return buildFeatures(product, plan);
+}
+
+/**
+ * Get feature by name (case-insensitive)
+ */
+function findFeatureByName(product: "imob" | "locacao", plan: PlanTier, featureName: string): any {
+  const productMatrix = pricingValues.featureMatrix[product];
+  const planFeatures = productMatrix[plan];
+  if (Array.isArray(planFeatures)) {
+    return planFeatures.find((f: any) => 
+      f.name.toLowerCase() === featureName.toLowerCase()
+    );
+  }
+  return null;
+}
+
+/**
+ * Check if a specific feature is included in a product/plan
+ */
+export function isFeatureIncluded(
+  product: "imob" | "locacao",
+  plan: PlanTier,
+  featureName: string
+): boolean {
+  const feature = findFeatureByName(product, plan, featureName);
+  return feature ? feature.included : false;
+}
+
+/**
+ * Get feature details (name, description, linked services)
+ */
+export function getFeatureDetails(product: "imob" | "locacao", plan: PlanTier, featureName: string) {
+  const feature = findFeatureByName(product, plan, featureName);
+  if (!feature) return null;
+
+  return {
+    name: feature.name,
+    description: feature.description,
+    linkedToAddon: feature.linkedToAddon,
+    linkedToPremiumService: feature.linkedToPremiumService,
+    included: feature.included,
+  };
+}
+
+/**
+ * Get all features for a product with their details across all plans
+ */
+export function getAllFeatures(product: "imob" | "locacao") {
+  const productMatrix = pricingValues.featureMatrix[product];
+  const primeFeatures = productMatrix.prime || [];
+  const kFeatures = productMatrix.k || [];
+  const k2Features = productMatrix.k2 || [];
+
+  // Merge features from all plans (assuming same features across plans)
+  const allFeatures = primeFeatures.map((primeFeature: any, idx: number) => {
+    const kFeature = kFeatures[idx];
+    const k2Feature = k2Features[idx];
+
+    return {
+      key: primeFeature.name.toLowerCase().replace(/\s+/g, '_'),
+      name: primeFeature.name,
+      description: primeFeature.description,
+      linkedToAddon: primeFeature.linkedToAddon,
+      linkedToPremiumService: primeFeature.linkedToPremiumService,
+      includedInPrime: primeFeature.included,
+      includedInK: kFeature ? kFeature.included : false,
+      includedInK2: k2Feature ? k2Feature.included : false,
+    };
+  });
+
+  return allFeatures;
 }

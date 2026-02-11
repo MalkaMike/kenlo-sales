@@ -3167,3 +3167,44 @@
 - [ ] Verify PDF and Calculator automatically correct (TODO: need to update consuming code)
 - [x] All tests passing (282/282 tests)
 - [ ] Save final checkpoint
+
+## Calculator Update - Consume Deterministic Structure v2.0.0 - Feb 2026
+
+### Phase 1: Audit Calculator for Hardcoded Logic
+- [ ] Read CalculadoraPage.tsx and document all hardcoded pricing logic
+- [ ] Identify all references to old structure (frequencyMultipliers, imobPlans, locPlans)
+- [ ] List all feature availability logic that should come from featureMatrix
+- [ ] Document all implicit calculations that should use explicit formulas
+
+### Phase 2: Update Calculator to Consume New Structure
+- [ ] Replace frequencyMultipliers → paymentCycles
+- [ ] Replace imobPlans/locPlans → basePlans.imob/basePlans.locacao
+- [ ] Replace hardcoded feature lists → featureMatrix
+- [ ] Replace premiumServices flat structure → premiumServices.recurring/nonRecurring
+- [ ] Replace kombos implicit logic → kombos explicit fields (productsIncluded, addonsIncluded)
+- [ ] Replace variable costs old structure → variableCosts with product/unit fields
+- [ ] Use explicit formulas from paymentCycles for calculations
+- [ ] Use availability flags from addons for conditional display
+- [ ] Use inheritanceRule from premium services for shared/independent logic
+
+### Phase 3: Update Calculator Tests
+- [ ] Update all calculator tests to use new structure
+- [ ] Add tests for determinism (same config + same inputs = same output)
+- [ ] Add tests for formula-based calculations
+- [ ] Add tests for feature matrix consumption
+- [ ] Ensure all tests pass
+
+### Phase 4: End-to-End Testing
+- [ ] Test calculator with all products (IMOB, LOC)
+- [ ] Test calculator with all plans (Prime, K, K2)
+- [ ] Test calculator with all payment cycles (Monthly, Semestral, Annual, Biennial)
+- [ ] Test calculator with all kombos
+- [ ] Test calculator with all add-ons
+- [ ] Test calculator with all premium services
+- [ ] Verify prices match expected values from config
+- [ ] Verify features displayed match featureMatrix
+
+### Phase 5: Deliver
+- [ ] All tests passing
+- [ ] Calculator fully deterministic (no hardcoded logic)
+- [ ] Save final checkpoint
