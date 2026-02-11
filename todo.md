@@ -3525,3 +3525,16 @@
 - [x] Add-on rows: clickable to select/deselect per column
 - [x] Each column functions as an independent mini-configurator
 - [x] All prices recalculate independently per column based on its own selections
+
+## Kombo Table — Custom Scenario Columns
+
+### Custom Column Feature
+- [x] Add 1-3 extra "Cenário Custom" columns after the Kombo columns
+- [x] Custom columns have NO Kombo base (no preset discount, no locked add-ons)
+- [x] Full configurator: clickable plan cells (Prime/K/K2) for Imob and Loc
+- [x] Full configurator: clickable add-on cells to toggle on/off freely
+- [x] Per-column cycle selector (Mensal/Semestral/Anual) like Kombo columns
+- [x] Custom columns calculate prices at full price (no Kombo discount)
+- [x] Distinct visual style: amber/gold header with "Livre" badge, dashed border separator
+- [x] Add/remove custom columns dynamically with "+" and "×" buttons
+- [x] Empty state: show "+ Adicionar" placeholder in addon cells, products default to Prime
