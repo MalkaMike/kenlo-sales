@@ -3406,3 +3406,17 @@
 
 ## Bug Fix - React Key Prop Warning
 - [x] Fix missing key prop in ImobPage component list rendering
+
+## PDF Testing - Real Scenarios Validation
+- [x] Test Scenario 1: 2 products (Imob K2 + Loc K) + multiple add-ons (Leads, Inteligência, Pay) - Anual cycle
+- [x] Test Scenario 2: Single product (Imob K only) + some add-ons (Inteligência, Assinatura) - Mensal cycle
+- [x] Test Scenario 3: Single product (Locação Prime only) + no add-ons - Semestral cycle
+- [x] Test Scenario 4: 2 products (Imob Prime + Loc K2) + all add-ons - Bienal cycle
+- [x] Validate all layout variations render correctly
+- [x] Document findings in /home/ubuntu/pdf-testing-analysis.md
+
+### Critical Issues Found During Testing
+- [ ] Fix Perfil section to show only relevant column(s) based on businessType (corretora = only CORETAGEM, administradora = only ADMINISTRAÇÃO, ambos = both)
+- [ ] Fix Investimento section showing R$ 0,00 (should read totalPrice and monthlyPrice from data)
+- [ ] Populate Funcionalidades table with actual features from pricing-config.ts
+- [ ] Add product/plan names to Estrutura Contratada section (e.g., "Kenlo Imob K2 & Kenlo Locação K")

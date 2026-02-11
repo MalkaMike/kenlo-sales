@@ -337,7 +337,8 @@ export default function ImobPage() {
                             </td>
                           ))}
                         </tr>
-                       );})}
+                      );
+                      })}
                     </React.Fragment>
                   ))}
                 </tbody>
