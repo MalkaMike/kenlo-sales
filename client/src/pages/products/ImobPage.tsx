@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Building2, Users, Globe, Smartphone, BarChart3, ArrowRight, Calculator, Info } from "lucide-react";
@@ -294,9 +295,9 @@ export default function ImobPage() {
                 
                 <tbody>
                   {pricingData.sections.map((section, sectionIndex) => (
-                    <>
+                    <React.Fragment key={`section-${sectionIndex}`}>
                       {/* Section Header */}
-                      <tr key={`section-${sectionIndex}`}>
+                      <tr>
                         <td 
                           colSpan={4} 
                           className="p-3 bg-primary/5 font-semibold text-primary border-t border-border/40"
@@ -336,8 +337,8 @@ export default function ImobPage() {
                             </td>
                           ))}
                         </tr>
-                      );})}
-                    </>
+                       );})}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
