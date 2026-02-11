@@ -3490,3 +3490,12 @@
 - [x] Scenario with only Pay (boleto/split revenue)
 - [x] Scenario with no revenue streams (Page 4 should NOT appear)
 - [x] Verify calculations match pricing-config.ts rates
+
+## Kombo Comparison Table — Product-Based Filtering
+
+- [x] Filter Kombo columns based on selected product type in "Sua Seleção vs Kombos"
+- [x] Imob only → show only Kombo Imob Start and Kombo Imob Pro
+- [x] Loc only → show only Kombo Loc Pro
+- [x] Both (Imob + Loc) → show only Kombo Core Gestão and Kombo Elite
+- [x] Ensure the "Sua Seleção" column always appears as first column
+- [x] Verify no broken layout when fewer columns are displayed

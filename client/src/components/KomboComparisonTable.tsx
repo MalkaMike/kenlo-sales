@@ -738,14 +738,27 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Create modified props with viewMode as frequency for calculations
   const propsWithFrequency = { ...props, frequency: viewMode as PaymentFrequency };
 
-  // Calculate all columns using the selected frequency
+  // Determine which Kombos are compatible with the selected product type
+  // Imob only → Imob Start, Imob Pro
+  // Loc only → Loc Pro
+  // Both (Imob + Loc) → Core Gestão, Elite
+  const compatibleKomboIds: KomboId[] = (() => {
+    switch (props.product) {
+      case "imob":
+        return ["imob_start", "imob_pro"];
+      case "loc":
+        return ["locacao_pro"];
+      case "both":
+        return ["core_gestao", "elite"];
+      default:
+        return [];
+    }
+  })();
+
+  // Calculate columns: always "Sua Seleção" first, then only compatible Kombos
   const columns: KomboColumnData[] = [
     calculateKomboColumn("none", propsWithFrequency, recommendedKombo),
-    calculateKomboColumn("imob_start", propsWithFrequency, recommendedKombo),
-    calculateKomboColumn("imob_pro", propsWithFrequency, recommendedKombo),
-    calculateKomboColumn("locacao_pro", propsWithFrequency, recommendedKombo),
-    calculateKomboColumn("core_gestao", propsWithFrequency, recommendedKombo),
-    calculateKomboColumn("elite", propsWithFrequency, recommendedKombo),
+    ...compatibleKomboIds.map(id => calculateKomboColumn(id, propsWithFrequency, recommendedKombo)),
   ];
 
   // Row definitions for the table

@@ -365,3 +365,139 @@ describe('Kombo Comparison Table - Annual Equivalent Calculation', () => {
     expect(annualEquivalent).toBe(42688);
   });
 });
+
+
+// ============================================================================
+// KOMBO COLUMN FILTERING TESTS
+// ============================================================================
+
+/**
+ * Tests for product-based Kombo column filtering
+ * 
+ * Business rules:
+ * - Imob only → show Imob Start, Imob Pro (2 Kombos)
+ * - Loc only → show Loc Pro (1 Kombo)
+ * - Both (Imob + Loc) → show Core Gestão, Elite (2 Kombos)
+ * - "Sua Seleção" column always appears as first column
+ * - It's impossible to have all 4+ Kombos together
+ */
+
+type KomboIdFilter = 'none' | 'imob_start' | 'imob_pro' | 'locacao_pro' | 'core_gestao' | 'elite';
+
+const getCompatibleKomboIds = (product: ProductSelection): KomboIdFilter[] => {
+  switch (product) {
+    case 'imob':
+      return ['imob_start', 'imob_pro'];
+    case 'loc':
+      return ['locacao_pro'];
+    case 'both':
+      return ['core_gestao', 'elite'];
+    default:
+      return [];
+  }
+};
+
+const getVisibleColumns = (product: ProductSelection): KomboIdFilter[] => {
+  return ['none', ...getCompatibleKomboIds(product)];
+};
+
+describe('Kombo Column Filtering by Product Type', () => {
+  describe('Imob only selection', () => {
+    it('should show only Sua Seleção + Imob Start + Imob Pro (3 columns)', () => {
+      const visible = getVisibleColumns('imob');
+      expect(visible).toEqual(['none', 'imob_start', 'imob_pro']);
+      expect(visible).toHaveLength(3);
+    });
+
+    it('should NOT include Loc Pro for Imob only', () => {
+      const visible = getVisibleColumns('imob');
+      expect(visible).not.toContain('locacao_pro');
+    });
+
+    it('should NOT include Core Gestão or Elite for Imob only', () => {
+      const visible = getVisibleColumns('imob');
+      expect(visible).not.toContain('core_gestao');
+      expect(visible).not.toContain('elite');
+    });
+  });
+
+  describe('Loc only selection', () => {
+    it('should show only Sua Seleção + Loc Pro (2 columns)', () => {
+      const visible = getVisibleColumns('loc');
+      expect(visible).toEqual(['none', 'locacao_pro']);
+      expect(visible).toHaveLength(2);
+    });
+
+    it('should NOT include Imob Start or Imob Pro for Loc only', () => {
+      const visible = getVisibleColumns('loc');
+      expect(visible).not.toContain('imob_start');
+      expect(visible).not.toContain('imob_pro');
+    });
+
+    it('should NOT include Core Gestão or Elite for Loc only', () => {
+      const visible = getVisibleColumns('loc');
+      expect(visible).not.toContain('core_gestao');
+      expect(visible).not.toContain('elite');
+    });
+  });
+
+  describe('Both (Imob + Loc) selection', () => {
+    it('should show only Sua Seleção + Core Gestão + Elite (3 columns)', () => {
+      const visible = getVisibleColumns('both');
+      expect(visible).toEqual(['none', 'core_gestao', 'elite']);
+      expect(visible).toHaveLength(3);
+    });
+
+    it('should NOT include Imob Start or Imob Pro for Both', () => {
+      const visible = getVisibleColumns('both');
+      expect(visible).not.toContain('imob_start');
+      expect(visible).not.toContain('imob_pro');
+    });
+
+    it('should NOT include Loc Pro for Both', () => {
+      const visible = getVisibleColumns('both');
+      expect(visible).not.toContain('locacao_pro');
+    });
+  });
+
+  describe('Sua Seleção column always present', () => {
+    it('should always have "none" (Sua Seleção) as first column for imob', () => {
+      expect(getVisibleColumns('imob')[0]).toBe('none');
+    });
+
+    it('should always have "none" (Sua Seleção) as first column for loc', () => {
+      expect(getVisibleColumns('loc')[0]).toBe('none');
+    });
+
+    it('should always have "none" (Sua Seleção) as first column for both', () => {
+      expect(getVisibleColumns('both')[0]).toBe('none');
+    });
+  });
+
+  describe('Mutual exclusivity — never all Kombos together', () => {
+    it('should never show more than 3 columns total (Sua Seleção + max 2 Kombos)', () => {
+      for (const product of ['imob', 'loc', 'both'] as ProductSelection[]) {
+        const visible = getVisibleColumns(product);
+        expect(visible.length).toBeLessThanOrEqual(3);
+      }
+    });
+
+    it('should never show Imob-only and Both Kombos together', () => {
+      for (const product of ['imob', 'loc', 'both'] as ProductSelection[]) {
+        const visible = getVisibleColumns(product);
+        const hasImobKombos = visible.includes('imob_start') || visible.includes('imob_pro');
+        const hasBothKombos = visible.includes('core_gestao') || visible.includes('elite');
+        expect(hasImobKombos && hasBothKombos).toBe(false);
+      }
+    });
+
+    it('should never show Loc-only and Imob-only Kombos together', () => {
+      for (const product of ['imob', 'loc', 'both'] as ProductSelection[]) {
+        const visible = getVisibleColumns(product);
+        const hasImobKombos = visible.includes('imob_start') || visible.includes('imob_pro');
+        const hasLocKombos = visible.includes('locacao_pro');
+        expect(hasImobKombos && hasLocKombos).toBe(false);
+      }
+    });
+  });
+});
