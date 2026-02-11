@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, AlertCircle, Info, AlertTriangle } from "lucide-react";
+import { Loader2, Save, AlertCircle, Info, AlertTriangle, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
@@ -15,6 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Format number with thousand separator
 const formatNumber = (num: number): string => {
@@ -70,7 +72,22 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
-export default function PricingAdminPage() {
+// Section header component
+const SectionHeader = ({ letter, title, description }: { letter: string; title: string; description: string }) => (
+  <div className="mb-6">
+    <div className="flex items-center gap-3 mb-2">
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <span className="text-lg font-bold text-primary">{letter}</span>
+      </div>
+      <div>
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  </div>
+);
+
+export default function PricingAdminPageV2() {
   const { data: config, isLoading, refetch } = trpc.pricingAdmin.getConfig.useQuery();
   const saveConfigMutation = trpc.pricingAdmin.saveConfig.useMutation();
 
@@ -83,8 +100,7 @@ export default function PricingAdminPage() {
   useEffect(() => {
     if (config) {
       setFormData(config);
-      // In a real app, you'd fetch this from the backend
-      setLastModified(new Date().toLocaleString('pt-BR'));
+      setLastModified(config._lastModified || new Date().toISOString());
     }
   }, [config]);
 
@@ -96,12 +112,19 @@ export default function PricingAdminPage() {
     if (!formData) return;
 
     try {
-      await saveConfigMutation.mutateAsync(formData);
+      // Update metadata
+      const updatedData = {
+        ...formData,
+        _lastModified: new Date().toISOString(),
+        _version: "2.0.0",
+      };
+      
+      await saveConfigMutation.mutateAsync(updatedData);
       alert(`✅ Configuração salva com sucesso!\n\nMotivo: ${changeReason || "Não informado"}`);
       setHasChanges(false);
       setShowConfirmDialog(false);
       setChangeReason("");
-      setLastModified(new Date().toLocaleString('pt-BR'));
+      setLastModified(updatedData._lastModified);
       refetch();
     } catch (error: any) {
       alert(`❌ Erro: ${error.message || "Erro ao salvar configuração"}`);
@@ -130,932 +153,262 @@ export default function PricingAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 py-8">
-      <div className="container max-w-7xl">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-1">Motor de Precificação Kenlo</h1>
-          <p className="text-sm text-muted-foreground mb-2">
-            Fonte única de verdade para Calculadora, PDF e toda a plataforma de vendas
-          </p>
-          {lastModified && (
-            <p className="text-xs text-muted-foreground">
-              Última alteração em: {lastModified}
+    <div className="container max-w-7xl py-8">
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Configuração de Preços</h1>
+            <p className="text-muted-foreground">
+              Fonte Única de Verdade — Estrutura Determinística v2.0.0
             </p>
-          )}
-        </div>
-
-        {/* Unsaved changes alert */}
-        {hasChanges && (
-          <Alert className="mb-4 bg-yellow-50 border-yellow-200">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-sm text-yellow-800">
-              Você tem alterações não salvas. Clique em "Salvar Alterações" para aplicar.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Save button */}
-        <div className="sticky top-4 z-10 mb-6">
+          </div>
           <Button
             onClick={handleSaveClick}
             disabled={!hasChanges || saveConfigMutation.isPending}
-            size="sm"
-            className="w-full md:w-auto bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+            size="lg"
+            className="gap-2"
           >
             {saveConfigMutation.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
                 Salvando...
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="w-5 h-5" />
                 Salvar Alterações
               </>
             )}
           </Button>
         </div>
 
-        <div className="space-y-6">
-          {/* ========================================
-              1️⃣ REGRAS GLOBAIS DE PRECIFICAÇÃO
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">1. Regras Globais de Precificação</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Essas regras definem como todos os preços da plataforma são calculados
-              </p>
-            </div>
-
-            <Card className="border-2 border-primary/20">
-              <CardHeader className="py-4 bg-primary/5">
-                <CardTitle className="text-lg">Ciclo de Pagamento e Descontos</CardTitle>
-                <CardDescription className="text-xs">
-                  Anual é a referência base. Outros ciclos aplicam descontos ou acréscimos sobre o valor anual.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Mensal</Label>
-                      <span className="text-xs text-red-600 font-medium">sem desconto</span>
-                    </div>
-                    <NumberInput
-                      value={formData.frequencyMultipliers.monthly}
-                      onChange={(val: number) => updateValue(["frequencyMultipliers", "monthly"], val)}
-                      step="0.01"
-                    />
-                    <p className="text-[10px] text-muted-foreground">
-                      Anual ÷ {formData.frequencyMultipliers.monthly.toFixed(2)} = Mensal
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Semestral</Label>
-                      <span className="text-xs text-green-600 font-medium">desconto aplicado</span>
-                    </div>
-                    <NumberInput
-                      value={formData.frequencyMultipliers.semiannual}
-                      onChange={(val: number) => updateValue(["frequencyMultipliers", "semiannual"], val)}
-                      step="0.01"
-                    />
-                    <p className="text-[10px] text-muted-foreground">
-                      Anual ÷ {formData.frequencyMultipliers.semiannual.toFixed(2)} = Semestral
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Anual</Label>
-                      <span className="text-xs text-blue-600 font-medium">referência</span>
-                    </div>
-                    <Input
-                      type="text"
-                      value="1.00"
-                      disabled
-                      className="h-7 text-sm bg-gray-50"
-                    />
-                    <p className="text-[10px] text-muted-foreground">
-                      Preço base (sem multiplicador)
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Bienal</Label>
-                      <span className="text-xs text-green-600 font-medium">desconto máximo</span>
-                    </div>
-                    <NumberInput
-                      value={formData.frequencyMultipliers.biennial}
-                      onChange={(val: number) => updateValue(["frequencyMultipliers", "biennial"], val)}
-                      step="0.01"
-                    />
-                    <p className="text-[10px] text-muted-foreground">
-                      Anual × {formData.frequencyMultipliers.biennial.toFixed(2)} = Bienal
-                    </p>
-                  </div>
-                </div>
-                <HelperText>
-                  O desconto por ciclo é aplicado antes de qualquer desconto de combo.
-                </HelperText>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              2️⃣ PREÇOS BASE DOS PLANOS (FUNDAÇÃO)
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">2. Preços Base dos Planos (Fundação)</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Preços base anuais usados como fundação para todos os cálculos
-              </p>
-            </div>
-
-            {/* IMOB Plans */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">2.1 Planos IMOB</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço base anual (antes de descontos) e usuários inclusos
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="space-y-3 p-3 border rounded-lg">
-                      <h3 className="font-semibold text-base uppercase text-center">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Preço Base Anual (R$)</Label>
-                        <NumberInput
-                          value={formData.imobPlans[plan].annualPrice}
-                          onChange={(val: number) => updateValue(["imobPlans", plan, "annualPrice"], val)}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Usuários Inclusos</Label>
-                        <NumberInput
-                          value={formData.imobPlans[plan].includedUsers}
-                          onChange={(val: number) => updateValue(["imobPlans", plan, "includedUsers"], Math.round(val))}
-                        />
-                      </div>
-                      <HelperText>
-                        Este é o preço base usado no cálculo do Mensal, Anual e Kombos.
-                      </HelperText>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* LOC Plans */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">2.2 Planos LOCAÇÃO</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço base anual (antes de descontos) e contratos inclusos
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="space-y-3 p-3 border rounded-lg">
-                      <h3 className="font-semibold text-base uppercase text-center">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Preço Base Anual (R$)</Label>
-                        <NumberInput
-                          value={formData.locPlans[plan].annualPrice}
-                          onChange={(val: number) => updateValue(["locPlans", plan, "annualPrice"], val)}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Contratos Inclusos</Label>
-                        <NumberInput
-                          value={formData.locPlans[plan].includedContracts}
-                          onChange={(val: number) => updateValue(["locPlans", plan, "includedContracts"], Math.round(val))}
-                        />
-                      </div>
-                      <HelperText>
-                        Este é o preço base usado no cálculo do Mensal, Anual e Kombos.
-                      </HelperText>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              3️⃣ ADD-ONS — PREÇOS BASE E IMPLANTAÇÃO
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">3. Add-ons — Preços Base e Implantação</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Funcionalidades extras com preços recorrentes e taxas de implantação
-              </p>
-            </div>
-
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Add-ons Disponíveis</CardTitle>
-                <CardDescription className="text-xs">
-                  Preços anuais recorrentes e custos únicos de implantação
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {["inteligencia", "leads", "assinaturas"].map((addon) => (
-                    <div key={addon} className="space-y-3 p-3 border rounded-lg">
-                      <h3 className="font-semibold text-base capitalize">{addon}</h3>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Preço Recorrente Anual (R$)</Label>
-                        <NumberInput
-                          value={formData.addons[addon].annualPrice}
-                          onChange={(val: number) => updateValue(["addons", addon, "annualPrice"], val)}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs uppercase text-muted-foreground">Taxa de Implantação (R$)</Label>
-                        <NumberInput
-                          value={formData.addons[addon].implementation}
-                          onChange={(val: number) => updateValue(["addons", addon, "implementation"], val)}
-                        />
-                      </div>
-                      {addon === "leads" && (
-                        <div className="space-y-1">
-                          <Label className="text-xs uppercase text-muted-foreground">Leads WhatsApp Inclusos</Label>
-                          <NumberInput
-                            value={formData.addons[addon].includedLeads}
-                            onChange={(val: number) => updateValue(["addons", addon, "includedLeads"], Math.round(val))}
-                          />
-                        </div>
-                      )}
-                      {addon === "assinaturas" && (
-                        <div className="space-y-1">
-                          <Label className="text-xs uppercase text-muted-foreground">Assinaturas Inclusas</Label>
-                          <NumberInput
-                            value={formData.addons[addon].includedSignatures}
-                            onChange={(val: number) => updateValue(["addons", addon, "includedSignatures"], Math.round(val))}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              4️⃣ SERVIÇOS PREMIUM (RECORRENTES)
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">4. Serviços Premium (Recorrentes)</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Serviços Premium impactam o valor mensal, mas não alteram o plano base
-              </p>
-            </div>
-
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Serviços Mensais e Treinamentos</CardTitle>
-                <CardDescription className="text-xs">
-                  Valores mensais para serviços recorrentes e valores únicos para treinamentos
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                  <div className="space-y-2 p-3 border rounded-lg">
-                    <Label className="text-sm font-semibold">Suporte VIP (mensal)</Label>
-                    <NumberInput
-                      value={formData.premiumServices.vipSupport}
-                      onChange={(val: number) => updateValue(["premiumServices", "vipSupport"], val)}
-                    />
-                    <p className="text-[10px] text-muted-foreground">Valor mensal recorrente</p>
-                  </div>
-                  <div className="space-y-2 p-3 border rounded-lg">
-                    <Label className="text-sm font-semibold">CS Dedicado (mensal)</Label>
-                    <NumberInput
-                      value={formData.premiumServices.csDedicado}
-                      onChange={(val: number) => updateValue(["premiumServices", "csDedicado"], val)}
-                    />
-                    <p className="text-[10px] text-muted-foreground">Valor mensal recorrente</p>
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2 p-3 border rounded-lg">
-                    <Label className="text-sm font-semibold">Treinamento Online</Label>
-                    <NumberInput
-                      value={formData.premiumServices.treinamentoOnline}
-                      onChange={(val: number) => updateValue(["premiumServices", "treinamentoOnline"], val)}
-                    />
-                    <p className="text-[10px] text-muted-foreground">Valor único (não recorrente)</p>
-                  </div>
-                  <div className="space-y-2 p-3 border rounded-lg">
-                    <Label className="text-sm font-semibold">Treinamento Presencial</Label>
-                    <NumberInput
-                      value={formData.premiumServices.treinamentoPresencial}
-                      onChange={(val: number) => updateValue(["premiumServices", "treinamentoPresencial"], val)}
-                    />
-                    <p className="text-[10px] text-muted-foreground">Valor único (não recorrente)</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              5️⃣ KOMBOS — DESCONTOS PROMOCIONAIS CUMULATIVOS
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">5. Kombos — Descontos Promocionais Cumulativos</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                O desconto de combo é aplicado após o desconto do ciclo de pagamento
-              </p>
-            </div>
-
-            <Card className="border-2 border-green-500/20">
-              <CardHeader className="py-4 bg-green-50">
-                <CardTitle className="text-lg">Descontos por Kombo</CardTitle>
-                <CardDescription className="text-xs">
-                  Descontos percentuais aplicados quando cliente contrata pacotes específicos
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="space-y-4">
-                  {Object.entries(formData.kombos).map(([key, kombo]: [string, any]) => (
-                    <div key={key} className="p-4 border rounded-lg bg-white">
-                      <h3 className="font-semibold text-base mb-3">{kombo.name}</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Desconto Promocional</Label>
-                          <div className="flex items-center gap-2">
-                            <NumberInput
-                              value={kombo.discount * 100}
-                              onChange={(val: number) => updateValue(["kombos", key, "discount"], val / 100)}
-                              className="flex-1"
-                            />
-                            <span className="text-lg font-bold text-green-600">%</span>
-                          </div>
-                          <p className="text-[10px] text-muted-foreground">
-                            Desconto aplicado sobre o valor após desconto de ciclo
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Implantações Ofertadas</Label>
-                          <NumberInput
-                            value={kombo.freeImplementations}
-                            onChange={(val: number) => updateValue(["kombos", key, "freeImplementations"], Math.round(val))}
-                          />
-                          <p className="text-[10px] text-muted-foreground">
-                            Número de implantações gratuitas incluídas
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <HelperText>
-                  Exemplo de cálculo: Preço Anual → aplica desconto de ciclo → aplica desconto de Kombo → resultado final
-                </HelperText>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              6️⃣ CUSTOS VARIÁVEIS PÓS-PAGO (BASEADOS EM USO)
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">6. Custos Variáveis Pós-Pago (baseados em uso)</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Preços por unidade adicional, organizados por faixas de volume
-              </p>
-            </div>
-
-            {/* Additional Users */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Usuários Adicionais (IMOB)</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por usuário adicional, variando por plano e faixa de volume
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="space-y-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="p-3 border rounded-lg">
-                      <h3 className="font-semibold text-sm mb-3 uppercase">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                        {formData.additionalUsersTiers[plan].map((tier: any, idx: number) => (
-                          <div key={idx} className="space-y-1">
-                            <Label className="text-[10px] uppercase text-muted-foreground">
-                              {tier.from === 1 ? "A partir de" : `${tier.from}-${tier.to === 999 ? "∞" : tier.to}`} usuários
-                            </Label>
-                            <NumberInput
-                              value={tier.price}
-                              onChange={(val: number) =>
-                                updateValue(["additionalUsersTiers", plan, String(idx), "price"], val)
-                              }
-                            />
-                            <p className="text-[9px] text-muted-foreground">R$ por usuário</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Contracts */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Contratos Adicionais (LOCAÇÃO)</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por contrato adicional, variando por plano e faixa de volume
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="space-y-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="p-3 border rounded-lg">
-                      <h3 className="font-semibold text-sm mb-3 uppercase">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                        {formData.additionalContractsTiers[plan].map((tier: any, idx: number) => (
-                          <div key={idx} className="space-y-1">
-                            <Label className="text-[10px] uppercase text-muted-foreground">
-                              {tier.from === 1 ? "A partir de" : `${tier.from}-${tier.to === 999 ? "∞" : tier.to}`} contratos
-                            </Label>
-                            <NumberInput
-                              value={tier.price}
-                              onChange={(val: number) =>
-                                updateValue(["additionalContractsTiers", plan, String(idx), "price"], val)
-                              }
-                            />
-                            <p className="text-[9px] text-muted-foreground">R$ por contrato</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Leads */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Leads WhatsApp Adicionais</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por lead adicional, variando por faixa de volume mensal
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {formData.additionalLeadsTiers.map((tier: any, idx: number) => (
-                    <div key={idx} className="space-y-2 p-3 border rounded-lg">
-                      <Label className="text-xs font-medium">
-                        {tier.from === 1 ? "A partir de" : `${tier.from}-${tier.to === 99999 ? "∞" : tier.to}`} leads
-                      </Label>
-                      <NumberInput
-                        value={tier.price}
-                        onChange={(val: number) =>
-                          updateValue(["additionalLeadsTiers", String(idx), "price"], val)
-                        }
-                      />
-                      <p className="text-[9px] text-muted-foreground">R$ por lead</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Signatures */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Assinaturas Digitais Adicionais</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por assinatura adicional, variando por faixa de volume mensal
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {formData.additionalSignaturesTiers.map((tier: any, idx: number) => (
-                    <div key={idx} className="space-y-2 p-3 border rounded-lg">
-                      <Label className="text-xs font-medium">
-                        {tier.from === 1 ? "A partir de" : `${tier.from}-${tier.to === 99999 ? "∞" : tier.to}`} assinaturas
-                      </Label>
-                      <NumberInput
-                        value={tier.price}
-                        onChange={(val: number) =>
-                          updateValue(["additionalSignaturesTiers", String(idx), "price"], val)
-                        }
-                      />
-                      <p className="text-[9px] text-muted-foreground">R$ por assinatura</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Kenlo Pay - Boletos */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Kenlo Pay — Boletos</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por boleto (pós-pago baseado em uso)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="space-y-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="p-3 border rounded-lg">
-                      <h3 className="font-semibold text-sm uppercase mb-3">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {formData.kenloPay.boletosTiers[plan].map((tier: any, idx: number) => (
-                          <div key={idx} className="space-y-1">
-                            <Label className="text-[10px] uppercase text-muted-foreground">
-                              {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
-                            </Label>
-                            <NumberInput
-                              value={tier.price}
-                              onChange={(val: number) =>
-                                updateValue(["kenloPay", "boletosTiers", plan, "tiers", String(idx), "price"], val)
-                              }
-                            />
-                            <p className="text-[9px] text-muted-foreground">R$ por boleto</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Kenlo Pay - Splits */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Kenlo Pay — Splits</CardTitle>
-                <CardDescription className="text-xs">
-                  Preço por split (pós-pago baseado em uso)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="space-y-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="p-3 border rounded-lg">
-                      <h3 className="font-semibold text-sm uppercase mb-3">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {formData.kenloPay.splitsTiers[plan].map((tier: any, idx: number) => (
-                          <div key={idx} className="space-y-1">
-                            <Label className="text-[10px] uppercase text-muted-foreground">
-                              {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
-                            </Label>
-                            <NumberInput
-                              value={tier.price}
-                              onChange={(val: number) =>
-                                updateValue(["kenloPay", "splitsTiers", plan, "tiers", String(idx), "price"], val)
-                              }
-                            />
-                            <p className="text-[9px] text-muted-foreground">R$ por split</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Kenlo Seguros */}
-            <Card>
-              <CardHeader className="py-4">
-                <CardTitle className="text-lg">Kenlo Seguros — Comissões</CardTitle>
-                <CardDescription className="text-xs">
-                  Percentual de comissão sobre seguros por plano
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {["prime", "k", "k2"].map((plan) => (
-                    <div key={plan} className="space-y-2 p-3 border rounded-lg">
-                      <h3 className="font-semibold text-sm uppercase text-center">{plan === "k2" ? "K2" : plan}</h3>
-                      <div className="flex items-center gap-2">
-                        <NumberInput
-                        value={formData.kenloSeguros.commissionRates[plan] * 100}
-                        onChange={(val: number) =>
-                          updateValue(["kenloSeguros", "commissionRates", plan], val / 100)
-                          }
-                          className="flex-1"
-                        />
-                        <span className="text-lg font-bold text-green-600">%</span>
-                      </div>
-                      <p className="text-[9px] text-muted-foreground text-center">
-                        Comissão sobre valor do seguro
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* ========================================
-              7️⃣ MATRIZ DE FUNCIONALIDADES
-          ======================================== */}
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">7. Matriz de Funcionalidades por Produto e Plano</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Esta matriz define exatamente quais funcionalidades estão incluídas ou não em cada plano
-              </p>
-            </div>
-
-            <Alert className="bg-red-50 border-red-200">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-sm text-red-800">
-                <strong>Atenção:</strong> Alterações nesta matriz impactam diretamente páginas públicas, calculadora e PDFs.
-                Modifique com cuidado.
-              </AlertDescription>
-            </Alert>
-
-            <Alert className="bg-blue-50 border-blue-200">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-sm text-blue-800">
-                <strong>Fonte Única de Verdade:</strong> Todas as páginas públicas (site, calculadora e PDF) devem consumir esta configuração.
-                Nunca codifique lógica de inclusão de features fora desta matriz.
-              </AlertDescription>
-            </Alert>
-
-            {/* IMOB Features */}
-            <Card className="border-2 border-primary/20">
-              <CardHeader className="py-4 bg-primary/5">
-                <CardTitle className="text-lg">Kenlo IMOB — Funcionalidades por Plano</CardTitle>
-                <CardDescription className="text-xs">
-                  Clique em ✅ ou — para alternar | ✅ = Incluído | — = Não incluído
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-2 px-3 font-semibold">Funcionalidade</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">Prime</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K2</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData?.featureMatrix?.imob?.prime?.map((feature: any, idx: number) => (
-                        <tr key={idx} className="border-b hover:bg-gray-50">
-                          <td className="py-2 px-3">
-                            <div>
-                              <div className="font-medium">{feature.name}</div>
-                              {feature.description && (
-                                <div className="text-xs text-muted-foreground">{feature.description}</div>
-                              )}
-                              {feature.linkedTo && (
-                                <div className="text-xs text-blue-600 italic mt-1">
-                                  → Vinculado a: {feature.linkedTo}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "imob", "prime", String(idx), "included"],
-                                  !formData.featureMatrix.imob.prime[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.imob.prime[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "imob", "k", String(idx), "included"],
-                                  !formData.featureMatrix.imob.k[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.imob.k[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "imob", "k2", String(idx), "included"],
-                                  !formData.featureMatrix.imob.k2[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.imob.k2[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Locação Features */}
-            <Card className="border-2 border-secondary/20">
-              <CardHeader className="py-4 bg-secondary/5">
-                <CardTitle className="text-lg">Kenlo Locação — Funcionalidades por Plano</CardTitle>
-                <CardDescription className="text-xs">
-                  Clique em ✅ ou — para alternar | ✅ = Incluído | — = Não incluído
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-4">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-2 px-3 font-semibold">Funcionalidade</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">Prime</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K</th>
-                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K2</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData?.featureMatrix?.locacao?.prime?.map((feature: any, idx: number) => (
-                        <tr key={idx} className="border-b hover:bg-gray-50">
-                          <td className="py-2 px-3">
-                            <div>
-                              <div className="font-medium">{feature.name}</div>
-                              {feature.description && (
-                                <div className="text-xs text-muted-foreground">{feature.description}</div>
-                              )}
-                              {feature.linkedTo && (
-                                <div className="text-xs text-blue-600 italic mt-1">
-                                  → Vinculado a: {feature.linkedTo}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "locacao", "prime", String(idx), "included"],
-                                  !formData.featureMatrix.locacao.prime[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.locacao.prime[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "locacao", "k", String(idx), "included"],
-                                  !formData.featureMatrix.locacao.k[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.locacao.k[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                          <td className="text-center py-2 px-3">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateValue(
-                                  ["featureMatrix", "locacao", "k2", String(idx), "included"],
-                                  !formData.featureMatrix.locacao.k2[idx]?.included
-                                )
-                              }
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                            >
-                              {formData.featureMatrix.locacao.k2[idx]?.included ? (
-                                <span className="text-green-600 font-bold text-lg">✅</span>
-                              ) : (
-                                <span className="text-gray-400 font-bold">—</span>
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-
-            <HelperText>
-              <strong>Regra absoluta:</strong> A calculadora, páginas de produtos e PDF devem APENAS ler esta matriz.
-              Nunca inferir, nunca codificar lógica de inclusão fora desta configuração.
-            </HelperText>
-          </div>
-
-          {/* Bottom spacer */}
-          <div className="h-8"></div>
-        </div>
+        <Alert className="bg-primary/5 border-primary/20">
+          <Info className="w-4 h-4 text-primary" />
+          <AlertDescription className="text-sm">
+            <strong>Essa configuração é a fonte única de verdade para Calculadora e PDF.</strong>
+            {" "}Qualquer alteração aqui impacta imediatamente todas as cotações, páginas públicas e documentos gerados.
+            {lastModified && (
+              <span className="block mt-1 text-xs text-muted-foreground">
+                Última alteração em: {new Date(lastModified).toLocaleString('pt-BR')}
+              </span>
+            )}
+          </AlertDescription>
+        </Alert>
       </div>
+
+      {/* BLOCO A — Ciclo de Pagamento (Fundação) */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="A"
+            title="Ciclo de Pagamento (Fundação)"
+            description="Multiplicadores e descontos por ciclo — aplicados ANTES de qualquer desconto de combo"
+          />
+          <Alert className="bg-blue-50 border-blue-200">
+            <Info className="w-4 h-4 text-blue-600" />
+            <AlertDescription className="text-xs text-blue-900">
+              <strong>Regra global:</strong> O desconto de ciclo é sempre aplicado antes de qualquer desconto de combo.
+              Ordem: Preço Base → Ciclo → Combo.
+            </AlertDescription>
+          </Alert>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {Object.entries(formData.paymentCycles || {}).map(([cycleKey, cycleData]: [string, any]) => {
+            if (cycleKey.startsWith('_')) return null; // Skip metadata fields
+            
+            return (
+              <Card key={cycleKey} className="border-l-4 border-l-primary/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg capitalize">{cycleKey === 'monthly' ? 'Mensal' : cycleKey === 'semiannual' ? 'Semestral' : cycleKey === 'annual' ? 'Anual' : 'Bienal'}</CardTitle>
+                  <CardDescription className="text-xs">
+                    Tipo: <strong>{cycleData.type}</strong> • {cycleData.displayLabel}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-xs">Multiplicador</Label>
+                    <NumberInput
+                      value={cycleData.multiplier}
+                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'multiplier'], val)}
+                    />
+                    <HelperText>Fator aplicado ao preço base</HelperText>
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-xs">Fórmula</Label>
+                    <Input
+                      value={cycleData.formula}
+                      onChange={(e) => updateValue(['paymentCycles', cycleKey, 'formula'], e.target.value)}
+                      className="h-7 text-sm font-mono"
+                    />
+                    <HelperText>Fórmula de cálculo explícita</HelperText>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* BLOCO B — Planos Base — Preço Anual de Fundação */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="B"
+            title="Planos Base — Preço Anual de Fundação"
+            description="Nada de mensal aqui. Nada de desconto aqui. Este é o preço raiz."
+          />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {['imob', 'locacao'].map((product) => (
+            <div key={product} className="space-y-4">
+              <h3 className="text-lg font-semibold capitalize border-b pb-2">
+                {product === 'imob' ? 'Kenlo IMOB' : 'Kenlo Locação'}
+              </h3>
+              <div className="grid grid-cols-3 gap-4">
+                {['prime', 'k', 'k2'].map((plan) => {
+                  const planData = formData.basePlans?.[product]?.[plan];
+                  if (!planData) return null;
+                  
+                  return (
+                    <Card key={plan} className="border-l-4 border-l-secondary/30">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base uppercase">{plan}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div>
+                          <Label className="text-xs">Preço Anual Base (R$)</Label>
+                          <NumberInput
+                            value={planData.annualPrice}
+                            onChange={(val: number) => updateValue(['basePlans', product, plan, 'annualPrice'], val)}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">
+                            {planData.includedUnits?.type === 'users' ? 'Usuários Inclusos' : 'Contratos Inclusos'}
+                          </Label>
+                          <NumberInput
+                            value={planData.includedUnits?.quantity || 0}
+                            onChange={(val: number) => updateValue(['basePlans', product, plan, 'includedUnits', 'quantity'], val)}
+                          />
+                        </div>
+                        <HelperText>{planData.internalNote}</HelperText>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* BLOCO C — Add-ons — Preços Base e Escopo */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="C"
+            title="Add-ons — Preços Base e Escopo"
+            description="Preços recorrentes, implementação e disponibilidade por produto"
+          />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {Object.entries(formData.addons || {}).map(([addonKey, addonData]: [string, any]) => {
+            if (addonKey.startsWith('_')) return null;
+            
+            return (
+              <Card key={addonKey} className="border-l-4 border-l-accent/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base capitalize">Kenlo {addonKey}</CardTitle>
+                  <CardDescription className="text-xs">
+                    Disponível em: <strong>{addonData.availability?.join(', ')}</strong>
+                    {addonData.shareable && ' • Compartilhável entre produtos'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-4 gap-4">
+                  <div>
+                    <Label className="text-xs">Preço Anual (R$)</Label>
+                    <NumberInput
+                      value={addonData.annualPrice}
+                      onChange={(val: number) => updateValue(['addons', addonKey, 'annualPrice'], val)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Implementação (R$)</Label>
+                    <NumberInput
+                      value={addonData.implementation}
+                      onChange={(val: number) => updateValue(['addons', addonKey, 'implementation'], val)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Unidades Inclusas</Label>
+                    <NumberInput
+                      value={addonData.includedUnits?.quantity || 0}
+                      onChange={(val: number) => updateValue(['addons', addonKey, 'includedUnits', 'quantity'], val)}
+                      disabled={!addonData.includedUnits}
+                    />
+                    {addonData.includedUnits && (
+                      <HelperText>{addonData.includedUnits.type}</HelperText>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      checked={addonData.shareable}
+                      onCheckedChange={(checked) => updateValue(['addons', addonKey, 'shareable'], checked)}
+                    />
+                    <Label className="text-xs">Compartilhável</Label>
+                  </div>
+                </CardContent>
+                {addonData._note && (
+                  <CardContent className="pt-0">
+                    <HelperText>{addonData._note}</HelperText>
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
+        </CardContent>
+      </Card>
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-600" />
-              Confirmar Alterações de Preços
-            </DialogTitle>
+            <DialogTitle>Confirmar Alterações</DialogTitle>
             <DialogDescription>
-              Você está prestes a alterar a configuração de preços da plataforma.
-              Essas mudanças afetarão:
+              Você está prestes a alterar a configuração de preços. Isso impactará:
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <Alert className="bg-yellow-50 border-yellow-200">
-              <AlertCircle className="h-4 w-4 text-yellow-600" />
-              <AlertDescription className="text-sm text-yellow-800">
-                <ul className="list-disc list-inside space-y-1 mt-1">
-                  <li>Novos contratos criados após esta alteração</li>
-                  <li>Cálculos na Calculadora de Preços</li>
-                  <li>PDFs de propostas exportados</li>
-                </ul>
-              </AlertDescription>
-            </Alert>
-            <div className="space-y-2">
-              <Label htmlFor="reason" className="text-sm font-medium">
-                Motivo da alteração (opcional)
-              </Label>
-              <Textarea
-                id="reason"
-                placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K2, etc."
-                value={changeReason}
-                onChange={(e) => setChangeReason(e.target.value)}
-                rows={3}
-                className="text-sm"
-              />
-            </div>
+          
+          <Alert className="bg-amber-50 border-amber-200">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <AlertDescription className="text-xs text-amber-900">
+              <ul className="list-disc list-inside space-y-1">
+                <li>Todas as novas cotações geradas pela calculadora</li>
+                <li>PDFs gerados a partir de agora</li>
+                <li>Páginas públicas de produtos</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-2">
+            <Label>Motivo da alteração (opcional)</Label>
+            <Textarea
+              value={changeReason}
+              onChange={(e) => setChangeReason(e.target.value)}
+              placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K2, etc."
+              rows={3}
+            />
           </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowConfirmDialog(false)}
-              className="w-full sm:w-auto"
-            >
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleConfirmSave}
-              disabled={saveConfigMutation.isPending}
-              className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
-            >
+            <Button onClick={handleConfirmSave} disabled={saveConfigMutation.isPending}>
               {saveConfigMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   Salvando...
                 </>
               ) : (
@@ -1068,6 +421,341 @@ export default function PricingAdminPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* BLOCO D — Serviços Premium (Recorrentes e Não Recorrentes) */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="D"
+            title="Serviços Premium (Recorrentes e Não Recorrentes)"
+            description="Serviços mensais recorrentes e serviços únicos com regras de herança e duplicação"
+          />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Recurring Services */}
+          <div>
+            <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Recorrentes Mensais</h3>
+            <div className="space-y-4">
+              {Object.entries(formData.premiumServices?.recurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
+                <Card key={serviceKey} className="border-l-4 border-l-purple-300">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">
+                      {serviceKey === 'vipSupport' ? 'Suporte VIP' : 'CS Dedicado'}
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Herança: <strong>{serviceData.inheritanceRule}</strong>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-4 gap-4">
+                      <div>
+                        <Label className="text-xs">Preço Mensal (R$)</Label>
+                        <NumberInput
+                          value={serviceData.monthlyPrice}
+                          onChange={(val: number) => updateValue(['premiumServices', 'recurring', serviceKey, 'monthlyPrice'], val)}
+                        />
+                      </div>
+                      <div className="col-span-3 space-y-2">
+                        <Label className="text-xs">Habilitado por padrão em:</Label>
+                        <div className="flex gap-4">
+                          {['prime', 'k', 'k2'].map((plan) => (
+                            <div key={plan} className="flex items-center gap-2">
+                              <Checkbox
+                                checked={serviceData.defaultByPlan?.[plan]}
+                                onCheckedChange={(checked) => updateValue(['premiumServices', 'recurring', serviceKey, 'defaultByPlan', plan], checked)}
+                              />
+                              <Label className="text-xs uppercase">{plan}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {serviceData._inheritanceNote && (
+                      <HelperText>{serviceData._inheritanceNote}</HelperText>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Non-Recurring Services */}
+          <div>
+            <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Não Recorrentes (Únicos)</h3>
+            <div className="space-y-4">
+              {Object.entries(formData.premiumServices?.nonRecurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
+                <Card key={serviceKey} className="border-l-4 border-l-indigo-300">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">
+                      {serviceKey === 'treinamentoOnline' ? 'Treinamento Online' : 'Treinamento Presencial'}
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Duplicação: <strong>{serviceData.duplicationRule}</strong>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-4 gap-4">
+                      <div>
+                        <Label className="text-xs">Preço Unitário (R$)</Label>
+                        <NumberInput
+                          value={serviceData.unitPrice}
+                          onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'unitPrice'], val)}
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <Label className="text-xs">Quantidade Inclusa por Plano</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {['prime', 'k', 'k2'].map((plan) => (
+                            <div key={plan}>
+                              <Label className="text-[10px] uppercase text-muted-foreground">{plan}</Label>
+                              <NumberInput
+                                value={serviceData.includedQuantityByPlan?.[plan] || 0}
+                                onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'includedQuantityByPlan', plan], val)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {serviceData._duplicationNote && (
+                      <HelperText>{serviceData._duplicationNote}</HelperText>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* BLOCO E — Kombos — Descontos Promocionais Cumulativos */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="E"
+            title="Kombos — Descontos Promocionais Cumulativos"
+            description="Descontos aplicados sobre o valor já ajustado pelo ciclo"
+          />
+          <Alert className="bg-green-50 border-green-200">
+            <Info className="w-4 h-4 text-green-600" />
+            <AlertDescription className="text-xs text-green-900">
+              <strong>Regra global:</strong> {formData.kombos?._globalRule || 'Desconto aplicado sobre o valor já ajustado pelo ciclo'}
+            </AlertDescription>
+          </Alert>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {Object.entries(formData.kombos || {}).map(([komboKey, komboData]: [string, any]) => {
+            if (komboKey.startsWith('_')) return null;
+            
+            return (
+              <Card key={komboKey} className="border-l-4 border-l-green-400">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">{komboData.name}</CardTitle>
+                  <CardDescription className="text-xs">
+                    Produtos: <strong>{komboData.productsIncluded?.join(', ')}</strong>
+                    {komboData.addonsIncluded?.length > 0 && (
+                      <> • Add-ons: <strong>{komboData.addonsIncluded.join(', ')}</strong></>
+                    )}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-xs">Desconto (%)</Label>
+                    <NumberInput
+                      value={komboData.discount * 100}
+                      onChange={(val: number) => updateValue(['kombos', komboKey, 'discount'], val / 100)}
+                    />
+                    <HelperText>Aplicado após desconto de ciclo</HelperText>
+                  </div>
+                  <div>
+                    <Label className="text-xs">Implantações Gratuitas</Label>
+                    <NumberInput
+                      value={komboData.freeImplementations}
+                      onChange={(val: number) => updateValue(['kombos', komboKey, 'freeImplementations'], val)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Ordem de Aplicação</Label>
+                    <Input
+                      value={komboData.discountOrder}
+                      disabled
+                      className="h-7 text-sm bg-muted"
+                    />
+                    <HelperText>Sempre após ciclo (ordem 2)</HelperText>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* BLOCO F — Custos Variáveis Pós-Pago (por Faixa de Uso) */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="F"
+            title="Custos Variáveis Pós-Pago (por Faixa de Uso)"
+            description="Preços por faixa de uso para usuários, contratos, leads, boletos, splits e seguros"
+          />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {Object.entries(formData.variableCosts || {}).map(([costKey, costData]: [string, any]) => {
+            if (costKey.startsWith('_')) return null;
+            
+            return (
+              <Card key={costKey} className="border-l-4 border-l-orange-300">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base capitalize">
+                    {costKey.replace(/([A-Z])/g, ' $1').trim()}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Produto: <strong>{costData.product}</strong> • Unidade: <strong>{costData.unit}</strong>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {Object.entries(costData.tiers || {}).map(([planKey, tiers]: [string, any]) => (
+                    <div key={planKey} className="mb-4">
+                      <Label className="text-xs uppercase font-semibold mb-2 block">{planKey}</Label>
+                      <div className="space-y-2">
+                        {tiers.map((tier: any, idx: number) => (
+                          <div key={idx} className="grid grid-cols-4 gap-2 items-center">
+                            <div>
+                              <Label className="text-[10px]">De</Label>
+                              <NumberInput
+                                value={tier.from || 0}
+                                onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'from'], val)}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-[10px]">Até</Label>
+                              <NumberInput
+                                value={tier.to || 0}
+                                onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'to'], val)}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-[10px]">{tier.price !== undefined ? 'Preço' : 'Taxa (%)'}</Label>
+                              <NumberInput
+                                value={tier.price !== undefined ? (tier.price || 0) : ((tier.rate || 0) * 100)}
+                                onChange={(val: number) => {
+                                  if (tier.price !== undefined) {
+                                    updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'price'], val);
+                                  } else {
+                                    updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'rate'], val / 100);
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {tier.to === 999999 ? '∞' : `Faixa ${idx + 1}`}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {costData._note && (
+                    <HelperText>{costData._note}</HelperText>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* BLOCO G — Matriz de Funcionalidades — Fonte Única de Verdade */}
+      <Card className="mb-8">
+        <CardHeader>
+          <SectionHeader
+            letter="G"
+            title="Matriz de Funcionalidades — Fonte Única de Verdade"
+            description="Define exatamente quais funcionalidades estão incluídas em cada plano"
+          />
+          <Alert className="bg-red-50 border-red-200">
+            <AlertTriangle className="w-4 h-4 text-red-600" />
+            <AlertDescription className="text-xs text-red-900">
+              <strong>Atenção:</strong> {formData.featureMatrix?._warning || 'Qualquer alteração aqui impacta imediatamente calculadora, páginas públicas e PDFs'}
+            </AlertDescription>
+          </Alert>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {['imob', 'locacao'].map((product) => (
+            <div key={product}>
+              <h3 className="text-lg font-semibold capitalize border-b pb-2 mb-4">
+                Kenlo {product === 'imob' ? 'IMOB' : 'Locação'}
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-2 font-semibold">Funcionalidade</th>
+                      <th className="text-center py-2 px-2 font-semibold uppercase">Prime</th>
+                      <th className="text-center py-2 px-2 font-semibold uppercase">K</th>
+                      <th className="text-center py-2 px-2 font-semibold uppercase">K2</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Get all unique features across all plans */}
+                    {(() => {
+                      const allFeatures = new Map();
+                      ['prime', 'k', 'k2'].forEach((plan) => {
+                        formData.featureMatrix?.[product]?.[plan]?.forEach((feature: any) => {
+                          if (!allFeatures.has(feature.name)) {
+                            allFeatures.set(feature.name, feature);
+                          }
+                        });
+                      });
+                      
+                      return Array.from(allFeatures.values()).map((feature: any, idx: number) => (
+                        <tr key={idx} className="border-b hover:bg-muted/50">
+                          <td className="py-2 px-2">
+                            <div>
+                              <div className="font-medium">{feature.name}</div>
+                              <div className="text-xs text-muted-foreground">{feature.description}</div>
+                              {(feature.linkedToAddon || feature.linkedToPremiumService) && (
+                                <div className="text-[10px] text-blue-600 mt-1">
+                                  → {feature.linkedToAddon ? `Add-on: ${feature.linkedToAddon}` : `Premium: ${feature.linkedToPremiumService}`}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          {['prime', 'k', 'k2'].map((plan) => {
+                            const planFeatures = formData.featureMatrix?.[product]?.[plan] || [];
+                            const planFeature = planFeatures.find((f: any) => f.name === feature.name);
+                            const isIncluded = planFeature?.included || false;
+                            
+                            return (
+                              <td key={plan} className="text-center py-2 px-2">
+                                <button
+                                  onClick={() => {
+                                    const featureIdx = planFeatures.findIndex((f: any) => f.name === feature.name);
+                                    if (featureIdx >= 0) {
+                                      updateValue(['featureMatrix', product, plan, String(featureIdx), 'included'], !isIncluded);
+                                    }
+                                  }}
+                                  className="inline-flex items-center justify-center w-8 h-8 rounded hover:bg-muted transition-colors"
+                                >
+                                  {isIncluded ? (
+                                    <Check className="w-5 h-5 text-green-600" />
+                                  ) : (
+                                    <X className="w-5 h-5 text-muted-foreground" />
+                                  )}
+                                </button>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ));
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
