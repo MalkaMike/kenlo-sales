@@ -11,11 +11,11 @@
  * - Clean, modular code for easy modifications
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2 } from "lucide-react";
+import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -705,6 +705,28 @@ const createUnavailableColumn = (
 // COMPONENT
 // ============================================================================
 
+// Contextual banner config per product type
+const PRODUCT_BANNER_CONFIG: Record<ProductSelection, { icon: typeof Building2; title: string; description: string; color: string }> = {
+  imob: {
+    icon: Building2,
+    title: "Kombos para Vendas",
+    description: "Compare sua seleção com os Kombos disponíveis para imobiliárias focadas em vendas.",
+    color: "text-primary",
+  },
+  loc: {
+    icon: Home,
+    title: "Kombo para Locação",
+    description: "Compare sua seleção com o Kombo otimizado para gestão de locações.",
+    color: "text-blue-600",
+  },
+  both: {
+    icon: Layers,
+    title: "Kombos Integrados",
+    description: "Compare sua seleção com os Kombos que combinam vendas e locação em uma única solução.",
+    color: "text-purple-600",
+  },
+};
+
 export function KomboComparisonTable(props: KomboComparisonProps) {
   // Initialize viewMode from props.frequency to stay in sync
   const [viewMode, setViewMode] = useState<ViewMode>(props.frequency);
@@ -719,6 +741,37 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
   // Hovered column for temporary visual focus
   const [hoveredColumn, setHoveredColumn] = useState<KomboId | null>(null);
+
+  // Track previous product for transition animation
+  const prevProductRef = useRef<ProductSelection>(props.product);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // (2) Auto-reset selected Kombo when product type changes
+  useEffect(() => {
+    if (prevProductRef.current !== props.product) {
+      // Product changed — clear incompatible Kombo selection
+      if (selectedPlan && selectedPlan !== "none") {
+        const newCompatible = (() => {
+          switch (props.product) {
+            case "imob": return ["imob_start", "imob_pro"];
+            case "loc": return ["locacao_pro"];
+            case "both": return ["core_gestao", "elite"];
+            default: return [];
+          }
+        })();
+        if (!newCompatible.includes(selectedPlan)) {
+          setSelectedPlan(null);
+          props.onPlanSelected?.(null);
+        }
+      }
+
+      // (1) Trigger transition animation
+      setIsTransitioning(true);
+      const timer = setTimeout(() => setIsTransitioning(false), 400);
+      prevProductRef.current = props.product;
+      return () => clearTimeout(timer);
+    }
+  }, [props.product]);
 
   // Handle frequency change - update local state AND notify parent
   const handleFrequencyChange = (newFrequency: ViewMode) => {
@@ -742,24 +795,27 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Imob only → Imob Start, Imob Pro
   // Loc only → Loc Pro
   // Both (Imob + Loc) → Core Gestão, Elite
-  const compatibleKomboIds: KomboId[] = (() => {
+  const compatibleKomboIds: KomboId[] = useMemo(() => {
     switch (props.product) {
       case "imob":
-        return ["imob_start", "imob_pro"];
+        return ["imob_start", "imob_pro"] as KomboId[];
       case "loc":
-        return ["locacao_pro"];
+        return ["locacao_pro"] as KomboId[];
       case "both":
-        return ["core_gestao", "elite"];
+        return ["core_gestao", "elite"] as KomboId[];
       default:
-        return [];
+        return [] as KomboId[];
     }
-  })();
+  }, [props.product]);
 
   // Calculate columns: always "Sua Seleção" first, then only compatible Kombos
   const columns: KomboColumnData[] = [
     calculateKomboColumn("none", propsWithFrequency, recommendedKombo),
     ...compatibleKomboIds.map(id => calculateKomboColumn(id, propsWithFrequency, recommendedKombo)),
   ];
+
+  // (3) Banner config for current product
+  const bannerConfig = PRODUCT_BANNER_CONFIG[props.product];
 
   // Row definitions for the table
   // Include plan name (K2) in red for Imob and Loc rows
@@ -889,6 +945,21 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           <div className="pb-2 mb-2">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
             
+            {/* (3) Contextual Banner */}
+            {bannerConfig && (
+              <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg mb-3 transition-all duration-300 ${
+                props.product === "imob" ? "bg-primary/5 border border-primary/15" :
+                props.product === "loc" ? "bg-blue-50 border border-blue-200/50" :
+                "bg-purple-50 border border-purple-200/50"
+              }`}>
+                <bannerConfig.icon className={`w-5 h-5 flex-shrink-0 ${bannerConfig.color}`} />
+                <div>
+                  <span className={`text-sm font-semibold ${bannerConfig.color}`}>{bannerConfig.title}</span>
+                  <span className="text-xs text-gray-500 ml-2">{bannerConfig.description}</span>
+                </div>
+              </div>
+            )}
+
             {/* Frequency Selector - Right below title */}
             <div className="flex items-center gap-1.5 mb-3">
               {FREQUENCY_OPTIONS.map((option) => (
@@ -910,8 +981,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             </div>
           </div>
 
-          {/* Comparison Table */}
-          <div className="w-full">
+          {/* Comparison Table with transition animation */}
+          <div className={`w-full transition-all duration-300 ${isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
             <table className="w-full text-sm border-collapse table-fixed" onMouseLeave={() => setHoveredColumn(null)}>
               <colgroup>
                 <col style={{ width: "180px" }} />

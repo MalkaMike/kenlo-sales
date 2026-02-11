@@ -3499,3 +3499,9 @@
 - [x] Both (Imob + Loc) → show only Kombo Core Gestão and Kombo Elite
 - [x] Ensure the "Sua Seleção" column always appears as first column
 - [x] Verify no broken layout when fewer columns are displayed
+
+## Kombo Comparison Table — UX Improvements
+
+- [x] Smooth transition animation when Kombo columns change (product switch)
+- [x] Auto-reset selected Kombo when product type changes (incompatible Kombo cleared)
+- [x] Contextual banner above table explaining available Kombos for selected product
