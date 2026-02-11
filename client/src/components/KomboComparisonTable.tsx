@@ -2,20 +2,23 @@
  * Kombo Comparison Table Component
  * 
  * Displays a comparison table showing prices for:
- * - Sem Kombo (no discount)
- * - All 5 Kombos with their respective discounts
+ * - Sua Seleção (no discount) — locked to parent calculator state
+ * - Compatible Kombos with their respective discounts
+ * - Empty custom columns the user can configure independently
  * 
  * Features:
- * - Toggle between Monthly and Annual view
+ * - Per-column payment cycle selector (each column independent)
+ * - Per-column plan & add-on selection (clickable cells)
  * - Auto-highlight recommended Kombo based on user selections
- * - Clean, modular code for easy modifications
+ * - Smooth transition animation when product type changes
+ * - Contextual banner showing available Kombos
  */
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers } from "lucide-react";
+import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers, ChevronDown } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -57,14 +60,31 @@ interface KomboComparisonProps {
 type KomboId = "none" | "imob_start" | "imob_pro" | "locacao_pro" | "core_gestao" | "elite";
 type ViewMode = "monthly" | "semestral" | "annual" | "biennial";
 
-// Frequency options for the selector
-// Monthly is the mental reference for clients, discounts shown from monthly perspective
-const FREQUENCY_OPTIONS: { id: ViewMode; label: string; discount: string }[] = [
-  { id: "monthly", label: "Mensal", discount: "Ref." },
-  { id: "semestral", label: "Semestral", discount: "−10%" },
-  { id: "annual", label: "Anual", discount: "−20%" },
-  { id: "biennial", label: "Bienal", discount: "−28%" },
+// Per-column override state for independent configurator behavior
+interface ColumnOverrides {
+  frequency: PaymentFrequency;
+  imobPlan: PlanTier;
+  locPlan: PlanTier;
+  addons: {
+    leads: boolean;
+    inteligencia: boolean;
+    assinatura: boolean;
+    pay: boolean;
+    seguros: boolean;
+    cash: boolean;
+  };
+}
+
+// Frequency options for the per-column selector
+const FREQUENCY_OPTIONS: { id: ViewMode; label: string; shortLabel: string; discount: string }[] = [
+  { id: "monthly", label: "Mensal", shortLabel: "Mensal", discount: "Ref." },
+  { id: "semestral", label: "Semestral", shortLabel: "Sem.", discount: "−10%" },
+  { id: "annual", label: "Anual", shortLabel: "Anual", discount: "−20%" },
+  { id: "biennial", label: "Bienal", shortLabel: "Bienal", discount: "−28%" },
 ];
+
+// Plan tiers for clickable cycling
+const PLAN_TIERS: PlanTier[] = ["prime", "k", "k2"];
 
 interface KomboColumnData {
   id: KomboId;
@@ -84,14 +104,16 @@ interface KomboColumnData {
   cashPrice: string | null; // "Grátis" or null
   vipSupportPrice: number | string | null; // number, "Incluído", or null
   dedicatedCSPrice: number | string | null;
-  trainingPrice: string | null; // "Incluído (2x online ou 1 presencial)", "Incluído (4x online ou 2 presencial)", or null
+  trainingPrice: string | null;
   // Subscription count (products + add-ons, excluding premium services)
   subscriptionCount: number;
   // Totals
   totalMonthly: number;
-  theoreticalImplementation: number; // Sum of all individual impl. costs without combo discount
-  implementation: number; // Actual amount charged
-  annualEquivalent: number; // 12 months + implementation
+  theoreticalImplementation: number;
+  implementation: number;
+  annualEquivalent: number;
+  // Per-column overrides (for display in UI)
+  overrides?: ColumnOverrides;
 }
 
 // ============================================================================
@@ -144,7 +166,7 @@ const KOMBO_DEFINITIONS = {
     products: ["imob"] as ProductSelection[],
     includedAddons: ["leads", "assinatura"],
     includesPremiumServices: false,
-    freeImplementations: ["leads"], // Leads implementation is free
+    freeImplementations: ["leads"],
     tooltipInfo: {
       description: "Ideal para imobiliárias focadas em vendas",
       includes: ["Imob", "Leads", "Assinatura"],
@@ -159,7 +181,7 @@ const KOMBO_DEFINITIONS = {
     discount: 0.15,
     products: ["imob"] as ProductSelection[],
     includedAddons: ["leads", "inteligencia", "assinatura"],
-    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    includesPremiumServices: true,
     freeImplementations: ["leads", "inteligencia"],
     tooltipInfo: {
       description: "Solução completa para vendas com BI",
@@ -175,7 +197,7 @@ const KOMBO_DEFINITIONS = {
     discount: 0.10,
     products: ["loc"] as ProductSelection[],
     includedAddons: ["inteligencia", "assinatura"],
-    includesPremiumServices: true, // INCLUI VIP + CS Dedicado
+    includesPremiumServices: true,
     freeImplementations: ["inteligencia"],
     tooltipInfo: {
       description: "Ideal para gestão de locações com BI",
@@ -188,10 +210,10 @@ const KOMBO_DEFINITIONS = {
   core_gestao: {
     name: "Kombo Core Gestão",
     shortName: "Core Gestão",
-    discount: 0, // No monthly discount
+    discount: 0,
     products: ["both"] as ProductSelection[],
     includedAddons: [] as string[],
-    includesPremiumServices: true, // VIP + CS included
+    includesPremiumServices: true,
     freeImplementations: ["imob"],
     tooltipInfo: {
       description: "IMOB + LOC sem add-ons",
@@ -207,7 +229,7 @@ const KOMBO_DEFINITIONS = {
     discount: 0.20,
     products: ["both"] as ProductSelection[],
     includedAddons: ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"],
-    includesPremiumServices: true, // VIP + CS included
+    includesPremiumServices: true,
     freeImplementations: ["imob", "leads", "inteligencia"],
     tooltipInfo: {
       description: "Solução completa com todos os produtos",
@@ -223,42 +245,24 @@ const KOMBO_DEFINITIONS = {
 // HELPER FUNCTIONS
 // ============================================================================
 
-/**
- * Round price UP to next value ending in 7
- * Rule applies ONLY for prices above R$ 100
- * Prices below R$ 100 use normal rounding
- */
 const roundToEndIn7 = (price: number): number => {
-  // For prices below 100, use normal rounding
   if (price < 100) return Math.round(price);
-  
-  // For prices >= 100, round to end in 7
   const lastDigit = price % 10;
   if (lastDigit === 7) return price;
   if (lastDigit < 7) return price - lastDigit + 7;
   return price - lastDigit + 17;
 };
 
-/**
- * Calculate price with frequency multiplier
- */
 const calculatePrice = (annualPrice: number, frequency: PaymentFrequency): number => {
   const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[frequency];
   return roundToEndIn7(Math.round(annualPrice * multiplier));
 };
 
-/**
- * Apply Kombo discount to a price
- * Note: price is already rounded to end in 7, so we just apply discount without re-rounding
- */
 const applyDiscount = (price: number, discount: number): number => {
   if (discount === 0) return price;
   return Math.round(price * (1 - discount));
 };
 
-/**
- * Format currency in Brazilian Real
- */
 const formatCurrency = (value: number): string => {
   return value.toLocaleString("pt-BR", {
     minimumFractionDigits: 0,
@@ -266,83 +270,38 @@ const formatCurrency = (value: number): string => {
   });
 };
 
-/**
- * Check if Premium Services are included in plan (K or K2)
- */
 const isPremiumIncludedInPlan = (plan: PlanTier): boolean => {
   return plan === "k" || plan === "k2";
 };
 
-/**
- * Determine which Kombo is recommended based on user selections
- * A Kombo is recommended when the user has the MINIMUM required items.
- * Having EXTRA add-ons doesn't disqualify a Kombo - we recommend the best match.
- */
 const getRecommendedKombo = (
   product: ProductSelection,
   addons: KomboComparisonProps["addons"]
 ): KomboId => {
-  // Elite: IMOB + LOC + ALL 6 add-ons
   if (
     product === "both" &&
-    addons.leads &&
-    addons.inteligencia &&
-    addons.assinatura &&
-    addons.pay &&
-    addons.seguros &&
-    addons.cash
-  ) {
-    return "elite";
-  }
+    addons.leads && addons.inteligencia && addons.assinatura &&
+    addons.pay && addons.seguros && addons.cash
+  ) return "elite";
 
-  // Core Gestão: IMOB + LOC + NO add-ons
   if (
     product === "both" &&
-    !addons.leads &&
-    !addons.inteligencia &&
-    !addons.assinatura &&
-    !addons.pay &&
-    !addons.seguros &&
-    !addons.cash
-  ) {
-    return "core_gestao";
-  }
+    !addons.leads && !addons.inteligencia && !addons.assinatura &&
+    !addons.pay && !addons.seguros && !addons.cash
+  ) return "core_gestao";
 
-  // Imob Pro: IMOB + Leads + Inteligência + Assinatura (priority over Imob Start)
-  if (
-    product === "imob" &&
-    addons.leads &&
-    addons.inteligencia &&
-    addons.assinatura
-  ) {
+  if (product === "imob" && addons.leads && addons.inteligencia && addons.assinatura)
     return "imob_pro";
-  }
 
-  // Imob Start: IMOB + Leads + Assinatura (without Inteligência)
-  if (
-    product === "imob" &&
-    addons.leads &&
-    addons.assinatura &&
-    !addons.inteligencia
-  ) {
+  if (product === "imob" && addons.leads && addons.assinatura && !addons.inteligencia)
     return "imob_start";
-  }
 
-  // Locação Pro: LOC + Inteligência + Assinatura
-  if (
-    product === "loc" &&
-    addons.inteligencia &&
-    addons.assinatura
-  ) {
+  if (product === "loc" && addons.inteligencia && addons.assinatura)
     return "locacao_pro";
-  }
 
   return "none";
 };
 
-/**
- * Check if a Kombo is available for the current product selection
- */
 const isKomboAvailable = (komboId: KomboId, product: ProductSelection): boolean => {
   if (komboId === "none") return true;
   const kombo = KOMBO_DEFINITIONS[komboId];
@@ -355,33 +314,37 @@ const isKomboAvailable = (komboId: KomboId, product: ProductSelection): boolean 
 // ============================================================================
 
 /**
- * Calculate all data for a single Kombo column
+ * Calculate all data for a single Kombo column with optional overrides
  */
 const calculateKomboColumn = (
   komboId: KomboId,
   props: KomboComparisonProps,
-  recommendedKombo: KomboId
+  recommendedKombo: KomboId,
+  overrides?: ColumnOverrides
 ): KomboColumnData => {
-  const { product, imobPlan, locPlan, addons, frequency, vipSupport, dedicatedCS } = props;
+  // Use overrides if provided, otherwise use props
+  const frequency = overrides?.frequency ?? props.frequency;
+  const imobPlan = overrides?.imobPlan ?? props.imobPlan;
+  const locPlan = overrides?.locPlan ?? props.locPlan;
+  const addons = overrides?.addons ?? props.addons;
+  const { product, vipSupport, dedicatedCS } = props;
 
-  // Sem Kombo (no discount)
   if (komboId === "none") {
-    return calculateNoKomboColumn(props, recommendedKombo === "none");
+    return calculateNoKomboColumn(
+      { ...props, frequency, imobPlan, locPlan, addons },
+      recommendedKombo === "none",
+      overrides
+    );
   }
 
   const kombo = KOMBO_DEFINITIONS[komboId];
   const isAvailable = isKomboAvailable(komboId, product);
   const isRecommended = komboId === recommendedKombo;
 
-  // Always calculate prices, even when Kombo is not available
-  // This allows users to see hypothetical prices for comparison
-
-  // Calculate prices with Kombo discount
   const discount = kombo.discount;
   let totalMonthly = 0;
-  let implementation = IMPLEMENTATION_COSTS.combo; // All Kombos have fixed R$1.497 implementation
+  let implementation = IMPLEMENTATION_COSTS.combo;
 
-  // Calculate theoretical implementation (sum of all individual costs without combo)
   let theoreticalImplementation = 0;
   if (kombo.products.includes("imob" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
     theoreticalImplementation += IMPLEMENTATION_COSTS.imob;
@@ -389,21 +352,13 @@ const calculateKomboColumn = (
   if (kombo.products.includes("loc" as ProductSelection) || kombo.products.includes("both" as ProductSelection)) {
     theoreticalImplementation += IMPLEMENTATION_COSTS.loc;
   }
-  if (kombo.includedAddons.includes("leads")) {
-    theoreticalImplementation += IMPLEMENTATION_COSTS.leads;
-  }
-  if (kombo.includedAddons.includes("inteligencia")) {
-    theoreticalImplementation += IMPLEMENTATION_COSTS.inteligencia;
-  }
+  if (kombo.includedAddons.includes("leads")) theoreticalImplementation += IMPLEMENTATION_COSTS.leads;
+  if (kombo.includedAddons.includes("inteligencia")) theoreticalImplementation += IMPLEMENTATION_COSTS.inteligencia;
 
-  // Products - always show prices based on Kombo definition, not user selection
-  // This allows comparison even when Kombo is not applicable
   let imobPrice: number | null = null;
   let locPrice: number | null = null;
 
-  // Check if Kombo includes IMOB
   const komboIncludesImob = kombo.products.includes("imob" as ProductSelection) || kombo.products.includes("both" as ProductSelection);
-  // Check if Kombo includes LOC
   const komboIncludesLoc = kombo.products.includes("loc" as ProductSelection) || kombo.products.includes("both" as ProductSelection);
 
   if (komboIncludesImob) {
@@ -418,7 +373,6 @@ const calculateKomboColumn = (
     totalMonthly += locPrice;
   }
 
-  // Add-ons - always show prices based on Kombo definition
   let leadsPrice: number | null = null;
   let inteligenciaPrice: number | null = null;
   let assinaturaPrice: number | null = null;
@@ -431,52 +385,32 @@ const calculateKomboColumn = (
     leadsPrice = applyDiscount(basePrice, discount);
     totalMonthly += leadsPrice;
   }
-
   if (kombo.includedAddons.includes("inteligencia")) {
     const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
     inteligenciaPrice = applyDiscount(basePrice, discount);
     totalMonthly += inteligenciaPrice;
   }
-
   if (kombo.includedAddons.includes("assinatura")) {
     const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
     assinaturaPrice = applyDiscount(basePrice, discount);
     totalMonthly += assinaturaPrice;
   }
+  if (kombo.includedAddons.includes("pay")) payPrice = "Pós-pago";
+  if (kombo.includedAddons.includes("seguros")) segurosPrice = "Pós-pago";
+  if (kombo.includedAddons.includes("cash")) cashPrice = "Grátis";
 
-  if (kombo.includedAddons.includes("pay")) {
-    payPrice = "Pós-pago";
-  }
-
-  if (kombo.includedAddons.includes("seguros")) {
-    segurosPrice = "Pós-pago";
-  }
-
-  if (kombo.includedAddons.includes("cash")) {
-    cashPrice = "Grátis";
-  }
-
-  // Premium Services
-  // Regra: Imob Pro, Locação Pro, Core Gestão, Elite = VIP + CS INCLUÍDO no Kombo
-  // Imob Start = NÃO inclui VIP/CS (cliente paga à parte se quiser)
   let vipSupportPrice: number | string | null = null;
   let dedicatedCSPrice: number | string | null = null;
 
   if (kombo.includesPremiumServices) {
-    // Imob Pro, Locação Pro, Core Gestão, Elite incluem VIP + CS Dedicado
     vipSupportPrice = "Incluído";
     dedicatedCSPrice = "Incluído";
   } else {
-    // Imob Start NÃO inclui VIP/CS - cliente paga à parte
-    // Verificar se o plano (K/K2) já inclui
     const relevantPlan = komboIncludesLoc && !komboIncludesImob ? locPlan : imobPlan;
     if (isPremiumIncludedInPlan(relevantPlan)) {
-      // K e K2 já incluem VIP/CS no plano base
       vipSupportPrice = "Incluído";
       dedicatedCSPrice = "Incluído";
     } else {
-      // Prime: VIP/CS são opcionais e pagos à parte
-      // Mostrar preço se o usuário selecionou
       if (vipSupport) {
         vipSupportPrice = PREMIUM_SERVICES_PRICES.vipSupport;
         totalMonthly += PREMIUM_SERVICES_PRICES.vipSupport;
@@ -488,21 +422,14 @@ const calculateKomboColumn = (
     }
   }
 
-  // Treinamentos: included only for K2 plans (not a paid add-on, just a benefit)
-  // If both products are K2, cumulative: 4 online ou 2 presencial
-  // If one product is K2, 2 online ou 1 presencial
   let trainingPrice: string | null = null;
   const imobIsK2 = komboIncludesImob && imobPlan === "k2";
   const locIsK2 = komboIncludesLoc && locPlan === "k2";
-  if (imobIsK2 && locIsK2) {
-    trainingPrice = "4x online ou 2 presencial";
-  } else if (imobIsK2 || locIsK2) {
-    trainingPrice = "2x online ou 1 presencial";
-  }
+  if (imobIsK2 && locIsK2) trainingPrice = "4x online ou 2 presencial";
+  else if (imobIsK2 || locIsK2) trainingPrice = "2x online ou 1 presencial";
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
-  // Count subscriptions: products + add-ons (excluding premium services, Pay, Seguros, Cash)
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
@@ -511,44 +438,29 @@ const calculateKomboColumn = (
   if (assinaturaPrice !== null) subscriptionCount++;
 
   return {
-    id: komboId,
-    name: kombo.name,
-    shortName: kombo.shortName,
-    discount,
-    isAvailable,
-    isRecommended,
-    imobPrice,
-    locPrice,
-    leadsPrice,
-    inteligenciaPrice,
-    assinaturaPrice,
-    payPrice,
-    segurosPrice,
-    cashPrice,
-    vipSupportPrice,
-    dedicatedCSPrice,
-    trainingPrice,
-    subscriptionCount,
-    totalMonthly,
-    theoreticalImplementation,
-    implementation,
-    annualEquivalent,
+    id: komboId, name: kombo.name, shortName: kombo.shortName, discount,
+    isAvailable, isRecommended,
+    imobPrice, locPrice, leadsPrice, inteligenciaPrice, assinaturaPrice,
+    payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
+    subscriptionCount, totalMonthly, theoreticalImplementation, implementation, annualEquivalent,
+    overrides,
   };
 };
 
-/**
- * Calculate "Sem Kombo" column (no discounts)
- */
 const calculateNoKomboColumn = (
   props: KomboComparisonProps,
-  isRecommended: boolean
+  isRecommended: boolean,
+  overrides?: ColumnOverrides
 ): KomboColumnData => {
-  const { product, imobPlan, locPlan, addons, frequency, vipSupport, dedicatedCS } = props;
+  const frequency = overrides?.frequency ?? props.frequency;
+  const imobPlan = overrides?.imobPlan ?? props.imobPlan;
+  const locPlan = overrides?.locPlan ?? props.locPlan;
+  const addons = overrides?.addons ?? props.addons;
+  const { product, vipSupport, dedicatedCS } = props;
 
   let totalMonthly = 0;
   let implementation = 0;
 
-  // Products
   let imobPrice: number | null = null;
   let locPrice: number | null = null;
 
@@ -557,14 +469,12 @@ const calculateNoKomboColumn = (
     totalMonthly += imobPrice;
     implementation += IMPLEMENTATION_COSTS.imob;
   }
-
   if (product === "loc" || product === "both") {
     locPrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
     totalMonthly += locPrice;
     implementation += IMPLEMENTATION_COSTS.loc;
   }
 
-  // Add-ons
   let leadsPrice: number | null = null;
   let inteligenciaPrice: number | null = null;
   let assinaturaPrice: number | null = null;
@@ -577,35 +487,22 @@ const calculateNoKomboColumn = (
     totalMonthly += leadsPrice;
     implementation += IMPLEMENTATION_COSTS.leads;
   }
-
   if (addons.inteligencia) {
     inteligenciaPrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
     totalMonthly += inteligenciaPrice;
     implementation += IMPLEMENTATION_COSTS.inteligencia;
   }
-
   if (addons.assinatura) {
     assinaturaPrice = calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
     totalMonthly += assinaturaPrice;
   }
+  if (addons.pay && (product === "loc" || product === "both")) payPrice = "Pós-pago";
+  if (addons.seguros && (product === "loc" || product === "both")) segurosPrice = "Pós-pago";
+  if (addons.cash && (product === "loc" || product === "both")) cashPrice = "Grátis";
 
-  if (addons.pay && (product === "loc" || product === "both")) {
-    payPrice = "Pós-pago";
-  }
-
-  if (addons.seguros && (product === "loc" || product === "both")) {
-    segurosPrice = "Pós-pago";
-  }
-
-  if (addons.cash && (product === "loc" || product === "both")) {
-    cashPrice = "Grátis";
-  }
-
-  // Premium Services
   let vipSupportPrice: number | string | null = null;
   let dedicatedCSPrice: number | string | null = null;
 
-  // Check if any plan includes Premium Services
   const imobIncludesPremium = (product === "imob" || product === "both") && isPremiumIncludedInPlan(imobPlan);
   const locIncludesPremium = (product === "loc" || product === "both") && isPremiumIncludedInPlan(locPlan);
 
@@ -623,19 +520,14 @@ const calculateNoKomboColumn = (
     }
   }
 
-  // Treinamentos: included only for K2 plans
   let trainingPrice: string | null = null;
-  const imobIsK2NoKombo = (product === "imob" || product === "both") && imobPlan === "k2";
-  const locIsK2NoKombo = (product === "loc" || product === "both") && locPlan === "k2";
-  if (imobIsK2NoKombo && locIsK2NoKombo) {
-    trainingPrice = "4x online ou 2 presencial";
-  } else if (imobIsK2NoKombo || locIsK2NoKombo) {
-    trainingPrice = "2x online ou 1 presencial";
-  }
+  const imobIsK2 = (product === "imob" || product === "both") && imobPlan === "k2";
+  const locIsK2 = (product === "loc" || product === "both") && locPlan === "k2";
+  if (imobIsK2 && locIsK2) trainingPrice = "4x online ou 2 presencial";
+  else if (imobIsK2 || locIsK2) trainingPrice = "2x online ou 1 presencial";
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
-  // Count subscriptions: products + add-ons (excluding premium services, Pay, Seguros, Cash)
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
@@ -644,61 +536,25 @@ const calculateNoKomboColumn = (
   if (assinaturaPrice !== null) subscriptionCount++;
 
   return {
-    id: "none",
-    name: "Sua Seleção (Sem Kombo)",
-    shortName: "Sua Seleção",
-    discount: 0,
-    isAvailable: true,
-    isRecommended,
-    imobPrice,
-    locPrice,
-    leadsPrice,
-    inteligenciaPrice,
-    assinaturaPrice,
-    payPrice,
-    segurosPrice,
-    cashPrice,
-    vipSupportPrice,
-    dedicatedCSPrice,
-    trainingPrice,
-    subscriptionCount,
-    totalMonthly,
-    theoreticalImplementation: implementation, // Sem Kombo: theoretical = actual (no combo discount)
-    implementation,
-    annualEquivalent,
+    id: "none", name: "Sua Seleção (Sem Kombo)", shortName: "Sua Seleção", discount: 0,
+    isAvailable: true, isRecommended,
+    imobPrice, locPrice, leadsPrice, inteligenciaPrice, assinaturaPrice,
+    payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
+    subscriptionCount, totalMonthly,
+    theoreticalImplementation: implementation, implementation, annualEquivalent,
+    overrides,
   };
 };
 
-/**
- * Create an unavailable column (grayed out)
- */
 const createUnavailableColumn = (
-  id: KomboId,
-  name: string,
-  shortName: string
+  id: KomboId, name: string, shortName: string
 ): KomboColumnData => ({
-  id,
-  name,
-  shortName,
-  discount: 0,
-  isAvailable: false,
-  isRecommended: false,
-  imobPrice: null,
-  locPrice: null,
-  leadsPrice: null,
-  inteligenciaPrice: null,
-  assinaturaPrice: null,
-  payPrice: null,
-  segurosPrice: null,
-  cashPrice: null,
-  vipSupportPrice: null,
-  dedicatedCSPrice: null,
-  trainingPrice: null,
-  subscriptionCount: 0,
-  totalMonthly: 0,
-  theoreticalImplementation: 0,
-  implementation: 0,
-  annualEquivalent: 0,
+  id, name, shortName, discount: 0, isAvailable: false, isRecommended: false,
+  imobPrice: null, locPrice: null, leadsPrice: null, inteligenciaPrice: null,
+  assinaturaPrice: null, payPrice: null, segurosPrice: null, cashPrice: null,
+  vipSupportPrice: null, dedicatedCSPrice: null, trainingPrice: null,
+  subscriptionCount: 0, totalMonthly: 0, theoreticalImplementation: 0,
+  implementation: 0, annualEquivalent: 0,
 });
 
 // ============================================================================
@@ -727,15 +583,58 @@ const PRODUCT_BANNER_CONFIG: Record<ProductSelection, { icon: typeof Building2; 
   },
 };
 
-export function KomboComparisonTable(props: KomboComparisonProps) {
-  // Initialize viewMode from props.frequency to stay in sync
-  const [viewMode, setViewMode] = useState<ViewMode>(props.frequency);
-  
-  // Sync viewMode when parent frequency changes
-  useEffect(() => {
-    setViewMode(props.frequency);
-  }, [props.frequency]);
+// Inline cycle selector component for each column
+function ColumnCycleSelector({
+  value,
+  onChange,
+  compact = false,
+}: {
+  value: PaymentFrequency;
+  onChange: (freq: PaymentFrequency) => void;
+  compact?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const current = FREQUENCY_OPTIONS.find(o => o.id === value)!;
+
+  return (
+    <div ref={ref} className="relative inline-block">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className="inline-flex items-center gap-0.5 px-2 py-1 text-[10px] font-medium rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition-all"
+      >
+        {current.shortLabel}
+        <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 min-w-[100px]">
+          {FREQUENCY_OPTIONS.map(opt => (
+            <button
+              key={opt.id}
+              onClick={(e) => { e.stopPropagation(); onChange(opt.id); setOpen(false); }}
+              className={`w-full text-left px-3 py-1.5 text-[11px] hover:bg-gray-50 transition-colors ${
+                opt.id === value ? "font-bold text-primary bg-primary/5" : "text-gray-600"
+              }`}
+            >
+              {opt.label} <span className="text-gray-400 ml-1">{opt.discount}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function KomboComparisonTable(props: KomboComparisonProps) {
   // Selected Plan for export (user confirms their choice)
   const [selectedPlan, setSelectedPlan] = useState<KomboId | null>(null);
 
@@ -746,10 +645,24 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const prevProductRef = useRef<ProductSelection>(props.product);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // (2) Auto-reset selected Kombo when product type changes
+  // Per-column overrides state: keyed by column index (0 = Sua Seleção, 1+ = Kombos)
+  // Column 0 (Sua Seleção) is LOCKED to parent props — no overrides
+  // Kombo columns start with parent values and can be independently modified
+  const [columnOverrides, setColumnOverrides] = useState<Record<number, ColumnOverrides>>({});
+
+  // Initialize/reset overrides when product or parent props change
+  const getDefaultOverrides = useCallback((): ColumnOverrides => ({
+    frequency: props.frequency,
+    imobPlan: props.imobPlan,
+    locPlan: props.locPlan,
+    addons: { ...props.addons },
+  }), [props.frequency, props.imobPlan, props.locPlan, props.addons]);
+
+  // Reset overrides when product type changes (columns change entirely)
   useEffect(() => {
     if (prevProductRef.current !== props.product) {
-      // Product changed — clear incompatible Kombo selection
+      setColumnOverrides({});
+      
       if (selectedPlan && selectedPlan !== "none") {
         const newCompatible = (() => {
           switch (props.product) {
@@ -765,7 +678,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         }
       }
 
-      // (1) Trigger transition animation
       setIsTransitioning(true);
       const timer = setTimeout(() => setIsTransitioning(false), 400);
       prevProductRef.current = props.product;
@@ -773,11 +685,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     }
   }, [props.product]);
 
-  // Handle frequency change - update local state AND notify parent
-  const handleFrequencyChange = (newFrequency: ViewMode) => {
-    setViewMode(newFrequency);
-    props.onFrequencyChange?.(newFrequency as PaymentFrequency);
-  };
+  // Update column override for a specific column index
+  const updateColumnOverride = useCallback((colIndex: number, update: Partial<ColumnOverrides>) => {
+    setColumnOverrides(prev => {
+      const current = prev[colIndex] || getDefaultOverrides();
+      return {
+        ...prev,
+        [colIndex]: {
+          ...current,
+          ...update,
+          addons: update.addons ? { ...current.addons, ...update.addons } : current.addons,
+        },
+      };
+    });
+  }, [getDefaultOverrides]);
 
   // Notify parent when plan selection changes
   const handlePlanSelect = (planId: KomboId) => {
@@ -785,45 +706,41 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     props.onPlanSelected?.(planId);
   };
 
-  // Determine recommended Kombo (auto-detected) - this is FIXED based on logic
+  // Determine recommended Kombo
   const recommendedKombo = getRecommendedKombo(props.product, props.addons);
 
-  // Create modified props with viewMode as frequency for calculations
-  const propsWithFrequency = { ...props, frequency: viewMode as PaymentFrequency };
-
-  // Determine which Kombos are compatible with the selected product type
-  // Imob only → Imob Start, Imob Pro
-  // Loc only → Loc Pro
-  // Both (Imob + Loc) → Core Gestão, Elite
+  // Determine compatible Kombos
   const compatibleKomboIds: KomboId[] = useMemo(() => {
     switch (props.product) {
-      case "imob":
-        return ["imob_start", "imob_pro"] as KomboId[];
-      case "loc":
-        return ["locacao_pro"] as KomboId[];
-      case "both":
-        return ["core_gestao", "elite"] as KomboId[];
-      default:
-        return [] as KomboId[];
+      case "imob": return ["imob_start", "imob_pro"] as KomboId[];
+      case "loc": return ["locacao_pro"] as KomboId[];
+      case "both": return ["core_gestao", "elite"] as KomboId[];
+      default: return [] as KomboId[];
     }
   }, [props.product]);
 
-  // Calculate columns: always "Sua Seleção" first, then only compatible Kombos
-  const columns: KomboColumnData[] = [
-    calculateKomboColumn("none", propsWithFrequency, recommendedKombo),
-    ...compatibleKomboIds.map(id => calculateKomboColumn(id, propsWithFrequency, recommendedKombo)),
-  ];
+  // Calculate columns with per-column overrides
+  // Column 0 = Sua Seleção (always uses parent props, no overrides)
+  // Column 1+ = Kombos (use their own overrides if set)
+  const columns: KomboColumnData[] = useMemo(() => {
+    const suaSelecao = calculateKomboColumn("none", props, recommendedKombo);
+    const komboColumns = compatibleKomboIds.map((id, idx) => {
+      const colIndex = idx + 1; // Kombo columns start at index 1
+      const overrides = columnOverrides[colIndex] || undefined;
+      return calculateKomboColumn(id, props, recommendedKombo, overrides);
+    });
+    return [suaSelecao, ...komboColumns];
+  }, [props, recommendedKombo, compatibleKomboIds, columnOverrides]);
 
-  // (3) Banner config for current product
+  // Banner config
   const bannerConfig = PRODUCT_BANNER_CONFIG[props.product];
 
-  // Row definitions for the table
-  // Include plan name (K2) in red for Imob and Loc rows
+  // Row definitions
   const imobLabel = props.product === "imob" || props.product === "both" 
-    ? <span>Imob - <span className="text-primary font-bold">{props.imobPlan.toUpperCase()}</span></span>
+    ? <span>Imob</span>
     : "Imob";
   const locLabel = props.product === "loc" || props.product === "both"
-    ? <span>Loc - <span className="text-primary font-bold">{props.locPlan.toUpperCase()}</span></span>
+    ? <span>Loc</span>
     : "Loc";
 
   const rows = [
@@ -838,6 +755,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
+    { key: "cycle", label: "Ciclo", isTotal: true },
     { key: "totalMonthly", label: "Mensalidades", isTotal: true },
     { key: "subscriptionCount", label: "", isSubRow: true },
     { key: "implementation", label: "Implantação", isTotal: true },
@@ -846,53 +764,192 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   ];
 
   /**
-   * Get cell value for a specific row and column
-   * Always shows values even when Kombo is not available (for comparison)
+   * Handle click on a plan cell (Imob/Loc row) to cycle through plan tiers
    */
-  const getCellValue = (rowKey: string, column: KomboColumnData): React.ReactNode => {
-    // Helper to render price - all values in normal gray/black color
+  const handlePlanCellClick = (colIndex: number, planType: "imob" | "loc", e: React.MouseEvent) => {
+    if (colIndex === 0) return; // Sua Seleção is locked
+    e.stopPropagation();
+    
+    const overrides = columnOverrides[colIndex] || getDefaultOverrides();
+    const currentPlan = planType === "imob" ? overrides.imobPlan : overrides.locPlan;
+    const currentIdx = PLAN_TIERS.indexOf(currentPlan);
+    const nextPlan = PLAN_TIERS[(currentIdx + 1) % PLAN_TIERS.length];
+    
+    updateColumnOverride(colIndex, planType === "imob" ? { imobPlan: nextPlan } : { locPlan: nextPlan });
+  };
+
+  /**
+   * Handle click on an add-on cell to toggle it
+   */
+  const handleAddonCellClick = (colIndex: number, addonKey: string, e: React.MouseEvent) => {
+    if (colIndex === 0) return; // Sua Seleção is locked
+    e.stopPropagation();
+    
+    const overrides = columnOverrides[colIndex] || getDefaultOverrides();
+    const currentValue = overrides.addons[addonKey as keyof typeof overrides.addons];
+    
+    updateColumnOverride(colIndex, {
+      addons: { ...overrides.addons, [addonKey]: !currentValue },
+    });
+  };
+
+  /**
+   * Get cell value for a specific row and column
+   */
+  const getCellValue = (rowKey: string, column: KomboColumnData, colIndex: number): React.ReactNode => {
+    const overrides = colIndex > 0 ? (columnOverrides[colIndex] || getDefaultOverrides()) : null;
+    const isEditable = colIndex > 0;
+
+    // Helper to render price
     const renderPrice = (price: number | null) => {
       if (price === null) return <span className="text-gray-300">—</span>;
-      const priceStr = `R$ ${formatCurrency(price)}`;
-      return <span className="font-medium text-gray-700">{priceStr}</span>;
+      return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
+    };
+
+    // Helper to render a clickable plan cell
+    const renderPlanCell = (price: number | null, planType: "imob" | "loc") => {
+      if (price === null) return <span className="text-gray-300">—</span>;
+      const currentPlan = overrides
+        ? (planType === "imob" ? overrides.imobPlan : overrides.locPlan)
+        : (planType === "imob" ? props.imobPlan : props.locPlan);
+      
+      return (
+        <div
+          className={`flex flex-col items-center gap-0.5 ${isEditable ? "cursor-pointer group" : ""}`}
+          onClick={isEditable ? (e) => handlePlanCellClick(colIndex, planType, e) : undefined}
+        >
+          <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>
+          <span className={`text-[10px] font-bold ${isEditable ? "text-primary group-hover:underline" : "text-gray-500"}`}>
+            {currentPlan.toUpperCase()}
+          </span>
+        </div>
+      );
+    };
+
+    // Helper to render a clickable add-on cell
+    // Kombo-included addons are shown as locked (not removable)
+    // Extra addons can be freely toggled
+    const renderAddonCell = (price: number | null, addonKey: string) => {
+      if (!isEditable) {
+        // Column 0 (Sua Seleção): just show price or dash
+        if (["pay", "seguros", "cash"].includes(addonKey)) {
+          const isOn = props.addons[addonKey as keyof typeof props.addons];
+          if (!isOn) return <span className="text-gray-300">—</span>;
+          return <span className="font-medium text-gray-700">{addonKey === "cash" ? "Grátis" : "Pós-pago"}</span>;
+        }
+        if (price === null) return <span className="text-gray-300">—</span>;
+        return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
+      }
+
+      // Check if this addon is mandatorily included by the Kombo definition
+      const komboId = column.id;
+      const isKomboIncluded = komboId !== "none" && komboId in KOMBO_DEFINITIONS
+        ? KOMBO_DEFINITIONS[komboId as Exclude<KomboId, "none">].includedAddons.includes(addonKey)
+        : false;
+
+      // Editable columns: show toggle-style
+      const isActive = overrides?.addons[addonKey as keyof typeof overrides.addons] ?? false;
+      
+      // For pay/seguros/cash, these are special (pós-pago/grátis)
+      if (["pay", "seguros", "cash"].includes(addonKey)) {
+        const label = addonKey === "cash" ? "Grátis" : "Pós-pago";
+        if (isKomboIncluded) {
+          // Locked — always included in this Kombo
+          return <span className="text-green-600 font-semibold text-xs">{label} ✓</span>;
+        }
+        return (
+          <div
+            className="cursor-pointer group"
+            onClick={(e) => handleAddonCellClick(colIndex, addonKey, e)}
+          >
+            {isActive ? (
+              <span className="text-green-600 font-semibold text-xs group-hover:underline">{label}</span>
+            ) : (
+              <span className="text-gray-300 group-hover:text-gray-500 transition-colors">—</span>
+            )}
+          </div>
+        );
+      }
+
+      // For paid add-ons (leads, inteligencia, assinatura)
+      if (isKomboIncluded && price !== null) {
+        // Locked — always included in this Kombo, not removable
+        return (
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>
+            <span className="text-[9px] text-green-600 font-semibold">Incluído</span>
+          </div>
+        );
+      }
+
+      if (isActive && price !== null) {
+        return (
+          <div
+            className="cursor-pointer group"
+            onClick={(e) => handleAddonCellClick(colIndex, addonKey, e)}
+          >
+            <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
+              R$ {formatCurrency(price)}
+            </span>
+          </div>
+        );
+      }
+
+      return (
+        <div
+          className="cursor-pointer group"
+          onClick={(e) => handleAddonCellClick(colIndex, addonKey, e)}
+        >
+          <span className="text-gray-300 group-hover:text-green-500 transition-colors">+ Adicionar</span>
+        </div>
+      );
     };
 
     switch (rowKey) {
       case "imob":
-        return renderPrice(column.imobPrice);
+        return renderPlanCell(column.imobPrice, "imob");
       case "loc":
-        return renderPrice(column.locPrice);
+        return renderPlanCell(column.locPrice, "loc");
       case "leads":
-        return renderPrice(column.leadsPrice);
+        return renderAddonCell(column.leadsPrice, "leads");
       case "inteligencia":
-        return renderPrice(column.inteligenciaPrice);
+        return renderAddonCell(column.inteligenciaPrice, "inteligencia");
       case "assinatura":
-        return renderPrice(column.assinaturaPrice);
+        return renderAddonCell(column.assinaturaPrice, "assinatura");
       case "pay":
-        return column.payPrice || <span className="text-gray-300">—</span>;
+        return renderAddonCell(null, "pay");
       case "seguros":
-        return column.segurosPrice || <span className="text-gray-300">—</span>;
+        return renderAddonCell(null, "seguros");
       case "cash":
-        return column.cashPrice || <span className="text-gray-300">—</span>;
+        return renderAddonCell(null, "cash");
       case "vipSupport":
-        if (column.vipSupportPrice === "Incluído") {
-          return <span className="text-green-600 font-semibold">Incluído</span>;
-        }
+        if (column.vipSupportPrice === "Incluído") return <span className="text-green-600 font-semibold">Incluído</span>;
         return typeof column.vipSupportPrice === "number"
           ? <span className="font-medium">R$ {formatCurrency(column.vipSupportPrice)}</span>
           : <span className="text-gray-300">—</span>;
       case "dedicatedCS":
-        if (column.dedicatedCSPrice === "Incluído") {
-          return <span className="text-green-600 font-semibold">Incluído</span>;
-        }
+        if (column.dedicatedCSPrice === "Incluído") return <span className="text-green-600 font-semibold">Incluído</span>;
         return typeof column.dedicatedCSPrice === "number"
           ? <span className="font-medium">R$ {formatCurrency(column.dedicatedCSPrice)}</span>
           : <span className="text-gray-300">—</span>;
       case "training":
-        if (column.trainingPrice) {
-          return <span className="text-green-600 font-semibold">{column.trainingPrice}</span>;
-        }
+        if (column.trainingPrice) return <span className="text-green-600 font-semibold">{column.trainingPrice}</span>;
         return <span className="text-gray-300">—</span>;
+      case "cycle": {
+        // Per-column cycle selector
+        if (colIndex === 0) {
+          // Sua Seleção: show current frequency (locked)
+          const freq = FREQUENCY_OPTIONS.find(o => o.id === props.frequency)!;
+          return <span className="text-xs font-medium text-gray-500">{freq.label}</span>;
+        }
+        const currentFreq = (columnOverrides[colIndex] || getDefaultOverrides()).frequency;
+        return (
+          <ColumnCycleSelector
+            value={currentFreq}
+            onChange={(freq) => updateColumnOverride(colIndex, { frequency: freq })}
+          />
+        );
+      }
       case "totalMonthly":
         return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
       case "subscriptionCount":
@@ -919,11 +976,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       case "annualEquivalent":
         return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
       case "savings": {
-        // Compare against "Sem Kombo" column (first column = columns[0])
         const semKombo = columns[0];
-        if (column.id === "none" || semKombo.annualEquivalent === 0) {
-          return null; // No savings to show for Sem Kombo itself
-        }
+        if (column.id === "none" || semKombo.annualEquivalent === 0) return null;
         const savings = semKombo.annualEquivalent - column.annualEquivalent;
         if (savings <= 0) return null;
         return (
@@ -945,7 +999,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           <div className="pb-2 mb-2">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
             
-            {/* (3) Contextual Banner */}
+            {/* Contextual Banner */}
             {bannerConfig && (
               <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg mb-3 transition-all duration-300 ${
                 props.product === "imob" ? "bg-primary/5 border border-primary/15" :
@@ -960,34 +1014,19 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               </div>
             )}
 
-            {/* Frequency Selector - Right below title */}
-            <div className="flex items-center gap-1.5 mb-3">
-              {FREQUENCY_OPTIONS.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleFrequencyChange(option.id)}
-                  className={`px-4 py-2 text-sm rounded-lg transition-all border ${
-                    viewMode === option.id
-                      ? "bg-primary text-white font-semibold border-primary shadow-sm"
-                      : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
-                  }`}
-                >
-                  {option.label}
-                  {option.id !== "monthly" && (
-                    <span className="ml-1 text-xs opacity-80">{option.discount}</span>
-                  )}
-                </button>
-              ))}
-            </div>
+            {/* Hint about interactive columns */}
+            <p className="text-[11px] text-gray-400 italic mb-2">
+              Clique nas células dos Kombos para alterar plano e add-ons. Cada coluna funciona como um configurador independente.
+            </p>
           </div>
 
           {/* Comparison Table with transition animation */}
           <div className={`w-full transition-all duration-300 ${isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
-            <table className="w-full text-sm border-collapse table-fixed" onMouseLeave={() => setHoveredColumn(null)}>
+            <table className="w-full text-sm border-collapse" onMouseLeave={() => setHoveredColumn(null)}>
               <colgroup>
-                <col style={{ width: "180px" }} />
+                <col style={{ width: "160px" }} />
                 {columns.map((_, idx) => (
-                  <col key={idx} />
+                  <col key={idx} style={{ width: `${Math.floor(100 / (columns.length + 1))}%`, minWidth: "120px" }} />
                 ))}
               </colgroup>
               <thead className="sticky top-0 z-10 shadow-[0_2px_4px_-1px_rgba(0,0,0,0.1)]">
@@ -995,7 +1034,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr className="border-b border-gray-200 bg-white">
                   <th className="text-left py-3 px-2 bg-white"></th>
                   {columns.map((col, colIndex) => {
-                    // Get tooltip data only for valid kombo keys (not "none")
                     const tooltipData = col.id !== "none" && col.id in KOMBO_DEFINITIONS
                       ? KOMBO_DEFINITIONS[col.id as Exclude<KomboId, "none">]?.tooltipInfo
                       : null;
@@ -1044,12 +1082,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               {Math.round(col.discount * 100)}% OFF
                             </Badge>
                           )}
+                          {colIndex === 0 && (
+                            <span className="text-[9px] text-gray-400 font-normal">Bloqueado</span>
+                          )}
                         </div>
                       </th>
                     );
                   })}
                 </tr>
-
               </thead>
               <tbody>
                 {rows.map((row, rowIndex) => (
@@ -1134,14 +1174,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       )}
                     </td>
                     {columns.map((col, colIndex) => {
-                      // Skip first column for header rows since we're using colSpan=2
                       if (row.isHeader && colIndex === 0) return null;
                       return (
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          onClick={() => handlePlanSelect(col.id)}
-                          className={`text-center ${row.isSubRow ? "py-0.5 px-3" : "py-3 px-3"} cursor-pointer transition-colors duration-150 ${
+                          className={`text-center ${row.isSubRow ? "py-0.5 px-2" : "py-3 px-2"} transition-colors duration-150 ${
                             selectedPlan === col.id
                               ? "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
                               : hoveredColumn === col.id && selectedPlan !== col.id
@@ -1157,7 +1195,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               : "text-gray-700"
                           }`}
                         >
-                          {row.isHeader ? null : getCellValue(row.key, col)}
+                          {row.isHeader ? null : getCellValue(row.key, col, colIndex)}
                         </td>
                       );
                     })}
@@ -1165,16 +1203,15 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 ))}
               </tbody>
               <tfoot>
-                {/* Selecionar buttons row (below Anual Equivalente) */}
                 <tr className="border-t-2 border-gray-200 bg-gray-50/50">
                   <td className="py-3 px-2"></td>
-                  {columns.map((col) => (
+                  {columns.map((col, colIndex) => (
                     <td key={`select-btn-${col.id}`} onMouseEnter={() => setHoveredColumn(col.id)} onClick={() => handlePlanSelect(col.id)} className={`text-center py-3 px-1 cursor-pointer transition-colors duration-150 ${
                       selectedPlan === col.id
                         ? "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
                         : hoveredColumn === col.id && selectedPlan !== col.id
                         ? "bg-blue-50/70"
-                        : columns.indexOf(col) % 2 === 1
+                        : colIndex % 2 === 1
                         ? "bg-gray-50/50"
                         : ""
                     }`}>
@@ -1209,30 +1246,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             </table>
           </div>
 
-          {/* Duplicated Frequency Selector - Below table for easy adjustment after viewing all values */}
-          <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-gray-200">
-            {FREQUENCY_OPTIONS.map((option) => (
-              <button
-                key={`bottom-${option.id}`}
-                onClick={() => handleFrequencyChange(option.id)}
-                className={`px-4 py-2 text-sm rounded-lg transition-all border ${
-                  viewMode === option.id
-                    ? "bg-primary text-white font-semibold border-primary shadow-sm"
-                    : "bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
-                }`}
-              >
-                {option.label}
-                {option.id !== "monthly" && (
-                  <span className="ml-1 text-xs opacity-80">{option.discount}</span>
-                )}
-              </button>
-            ))}
-          </div>
-
           {/* Footnote */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
               <strong>Mensalidades:</strong> Valor mensal recorrente. <strong>Anual:</strong> 12x mensalidades + taxa de implantação (cobrada apenas no primeiro ano).
+              <br />
+              <strong>Colunas interativas:</strong> Clique nos planos (Prime/K/K2) e add-ons nas colunas de Kombo para simular cenários diferentes. A coluna "Sua Seleção" reflete a configuração principal.
             </p>
           </div>
 

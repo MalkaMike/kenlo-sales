@@ -3505,3 +3505,23 @@
 - [x] Smooth transition animation when Kombo columns change (product switch)
 - [x] Auto-reset selected Kombo when product type changes (incompatible Kombo cleared)
 - [x] Contextual banner above table explaining available Kombos for selected product
+
+## Kombo Table — Independent Mini-Configurator Columns
+
+### Column Width & Layout
+- [x] Revert column widths to original (pre-filtering) size
+- [x] Leave empty space in the table for additional custom columns
+
+### Per-Column Payment Cycle Selector
+- [x] Remove global cycle selector from above the table
+- [x] Add per-column cycle selector below the "Anual" row in each column
+- [x] Default each column to "Anual" cycle
+- [x] Changing cycle in one column recalculates ONLY that column
+- [x] Other columns remain unaffected when one column's cycle changes
+
+### Per-Column Plan & Add-on Selection (Clickable Cells)
+- [x] Imob row: clickable to toggle between Prime, K, K2 per column
+- [x] Loc row: clickable to toggle between Prime, K, K2 per column
+- [x] Add-on rows: clickable to select/deselect per column
+- [x] Each column functions as an independent mini-configurator
+- [x] All prices recalculate independently per column based on its own selections
