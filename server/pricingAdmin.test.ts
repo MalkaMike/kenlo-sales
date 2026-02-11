@@ -88,11 +88,13 @@ describe("Pricing Admin", () => {
       const config = JSON.parse(content);
       
       ["imob_start", "imob_pro", "locacao_pro", "core_gestao", "elite"].forEach((kombo) => {
+        expect(config.kombos[kombo]).toHaveProperty("name");
         expect(config.kombos[kombo]).toHaveProperty("discount");
-        expect(config.kombos[kombo]).toHaveProperty("implementation");
+        expect(config.kombos[kombo]).toHaveProperty("freeImplementations");
         expect(config.kombos[kombo]).toHaveProperty("includesPremium");
+        expect(typeof config.kombos[kombo].name).toBe("string");
         expect(typeof config.kombos[kombo].discount).toBe("number");
-        expect(typeof config.kombos[kombo].implementation).toBe("number");
+        expect(typeof config.kombos[kombo].freeImplementations).toBe("number");
         expect(typeof config.kombos[kombo].includesPremium).toBe("boolean");
       });
     });

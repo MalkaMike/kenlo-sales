@@ -53,17 +53,15 @@ const PricingValuesSchema = z.object({
   premiumServices: z.object({
     vipSupport: z.number(),
     csDedicado: z.number(),
-    treinamento: z.object({
-      online: z.number(),
-      presencial: z.number(),
-    }),
+    treinamentoOnline: z.number(),
+    treinamentoPresencial: z.number(),
   }),
   kombos: z.object({
-    imob_start: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
-    imob_pro: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
-    locacao_pro: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
-    core_gestao: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
-    elite: z.object({ discount: z.number(), implementation: z.number(), includesPremium: z.boolean() }),
+    imob_start: z.object({ name: z.string(), discount: z.number(), freeImplementations: z.number(), includesPremium: z.boolean() }),
+    imob_pro: z.object({ name: z.string(), discount: z.number(), freeImplementations: z.number(), includesPremium: z.boolean() }),
+    locacao_pro: z.object({ name: z.string(), discount: z.number(), freeImplementations: z.number(), includesPremium: z.boolean() }),
+    core_gestao: z.object({ name: z.string(), discount: z.number(), freeImplementations: z.number(), includesPremium: z.boolean() }),
+    elite: z.object({ name: z.string(), discount: z.number(), freeImplementations: z.number(), includesPremium: z.boolean() }),
   }),
   additionalUsersTiers: z.object({
     prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),

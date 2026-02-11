@@ -51,35 +51,38 @@
   "premiumServices": {
     "vipSupport": 97,
     "csDedicado": 297,
-    "treinamento": {
-      "online": 2000,
-      "presencial": 3000
-    }
+    "treinamentoOnline": 2000,
+    "treinamentoPresencial": 3000
   },
   "kombos": {
     "imob_start": {
-      "discount": 10,
-      "implementation": 1497,
+      "name": "Kombo Imob Start",
+      "discount": 0.10,
+      "freeImplementations": 1,
       "includesPremium": true
     },
     "imob_pro": {
-      "discount": 15,
-      "implementation": 1497,
+      "name": "Kombo Imob Pro",
+      "discount": 0.15,
+      "freeImplementations": 2,
       "includesPremium": true
     },
     "locacao_pro": {
-      "discount": 10,
-      "implementation": 1497,
+      "name": "Kombo Locação Pro",
+      "discount": 0.10,
+      "freeImplementations": 1,
       "includesPremium": true
     },
     "core_gestao": {
+      "name": "Kombo Core Gestão",
       "discount": 0,
-      "implementation": 1497,
+      "freeImplementations": 1,
       "includesPremium": true
     },
     "elite": {
-      "discount": 20,
-      "implementation": 1497,
+      "name": "Kombo Elite",
+      "discount": 0.20,
+      "freeImplementations": 3,
       "includesPremium": true
     }
   },

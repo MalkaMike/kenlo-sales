@@ -3014,3 +3014,30 @@
 - [x] Correct JSON structure access to handle nested tiered pricing by plan
 - [x] Test pricing admin page loads without errors
 - [x] All 271 tests passing
+
+## Pricing Admin Redesign - Business-Oriented UX - Feb 2026
+- [x] Analyze current PricingAdminPage structure and identify all sections
+- [x] Redesign UI with 7-layer hierarchy:
+  - [x] 1. Regras Globais de Precificação (payment cycles as business concepts)
+  - [x] 2. Preços Base dos Planos (IMOB and LOC foundation)
+  - [x] 3. Add-ons — Preços Base e Implantação
+  - [x] 4. Serviços Premium (Recorrentes)
+  - [x] 5. Kombos — Descontos Promocionais Cumulativos
+  - [x] 6. Custos Variáveis Pós-Pago (baseados em uso)
+  - [x] 7. Nomenclatura padrão aplicada globalmente
+- [x] Replace technical terms with business language:
+  - [x] "Multiplicadores" → "Ciclo de Pagamento e Descontos"
+  - [x] "NaN" → "Não aplicável"
+  - [x] "999999" → "Sem limite" (displayed as ∞)
+  - [x] "Preço" → "Preço base anual (antes de descontos)"
+- [x] Show Kombos as percentages (10%, 15%, 20%) with % symbol
+- [x] Add helper text explaining calculation order: "O desconto de combo é aplicado após o desconto do ciclo de pagamento"
+- [x] Add helper text for payment cycles: "O desconto por ciclo é aplicado antes de qualquer desconto de combo"
+- [x] Implement confirmation modal before saving changes
+- [x] Add "Última alteração em" timestamp display
+- [x] Add "Motivo da alteração" optional note field in modal
+- [x] Add warning when changes affect active contracts (in modal)
+- [x] Add note: "Essa configuração é a fonte única de verdade para Calculadora e PDF" (in header)
+- [x] Test all changes maintain existing pricing logic (no price changes)
+- [x] Verify calculator and PDF generation still work correctly
+- [x] All 271 tests passing
