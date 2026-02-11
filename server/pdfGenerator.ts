@@ -18,7 +18,7 @@
 import PDFDocument from "pdfkit";
 import path from "path";
 import fs from "fs";
-import { PREMIUM_SERVICES } from "@shared/pricing-config";
+import { PREMIUM_SERVICES, TRAINING, SEGUROS_COMMISSION, getFeatures, getAllFeatures, type PlanTier } from "@shared/pricing-config";
 
 // -- Data interfaces --
 interface PostPaidItem {
@@ -582,8 +582,74 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.fontSize(7.5).fillColor(trainingColor).font("Helvetica")
         .text(trainingStatus || "—", M + 14, Y, { width: CW - 28, align: "right" });
       Y += 10;
-      lbl("Treinamentos online e presenciais inclusos no plano K2 (ref. R$ 2.000/online, R$ 3.000/presencial).", M + 14, Y, { size: 6, color: C.textMuted });
+      const trainingOnlinePrice = TRAINING.online;
+      const trainingPresencialPrice = TRAINING.presencial;
+      lbl(`Treinamentos online e presenciais inclusos no plano K2 (ref. ${fmt(trainingOnlinePrice)}/online, ${fmt(trainingPresencialPrice)}/presencial).`, M + 14, Y, { size: 6, color: C.textMuted });
       Y += 14;
+
+      Y += GAP;
+    }
+
+    // ================================================================
+    // SECTION 4.5 — FUNCIONALIDADES INCLUÍDAS
+    // ================================================================
+    if (showImob || showLoc) {
+      if (needsNewPage(Y, 150)) Y = newPage();
+      Y = sectionTitle("Funcionalidades Incluidas", Y);
+
+      lbl("Recursos disponiveis em cada produto conforme plano contratado.", M + 10, Y, { size: 6.5, color: C.textMuted });
+      Y += 14;
+
+      // IMOB Features
+      if (showImob && data.imobPlan) {
+        const imobPlan = data.imobPlan.toLowerCase() as PlanTier;
+        const imobFeatures = getFeatures("imob", imobPlan);
+        const allImobFeatures = getAllFeatures("imob");
+
+        doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+          .text(`Kenlo IMOB (${data.imobPlan.toUpperCase()})`, M + 14, Y, { lineBreak: false });
+        Y += 14;
+
+        for (const feature of allImobFeatures) {
+          if (needsNewPage(Y, 20)) Y = newPage();
+          const isIncluded = imobFeatures[feature.name];
+          const icon = isIncluded ? "✓" : "—";
+          const color = isIncluded ? C.green : C.textLight;
+
+          doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
+            .text(icon, M + 20, Y, { lineBreak: false });
+          doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
+            .text(feature.description, M + 32, Y, { lineBreak: false });
+          Y += 11;
+        }
+        Y += 6;
+      }
+
+      // LOC Features
+      if (showLoc && data.locPlan) {
+        if (needsNewPage(Y, 150)) Y = newPage();
+        const locPlan = data.locPlan.toLowerCase() as PlanTier;
+        const locFeatures = getFeatures("locacao", locPlan);
+        const allLocFeatures = getAllFeatures("locacao");
+
+        doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
+          .text(`Kenlo Locacao (${data.locPlan.toUpperCase()})`, M + 14, Y, { lineBreak: false });
+        Y += 14;
+
+        for (const feature of allLocFeatures) {
+          if (needsNewPage(Y, 20)) Y = newPage();
+          const isIncluded = locFeatures[feature.name];
+          const icon = isIncluded ? "✓" : "—";
+          const color = isIncluded ? C.green : C.textLight;
+
+          doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
+            .text(icon, M + 20, Y, { lineBreak: false });
+          doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
+            .text(feature.description, M + 32, Y, { lineBreak: false });
+          Y += 11;
+        }
+        Y += 6;
+      }
 
       Y += GAP;
     }
@@ -638,6 +704,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
       lbl("Pay e Seguros ficam disponiveis por padrao. O uso e habilitado no onboarding.", M + 10, Y, { size: 6.5, color: C.textMuted });
       Y += 10;
+      // Note: R$ 10 is the fixed revenue per contract for the real estate agency, not the commission rate
       lbl("Seguros: receita para a imobiliaria a partir de R$ 10 por contrato/mes.", M + 10, Y, { size: 6.5, color: C.textMuted });
       Y += 14;
 

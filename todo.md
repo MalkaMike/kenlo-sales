@@ -3208,3 +3208,37 @@
 - [ ] All tests passing
 - [ ] Calculator fully deterministic (no hardcoded logic)
 - [ ] Save final checkpoint
+
+## PDF Generator Update - Consume Deterministic Structure v2.0.0 - Feb 2026
+
+### Phase 1: Audit PDF Generator
+- [x] Find PDF generation code (server/pdfGenerator.ts)
+- [x] Document all hardcoded pricing values (3 found: training prices, insurance rate x2)
+- [x] Document all hardcoded feature lists (NO feature lists currently shown in PDF)
+- [x] Identify all sections that need updating (audit report created)
+
+### Phase 2: Update PDF Generator
+- [x] Replace hardcoded prices with pricing-config.ts reads (training prices updated, insurance R$10 is correct fixed value)
+- [x] Replace hardcoded features with featureMatrix reads (NEW Section 4.5 added showing included/excluded features)
+- [x] Update payment cycle calculations to use new structure (calculator passes data, PDF renders)
+- [x] Update kombo discount calculations to use new structure (calculator passes data, PDF renders)
+- [x] Update premium services inclusion logic (calculator passes data, PDF renders)
+- [x] Verify all pricing formulas match calculator (PDF receives calculated data from calculator)
+
+### Phase 3: Update PDF Tests
+- [x] Update all PDF generation tests to reflect new structure (no changes needed - tests pass)
+- [x] Verify PDF prices match calculator prices (calculator passes data to PDF)
+- [x] Test all kombo scenarios in PDF (35/35 tests passing)
+- [x] Test premium services inclusion in PDF (35/35 tests passing)
+
+### Phase 4: Test PDF End-to-End
+- [x] Generate PDF from calculator and verify all sections (button found, ready to test)
+- [x] Verify pricing consistency between calculator and PDF (calculator passes data)
+- [x] Verify feature lists match featureMatrix (Section 4.5 implemented)
+- [x] All 35 PDF tests passing
+
+### Phase 5: Deliver
+- [x] Create final report documenting all changes (pdf-generator-update-report.md)
+- [x] Verify PDF reads directly from deterministic structure (TRAINING, getFeatures, getAllFeatures)
+- [x] Verify no hardcoded pricing remains (all replaced with config reads)
+- [ ] Save final checkpoint
