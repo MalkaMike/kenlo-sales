@@ -3538,3 +3538,30 @@
 - [x] Distinct visual style: amber/gold header with "Livre" badge, dashed border separator
 - [x] Add/remove custom columns dynamically with "+" and "×" buttons
 - [x] Empty state: show "+ Adicionar" placeholder in addon cells, products default to Prime
+
+## Kombo Table — 6 Corrections (Feb 11)
+
+### 1. Sua Seleção cycle editable
+- [x] Remove "Bloqueado" lock on Sua Seleção cycle — user can change it (default Anual)
+- [x] Sua Seleção cycle selector works the same as Kombo columns
+
+### 2. Treinamentos "Incluído" in Kombos
+- [x] When a Kombo includes Treinamentos, show "Incluído" (same style as CS/Suporte VIP)
+
+### 3. Simplify Kombo add-on cells
+- [x] Remove "Incluído" badge text below add-on prices in Kombo columns
+- [x] Remove "+ Adicionar" button from Kombo columns — Kombos are fixed, only show price or dash
+- [x] Kombo columns: only show the discounted price for included items, dash for excluded items
+
+### 4. Editable custom scenario titles
+- [x] Custom scenario title is editable (click to type)
+- [x] Max 11 characters limit
+- [x] Default: "Cenário 1", "Cenário 2", "Cenário 3"
+
+### 5. Suporte VIP & CS Dedicado in custom scenarios
+- [x] Add Suporte VIP row toggleable in custom scenarios (R$97/mês base anual)
+- [x] Add CS Dedicado row toggleable in custom scenarios (R$297/mês base anual)
+- [x] Prices follow same cycle discount as products/add-ons
+
+### 6. Move Ciclo row below Anual row
+- [x] Reorder rows: Mensalidades → Implantação → Anual → Ciclo (at the bottom)
