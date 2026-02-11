@@ -3572,3 +3572,10 @@
 - [x] Treinamentos price follows cycle discount like Suporte/CS
 - [x] Treinamentos included in Mensalidades calculation for custom scenarios
 - [x] Verify Treinamentos still shows "Incluído" in Kombos that include it
+
+## Kombo Table — 4 Quick Corrections (Feb 11 v2)
+
+- [x] Remove contextual banner (pink "Kombos para Vendas" bar) and instruction text below it
+- [x] Change "+" button color from gray to green
+- [x] Remove Seguros and Cash rows from the comparison table (they are free services, not paid)
+- [x] Fix training pricing: R$166/mês (anual) × 2 per product selected (not R$167)

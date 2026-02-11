@@ -159,7 +159,7 @@ const IMPLEMENTATION_COSTS = {
 const PREMIUM_SERVICES_ANNUAL_PRICES = {
   vipSupport: 97,
   dedicatedCS: 297,
-  training: 167, // R$167/mês (anual) — treinamento online ou presencial
+  training: 166, // R$166/mês (anual) per training — 2 trainings per product selected
 };
 
 const PAYMENT_FREQUENCY_MULTIPLIERS: Record<PaymentFrequency, number> = {
@@ -664,9 +664,14 @@ const calculateCustomColumn = (
     if (imobIsK2 && locIsK2) trainingPrice = "4x online ou 2 presencial";
     else trainingPrice = "2x online ou 1 presencial";
   } else if (overrides.training) {
-    const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.training, frequency);
-    trainingPrice = price;
-    totalMonthly += price;
+    // 2 trainings per product selected
+    let productCount = 0;
+    if (product === "imob" || product === "both") productCount++;
+    if (product === "loc" || product === "both") productCount++;
+    const perTraining = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.training, frequency);
+    const totalTraining = perTraining * 2 * productCount;
+    trainingPrice = totalTraining;
+    totalMonthly += totalTraining;
   }
 
   const annualEquivalent = totalMonthly * 12 + implementation;
@@ -1021,8 +1026,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "inteligencia", label: "Inteligência", indent: true },
     { key: "assinatura", label: "Assinatura", indent: true },
     { key: "pay", label: "Pay", indent: true },
-    { key: "seguros", label: "Seguros", indent: true },
-    { key: "cash", label: "Cash", indent: true },
+
     { key: "premium", label: "Serviços Premium", isHeader: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
@@ -1374,26 +1378,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Table Header: Title */}
           <div className="pb-2 mb-2">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
-            
-            {/* Contextual Banner */}
-            {bannerConfig && (
-              <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg mb-3 transition-all duration-300 ${
-                props.product === "imob" ? "bg-primary/5 border border-primary/15" :
-                props.product === "loc" ? "bg-blue-50 border border-blue-200/50" :
-                "bg-purple-50 border border-purple-200/50"
-              }`}>
-                <bannerConfig.icon className={`w-5 h-5 flex-shrink-0 ${bannerConfig.color}`} />
-                <div>
-                  <span className={`text-sm font-semibold ${bannerConfig.color}`}>{bannerConfig.title}</span>
-                  <span className="text-xs text-gray-500 ml-2">{bannerConfig.description}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Hint about interactive columns */}
-            <p className="text-[11px] text-gray-400 italic mb-2">
-              Clique nas células dos Kombos para alterar plano. Nos cenários personalizados, configure plano, add-ons e serviços premium livremente. Use "+" para adicionar cenários.
-            </p>
           </div>
 
           {/* Comparison Table with transition animation */}
@@ -1502,7 +1486,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     <th className="text-center py-3 px-1 bg-white align-middle" rowSpan={1}>
                       <button
                         onClick={addCustomColumn}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-gray-300 text-gray-400 hover:border-amber-400 hover:text-amber-500 hover:bg-amber-50 transition-all"
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-green-400 text-green-500 hover:border-green-500 hover:text-green-600 hover:bg-green-50 transition-all"
                         title="Adicionar cenário personalizado"
                       >
                         <Plus className="w-4 h-4" />
