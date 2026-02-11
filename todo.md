@@ -3420,3 +3420,37 @@
 - [x] 2. Fix Perfil section to show only relevant column(s) based on businessType (corretora = only CORETAGEM, administradora = only ADMINISTRAÇÃO, ambos = both) - FIXED: Added conditional column display logic
 - [x] 3. Populate Funcionalidades table with actual features from pricing-config.ts - FIXED: Added productType field to enable feature loading
 - [x] 4. Add product/plan names to Estrutura Contratada section (e.g., "Kenlo Imob K2 & Kenlo Locação K") - FIXED: Added Kenlo prefix to product names
+
+## PDF Master Redesign v4 - FINAL 4-Page Structure
+
+### Page 1 - Cover (Simplified)
+- [x] Keep current cover layout
+- [x] Remove "Consultor: Vendedor Exemplo" and unnecessary metadata
+- [x] Cover must include ONLY: Logo, Nome da imobiliária, Produto(s) contratado(s), Ciclo selecionado, Data
+
+### Page 2 - Strategic Overview (3-Column Grid)
+- [x] Column 1: Perfil Operacional do Cliente (label:value format, conditional Coretagem/Locação/both)
+- [x] Column 2: Estrutura Contratada (selected cycle only, products/plans, add-ons in bordered boxes, non-included in grey)
+- [x] Column 3: Investimento & Escopo (total for selected cycle only, escopo items, serviços premium mini-table)
+- [x] Full page width, equal spacing, no vertical stacking
+
+### Page 3 - Platform Functionalities (Comparison Matrix)
+- [x] 1 product: full functionality list with green circle check icons + short descriptions
+- [x] 2 products: split vertically (Imob left, Locação right)
+- [x] Highlight selected plan with subtle green background band
+- [x] No decorative discount badges
+
+### Page 4 - Extra Revenue Kenlo (Conditional)
+- [x] Only show if post-pago or monetizable modules exist
+- [x] Card layout: Split automático, Seguros integrados, Antecipação de aluguel
+- [x] If none applicable → do NOT create this page
+
+### Global Design Rules
+- [x] No horizontal overflow, no broken layout
+- [x] No duplicated installment tables
+- [x] No inconsistent bullet styles
+- [x] Maximum 4 pages (3 in most cases), use full page width
+- [x] Typography: H1 section titles, H2 block titles, body uniform, labels bold values regular
+- [x] Colors: Green=selected/included, Grey=not included, Red=financial emphasis only
+- [x] Final quality check: no blank pages, no duplicated info, no alternative payment options
+- [x] 282 tests passing, 0 regressions
