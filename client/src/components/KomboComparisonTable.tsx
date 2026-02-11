@@ -82,6 +82,7 @@ interface ColumnOverrides {
   // Custom columns: toggleable premium services
   vipSupport?: boolean;
   dedicatedCS?: boolean;
+  training?: boolean;
 }
 
 // Frequency options for the per-column selector
@@ -114,7 +115,7 @@ interface KomboColumnData {
   cashPrice: string | null; // "Grátis" or null
   vipSupportPrice: number | string | null; // number, "Incluído", or null
   dedicatedCSPrice: number | string | null;
-  trainingPrice: string | null;
+  trainingPrice: number | string | null;
   // Subscription count (products + add-ons, excluding premium services)
   subscriptionCount: number;
   // Totals
@@ -158,6 +159,7 @@ const IMPLEMENTATION_COSTS = {
 const PREMIUM_SERVICES_ANNUAL_PRICES = {
   vipSupport: 97,
   dedicatedCS: 297,
+  training: 167, // R$167/mês (anual) — treinamento online ou presencial
 };
 
 const PAYMENT_FREQUENCY_MULTIPLIERS: Record<PaymentFrequency, number> = {
@@ -653,21 +655,27 @@ const calculateCustomColumn = (
     }
   }
 
-  let trainingPrice: string | null = null;
+  // Training: toggleable in custom columns, or auto-included if K2
+  let trainingPrice: number | string | null = null;
   const imobIsK2 = (product === "imob" || product === "both") && imobPlan === "k2";
   const locIsK2 = (product === "loc" || product === "both") && locPlan === "k2";
-  if (imobIsK2 && locIsK2) trainingPrice = "4x online ou 2 presencial";
-  else if (imobIsK2 || locIsK2) trainingPrice = "2x online ou 1 presencial";
+  if (imobIsK2 || locIsK2) {
+    // K2 includes training automatically
+    if (imobIsK2 && locIsK2) trainingPrice = "4x online ou 2 presencial";
+    else trainingPrice = "2x online ou 1 presencial";
+  } else if (overrides.training) {
+    const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.training, frequency);
+    trainingPrice = price;
+    totalMonthly += price;
+  }
 
   const annualEquivalent = totalMonthly * 12 + implementation;
-
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
   if (leadsPrice !== null) subscriptionCount++;
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
-
   return {
     id: customId,
     name: customName,
@@ -863,6 +871,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     },
     vipSupport: false,
     dedicatedCS: false,
+    training: false,
   }), [props.imobPlan, props.locPlan]);
 
   // Reset overrides when product type changes (columns change entirely)
@@ -1068,7 +1077,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   /**
    * Handle click on premium service cell in custom columns
    */
-  const handlePremiumCellClick = (colIndex: number, serviceKey: "vipSupport" | "dedicatedCS", e: React.MouseEvent) => {
+  const handlePremiumCellClick = (colIndex: number, serviceKey: "vipSupport" | "dedicatedCS" | "training", e: React.MouseEvent) => {
     e.stopPropagation();
     const colKey = getColumnKey(colIndex);
     const col = columns[colIndex];
@@ -1248,10 +1257,45 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return renderPremiumCell(column.vipSupportPrice, "vipSupport");
       case "dedicatedCS":
         return renderPremiumCell(column.dedicatedCSPrice, "dedicatedCS");
-      case "training":
+      case "training": {
+        // Kombo "Incluído"
         if (column.trainingPrice === "Incluído") return <span className="text-green-600 font-semibold text-xs">Incluído</span>;
-        if (column.trainingPrice) return <span className="text-green-600 font-semibold text-xs">{column.trainingPrice}</span>;
+        // K2 auto-included (string description)
+        if (typeof column.trainingPrice === "string" && column.trainingPrice) {
+          return <span className="text-green-600 font-semibold text-xs">{column.trainingPrice}</span>;
+        }
+        // Custom columns: toggleable
+        if (isCustom) {
+          const overridesData = columnOverrides[colKey] || getCustomDefaultOverrides();
+          const isActive = overridesData.training ?? false;
+          if (typeof column.trainingPrice === "number") {
+            return (
+              <div
+                className="cursor-pointer group"
+                onClick={(e) => handlePremiumCellClick(colIndex, "training", e)}
+              >
+                <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
+                  R$ {formatCurrency(column.trainingPrice)}
+                </span>
+              </div>
+            );
+          }
+          // Not active — show clickable dash
+          return (
+            <div
+              className="cursor-pointer group"
+              onClick={(e) => handlePremiumCellClick(colIndex, "training", e)}
+            >
+              <span className="text-gray-300 group-hover:text-green-500 transition-colors">—</span>
+            </div>
+          );
+        }
+        // Non-custom, non-Kombo: just show dash
+        if (typeof column.trainingPrice === "number") {
+          return <span className="font-medium">R$ {formatCurrency(column.trainingPrice)}</span>;
+        }
         return <span className="text-gray-300">—</span>;
+      }
       case "cycle": {
         // Per-column cycle selector — ALL columns are editable (including Sua Seleção)
         const colKey2 = getColumnKey(colIndex);

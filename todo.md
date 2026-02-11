@@ -3565,3 +3565,10 @@
 
 ### 6. Move Ciclo row below Anual row
 - [x] Reorder rows: Mensalidades → Implantação → Anual → Ciclo (at the bottom)
+
+## Kombo Table — Treinamentos Toggle in Custom Scenarios
+
+- [x] Add Treinamentos as toggleable item in custom scenario columns (same pattern as Suporte VIP/CS Dedicado)
+- [x] Treinamentos price follows cycle discount like Suporte/CS
+- [x] Treinamentos included in Mensalidades calculation for custom scenarios
+- [x] Verify Treinamentos still shows "Incluído" in Kombos that include it
