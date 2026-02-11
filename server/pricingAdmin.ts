@@ -76,16 +76,6 @@ const PricingValuesSchema = z.object({
   additionalLeadsTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
   additionalSignaturesTiers: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
   kenloPay: z.object({
-    boletosIncluded: z.object({
-      prime: z.number(),
-      k: z.number(),
-      k2: z.number(),
-    }),
-    splitsIncluded: z.object({
-      prime: z.number(),
-      k: z.number(),
-      k2: z.number(),
-    }),
     boletosTiers: z.object({
       prime: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),
       k: z.array(z.object({ from: z.number(), to: z.number(), price: z.number() })),

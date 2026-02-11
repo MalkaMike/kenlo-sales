@@ -136,13 +136,7 @@ describe("Pricing Admin", () => {
       const content = await fs.readFile(testConfigPath, "utf-8");
       const config = JSON.parse(content);
       
-      // Check included amounts per plan
-      expect(config.kenloPay.boletosIncluded).toHaveProperty("prime");
-      expect(config.kenloPay.boletosIncluded).toHaveProperty("k");
-      expect(config.kenloPay.boletosIncluded).toHaveProperty("k2");
-      expect(config.kenloPay.splitsIncluded).toHaveProperty("prime");
-      
-      // Check tiered pricing per plan
+      // Check tiered pricing per plan (no included amounts - all post-paid)
       expect(config.kenloPay.boletosTiers).toHaveProperty("prime");
       expect(Array.isArray(config.kenloPay.boletosTiers.prime)).toBe(true);
       expect(config.kenloPay.splitsTiers).toHaveProperty("prime");

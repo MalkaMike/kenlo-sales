@@ -3076,3 +3076,18 @@
   - [ ] Calculator reads from matrix
   - [ ] PDF generation reads from matrix
 - [x] All 271 tests passing
+
+## Remove Boletos/Splits Included + Make Feature Matrix Editable - Feb 2026
+- [x] Remove boletos/splits included from Locação plans:
+  - [x] Remove `boletosIncluded` and `splitsIncluded` from pricing-values.json kenloPay section
+  - [x] Remove boletos/splits included UI sections from PricingAdminPage (Section 6)
+  - [x] Update pricingAdmin.ts schema to remove boletosIncluded/splitsIncluded validation
+  - [x] Update calculator to remove all references to boletos/splits included (none found)
+  - [x] Update all tests that assume boletos/splits included
+- [x] Make Feature Matrix editable with toggles:
+  - [x] Add checkbox/toggle UI for each feature in each plan (Prime/K/K2)
+  - [x] Update formData state when toggles are clicked (updateValue handles this)
+  - [x] Ensure toggles trigger hasChanges flag (updateValue triggers this)
+  - [x] Verify confirmation modal captures feature matrix changes (modal already implemented)
+  - [x] Test toggling features on/off and saving successfully (manual test PASSED)
+- [x] All 271 tests passing after changes

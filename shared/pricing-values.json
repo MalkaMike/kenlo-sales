@@ -126,16 +126,6 @@
     { "from": 41, "to": 999999, "price": 1.5 }
   ],
   "kenloPay": {
-    "boletosIncluded": {
-      "prime": 2,
-      "k": 5,
-      "k2": 15
-    },
-    "splitsIncluded": {
-      "prime": 2,
-      "k": 5,
-      "k2": 15
-    },
     "boletosTiers": {
       "prime": [
         { "from": 1, "to": 999999, "price": 4.0 }

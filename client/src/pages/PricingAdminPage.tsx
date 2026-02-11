@@ -672,25 +672,14 @@ export default function PricingAdminPage() {
               <CardHeader className="py-4">
                 <CardTitle className="text-lg">Kenlo Pay — Boletos</CardTitle>
                 <CardDescription className="text-xs">
-                  Boletos inclusos por plano e preço por boleto adicional
+                  Preço por boleto (pós-pago baseado em uso)
                 </CardDescription>
               </CardHeader>
               <CardContent className="py-4">
                 <div className="space-y-4">
                   {["prime", "k", "k2"].map((plan) => (
                     <div key={plan} className="p-3 border rounded-lg">
-                      <div className="flex items-center gap-4 mb-3">
-                        <h3 className="font-semibold text-sm uppercase">{plan === "k2" ? "K2" : plan}</h3>
-                        <div className="flex-1 space-y-1">
-                          <Label className="text-[10px] uppercase text-muted-foreground">Boletos Inclusos</Label>
-                          <NumberInput
-                            value={formData.kenloPay.boletosIncluded[plan]}
-                            onChange={(val: number) =>
-                              updateValue(["kenloPay", "boletosIncluded", plan], Math.round(val))
-                            }
-                          />
-                        </div>
-                      </div>
+                      <h3 className="font-semibold text-sm uppercase mb-3">{plan === "k2" ? "K2" : plan}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {formData.kenloPay.boletosTiers[plan].map((tier: any, idx: number) => (
                           <div key={idx} className="space-y-1">
@@ -718,25 +707,14 @@ export default function PricingAdminPage() {
               <CardHeader className="py-4">
                 <CardTitle className="text-lg">Kenlo Pay — Splits</CardTitle>
                 <CardDescription className="text-xs">
-                  Splits inclusos por plano e preço por split adicional
+                  Preço por split (pós-pago baseado em uso)
                 </CardDescription>
               </CardHeader>
               <CardContent className="py-4">
                 <div className="space-y-4">
                   {["prime", "k", "k2"].map((plan) => (
                     <div key={plan} className="p-3 border rounded-lg">
-                      <div className="flex items-center gap-4 mb-3">
-                        <h3 className="font-semibold text-sm uppercase">{plan === "k2" ? "K2" : plan}</h3>
-                        <div className="flex-1 space-y-1">
-                          <Label className="text-[10px] uppercase text-muted-foreground">Splits Inclusos</Label>
-                          <NumberInput
-                            value={formData.kenloPay.splitsIncluded[plan]}
-                            onChange={(val: number) =>
-                              updateValue(["kenloPay", "splitsIncluded", plan], Math.round(val))
-                            }
-                          />
-                        </div>
-                      </div>
+                      <h3 className="font-semibold text-sm uppercase mb-3">{plan === "k2" ? "K2" : plan}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {formData.kenloPay.splitsTiers[plan].map((tier: any, idx: number) => (
                           <div key={idx} className="space-y-1">
@@ -824,7 +802,7 @@ export default function PricingAdminPage() {
               <CardHeader className="py-4 bg-primary/5">
                 <CardTitle className="text-lg">Kenlo IMOB — Funcionalidades por Plano</CardTitle>
                 <CardDescription className="text-xs">
-                  ✅ = Incluído | — = Não incluído
+                  Clique em ✅ ou — para alternar | ✅ = Incluído | — = Não incluído
                 </CardDescription>
               </CardHeader>
               <CardContent className="py-4">
@@ -855,25 +833,58 @@ export default function PricingAdminPage() {
                             </div>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.imob.prime[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "imob", "prime", String(idx), "included"],
+                                  !formData.featureMatrix.imob.prime[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.imob.prime[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.imob.k[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "imob", "k", String(idx), "included"],
+                                  !formData.featureMatrix.imob.k[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.imob.k[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.imob.k2[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "imob", "k2", String(idx), "included"],
+                                  !formData.featureMatrix.imob.k2[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.imob.k2[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -888,7 +899,7 @@ export default function PricingAdminPage() {
               <CardHeader className="py-4 bg-secondary/5">
                 <CardTitle className="text-lg">Kenlo Locação — Funcionalidades por Plano</CardTitle>
                 <CardDescription className="text-xs">
-                  ✅ = Incluído | — = Não incluído
+                  Clique em ✅ ou — para alternar | ✅ = Incluído | — = Não incluído
                 </CardDescription>
               </CardHeader>
               <CardContent className="py-4">
@@ -919,25 +930,58 @@ export default function PricingAdminPage() {
                             </div>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.locacao.prime[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "locacao", "prime", String(idx), "included"],
+                                  !formData.featureMatrix.locacao.prime[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.locacao.prime[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.locacao.k[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "locacao", "k", String(idx), "included"],
+                                  !formData.featureMatrix.locacao.k[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.locacao.k[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                           <td className="text-center py-2 px-3">
-                            {formData.featureMatrix.locacao.k2[idx]?.included ? (
-                              <span className="text-green-600 font-bold text-lg">✅</span>
-                            ) : (
-                              <span className="text-gray-400 font-bold">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateValue(
+                                  ["featureMatrix", "locacao", "k2", String(idx), "included"],
+                                  !formData.featureMatrix.locacao.k2[idx]?.included
+                                )
+                              }
+                              className="cursor-pointer hover:scale-110 transition-transform"
+                            >
+                              {formData.featureMatrix.locacao.k2[idx]?.included ? (
+                                <span className="text-green-600 font-bold text-lg">✅</span>
+                              ) : (
+                                <span className="text-gray-400 font-bold">—</span>
+                              )}
+                            </button>
                           </td>
                         </tr>
                       ))}
