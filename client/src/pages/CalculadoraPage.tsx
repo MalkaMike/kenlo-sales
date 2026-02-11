@@ -1152,7 +1152,7 @@ export default function CalculadoraPage() {
         bestSavings = savings;
         
         if (missingAddons.length === 0) {
-          bestMessage = `Ative o ${kombo.name} e economize R$${Math.round(bestSavings)}/mês!`;
+          bestMessage = `Ative o ${kombo.name} e economize R$${Math.round(bestSavings).toLocaleString('pt-BR')}/mês!`;
         } else {
           const addonNames = missingAddons.map(a => {
             if (a === "leads") return "Leads";
@@ -1161,7 +1161,7 @@ export default function CalculadoraPage() {
             if (a === "pay") return "Pay";
             return a;
           }).join(", ");
-          bestMessage = `Adicione ${addonNames} e ative o ${kombo.name} para economizar R$${Math.round(bestSavings)}/mês!`;
+          bestMessage = `Adicione ${addonNames} e ative o ${kombo.name} para economizar R$${Math.round(bestSavings).toLocaleString('pt-BR')}/mês!`;
         }
       }
     });
@@ -1478,6 +1478,17 @@ export default function CalculadoraPage() {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     }).format(value);
+  };
+
+  // Helper: Format number with thousands separator (pt-BR: 1.000, 10.000)
+  const fmtNum = (value: number | string): string => {
+    const num = typeof value === 'number' ? value : toNum(value);
+    return num.toLocaleString('pt-BR');
+  };
+
+  // Helper: Format price with comma decimal (e.g., 37,00)
+  const fmtPrice = (value: number): string => {
+    return value.toFixed(2).replace('.', ',');
   };
 
   const frequencyLabels = {
@@ -1939,19 +1950,19 @@ export default function CalculadoraPage() {
                                 if (remaining <= 0) break;
                                 const tierSize = tier.to === Infinity ? remaining : (tier.to - tier.from + 1);
                                 const qty = Math.min(remaining, tierSize);
-                                breakdownLines.push(`${qty} × R$${tier.price.toFixed(2).replace('.', ',')}`);
+                                breakdownLines.push(`${fmtNum(qty)} × R$${fmtPrice(tier.price)}`);
                                 remaining -= qty;
                               }
                             }
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
-                                <span><span className="font-bold text-red-600">{included}</span> usuários incluídos</span>
+                                <span><span className="font-bold text-red-600">{fmtNum(included)}</span> usuários incluídos</span>
                                 {additional > 0 && (
                                   <TooltipProvider delayDuration={200}>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
                                         <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
-                                          {additional} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/usuário)
+                                          {fmtNum(additional)} serão cobrados pós-pago (R${fmtPrice(avgPrice)}/usuário)
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent side="bottom" className="max-w-xs">
@@ -1959,10 +1970,15 @@ export default function CalculadoraPage() {
                                         {breakdownLines.map((line, i) => (
                                           <p key={i} className="text-xs">{line}</p>
                                         ))}
-                                        <p className="text-xs mt-1 font-semibold">Total: R${totalCost.toFixed(2).replace('.', ',')}/mês</p>
+                                        <p className="text-xs mt-1 font-semibold">Total: R${fmtPrice(totalCost)}/mês</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
+                                )}
+                                {additional > 0 && (
+                                  <p className="mt-1.5 text-[10px] text-gray-500 italic leading-snug">
+                                    Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por usuário.
+                                  </p>
                                 )}
                               </div>
                             );
@@ -2060,19 +2076,19 @@ export default function CalculadoraPage() {
                                 if (remaining <= 0) break;
                                 const tierSize = tier.to === Infinity ? remaining : (tier.to - tier.from + 1);
                                 const qty = Math.min(remaining, tierSize);
-                                breakdownLines.push(`${qty} × R$${tier.price.toFixed(2).replace('.', ',')}`);
+                                breakdownLines.push(`${fmtNum(qty)} × R$${fmtPrice(tier.price)}`);
                                 remaining -= qty;
                               }
                             }
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
-                                <span><span className="font-bold text-red-600">{included}</span> contratos incluídos</span>
+                                <span><span className="font-bold text-red-600">{fmtNum(included)}</span> contratos incluídos</span>
                                 {additional > 0 && (
                                   <TooltipProvider delayDuration={200}>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
                                         <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
-                                          {additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/contrato)
+                                          {fmtNum(additional)} serão cobrados pós-pago (R${fmtPrice(avgPrice)}/contrato)
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent side="bottom" className="max-w-xs">
@@ -2080,10 +2096,15 @@ export default function CalculadoraPage() {
                                         {breakdownLines.map((line, i) => (
                                           <p key={i} className="text-xs">{line}</p>
                                         ))}
-                                        <p className="text-xs mt-1 font-semibold">Total: R${totalCost.toFixed(2).replace('.', ',')}/mês</p>
+                                        <p className="text-xs mt-1 font-semibold">Total: R${fmtPrice(totalCost)}/mês</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
+                                )}
+                                {additional > 0 && (
+                                  <p className="mt-1.5 text-[10px] text-gray-500 italic leading-snug">
+                                    Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por contrato.
+                                  </p>
                                 )}
                               </div>
                             );
@@ -2542,7 +2563,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Usuários Adicionais</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídos: {included} | Adicionais: {additional}
+                                Incluídos: {fmtNum(included)} | Adicionais: {fmtNum(additional)}
                               </span>
                               {showPrepayOption && (
                                 <label className="flex items-center gap-2 mt-2 cursor-pointer">
@@ -2596,7 +2617,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Mensagens WhatsApp (Leads)</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídas: {included} | Adicionais: {additional}
+                                Incluídas: {fmtNum(included)} | Adicionais: {fmtNum(additional)}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
@@ -2718,7 +2739,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Contratos Adicionais</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídos: {included} | Adicionais: {additional}
+                                Incluídos: {fmtNum(included)} | Adicionais: {fmtNum(additional)}
                               </span>
                               {showPrepayOption && (
                                 <label className="flex items-center gap-2 mt-2 cursor-pointer">
@@ -2782,7 +2803,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Custo Boletos (Pay)</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídos: {includedBoletos} | Adicionais: {additionalBoletos}
+                                Incluídos: {fmtNum(includedBoletos)} | Adicionais: {fmtNum(additionalBoletos)}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
@@ -2827,7 +2848,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Custo Split (Pay)</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídos: {includedSplits} | Adicionais: {additionalSplits}
+                                Incluídos: {fmtNum(includedSplits)} | Adicionais: {fmtNum(additionalSplits)}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
@@ -2901,7 +2922,7 @@ export default function CalculadoraPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-medium text-slate-900">Assinaturas Digitais</span>
                               <span className="text-xs text-gray-500 italic">
-                                Incluídas: {included} | Adicionais: {additional}
+                                Incluídas: {fmtNum(included)} | Adicionais: {fmtNum(additional)}
                               </span>
                             </div>
                             <div className="flex flex-col items-end">
@@ -3249,10 +3270,10 @@ export default function CalculadoraPage() {
                             <span className="text-sm font-medium text-slate-900">Boletos & Split</span>
                             <span className="text-xs text-gray-500 italic">
                               {metrics.chargesBoletoToTenant && metrics.chargesSplitToOwner 
-                                ? `${metrics.contractsUnderManagement} boletos × R$ ${Number(toNum(metrics.boletoChargeAmount)).toFixed(2)} + ${metrics.contractsUnderManagement} splits × R$ ${Number(toNum(metrics.splitChargeAmount)).toFixed(2)}`
+                                ? `${fmtNum(metrics.contractsUnderManagement)} boletos × R$ ${fmtPrice(toNum(metrics.boletoChargeAmount))} + ${fmtNum(metrics.contractsUnderManagement)} splits × R$ ${fmtPrice(toNum(metrics.splitChargeAmount))}`
                                 : metrics.chargesBoletoToTenant 
-                                  ? `${metrics.contractsUnderManagement} boletos × R$ ${Number(toNum(metrics.boletoChargeAmount)).toFixed(2)}`
-                                  : `${metrics.contractsUnderManagement} splits × R$ ${Number(toNum(metrics.splitChargeAmount)).toFixed(2)}`
+                                  ? `${fmtNum(metrics.contractsUnderManagement)} boletos × R$ ${fmtPrice(toNum(metrics.boletoChargeAmount))}`
+                                  : `${fmtNum(metrics.contractsUnderManagement)} splits × R$ ${fmtPrice(toNum(metrics.splitChargeAmount))}`
                               }
                             </span>
                           </div>

@@ -3606,3 +3606,10 @@
 - [x] Add tooltip on Locação per-contract price showing tiered breakdown (e.g., "250 × R$3,00 + 250 × R$2,50 + 500 × R$2,00")
 - [x] Tooltip appears on hover over the per-unit price text
 - [x] Use existing shadcn/ui Tooltip component for consistent styling
+
+## Thousands Separators + Motivational Phrase
+
+- [x] Ensure all numbers across the entire site use thousands separators (pt-BR format: 1.000, 10.000, etc.)
+- [x] Add motivational phrase below IMOB postpaid text: "Na Kenlo, você paga só o que usa. E mais você usa, menos você paga por usuário" with Kenlo in red
+- [x] Add motivational phrase below Locação postpaid text: "Na Kenlo, você paga só o que usa. E mais você usa, menos você paga por contrato" with Kenlo in red
+- [x] Audit all number displays in CalculadoraPage, KomboComparisonTable, and other pages
