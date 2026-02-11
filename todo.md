@@ -2994,3 +2994,17 @@
 - [ ] Inputs mais compactos (h-7 em vez de h-8)
 - [ ] Labels menores e uppercase
 - [ ] Espaçamento reduzido (space-y-3 em vez de space-y-4)
+
+## Pricing Admin Visual Improvements - Reimplementation
+- [ ] Read current PricingAdminPage structure
+- [ ] Implement thousand separator formatting (1.497 instead of 1497)
+- [ ] Reduce input heights (h-7 instead of h-8)
+- [ ] Make labels smaller and uppercase (text-xs uppercase)
+- [ ] Optimize spacing (space-y-3, py-6, mb-4)
+- [ ] Test all changes work correctly
+
+## Pricing Admin Visual Improvements (Reimplementation) - Feb 2026
+- [x] Implement thousand separator formatting for all number inputs (1.497 format)
+- [x] Optimize input sizes (h-7) and labels (text-xs uppercase)
+- [x] Reduce spacing and padding throughout interface (py-4, gap-3, space-y-1)
+- [x] Test all changes and verify all 271 tests pass
