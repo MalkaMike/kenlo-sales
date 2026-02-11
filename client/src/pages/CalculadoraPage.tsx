@@ -2072,7 +2072,7 @@ export default function CalculadoraPage() {
                             ) : isPrimeOnly ? (
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                  Opcional (R$97/mês) ⚠️ Atualizar
+                                  Opcional (R$97/mês)
                                 </Badge>
                                 <Switch
                                   checked={metrics.imobVipSupport}
@@ -2092,7 +2092,7 @@ export default function CalculadoraPage() {
                           <p className="text-xs text-muted-foreground">
                             Atendimento prioritário com SLA reduzido e canal exclusivo.
                           </p>
-                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês ⚠️ Atualizar</p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic">Ref. R$ 97/mês</p>
                         </CardContent>
                       </Card>
 

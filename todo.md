@@ -3579,3 +3579,7 @@
 - [x] Change "+" button color from gray to green
 - [x] Remove Seguros and Cash rows from the comparison table (they are free services, not paid)
 - [x] Fix training pricing: R$166/mês (anual) × 2 per product selected (not R$167)
+
+## Bug Fix — Suporte VIP Selector Visual Issue
+
+- [x] Fix visual issue with Suporte VIP selector in Calculadora (removed ⚠️ Atualizar from badge and ref line)
