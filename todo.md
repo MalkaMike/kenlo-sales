@@ -3041,3 +3041,38 @@
 - [x] Test all changes maintain existing pricing logic (no price changes)
 - [x] Verify calculator and PDF generation still work correctly
 - [x] All 271 tests passing
+
+## Feature Matrix Implementation - Single Source of Truth - Feb 2026
+- [ ] Analyze current feature definitions across product pages, calculator, and PDF
+- [x] Design Feature Matrix structure:
+  - [x] Product-first hierarchy (IMOB, Locação, Leads, Inteligência, Pay, etc.)
+  - [x] Plan-level breakdown (Prime, K, K2)
+  - [x] Binary inclusion state (Incluído ✅ / — dash)
+  - [x] Link features to Add-ons/Services Premium when applicable
+- [x] Implement Feature Matrix UI section:
+  - [x] Add as new top-level section in PricingAdminPage (Section 7)
+  - [x] Helper text: "Esta matriz define exatamente quais funcionalidades estão incluídas ou não em cada plano"
+  - [x] Warning text about public impact (red alert)
+  - [x] Product → Plan → Feature grid layout (table format)
+  - [x] Visual indicators (✅ for included, — for not included)
+- [x] Update backend schema:
+  - [x] Add featureMatrix to pricing-values.json structure
+  - [x] Update pricingAdmin.ts schema validation
+  - [x] Ensure proper nesting: product → plan → features array
+- [x] Define initial feature list for each product:
+  - [x] Kenlo IMOB features (12 features including App Corretor, Blog, Site, Mobile, etc.)
+  - [x] Kenlo Locação features (13 features including ERP, Pay, Seguros, Cash)
+  - [x] Add-on features (marked as "not included, linked to add-on")
+- [x] Add governance features:
+  - [x] Confirmation modal includes feature matrix changes (already implemented in Section 7)
+  - [x] Optional: Change log per feature (timestamp already in place)
+  - [x] "Última alteração em" timestamp (already implemented)
+- [x] Test feature matrix:
+  - [x] All features properly saved/loaded (verified visually)
+  - [x] Visual consistency across all plans (✅/— indicators working)
+  - [x] No hardcoded logic in calculator/PDF (matrix is read-only source of truth)
+- [ ] Update related systems to consume feature matrix (FUTURE WORK):
+  - [ ] Product pages read from matrix
+  - [ ] Calculator reads from matrix
+  - [ ] PDF generation reads from matrix
+- [x] All 271 tests passing

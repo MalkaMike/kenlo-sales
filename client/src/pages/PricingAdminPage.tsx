@@ -792,6 +792,167 @@ export default function PricingAdminPage() {
             </Card>
           </div>
 
+          {/* ========================================
+              7️⃣ MATRIZ DE FUNCIONALIDADES
+          ======================================== */}
+          <div className="space-y-3">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">7. Matriz de Funcionalidades por Produto e Plano</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Esta matriz define exatamente quais funcionalidades estão incluídas ou não em cada plano
+              </p>
+            </div>
+
+            <Alert className="bg-red-50 border-red-200">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-sm text-red-800">
+                <strong>Atenção:</strong> Alterações nesta matriz impactam diretamente páginas públicas, calculadora e PDFs.
+                Modifique com cuidado.
+              </AlertDescription>
+            </Alert>
+
+            <Alert className="bg-blue-50 border-blue-200">
+              <Info className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-sm text-blue-800">
+                <strong>Fonte Única de Verdade:</strong> Todas as páginas públicas (site, calculadora e PDF) devem consumir esta configuração.
+                Nunca codifique lógica de inclusão de features fora desta matriz.
+              </AlertDescription>
+            </Alert>
+
+            {/* IMOB Features */}
+            <Card className="border-2 border-primary/20">
+              <CardHeader className="py-4 bg-primary/5">
+                <CardTitle className="text-lg">Kenlo IMOB — Funcionalidades por Plano</CardTitle>
+                <CardDescription className="text-xs">
+                  ✅ = Incluído | — = Não incluído
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="py-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3 font-semibold">Funcionalidade</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">Prime</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K2</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData?.featureMatrix?.imob?.prime?.map((feature: any, idx: number) => (
+                        <tr key={idx} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-3">
+                            <div>
+                              <div className="font-medium">{feature.name}</div>
+                              {feature.description && (
+                                <div className="text-xs text-muted-foreground">{feature.description}</div>
+                              )}
+                              {feature.linkedTo && (
+                                <div className="text-xs text-blue-600 italic mt-1">
+                                  → Vinculado a: {feature.linkedTo}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.imob.prime[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.imob.k[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.imob.k2[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Locação Features */}
+            <Card className="border-2 border-secondary/20">
+              <CardHeader className="py-4 bg-secondary/5">
+                <CardTitle className="text-lg">Kenlo Locação — Funcionalidades por Plano</CardTitle>
+                <CardDescription className="text-xs">
+                  ✅ = Incluído | — = Não incluído
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="py-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3 font-semibold">Funcionalidade</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">Prime</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K</th>
+                        <th className="text-center py-2 px-3 font-semibold bg-gray-50">K2</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData?.featureMatrix?.locacao?.prime?.map((feature: any, idx: number) => (
+                        <tr key={idx} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-3">
+                            <div>
+                              <div className="font-medium">{feature.name}</div>
+                              {feature.description && (
+                                <div className="text-xs text-muted-foreground">{feature.description}</div>
+                              )}
+                              {feature.linkedTo && (
+                                <div className="text-xs text-blue-600 italic mt-1">
+                                  → Vinculado a: {feature.linkedTo}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.locacao.prime[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.locacao.k[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            {formData.featureMatrix.locacao.k2[idx]?.included ? (
+                              <span className="text-green-600 font-bold text-lg">✅</span>
+                            ) : (
+                              <span className="text-gray-400 font-bold">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <HelperText>
+              <strong>Regra absoluta:</strong> A calculadora, páginas de produtos e PDF devem APENAS ler esta matriz.
+              Nunca inferir, nunca codificar lógica de inclusão fora desta configuração.
+            </HelperText>
+          </div>
+
           {/* Bottom spacer */}
           <div className="h-8"></div>
         </div>

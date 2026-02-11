@@ -105,6 +105,48 @@ const PricingValuesSchema = z.object({
     }),
   }),
   implantacaoBase: z.number(),
+  featureMatrix: z.object({
+    imob: z.object({
+      prime: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+      k: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+      k2: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+    }),
+    locacao: z.object({
+      prime: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+      k: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+      k2: z.array(z.object({
+        name: z.string(),
+        description: z.string(),
+        included: z.boolean(),
+        linkedTo: z.string().optional(),
+      })),
+    }),
+  }),
 });
 
 export const pricingAdminRouter = router({

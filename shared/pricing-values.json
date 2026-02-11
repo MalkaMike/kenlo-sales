@@ -172,5 +172,98 @@
       "k2": 0.45
     }
   },
-  "implantacaoBase": 1497
+  "implantacaoBase": 1497,
+  "featureMatrix": {
+    "imob": {
+      "prime": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "App Corretor", "description": "Aplicativo para corretores", "included": true },
+        { "name": "CRM Completo", "description": "Gestão de leads e vendas", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis", "included": true },
+        { "name": "Integração com Portais", "description": "Integração automática com portais (Zap, Viva Real, etc.)", "included": true },
+        { "name": "Blog", "description": "Blog integrado ao site", "included": false },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Omnichannel/WhatsApp", "description": "Comunicação via WhatsApp integrada", "included": false, "linkedTo": "addon_omnichannel" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": false, "linkedTo": "premiumServices" },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ],
+      "k": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "App Corretor", "description": "Aplicativo para corretores", "included": true },
+        { "name": "CRM Completo", "description": "Gestão de leads e vendas", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis", "included": true },
+        { "name": "Integração com Portais", "description": "Integração automática com portais (Zap, Viva Real, etc.)", "included": true },
+        { "name": "Blog", "description": "Blog integrado ao site", "included": true },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Omnichannel/WhatsApp", "description": "Comunicação via WhatsApp integrada", "included": false, "linkedTo": "addon_omnichannel" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": false, "linkedTo": "premiumServices" },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ],
+      "k2": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "App Corretor", "description": "Aplicativo para corretores", "included": true },
+        { "name": "CRM Completo", "description": "Gestão de leads e vendas", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis", "included": true },
+        { "name": "Integração com Portais", "description": "Integração automática com portais (Zap, Viva Real, etc.)", "included": true },
+        { "name": "Blog", "description": "Blog integrado ao site", "included": true },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Omnichannel/WhatsApp", "description": "Comunicação via WhatsApp integrada", "included": false, "linkedTo": "addon_omnichannel" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": true },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ]
+    },
+    "locacao": {
+      "prime": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "ERP de Locação", "description": "Gestão completa de contratos de locação", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis para locação", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis para locação", "included": true },
+        { "name": "Gestão Financeira", "description": "Controle financeiro de aluguéis e pagamentos", "included": true },
+        { "name": "Emissão de Boletos", "description": "Geração de boletos de aluguel", "included": true },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Kenlo Pay", "description": "Split automático e conciliação financeira", "included": false, "linkedTo": "addon_pay" },
+        { "name": "Kenlo Seguros", "description": "Seguros integrados no boleto", "included": false, "linkedTo": "addon_seguros" },
+        { "name": "Kenlo Cash", "description": "Antecipação de até 24 meses de aluguel", "included": false, "linkedTo": "addon_cash" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": false, "linkedTo": "premiumServices" },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ],
+      "k": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "ERP de Locação", "description": "Gestão completa de contratos de locação", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis para locação", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis para locação", "included": true },
+        { "name": "Gestão Financeira", "description": "Controle financeiro de aluguéis e pagamentos", "included": true },
+        { "name": "Emissão de Boletos", "description": "Geração de boletos de aluguel", "included": true },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Kenlo Pay", "description": "Split automático e conciliação financeira", "included": false, "linkedTo": "addon_pay" },
+        { "name": "Kenlo Seguros", "description": "Seguros integrados no boleto", "included": false, "linkedTo": "addon_seguros" },
+        { "name": "Kenlo Cash", "description": "Antecipação de até 24 meses de aluguel", "included": false, "linkedTo": "addon_cash" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": false, "linkedTo": "premiumServices" },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ],
+      "k2": [
+        { "name": "Site Personalizável", "description": "Website personalizado para a imobiliária", "included": true },
+        { "name": "Mobile Access", "description": "Acesso via dispositivos móveis", "included": true },
+        { "name": "ERP de Locação", "description": "Gestão completa de contratos de locação", "included": true },
+        { "name": "Gestão de Imóveis", "description": "Cadastro e gestão de imóveis para locação", "included": true },
+        { "name": "Portal de Imóveis", "description": "Portal público de imóveis para locação", "included": true },
+        { "name": "Gestão Financeira", "description": "Controle financeiro de aluguéis e pagamentos", "included": true },
+        { "name": "Emissão de Boletos", "description": "Geração de boletos de aluguel", "included": true },
+        { "name": "Google Looker BI", "description": "Business Intelligence com Google Looker", "included": false, "linkedTo": "addon_inteligencia" },
+        { "name": "Kenlo Pay", "description": "Split automático e conciliação financeira", "included": false, "linkedTo": "addon_pay" },
+        { "name": "Kenlo Seguros", "description": "Seguros integrados no boleto", "included": false, "linkedTo": "addon_seguros" },
+        { "name": "Kenlo Cash", "description": "Antecipação de até 24 meses de aluguel", "included": false, "linkedTo": "addon_cash" },
+        { "name": "CS Dedicado", "description": "Customer Success dedicado", "included": true },
+        { "name": "Suporte VIP", "description": "Suporte prioritário", "included": false, "linkedTo": "premiumServices" }
+      ]
+    }
+  }
 }
