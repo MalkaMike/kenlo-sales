@@ -3318,3 +3318,36 @@
 - [ ] Verify defendable in front of CFO-level clients (manual test needed)
 - [x] All 35 PDF tests passing
 - [ ] Save final checkpoint
+
+## PDF Complete Structural Redesign - Executive Clarity v2.0
+
+- [ ] Redesign PDF structure to answer 4 key questions: Who is the client? What did they contract? How much will they pay? What are they getting?
+- [ ] Section 1: Cover (keep unchanged, no blank pages)
+- [ ] Section 2: Perfil Operacional do Cliente (clean grid format with business nature, users, leads/month, closings/month, total contracts, new contracts/month, split %, boleto value)
+- [ ] Section 3: Estrutura Contratada (payment cycle, products & plans with "&", selected add-ons bullet list, non-included add-ons bullet list)
+- [ ] Section 4: Investimento Contratual (show ONLY real charged value according to cycle - never show equivalent monthly here)
+- [ ] Section 5: Escopo Incluído na Contratação (explicit bullet list: users, contracts, WhatsApp, signatures, Explorer user, implementation, premium services)
+- [ ] Section 6: Serviços Premium Ativados (clear status: Included or —)
+- [ ] Section 7: Funcionalidades da Plataforma (table format with checkmarks/dashes, side-by-side if 2 products)
+- [ ] Section 8: Potencial de Receita Extra com Kenlo (display only if applicable)
+- [ ] Remove all redundant discount explanations
+- [ ] Remove all mixing of "equivalent values" with "charged values"
+- [ ] Remove all didactic texts about payment cycles
+- [ ] Remove all "Incluído no plano" repetitions
+- [ ] Ensure no blank pages in final PDF
+- [ ] Test PDF generation with different configurations (monthly/annual, 1 product/2 products, with/without kombos)
+
+## PDF Complete Structural Redesign - Executive Clarity v2.0
+
+- [x] Redesenhar estrutura do PDF server-side (pdfGenerator.ts) com 8 seções obrigatórias
+- [x] Redesenhar estrutura do PDF client-side (generateProposalPDF.ts) com 8 seções obrigatórias
+- [x] Implementar Seção 1: Capa (full page)
+- [x] Implementar Seção 2: Perfil Operacional do Cliente (grid format)
+- [x] Implementar Seção 3: Estrutura Contratada (ciclo, produtos com "&", add-ons bullets)
+- [x] Implementar Seção 4: Investimento Contratual (valor REAL cobrado no ciclo)
+- [x] Implementar Seção 5: Escopo Incluído na Contratação (bullets explícitos)
+- [x] Implementar Seção 6: Serviços Premium Ativados (status claro: Incluído ou —)
+- [x] Implementar Seção 7: Funcionalidades da Plataforma (tabela com ✔ e —)
+- [x] Implementar Seção 8: Potencial de Receita Extra (só se aplicável)
+- [x] Testar geração de PDF com dados de teste
+- [ ] ISSUE CONHECIDO: PDFKit 0.17.2 está criando páginas em branco extras automaticamente (páginas 2 e 4). Conteúdo está correto nas páginas 1, 3 e 5. Investigar atualização do PDFKit ou workaround.
