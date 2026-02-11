@@ -286,10 +286,10 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     const freqMap: Record<string, { label: string; adj: string }> = {
       monthly: { label: "Mensal", adj: "(referência)" },
       mensal: { label: "Mensal", adj: "(referência)" },
-      semestral: { label: "Semestral", adj: "−10%" },
-      annual: { label: "Anual", adj: "−20%" },
-      anual: { label: "Anual", adj: "−20%" },
-      bienal: { label: "Bienal", adj: "−28%" },
+      semestral: { label: "Semestral", adj: "–10%" },
+      annual: { label: "Anual", adj: "–20%" },
+      anual: { label: "Anual", adj: "–20%" },
+      bienal: { label: "Bienal", adj: "–28%" },
     };
     const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || freqMap["annual"];
 
@@ -421,14 +421,12 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     Y = resumoStartY + resumoH + GAP;
 
     // ================================================================
-    // SECTION 3 — DETALHAMENTO
+    // SECTION 3 — INVESTIMENTO
     // ================================================================
-    Y = sectionTitle("Detalhamento", Y);
+    Y = sectionTitle("Investimento", Y);
 
-    // CEO Verdict pricing transparency text
-    lbl("O valor mensal é o preço de referência. Pagamentos semestrais e anuais oferecem descontos progressivos sobre esse valor.", M + 10, Y, { size: 6.5, color: C.text });
-    Y += 10;
-    lbl("Descontos: Semestral −10% | Anual −20% | Bienal −28%", M + 10, Y, { size: 6, color: C.textMuted });
+    // Guideline 2: Explicit discount order (one clean line only)
+    lbl("Desconto aplicado na seguinte ordem: 1. Ciclo de pagamento  2. Kombo promocional (quando aplicável)", M + 10, Y, { size: 6.5, color: C.textMuted });
     Y += 14;
 
     // Products
@@ -478,38 +476,48 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     divider(Y);
     Y += 10;
 
-    // Total mensal
-    doc.fontSize(9).fillColor(C.dark).font("Helvetica-Bold")
-      .text("Total Mensal Equivalente", M + 14, Y, { lineBreak: false });
-    doc.fontSize(9).fillColor(C.dark).font("Helvetica-Bold")
-      .text(fmt(monthlyRecurring), M + 14, Y, { width: CW - 28, align: "right" });
+    // ================================================================
+    // BLOCO A — INVESTIMENTO MENSAL EQUIVALENTE
+    // ================================================================
+    doc.fontSize(7.5).fillColor(C.textMuted).font("Helvetica-Bold")
+      .text("INVESTIMENTO MENSAL EQUIVALENTE", M + 14, Y, { lineBreak: false });
+    Y += 12;
+    
+    // Large equivalent monthly value (for comparison only)
+    doc.fontSize(14).fillColor(C.dark).font("Helvetica-Bold")
+      .text(fmt(monthlyRecurring) + " / mês", M + 14, Y, { lineBreak: false });
+    Y += 18;
+    lbl("Valor normalizado para comparação", M + 14, Y, { size: 6, color: C.textLight });
     Y += 16;
 
-    // Implantação - CEO Verdict: clearly labeled as "Pagamento único"
-    Y += 4; // Extra spacing to visually separate from monthly fees
-    doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
-      .text("PAGAMENTO ÚNICO", M + 14, Y, { lineBreak: false });
+    // ================================================================
+    // BLOCO B — FORMA DE PAGAMENTO
+    // ================================================================
+    doc.fontSize(7.5).fillColor(C.textMuted).font("Helvetica-Bold")
+      .text("FORMA DE PAGAMENTO", M + 14, Y, { lineBreak: false });
     Y += 12;
-    tableRow("Implantação", fmt(data.implantationFee), Y);
-    Y += 10;
-    lbl("Custo único, não recorrente — não entra no cálculo do ROI mensal.", M + 14, Y, { size: 5.5, color: C.textLight });
-    Y += 14;
 
-    // Payment condition with installment breakdown
     const normPlan = data.paymentPlan?.toLowerCase() || "annual";
-    doc.fontSize(7.5).fillColor(C.dark).font("Helvetica-Bold")
-      .text("Condicao de Pagamento", M + 14, Y, { lineBreak: false });
-    Y += 12;
-
+    
     if (normPlan === "monthly" || normPlan === "mensal") {
-      lbl(`Cobrado mensalmente: ${fmt(data.totalMonthly || monthlyRecurring)}/mes`, M + 14, Y, { size: 7.5, color: C.text });
-      Y += 14;
+      doc.fontSize(10).fillColor(C.primary).font("Helvetica-Bold")
+        .text(`Cobrança mensal: ${fmt(data.totalMonthly || monthlyRecurring)} / mês`, M + 14, Y, { lineBreak: false });
+      Y += 16;
     } else if (normPlan === "semestral") {
-      lbl(`Pago semestralmente: ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`, M + 14, Y, { size: 7.5, color: C.text });
-      Y += 14;
+      doc.fontSize(10).fillColor(C.primary).font("Helvetica-Bold")
+        .text(`Cobrança semestral: ${fmt((data.totalMonthly || 0) * 6)} a cada 6 meses`, M + 14, Y, { lineBreak: false });
+      Y += 16;
     } else {
-      // Annual or Bienal — show installment pills
-      const periodLabel = normPlan === "bienal" ? "bienal (24 meses)" : "anual";
+      // Annual or Bienal — show charged amount + installment pills
+      const periodLabel = normPlan === "bienal" ? "bienal" : "anual";
+      doc.fontSize(10).fillColor(C.primary).font("Helvetica-Bold")
+        .text(`Cobrança ${periodLabel}: ${fmt(totalInvestment)}`, M + 14, Y, { lineBreak: false });
+      Y += 14;
+      
+      // Installment options
+      lbl("Parcelamento disponível:", M + 14, Y, { size: 7, color: C.textMuted });
+      Y += 12;
+      
       const maxInstallments = normPlan === "bienal" ? 6 : 3;
       const PILL_W = (CW - 28 - (maxInstallments - 1) * 6) / maxInstallments;
       const PILL_H = 28;
@@ -521,7 +529,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         if (isSel) {
           doc.roundedRect(px, Y, PILL_W, PILL_H, 4).strokeColor(C.primary).stroke();
         }
-        const pillLabel = n === 1 ? "A vista" : `${n}x`;
+        const pillLabel = n === 1 ? "1x" : `${n}x`;
         doc.fontSize(6.5).fillColor(isSel ? "#FFFFFF" : C.text)
           .font(isSel ? "Helvetica-Bold" : "Helvetica")
           .text(pillLabel, px, Y + 4, { width: PILL_W, align: "center" });
@@ -530,10 +538,22 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
           .font("Helvetica")
           .text(pillValue, px, Y + 15, { width: PILL_W, align: "center" });
       }
-      Y += PILL_H + 4;
-      lbl(`Pagamento ${periodLabel} — Total: ${fmt(totalInvestment)}`, M + 14, Y, { size: 6, color: C.textMuted });
-      Y += 14;
+      Y += PILL_H + 6;
     }
+    
+    Y += 10;
+
+    // ================================================================
+    // IMPLANTAÇÃO (Separate section)
+    // ================================================================
+    doc.fontSize(7.5).fillColor(C.textMuted).font("Helvetica-Bold")
+      .text("IMPLANTAÇÃO", M + 14, Y, { lineBreak: false });
+    Y += 12;
+    doc.fontSize(10).fillColor(C.dark).font("Helvetica-Bold")
+      .text(fmt(data.implantationFee), M + 14, Y, { lineBreak: false });
+    Y += 14;
+    lbl("Pagamento único, não recorrente", M + 14, Y, { size: 6, color: C.textLight });
+    Y += 14;
 
     Y += GAP;
 
@@ -551,7 +571,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       }
 
       // VIP
-      const vipStatus = hasVip ? (data.vipIncluded ? "Incluido no plano" : "Contratado") : "Nao contratado";
+      const vipStatus = hasVip ? (data.vipIncluded ? "Incluído" : "Contratado") : "Não contratado";
       const vipColor = hasVip ? (data.vipIncluded ? C.green : C.text) : C.textLight;
       doc.fontSize(7.5).fillColor(C.dark).font("Helvetica-Bold")
         .text("Suporte VIP", M + 14, Y, { lineBreak: false });
@@ -562,7 +582,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       Y += 14;
 
       // CS Dedicado
-      const csStatus = hasCS ? (data.csIncluded ? "Incluido no plano" : "Contratado") : "Nao contratado";
+      const csStatus = hasCS ? (data.csIncluded ? "Incluído" : "Contratado") : "Não contratado";
       const csColor = hasCS ? (data.csIncluded ? C.green : C.text) : C.textLight;
       doc.fontSize(7.5).fillColor(C.dark).font("Helvetica-Bold")
         .text("CS Dedicado", M + 14, Y, { lineBreak: false });

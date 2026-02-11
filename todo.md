@@ -3262,3 +3262,59 @@
   - [x] Verify all features still shown (getAllFeatures includes category)
   - [x] All 282 tests passing
 - [ ] Save final checkpoint
+
+## PDF Restructuring - Executive Clarity - Feb 2026
+
+### Phase 1: Audit Complete ✅
+- [x] Documented all changes needed in pdf-restructure-audit.md
+- [x] Found redundant text at lines 429, 431
+- [x] Identified pricing structure issues
+- [x] Identified symbol encoding issues
+- [x] Identified benefits section redundancy
+
+### Guideline 1: Remove Redundant Discount Explanation ✅
+- [x] Delete block: "O valor mensal é o preço de referência. Pagamentos semestrais..." (line 429)
+- [x] Delete: "Descontos: Semestral –10% | Anual –20% | Bienal –28%" (line 431)
+- [x] Reason: Selected cycle already in header, repetition creates confusion
+
+### Guideline 2: Make Discount Order Explicit ✅
+- [x] Add ONE clean line under summary: "Desconto aplicado na seguinte ordem: 1. Ciclo 2. Kombo"
+- [x] Remove all other discount explanations
+
+### Guideline 3: Separate "Valor Equivalente" from "Valor Cobrado" ✅
+- [x] Create BLOCO A — Investimento Mensal Equivalente
+  - [x] Title: "INVESTIMENTO MENSAL EQUIVALENTE"
+  - [x] Show: "R$ X.XXX,00 / mês" (large font, dark color)
+  - [x] Note: "Valor normalizado para comparação"
+- [x] Create BLOCO B — Forma de Pagamento
+  - [x] Title: "FORMA DE PAGAMENTO"
+  - [x] If Annual: "Cobrança anual: R$ XXXXX" + "Parcelamento disponível: 1x | 2x | 3x"
+  - [x] If Semestral: "Cobrança semestral: R$ XXXXX a cada 6 meses"
+  - [x] If Mensal: "Cobrança mensal: R$ XXXXX / mês"
+- [x] Never mix equivalent values with charged values (completely separated)
+
+### Guideline 4: Fix Symbol Encoding Errors ✅
+- [x] Replace broken symbols like "−10%" with proper dash: "–10%"
+- [x] Use proper dash formatting everywhere (– not −)
+
+### Guideline 5: Clean Benefits Section ✅
+- [x] Replace "Incluido no plano" with just "Incluído"
+- [x] Do not repeat "no plano"
+
+### Guideline 6: Add Visual Hierarchy ✅
+- [x] Enforce section order: Cliente → Resumo → Investimento → Implantação → Benefícios → Funcionalidades → Custos Variáveis → Próximos Passos
+- [x] No repetition of sections (verified in pdf-section-order-analysis.md)
+- [x] Renamed "Detalhamento" to "Investimento" for clarity
+
+### Guideline 7: Visual Improvement ✅
+- [x] Titles clearly separated (BLOCO A, BLOCO B, IMPLANTAÇÃO headers in all caps)
+- [x] Pricing blocks visually distinct (separate BLOCO A and BLOCO B)
+- [x] Monetary values stand out (font size 14 for equivalent, 10 for charged, bold)
+- [x] Equivalent values clearly differentiated ("Valor normalizado para comparação" note)
+
+### Testing
+- [ ] Generate PDF and verify executive presentation quality (manual test needed)
+- [ ] Verify impossible to misinterpret (manual test needed)
+- [ ] Verify defendable in front of CFO-level clients (manual test needed)
+- [x] All 35 PDF tests passing
+- [ ] Save final checkpoint
