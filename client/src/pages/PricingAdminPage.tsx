@@ -374,7 +374,7 @@ export default function PricingAdminPage() {
                 <div key={plan} className="border-b pb-3 last:border-0">
                   <h3 className="font-semibold text-sm mb-2 uppercase">{plan === "k2" ? "K2" : plan}</h3>
                   <div className="grid grid-cols-5 gap-2">
-                    {formData.tieredPricing.additionalUsers[plan].map((tier: any, idx: number) => (
+                    {formData.additionalUsersTiers[plan].map((tier: any, idx: number) => (
                       <div key={idx} className="space-y-1">
                         <Label className="text-[10px] uppercase text-muted-foreground">
                           {tier.from}-{tier.to === 999 ? "∞" : tier.to}
@@ -382,7 +382,7 @@ export default function PricingAdminPage() {
                         <NumberInput
                           value={tier.price}
                           onChange={(val: number) =>
-                            updateValue(["tieredPricing", "additionalUsers", plan, String(idx), "price"], val)
+                            updateValue(["additionalUsersTiers", plan, String(idx), "price"], val)
                           }
                         />
                       </div>
@@ -404,7 +404,7 @@ export default function PricingAdminPage() {
                 <div key={plan} className="border-b pb-3 last:border-0">
                   <h3 className="font-semibold text-sm mb-2 uppercase">{plan === "k2" ? "K2" : plan}</h3>
                   <div className="grid grid-cols-5 gap-2">
-                    {formData.tieredPricing.additionalContracts[plan].map((tier: any, idx: number) => (
+                    {formData.additionalContractsTiers[plan].map((tier: any, idx: number) => (
                       <div key={idx} className="space-y-1">
                         <Label className="text-[10px] uppercase text-muted-foreground">
                           {tier.from}-{tier.to === 999 ? "∞" : tier.to}
@@ -412,7 +412,7 @@ export default function PricingAdminPage() {
                         <NumberInput
                           value={tier.price}
                           onChange={(val: number) =>
-                            updateValue(["tieredPricing", "additionalContracts", plan, String(idx), "price"], val)
+                            updateValue(["additionalContractsTiers", plan, String(idx), "price"], val)
                           }
                         />
                       </div>
@@ -431,7 +431,7 @@ export default function PricingAdminPage() {
             </CardHeader>
             <CardContent className="py-4">
               <div className="grid grid-cols-4 gap-2">
-                {formData.tieredPricing.additionalLeads.map((tier: any, idx: number) => (
+                {formData.additionalLeadsTiers.map((tier: any, idx: number) => (
                   <div key={idx} className="space-y-1">
                     <Label className="text-[10px] uppercase text-muted-foreground">
                       {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
@@ -439,7 +439,7 @@ export default function PricingAdminPage() {
                     <NumberInput
                       value={tier.price}
                       onChange={(val: number) =>
-                        updateValue(["tieredPricing", "additionalLeads", String(idx), "price"], val)
+                        updateValue(["additionalLeadsTiers", String(idx), "price"], val)
                       }
                     />
                   </div>
@@ -456,7 +456,7 @@ export default function PricingAdminPage() {
             </CardHeader>
             <CardContent className="py-4">
               <div className="grid grid-cols-4 gap-2">
-                {formData.tieredPricing.additionalSignatures.map((tier: any, idx: number) => (
+                {formData.additionalSignaturesTiers.map((tier: any, idx: number) => (
                   <div key={idx} className="space-y-1">
                     <Label className="text-[10px] uppercase text-muted-foreground">
                       {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
@@ -464,7 +464,7 @@ export default function PricingAdminPage() {
                     <NumberInput
                       value={tier.price}
                       onChange={(val: number) =>
-                        updateValue(["tieredPricing", "additionalSignatures", String(idx), "price"], val)
+                        updateValue(["additionalSignaturesTiers", String(idx), "price"], val)
                       }
                     />
                   </div>
@@ -487,15 +487,15 @@ export default function PricingAdminPage() {
                     <div className="flex-1 space-y-1">
                       <Label className="text-[10px] uppercase text-muted-foreground">Inclusos</Label>
                       <NumberInput
-                        value={formData.kenloPay.boletos[plan].included}
+                        value={formData.kenloPay.boletosIncluded[plan]}
                         onChange={(val: number) =>
-                          updateValue(["kenloPay", "boletos", plan, "included"], Math.round(val))
+                          updateValue(["kenloPay", "boletosIncluded", plan], Math.round(val))
                         }
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    {formData.kenloPay.boletos[plan].tiers.map((tier: any, idx: number) => (
+                    {formData.kenloPay.boletosTiers[plan].map((tier: any, idx: number) => (
                       <div key={idx} className="space-y-1">
                         <Label className="text-[10px] uppercase text-muted-foreground">
                           {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
@@ -503,7 +503,7 @@ export default function PricingAdminPage() {
                         <NumberInput
                           value={tier.price}
                           onChange={(val: number) =>
-                            updateValue(["kenloPay", "boletos", plan, "tiers", String(idx), "price"], val)
+                            updateValue(["kenloPay", "boletosTiers", plan, String(idx), "price"], val)
                           }
                         />
                       </div>
@@ -528,15 +528,15 @@ export default function PricingAdminPage() {
                     <div className="flex-1 space-y-1">
                       <Label className="text-[10px] uppercase text-muted-foreground">Inclusos</Label>
                       <NumberInput
-                        value={formData.kenloPay.splits[plan].included}
+                        value={formData.kenloPay.splitsIncluded[plan]}
                         onChange={(val: number) =>
-                          updateValue(["kenloPay", "splits", plan, "included"], Math.round(val))
+                          updateValue(["kenloPay", "splitsIncluded", plan], Math.round(val))
                         }
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    {formData.kenloPay.splits[plan].tiers.map((tier: any, idx: number) => (
+                    {formData.kenloPay.splitsTiers[plan].map((tier: any, idx: number) => (
                       <div key={idx} className="space-y-1">
                         <Label className="text-[10px] uppercase text-muted-foreground">
                           {tier.from}-{tier.to === 99999 ? "∞" : tier.to}
@@ -544,7 +544,7 @@ export default function PricingAdminPage() {
                         <NumberInput
                           value={tier.price}
                           onChange={(val: number) =>
-                            updateValue(["kenloPay", "splits", plan, "tiers", String(idx), "price"], val)
+                            updateValue(["kenloPay", "splitsTiers", plan, String(idx), "price"], val)
                           }
                         />
                       </div>
