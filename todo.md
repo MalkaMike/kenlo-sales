@@ -3599,3 +3599,10 @@
 - [x] Fix per-user price to calculate tiered average (not flat first-tier price)
 - [x] Fix per-contract price to calculate tiered average (not flat R$3)
 - [x] Show per-unit price with 2 decimal places (e.g., R$2,38/contrato)
+
+## Tiered Pricing Tooltip on Per-Unit Price
+
+- [x] Add tooltip on IMOB per-user price showing tiered breakdown (e.g., "10 × R$37,00 + 25 × R$27,00")
+- [x] Add tooltip on Locação per-contract price showing tiered breakdown (e.g., "250 × R$3,00 + 250 × R$2,50 + 500 × R$2,00")
+- [x] Tooltip appears on hover over the per-unit price text
+- [x] Use existing shadcn/ui Tooltip component for consistent styling

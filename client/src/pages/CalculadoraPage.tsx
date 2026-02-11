@@ -12,6 +12,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/constants/systems";
 
 import { KomboComparisonTable } from "@/components/KomboComparisonTable";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { IMOB_ADDITIONAL_USERS, LOC_ADDITIONAL_CONTRACTS } from "@shared/pricing-config";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
 import { downloadProposalPDF } from "@/utils/generateProposalPDF";
 import { trpc } from "@/lib/trpc";
@@ -1929,11 +1931,38 @@ export default function CalculadoraPage() {
                             const additional = Math.max(0, totalUsers - included);
                             const totalCost = additional > 0 ? calculateAdditionalUsersCost(imobPlan, additional) : 0;
                             const avgPrice = additional > 0 ? (totalCost / additional) : 0;
+                            const tiers = IMOB_ADDITIONAL_USERS[imobPlan];
+                            const breakdownLines: string[] = [];
+                            if (additional > 0) {
+                              let remaining = additional;
+                              for (const tier of tiers) {
+                                if (remaining <= 0) break;
+                                const tierSize = tier.to === Infinity ? remaining : (tier.to - tier.from + 1);
+                                const qty = Math.min(remaining, tierSize);
+                                breakdownLines.push(`${qty} × R$${tier.price.toFixed(2).replace('.', ',')}`);
+                                remaining -= qty;
+                              }
+                            }
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
                                 <span><span className="font-bold text-red-600">{included}</span> usuários incluídos</span>
                                 {additional > 0 && (
-                                  <span className="block mt-0.5">{additional} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/usuário)</span>
+                                  <TooltipProvider delayDuration={200}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
+                                          {additional} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/usuário)
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="bottom" className="max-w-xs">
+                                        <p className="font-semibold mb-1">Detalhamento por faixa:</p>
+                                        {breakdownLines.map((line, i) => (
+                                          <p key={i} className="text-xs">{line}</p>
+                                        ))}
+                                        <p className="text-xs mt-1 font-semibold">Total: R${totalCost.toFixed(2).replace('.', ',')}/mês</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
                                 )}
                               </div>
                             );
@@ -2023,11 +2052,38 @@ export default function CalculadoraPage() {
                             const additional = Math.max(0, totalContracts - included);
                             const totalCost = additional > 0 ? Pricing.calculateAdditionalContractsCost(locPlan, additional) : 0;
                             const avgPrice = additional > 0 ? (totalCost / additional) : 0;
+                            const tiers = LOC_ADDITIONAL_CONTRACTS[locPlan];
+                            const breakdownLines: string[] = [];
+                            if (additional > 0) {
+                              let remaining = additional;
+                              for (const tier of tiers) {
+                                if (remaining <= 0) break;
+                                const tierSize = tier.to === Infinity ? remaining : (tier.to - tier.from + 1);
+                                const qty = Math.min(remaining, tierSize);
+                                breakdownLines.push(`${qty} × R$${tier.price.toFixed(2).replace('.', ',')}`);
+                                remaining -= qty;
+                              }
+                            }
                             return (
                               <div className="mt-2 text-xs text-gray-700 leading-relaxed">
                                 <span><span className="font-bold text-red-600">{included}</span> contratos incluídos</span>
                                 {additional > 0 && (
-                                  <span className="block mt-0.5">{additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/contrato)</span>
+                                  <TooltipProvider delayDuration={200}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
+                                          {additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${avgPrice.toFixed(2).replace('.', ',')}/contrato)
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="bottom" className="max-w-xs">
+                                        <p className="font-semibold mb-1">Detalhamento por faixa:</p>
+                                        {breakdownLines.map((line, i) => (
+                                          <p key={i} className="text-xs">{line}</p>
+                                        ))}
+                                        <p className="text-xs mt-1 font-semibold">Total: R${totalCost.toFixed(2).replace('.', ',')}/mês</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
                                 )}
                               </div>
                             );
