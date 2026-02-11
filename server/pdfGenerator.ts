@@ -157,9 +157,9 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(v);
 
     // -- Helpers --
-    const sectionTitle = (title: string, y: number): number => {
-      doc.rect(M, y, 3, 12).fill(C.primary);
-      doc.fontSize(11).fillColor(C.dark).font("Helvetica-Bold").text(title, M + 10, y + 1, { lineBreak: false });
+    const sectionTitle = (title: string, y: number, x: number = M): number => {
+      doc.rect(x, y, 3, 12).fill(C.primary);
+      doc.fontSize(11).fillColor(C.dark).font("Helvetica-Bold").text(title, x + 10, y + 1, { lineBreak: false });
       return y + 22;
     };
 
@@ -193,8 +193,7 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       doc.rect(0, 0, PW, 3).fill(C.primary);
       doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
         .text(`${data.agencyName || data.clientName} — Proposta Comercial`, M, PH - 20, { lineBreak: false });
-      doc.fontSize(6).fillColor(C.textLight).font("Helvetica")
-        .text(`Consultor: ${data.salesPersonName}`, M + CW - 150, PH - 20, { width: 150, align: "right", lineBreak: false });
+      // Consultant info removed from internal pages (only on cover)
       return 30;
     };
 
@@ -310,44 +309,43 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     doc.rect(0, PH - 4, PW, 4).fill(C.primary);
 
     // ================================================================
-    // SECTION 2 — PERFIL OPERACIONAL DO CLIENTE
+    // PAGE 2 — TWO-COLUMN LAYOUT: PERFIL + ESTRUTURA
     // ================================================================
     Y = newPage();
-    Y = sectionTitle("Perfil Operacional do Cliente", Y);
-
-    // Clean grid format (2 columns)
-    const colW = (CW - 16) / 2;
-    let gridY = Y;
-
-    // Row 1: Natureza do Negócio | Número de Usuários
-    gridRow("Natureza do Negócio", data.businessType || "Imobiliária", M, gridY, colW);
-    gridRow("Número de Usuários", fmtNum(data.imobUsers || 0), M + colW + 16, gridY, colW);
-    gridY += 32;
-
-    // Row 2: Leads por mês | Fechamentos por mês
-    gridRow("Leads por mês", fmtNum(data.leadsPerMonth || 0), M, gridY, colW);
-    gridRow("Fechamentos por mês", fmtNum(data.closings || 0), M + colW + 16, gridY, colW);
-    gridY += 32;
-
-    // Row 3: Total de contratos | Novos contratos por mês
-    gridRow("Total de contratos", fmtNum(data.contracts || 0), M, gridY, colW);
-    gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), M + colW + 16, gridY, colW);
-    gridY += 32;
-
-    // Row 4: Split aplicado | Boleto aplicado
+    
+    // Left column: Perfil Operacional
+    const leftColX = M;
+    const rightColX = M + (CW / 2) + 8;
+    const colWidth = (CW / 2) - 8;
+    
+    // LEFT COLUMN - PERFIL OPERACIONAL DO CLIENTE
+    let leftY = Y;
+    leftY = sectionTitle("Perfil Operacional do Cliente", leftY);
+    
+    const gridItemW = colWidth - 10;
+    gridRow("Natureza do Negócio", data.businessType || "Imobiliária", leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Número de Usuários", fmtNum(data.imobUsers || 0), leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Leads por mês", fmtNum(data.leadsPerMonth || 0), leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Fechamentos por mês", fmtNum(data.closings || 0), leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Total de contratos", fmtNum(data.contracts || 0), leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), leftColX, leftY, gridItemW);
+    leftY += 32;
+    
     const splitText = data.chargesSplitToOwner ? (data.splitAmount ? `${data.splitAmount}%` : "Sim") : "Não";
     const boletoText = data.chargesBoletoToTenant ? (data.boletoAmount ? fmt(data.boletoAmount) : "Sim") : "Não";
-    gridRow("Split aplicado", splitText, M, gridY, colW);
-    gridRow("Boleto aplicado", boletoText, M + colW + 16, gridY, colW);
-    gridY += 32;
-
-    Y = gridY + GAP;
-
-    // ================================================================
-    // SECTION 3 — ESTRUTURA CONTRATADA
-    // ================================================================
-    if (needsNewPage(Y, 150)) Y = newPage();
-    Y = sectionTitle("Estrutura Contratada", Y);
+    gridRow("Split aplicado", splitText, leftColX, leftY, gridItemW);
+    leftY += 32;
+    gridRow("Boleto aplicado", boletoText, leftColX, leftY, gridItemW);
+    leftY += 32;
+    
+    // RIGHT COLUMN - ESTRUTURA CONTRATADA
+    let rightY = Y;
+    rightY = sectionTitle("Estrutura Contratada", rightY, rightColX);
 
     // Ciclo de pagamento
     const freqMap: Record<string, string> = {
@@ -357,50 +355,55 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
       bienal: "Bienal",
     };
     const selFreq = freqMap[data.paymentPlan?.toLowerCase()] || "Anual";
-    lbl("Ciclo de Pagamento", M, Y, { size: 6.5, color: C.textMuted });
-    val(selFreq, M, Y + 10, { size: 10, color: C.primary });
-    Y += 28;
+    lbl("Ciclo de Pagamento", rightColX, rightY, { size: 6.5, color: C.textMuted });
+    val(selFreq, rightColX, rightY + 10, { size: 10, color: C.primary });
+    rightY += 28;
 
     // Produtos e planos (use "&" between products)
     const prodParts: string[] = [];
     if (showImob) prodParts.push(`Imob ${(data.imobPlan || "K").toUpperCase()}`);
     if (showLoc) prodParts.push(`Loc ${(data.locPlan || "K").toUpperCase()}`);
-    lbl("Produtos e Planos", M, Y, { size: 6.5, color: C.textMuted });
-    val(prodParts.join(" & "), M, Y + 10, { size: 10, color: C.dark });
-    Y += 28;
+    lbl("Produtos e Planos", rightColX, rightY, { size: 6.5, color: C.textMuted });
+    val(prodParts.join(" & "), rightColX, rightY + 10, { size: 10, color: C.dark });
+    rightY += 28;
 
     // Kombo (if applicable)
     if (isKombo) {
-      lbl("Kombo Ativado", M, Y, { size: 6.5, color: C.textMuted });
-      val(komboLabel, M, Y + 10, { size: 10, color: C.green });
-      Y += 28;
+      lbl("Kombo Ativado", rightColX, rightY, { size: 6.5, color: C.textMuted });
+      val(komboLabel, rightColX, rightY + 10, { size: 10, color: C.green });
+      rightY += 28;
     }
 
-    // Add-ons selecionados (bullet list)
+    // Add-ons selecionados (boxed style instead of bullets)
     if (activeAddons.length > 0) {
-      lbl("Add-ons Selecionados", M, Y, { size: 7, color: C.textMuted, bold: true });
-      Y += 12;
+      lbl("Add-ons Selecionados", rightColX, rightY, { size: 7, color: C.textMuted, bold: true });
+      rightY += 12;
       for (const addon of activeAddons) {
-        doc.fontSize(7.5).fillColor(C.text).font("Helvetica")
-          .text(`• Kenlo ${addon.label}`, M + 10, Y, { lineBreak: false });
-        Y += 12;
+        // Box style
+        doc.rect(rightColX, rightY, colWidth - 10, 16).fillAndStroke(C.greenLight, C.green);
+        doc.fontSize(7).fillColor(C.green).font("Helvetica-Bold")
+          .text(`Kenlo ${addon.label}`, rightColX + 6, rightY + 4, { lineBreak: false });
+        rightY += 20;
       }
-      Y += 4;
+      rightY += 4;
     }
 
-    // Add-ons não incluídos (bullet list)
+    // Add-ons não incluídos (grayed boxes)
     if (allAddons.length > 0) {
-      lbl("Add-ons Não Incluídos", M, Y, { size: 7, color: C.textMuted, bold: true });
-      Y += 12;
+      lbl("Add-ons Não Incluídos", rightColX, rightY, { size: 7, color: C.textMuted, bold: true });
+      rightY += 12;
       for (const addon of allAddons) {
-        doc.fontSize(7.5).fillColor(C.textLight).font("Helvetica")
-          .text(`— Kenlo ${addon.label}`, M + 10, Y, { lineBreak: false });
-        Y += 12;
+        // Grayed box
+        doc.rect(rightColX, rightY, colWidth - 10, 16).fillAndStroke("#F5F5F5", C.border);
+        doc.fontSize(7).fillColor(C.textLight).font("Helvetica")
+          .text(`Kenlo ${addon.label}`, rightColX + 6, rightY + 4, { lineBreak: false });
+        rightY += 20;
       }
-      Y += 4;
+      rightY += 4;
     }
 
-    Y += GAP;
+    // Continue from whichever column is taller
+    Y = Math.max(leftY, rightY) + GAP;
 
     // ================================================================
     // SECTION 4 — INVESTIMENTO CONTRATUAL
@@ -444,43 +447,22 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         .text(fmt(totalInvestment), M, Y, { lineBreak: false });
       Y += 24;
 
-      // Installment breakdown
-      const maxInstallments = normPlan === "bienal" ? 6 : 3;
+      // Installment breakdown - show ONLY selected option
       lbl(`Parcelado em ${installments}x de ${fmt(totalInvestment / installments)}`, M, Y, { size: 8, color: C.text });
       Y += 16;
-
-      // Installment pills
-      const PILL_W = (CW - (maxInstallments - 1) * 8) / maxInstallments;
-      const PILL_H = 32;
-
-      for (let n = 1; n <= maxInstallments; n++) {
-        const px = M + (n - 1) * (PILL_W + 8);
-        const isSel = n === installments;
-        doc.roundedRect(px, Y, PILL_W, PILL_H, 4).fill(isSel ? C.primary : C.bgSoft);
-        if (isSel) {
-          doc.roundedRect(px, Y, PILL_W, PILL_H, 4).lineWidth(1).strokeColor(C.primary).stroke();
-        }
-        const pillLabel = n === 1 ? "1x" : `${n}x`;
-        doc.fontSize(7).fillColor(isSel ? "#FFFFFF" : C.text)
-          .font(isSel ? "Helvetica-Bold" : "Helvetica")
-          .text(pillLabel, px, Y + 6, { width: PILL_W, align: "center" });
-        const pillValue = fmt(totalInvestment / n);
-        doc.fontSize(6.5).fillColor(isSel ? "#FFFFFF" : C.textMuted)
-          .font("Helvetica")
-          .text(pillValue, px, Y + 18, { width: PILL_W, align: "center" });
-      }
-      Y += PILL_H + 8;
     }
 
     Y += GAP;
 
     // ================================================================
-    // SECTION 5 — ESCOPO INCLUÍDO NA CONTRATAÇÃO
+    // PAGE 4 — TWO-COLUMN LAYOUT: ESCOPO + SERVIÇOS PREMIUM
     // ================================================================
     if (needsNewPage(Y, 200)) Y = newPage();
-    Y = sectionTitle("Escopo Incluído na Contratação", Y);
-
-    // Explicit bullet list
+    
+    // LEFT COLUMN - ESCOPO INCLUÍDO
+    let leftY2 = Y;
+    leftY2 = sectionTitle("Escopo Incluído na Contratação", leftY2);
+    
     const scopeItems: string[] = [];
     
     // Users
@@ -511,62 +493,49 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // Implementation
     scopeItems.push(`Implantação: ${fmt(totalImplantation)}`);
     
-    // Premium services
-    if (hasVip && data.vipIncluded) {
-      scopeItems.push("Suporte VIP");
-    }
-    if (hasCS && data.csIncluded) {
-      scopeItems.push("CS Dedicado");
-    }
-    if (anyK2) {
-      const trainText = bothK2 ? "4 treinamentos online ou 2 presenciais" : "2 treinamentos online ou 1 presencial";
-      scopeItems.push(trainText);
-    }
-
+    // DO NOT include premium services here (avoid redundancy)
+    
     for (const item of scopeItems) {
       doc.fontSize(8).fillColor(C.text).font("Helvetica")
-        .text(`• ${item}`, M + 10, Y, { lineBreak: false });
-      Y += 14;
+        .text(`• ${item}`, leftColX + 10, leftY2, { lineBreak: false });
+      leftY2 += 14;
     }
-
-    Y += GAP;
-
-    // ================================================================
-    // SECTION 6 — SERVIÇOS PREMIUM ATIVADOS
-    // ================================================================
-    if (needsNewPage(Y, 100)) Y = newPage();
-    Y = sectionTitle("Serviços Premium Ativados", Y);
-
-    // VIP Support
+    
+    // RIGHT COLUMN - SERVIÇOS PREMIUM ATIVADOS
+    let rightY2 = Y;
+    rightY2 = sectionTitle("Serviços Premium Ativados", rightY2, rightColX);
+    
+    // VIP Support (status only, no redundancy)
     const vipStatus = hasVip ? (data.vipIncluded ? "Incluído" : fmt(data.vipPrice || 97) + "/mês") : "—";
     const vipColor = hasVip ? (data.vipIncluded ? C.green : C.text) : C.textLight;
     doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
-      .text("Suporte VIP", M + 10, Y, { lineBreak: false });
+      .text("Suporte VIP", rightColX + 10, rightY2, { lineBreak: false });
     doc.fontSize(8).fillColor(vipColor).font("Helvetica")
-      .text(vipStatus, M + 10, Y, { width: CW - 20, align: "right" });
-    Y += 16;
-
+      .text(vipStatus, rightColX + 10, rightY2, { width: colWidth - 20, align: "right" });
+    rightY2 += 16;
+    
     // CS Dedicado
     const csStatus = hasCS ? (data.csIncluded ? "Incluído" : fmt(data.csPrice || PREMIUM_SERVICES.csDedicado.monthlyPrice) + "/mês") : "—";
     const csColor = hasCS ? (data.csIncluded ? C.green : C.text) : C.textLight;
     doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
-      .text("CS Dedicado", M + 10, Y, { lineBreak: false });
+      .text("CS Dedicado", rightColX + 10, rightY2, { lineBreak: false });
     doc.fontSize(8).fillColor(csColor).font("Helvetica")
-      .text(csStatus, M + 10, Y, { width: CW - 20, align: "right" });
-    Y += 16;
-
+      .text(csStatus, rightColX + 10, rightY2, { width: colWidth - 20, align: "right" });
+    rightY2 += 16;
+    
     // Treinamentos
     const trainingStatus = anyK2
       ? (bothK2 ? "Incluído (4x online ou 2x presencial)" : "Incluído (2x online ou 1x presencial)")
       : "—";
     const trainingColor = anyK2 ? C.green : C.textLight;
     doc.fontSize(8).fillColor(C.dark).font("Helvetica-Bold")
-      .text("Treinamentos", M + 10, Y, { lineBreak: false });
+      .text("Treinamentos", rightColX + 10, rightY2, { lineBreak: false });
     doc.fontSize(8).fillColor(trainingColor).font("Helvetica")
-      .text(trainingStatus, M + 10, Y, { width: CW - 20, align: "right" });
-    Y += 16;
-
-    Y += GAP;
+      .text(trainingStatus, rightColX + 10, rightY2, { width: colWidth - 20, align: "right" });
+    rightY2 += 16;
+    
+    // Continue from whichever column is taller
+    Y = Math.max(leftY2, rightY2) + GAP;
 
     // ================================================================
     // SECTION 7 — FUNCIONALIDADES DA PLATAFORMA
@@ -628,13 +597,27 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
         Y += 12;
       }
     } else {
-      // Single product: just one column
+      // Single product: table format with single column
       const features = showImob ? imobFeatures : locFeatures;
+      const col1W = CW * 0.7;
+      const col2W = CW * 0.3;
+      
+      // Header row
+      doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
+        .text("Funcionalidade", M, Y, { lineBreak: false });
+      doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
+        .text("Status", M + col1W, Y, { width: col2W, align: "center" });
+      Y += 14;
+      divider(Y);
+      Y += 8;
+      
       for (const feat of features) {
         const symbol = feat.included ? "✔" : "—";
         const color = feat.included ? C.green : C.textLight;
+        doc.fontSize(7).fillColor(C.text).font("Helvetica")
+          .text(feat.name, M, Y, { width: col1W - 10, lineBreak: false });
         doc.fontSize(7).fillColor(color).font("Helvetica")
-          .text(`${symbol} ${feat.name}`, M + 10, Y, { lineBreak: false });
+          .text(symbol, M + col1W, Y, { width: col2W, align: "center" });
         Y += 12;
       }
     }

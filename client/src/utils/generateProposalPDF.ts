@@ -153,7 +153,7 @@ function newPage(doc: jsPDF, data: ProposalPrintData): number {
   doc.setTextColor(...rgb(C.textLight));
   doc.setFont("helvetica", "normal");
   doc.text(`${data.agencyName || "Cliente"} — Proposta Comercial Kenlo`, M, PH - 20);
-  doc.text(`Consultor: ${data.salesPersonName}`, PW - M, PH - 20, { align: "right" });
+  // Consultant info removed from internal pages (only on cover)
   return 30;
 }
 

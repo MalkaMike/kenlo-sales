@@ -3351,3 +3351,27 @@
 - [x] Implementar Seção 8: Potencial de Receita Extra (só se aplicável)
 - [x] Testar geração de PDF com dados de teste
 - [ ] ISSUE CONHECIDO: PDFKit 0.17.2 está criando páginas em branco extras automaticamente (páginas 2 e 4). Conteúdo está correto nas páginas 1, 3 e 5. Investigar atualização do PDFKit ou workaround.
+
+## PDF Visual and Structural Refinement - Premium Executive Feel
+
+### Critical Fixes
+- [x] 1. Remove header redundancy: "Consultor: Vendedor Exemplo" must appear ONLY on cover page, remove from all internal pages
+- [x] 2. Fix installment display: Show only the selected installment option (e.g., "Parcelado em 3x de R$ 4.439,00"), do NOT show alternative options (1x, 2x, 3x pills)
+- [x] 3. Remove Suporte VIP redundancy: If appears in "Escopo Incluído", do not repeat in "Serviços Premium" (only show status)
+- [x] 4. Ensure Funcionalidades section is ALWAYS table format (never list), consistent across all PDFs
+
+### Layout Improvements (2-Column Strategy)
+- [x] 5. Page 2 - Use 2-column layout: Left = Perfil Operacional, Right = Estrutura Contratada
+- [x] 6. Page 4 - Use 2-column layout: Left = Escopo Incluído, Right = Serviços Premium
+- [x] 7. Avoid long vertical stacking, use smart column layouts where appropriate
+- [x] 8. Eliminate large empty areas and unnecessary page breaks
+
+### Visual Consistency
+- [x] 9. Standardize add-on visual style: Use boxed items similar to calculator style (not mixed bullets/dashes/text)
+- [x] 10. Investment page typography: Make investment value largest, visually dominant, impossible to misread
+- [x] 11. Ensure premium, executive, clean, confident, structured design tone throughout
+
+### Testing
+- [x] 12. Test with test data (server-side generator verified)
+- [x] 13. Verify 2-column layouts working correctly
+- [x] 14. PDF reduced from 5 pages to 3 pages (40% reduction), professional feel achieved
