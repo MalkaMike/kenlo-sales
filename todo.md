@@ -3454,3 +3454,39 @@
 - [x] Colors: Green=selected/included, Grey=not included, Red=financial emphasis only
 - [x] Final quality check: no blank pages, no duplicated info, no alternative payment options
 - [x] 282 tests passing, 0 regressions
+
+## PDF Page 4 — Receita Extra Kenlo (Extra Revenue)
+
+### Conditional Rendering Logic
+- [x] Page 4 only appears when at least one revenue stream is applicable
+- [x] Revenue streams: Pay (boleto/split), Seguros (insurance commission), Cash (rent anticipation)
+- [x] Detect applicable streams from selectedAddons containing pay/seguros/cash
+
+### Card 1 — Split Automático (Kenlo Pay)
+- [x] Show when Pay addon is selected OR locação product has boleto/split data
+- [x] Display: per-split fee, estimated monthly volume, projected monthly revenue
+- [x] Visual: green accent card with money icon
+
+### Card 2 — Seguros Integrados (Kenlo Seguros)
+- [x] Show when Seguros addon is selected
+- [x] Display: commission rate by plan, estimated contracts, projected monthly commission
+- [x] Visual: blue accent card with shield icon
+
+### Card 3 — Antecipação de Aluguel (Kenlo Cash)
+- [x] Show when Cash addon is selected
+- [x] Display: up to 24 months anticipation, portfolio value, potential revenue
+- [x] Visual: purple accent card with trending-up icon
+
+### Page Layout & Design
+- [x] Full-width header with section title and revenue potential subtitle
+- [x] 3-column card grid (adaptive: 2+1 or single card layouts)
+- [x] Each card: icon area, title, description, key metric (large colored number), calculation breakdown
+- [x] Bottom summary bar: total estimated extra monthly revenue
+- [x] Footer note: "Valores estimados com base no perfil informado"
+- [x] Consistent executive design language (same colors, typography as Pages 1-3)
+
+### Test Scenarios
+- [x] Scenario with all 3 revenue streams (Pay + Seguros + Cash)
+- [x] Scenario with only Pay (boleto/split revenue)
+- [x] Scenario with no revenue streams (Page 4 should NOT appear)
+- [x] Verify calculations match pricing-config.ts rates

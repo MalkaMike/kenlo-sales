@@ -596,3 +596,234 @@ describe('Installment Breakdown in PDF', () => {
     expect(result.length).toBeGreaterThan(1000);
   });
 });
+
+describe('Page 4 — Extra Revenue (Receita Extra)', () => {
+  const locBaseData = {
+    salesPersonName: 'Vendedor Receita',
+    vendorEmail: 'vendedor@kenlo.com.br',
+    vendorPhone: '(11) 99999-0000',
+    clientName: 'Carlos Revenue',
+    agencyName: 'Imobiliária Revenue',
+    productType: 'loc',
+    locPlan: 'K',
+    selectedAddons: '[]',
+    paymentPlan: 'annual',
+    totalMonthly: 497,
+    totalAnnual: 5964,
+    implantationFee: 1497,
+    firstYearTotal: 7461,
+    contracts: 300,
+    newContracts: 15,
+    businessType: 'administradora',
+    email: 'carlos@revenue.com',
+    cellphone: '(11) 98888-7777',
+    monthlyLicenseBase: 497,
+    postPaidTotal: 0,
+  };
+
+  it('should NOT generate Page 4 when no revenue add-ons are selected', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '[]',
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 0,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    // Should be 3 pages (no Page 4)
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should NOT generate Page 4 for IMOB-only without revenue add-ons', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      productType: 'imob',
+      imobPlan: 'K',
+      selectedAddons: '["leads","inteligencia"]',
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 0,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(1000);
+  });
+
+  it('should generate Page 4 with Pay card (Split Automático) only', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["pay"]',
+      chargesBoletoToTenant: true,
+      boletoAmount: 10,
+      chargesSplitToOwner: true,
+      splitAmount: 8,
+      revenueFromBoletos: 5400, // 300 contracts * (10 + 8)
+      revenueFromInsurance: 0,
+      netGain: 4903,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    // Page 4 should be generated → larger PDF
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should generate Page 4 with Seguros card only', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["seguros"]',
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 3000, // 300 contracts * R$10
+      netGain: 2503,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should generate Page 4 with Cash card only (no revenue numbers)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["cash"]',
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 0,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    // Cash addon triggers Page 4 even without explicit revenue numbers
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should generate Page 4 with all 3 revenue cards (Pay + Seguros + Cash)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["pay","seguros","cash","inteligencia","assinatura"]',
+      chargesBoletoToTenant: true,
+      boletoAmount: 12,
+      chargesSplitToOwner: true,
+      splitAmount: 5,
+      revenueFromBoletos: 5100, // 300 * (12 + 5)
+      revenueFromInsurance: 3000, // 300 * 10
+      netGain: 7603,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    // 4 pages → should be noticeably larger
+    expect(result.length).toBeGreaterThan(4000);
+  });
+
+  it('should generate Page 4 with Pay + Seguros (2 cards side by side)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["pay","seguros"]',
+      chargesBoletoToTenant: true,
+      boletoAmount: 8.5,
+      chargesSplitToOwner: false,
+      splitAmount: 0,
+      revenueFromBoletos: 2550, // 300 * 8.5
+      revenueFromInsurance: 3000,
+      netGain: 5053,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should generate Page 4 for both products with all revenue streams', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      productType: 'both',
+      imobPlan: 'K2',
+      locPlan: 'K2',
+      imobUsers: 20,
+      selectedAddons: '["leads","inteligencia","assinatura","pay","seguros","cash"]',
+      komboName: 'Kombo Elite',
+      komboDiscount: 20,
+      chargesBoletoToTenant: true,
+      boletoAmount: 12,
+      chargesSplitToOwner: true,
+      splitAmount: 5,
+      revenueFromBoletos: 5100,
+      revenueFromInsurance: 3000,
+      netGain: 6100,
+      totalMonthly: 2500,
+      totalAnnual: 30000,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(4000);
+  });
+
+  it('should show correct commission rate for K2 plan in Seguros card', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      locPlan: 'K2',
+      selectedAddons: '["seguros"]',
+      contracts: 500,
+      revenueFromInsurance: 5000, // 500 * 10
+      netGain: 4503,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should show correct commission rate for Prime plan in Seguros card', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      locPlan: 'Prime',
+      selectedAddons: '["seguros"]',
+      contracts: 100,
+      revenueFromInsurance: 1000, // 100 * 10
+      netGain: 503,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should handle Pay with only boleto (no split)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["pay"]',
+      chargesBoletoToTenant: true,
+      boletoAmount: 10,
+      chargesSplitToOwner: false,
+      splitAmount: 0,
+      revenueFromBoletos: 3000, // 300 * 10
+      netGain: 2503,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should handle Pay with only split (no boleto)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["pay"]',
+      chargesBoletoToTenant: false,
+      boletoAmount: 0,
+      chargesSplitToOwner: true,
+      splitAmount: 15,
+      revenueFromBoletos: 4500, // 300 * 15
+      netGain: 4003,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should generate Page 4 with Cash + Seguros (no Pay)', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      selectedAddons: '["seguros","cash"]',
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 3000,
+      netGain: 2503,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBeGreaterThan(3000);
+  });
+
+  it('should handle zero contracts gracefully in revenue cards', async () => {
+    const result = await generateProposalPDF({
+      ...locBaseData,
+      contracts: 0,
+      selectedAddons: '["pay","seguros","cash"]',
+      chargesBoletoToTenant: true,
+      boletoAmount: 10,
+      revenueFromBoletos: 0,
+      revenueFromInsurance: 0,
+    });
+    expect(result).toBeInstanceOf(Buffer);
+    // Cash still triggers Page 4
+    expect(result.length).toBeGreaterThan(3000);
+  });
+});
