@@ -3583,3 +3583,11 @@
 ## Bug Fix — Suporte VIP Selector Visual Issue
 
 - [x] Fix visual issue with Suporte VIP selector in Calculadora (removed ⚠️ Atualizar from badge and ref line)
+
+## Plan Inclusion Text — Improved Display
+
+- [x] IMOB: Show "X usuários incluídos" with X in red, larger font
+- [x] IMOB: Add post-paid sentence only when additional users exist: "Y serão cobrados pós-pago (R$Z/usuário)"
+- [x] Locação: Show "X contratos incluídos" with X in red, larger font
+- [x] Locação: Add post-paid sentence only when additional contracts exist: "Y serão cobrados pós-pago (R$Z/contrato)"
+- [x] Increase font size of the inclusion text (from text-[10px] to text-xs)

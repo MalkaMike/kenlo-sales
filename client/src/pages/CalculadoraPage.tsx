@@ -1922,12 +1922,21 @@ export default function CalculadoraPage() {
                               );
                             })}
                           </div>
-                          {/* Allowance + Overage (CEO Verdict Round 2) */}
-                          <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
-                            {imobPlan === "prime" && "Inclui até 2 usuários · Usuários adicionais cobrados conforme tabela"}
-                            {imobPlan === "k" && "Inclui até 5 usuários · Usuários adicionais cobrados conforme tabela"}
-                            {imobPlan === "k2" && "Inclui até 10 usuários · Usuários adicionais cobrados conforme tabela"}
-                          </div>
+                          {/* Allowance + Overage — dynamic display */}
+                          {(() => {
+                            const included = imobPlan === 'prime' ? 2 : imobPlan === 'k' ? 7 : 15;
+                            const totalUsers = toNum(metrics.imobUsers);
+                            const additional = Math.max(0, totalUsers - included);
+                            const perUserPrice = imobPlan === 'prime' ? 57 : imobPlan === 'k' ? 47 : 37;
+                            return (
+                              <div className="mt-2 text-xs text-gray-700 leading-relaxed">
+                                <span><span className="font-bold text-red-600">{included}</span> usuários incluídos</span>
+                                {additional > 0 && (
+                                  <span className="block mt-0.5">{additional} serão cobrados pós-pago (R${perUserPrice}/usuário)</span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </CardContent>
                     </Card>
@@ -2006,12 +2015,21 @@ export default function CalculadoraPage() {
                               );
                             })}
                           </div>
-                          {/* Allowance + Overage (CEO Verdict Round 2) */}
-                          <div className="mt-2 text-[10px] text-gray-600 leading-relaxed">
-                            {locPlan === "prime" && "Inclui até 100 contratos · Contratos adicionais cobrados conforme uso"}
-                            {locPlan === "k" && "Inclui até 150 contratos · Contratos adicionais cobrados conforme uso"}
-                            {locPlan === "k2" && "Inclui até 500 contratos · Contratos adicionais cobrados conforme uso"}
-                          </div>
+                          {/* Allowance + Overage — dynamic display */}
+                          {(() => {
+                            const included = locPlan === 'prime' ? 100 : locPlan === 'k' ? 150 : 500;
+                            const totalContracts = toNum(metrics.contractsUnderManagement);
+                            const additional = Math.max(0, totalContracts - included);
+                            const perContractPrice = 3; // R$3/contrato for first tier across all plans
+                            return (
+                              <div className="mt-2 text-xs text-gray-700 leading-relaxed">
+                                <span><span className="font-bold text-red-600">{included}</span> contratos incluídos</span>
+                                {additional > 0 && (
+                                  <span className="block mt-0.5">{additional.toLocaleString('pt-BR')} serão cobrados pós-pago (R${perContractPrice}/contrato)</span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </CardContent>
                     </Card>
