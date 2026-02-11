@@ -338,40 +338,61 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     
     // Fix "both" → "Ambos"
     let businessTypeText = data.businessType || "Imobiliária";
-    if (businessTypeText.toLowerCase() === "both") {
+    const normalizedType = businessTypeText.toLowerCase();
+    if (normalizedType === "both") {
       businessTypeText = "Ambos";
     }
-    gridRow("Natureza do Negócio", businessTypeText, leftColX, leftY, gridItemW);
+    
+    // Determine which columns to show
+    const showCoretagem = normalizedType === "both" || normalizedType === "ambos" || normalizedType === "corretora";
+    const showAdministracao = normalizedType === "both" || normalizedType === "ambos" || normalizedType === "administradora";
+    const isSingleColumn = !showCoretagem || !showAdministracao;
+    
+    // If single column, use full width; if two columns, use half width
+    const effectiveColWidth = isSingleColumn ? CW : colWidth;
+    const effectiveLeftX = leftColX;
+    const effectiveRightX = isSingleColumn ? leftColX : rightColX;
+    
+    gridRow("Natureza do Negócio", businessTypeText, effectiveLeftX, leftY, isSingleColumn ? CW - 10 : gridItemW);
     leftY += 32;
     
-    // CORETAGEM section
-    lbl("CORETAGEM", leftColX, leftY, { size: 8, color: C.primary, bold: true });
-    leftY += 16;
-    gridRow("Número de usuários", fmtNum(data.imobUsers || 0), leftColX, leftY, gridItemW);
-    leftY += 32;
-    gridRow("Leads por mês", fmtNum(data.leadsPerMonth || 0), leftColX, leftY, gridItemW);
-    leftY += 32;
-    gridRow("Fechamentos por mês", fmtNum(data.closings || 0), leftColX, leftY, gridItemW);
-    leftY += 32;
+    // CORETAGEM section (left column or full width)
+    if (showCoretagem) {
+      lbl("CORETAGEM", effectiveLeftX, leftY, { size: 8, color: C.primary, bold: true });
+      leftY += 16;
+      gridRow("Número de usuários", fmtNum(data.imobUsers || 0), effectiveLeftX, leftY, isSingleColumn ? CW - 10 : gridItemW);
+      leftY += 32;
+      gridRow("Leads por mês", fmtNum(data.leadsPerMonth || 0), effectiveLeftX, leftY, isSingleColumn ? CW - 10 : gridItemW);
+      leftY += 32;
+      gridRow("Fechamentos por mês", fmtNum(data.closings || 0), effectiveLeftX, leftY, isSingleColumn ? CW - 10 : gridItemW);
+      leftY += 32;
+    }
     
-    // RIGHT COLUMN - ADMINISTRAÇÃO DE ALUGUEL
+    // ADMINISTRAÇÃO DE ALUGUEL section (right column or full width)
     let rightY = Y;
-    // Skip main title, add subsection title after Natureza do Negócio
-    rightY += 32; // align with first row
-    lbl("ADMINISTRAÇÃO DE ALUGUEL", rightColX, rightY, { size: 8, color: C.primary, bold: true });
-    rightY += 16;
-    gridRow("Número de contratos sob gestão", fmtNum(data.contracts || 0), rightColX, rightY, gridItemW);
-    rightY += 32;
-    gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), rightColX, rightY, gridItemW);
-    rightY += 32;
-    
-    const boletoText = data.chargesBoletoToTenant ? (data.boletoAmount ? `Sim (${fmt(data.boletoAmount)})` : "Sim") : "Não";
-    gridRow("Inquilino paga boleto?", boletoText, rightColX, rightY, gridItemW);
-    rightY += 32;
-    
-    const splitText = data.chargesSplitToOwner ? (data.splitAmount ? `Sim (${data.splitAmount}%)` : "Sim") : "Não";
-    gridRow("Proprietário paga split?", splitText, rightColX, rightY, gridItemW);
-    rightY += 32;
+    if (showAdministracao) {
+      // If single column, start after Coretagem; if two columns, align with first row
+      if (isSingleColumn) {
+        rightY = leftY;
+      } else {
+        rightY += 32; // align with first row after Natureza do Negócio
+      }
+      
+      lbl("ADMINISTRAÇÃO DE ALUGUEL", effectiveRightX, rightY, { size: 8, color: C.primary, bold: true });
+      rightY += 16;
+      gridRow("Número de contratos sob gestão", fmtNum(data.contracts || 0), effectiveRightX, rightY, isSingleColumn ? CW - 10 : gridItemW);
+      rightY += 32;
+      gridRow("Novos contratos por mês", fmtNum(data.newContracts || 0), effectiveRightX, rightY, isSingleColumn ? CW - 10 : gridItemW);
+      rightY += 32;
+      
+      const boletoText = data.chargesBoletoToTenant ? (data.boletoAmount ? `Sim (${fmt(data.boletoAmount)})` : "Sim") : "Não";
+      gridRow("Inquilino paga boleto?", boletoText, effectiveRightX, rightY, isSingleColumn ? CW - 10 : gridItemW);
+      rightY += 32;
+      
+      const splitText = data.chargesSplitToOwner ? (data.splitAmount ? `Sim (${data.splitAmount}%)` : "Sim") : "Não";
+      gridRow("Proprietário paga split?", splitText, effectiveRightX, rightY, isSingleColumn ? CW - 10 : gridItemW);
+      rightY += 32;
+    }
     
     // Continue from whichever column is taller, then add Estrutura Contratada section
     Y = Math.max(leftY, rightY) + GAP;
@@ -392,8 +413,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
 
     // Produtos e planos (use "&" between products)
     const prodParts: string[] = [];
-    if (showImob) prodParts.push(`Imob ${(data.imobPlan || "K").toUpperCase()}`);
-    if (showLoc) prodParts.push(`Loc ${(data.locPlan || "K").toUpperCase()}`);
+    if (showImob) prodParts.push(`Kenlo Imob ${(data.imobPlan || "K").toUpperCase()}`);
+    if (showLoc) prodParts.push(`Kenlo Locação ${(data.locPlan || "K").toUpperCase()}`);
     lbl("Produtos e Planos", M, Y, { size: 6.5, color: C.textMuted });
     val(prodParts.join(" & "), M, Y + 10, { size: 10, color: C.dark });
     Y += 28;
@@ -452,13 +473,14 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     if (normPlan === "monthly" || normPlan === "mensal") {
       lbl("Contrato Mensal", M, Y, { size: 7, color: C.textMuted });
       Y += 12;
+      const monthlyValue = data.totalMonthly || 0;
       doc.fontSize(18).fillColor(C.primary).font("Helvetica-Bold")
-        .text(fmt(data.totalMonthly || monthlyRecurring), M, Y, { lineBreak: false });
+        .text(fmt(monthlyValue), M, Y, { lineBreak: false });
       doc.fontSize(10).fillColor(C.textMuted).font("Helvetica")
-        .text(" / mês", M + doc.widthOfString(fmt(data.totalMonthly || monthlyRecurring)) + 4, Y + 6, { lineBreak: false });
+        .text(" / mês", M + doc.widthOfString(fmt(monthlyValue)) + 4, Y + 6, { lineBreak: false });
       Y += 28;
     } else if (normPlan === "semestral") {
-      const semiannualTotal = (data.totalMonthly || monthlyRecurring) * 6;
+      const semiannualTotal = (data.totalMonthly || 0) * 6;
       lbl("Contrato Semestral", M, Y, { size: 7, color: C.textMuted });
       Y += 12;
       doc.fontSize(18).fillColor(C.primary).font("Helvetica-Bold")

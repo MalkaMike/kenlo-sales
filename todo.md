@@ -3415,8 +3415,8 @@
 - [x] Validate all layout variations render correctly
 - [x] Document findings in /home/ubuntu/pdf-testing-analysis.md
 
-### Critical Issues Found During Testing
-- [ ] Fix Perfil section to show only relevant column(s) based on businessType (corretora = only CORETAGEM, administradora = only ADMINISTRAÇÃO, ambos = both)
-- [ ] Fix Investimento section showing R$ 0,00 (should read totalPrice and monthlyPrice from data)
-- [ ] Populate Funcionalidades table with actual features from pricing-config.ts
-- [ ] Add product/plan names to Estrutura Contratada section (e.g., "Kenlo Imob K2 & Kenlo Locação K")
+### Critical Issues Found During Testing - ALL FIXED ✅
+- [x] 1. Fix Investimento section showing R$ 0,00 (should read totalPrice and monthlyPrice from data) - FIXED: Changed to use data.totalMonthly and data.totalAnnual directly
+- [x] 2. Fix Perfil section to show only relevant column(s) based on businessType (corretora = only CORETAGEM, administradora = only ADMINISTRAÇÃO, ambos = both) - FIXED: Added conditional column display logic
+- [x] 3. Populate Funcionalidades table with actual features from pricing-config.ts - FIXED: Added productType field to enable feature loading
+- [x] 4. Add product/plan names to Estrutura Contratada section (e.g., "Kenlo Imob K2 & Kenlo Locação K") - FIXED: Added Kenlo prefix to product names
