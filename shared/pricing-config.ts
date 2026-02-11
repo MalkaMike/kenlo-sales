@@ -571,6 +571,7 @@ export function getAllFeatures(product: "imob" | "locacao") {
       key: primeFeature.name.toLowerCase().replace(/\s+/g, '_'),
       name: primeFeature.name,
       description: primeFeature.description,
+      category: primeFeature.category || "core",
       linkedToAddon: primeFeature.linkedToAddon,
       linkedToPremiumService: primeFeature.linkedToPremiumService,
       includedInPrime: primeFeature.included,

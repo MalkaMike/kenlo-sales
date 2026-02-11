@@ -2,7 +2,6 @@
   "_comment": "FONTE ÚNICA DE VERDADE - Pricing Configuration - Deterministic Structure",
   "_lastModified": "2026-02-11T00:00:00Z",
   "_version": "2.0.0",
-
   "paymentCycles": {
     "_description": "BLOCO A — Ciclo de Pagamento (Fundação)",
     "_rule": "O desconto de ciclo é sempre aplicado antes de qualquer desconto de combo",
@@ -35,7 +34,6 @@
       "displayLabel": "desconto máximo"
     }
   },
-
   "basePlans": {
     "_description": "BLOCO B — Planos Base — Preço Anual de Fundação",
     "_note": "Nada de mensal aqui. Nada de desconto aqui. Este é o preço raiz.",
@@ -92,18 +90,22 @@
       }
     }
   },
-
   "addons": {
     "_description": "BLOCO C — Add-ons — Preços Base e Escopo",
     "inteligencia": {
-      "availability": ["imob", "locacao"],
+      "availability": [
+        "imob",
+        "locacao"
+      ],
       "shareable": true,
       "annualPrice": 297,
       "implementation": 497,
       "includedUnits": null
     },
     "leads": {
-      "availability": ["imob"],
+      "availability": [
+        "imob"
+      ],
       "shareable": false,
       "annualPrice": 497,
       "implementation": 497,
@@ -113,7 +115,10 @@
       }
     },
     "assinaturas": {
-      "availability": ["imob", "locacao"],
+      "availability": [
+        "imob",
+        "locacao"
+      ],
       "shareable": true,
       "annualPrice": 37,
       "implementation": 0,
@@ -123,7 +128,9 @@
       }
     },
     "pay": {
-      "availability": ["locacao"],
+      "availability": [
+        "locacao"
+      ],
       "shareable": false,
       "annualPrice": 0,
       "implementation": 0,
@@ -131,7 +138,9 @@
       "_note": "Pay é pós-pago baseado em uso (boletos e splits)"
     },
     "seguros": {
-      "availability": ["locacao"],
+      "availability": [
+        "locacao"
+      ],
       "shareable": false,
       "annualPrice": 0,
       "implementation": 0,
@@ -139,7 +148,9 @@
       "_note": "Seguros é baseado em comissão sobre seguros vendidos"
     },
     "cash": {
-      "availability": ["locacao"],
+      "availability": [
+        "locacao"
+      ],
       "shareable": false,
       "annualPrice": 0,
       "implementation": 0,
@@ -147,7 +158,6 @@
       "_note": "Cash é serviço de antecipação, sem custo recorrente"
     }
   },
-
   "premiumServices": {
     "_description": "BLOCO D — Serviços Premium (Recorrentes e Não Recorrentes)",
     "recurring": {
@@ -195,62 +205,110 @@
       }
     }
   },
-
   "kombos": {
     "_description": "BLOCO E — Kombos — Descontos Promocionais Cumulativos",
     "_globalRule": "Desconto aplicado sobre o valor já ajustado pelo ciclo",
     "imob_start": {
       "name": "Kombo Imob Start",
-      "productsIncluded": ["imob"],
-      "addonsIncluded": ["leads"],
+      "productsIncluded": [
+        "imob"
+      ],
+      "addonsIncluded": [
+        "leads"
+      ],
       "discount": 10,
       "discountOrder": 2,
       "freeImplementations": 1,
-      "zeroedImplementationsList": ["leads"],
-      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
+      "zeroedImplementationsList": [
+        "leads"
+      ],
+      "premiumServicesIncluded": [
+        "vipSupport",
+        "csDedicado"
+      ]
     },
     "imob_pro": {
       "name": "Kombo Imob Pro",
-      "productsIncluded": ["imob"],
-      "addonsIncluded": ["leads", "inteligencia"],
+      "productsIncluded": [
+        "imob"
+      ],
+      "addonsIncluded": [
+        "leads",
+        "inteligencia"
+      ],
       "discount": 15,
       "discountOrder": 2,
       "freeImplementations": 2,
-      "zeroedImplementationsList": ["leads", "inteligencia"],
-      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
+      "zeroedImplementationsList": [
+        "leads",
+        "inteligencia"
+      ],
+      "premiumServicesIncluded": [
+        "vipSupport",
+        "csDedicado"
+      ]
     },
     "locacao_pro": {
       "name": "Kombo Locação Pro",
-      "productsIncluded": ["locacao"],
-      "addonsIncluded": ["pay"],
+      "productsIncluded": [
+        "locacao"
+      ],
+      "addonsIncluded": [
+        "pay"
+      ],
       "discount": 10,
       "discountOrder": 2,
       "freeImplementations": 1,
-      "zeroedImplementationsList": ["pay"],
-      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
+      "zeroedImplementationsList": [
+        "pay"
+      ],
+      "premiumServicesIncluded": [
+        "vipSupport",
+        "csDedicado"
+      ]
     },
     "core_gestao": {
       "name": "Kombo Core Gestão",
-      "productsIncluded": ["imob", "locacao"],
+      "productsIncluded": [
+        "imob",
+        "locacao"
+      ],
       "addonsIncluded": [],
       "discount": 0,
       "discountOrder": 2,
       "freeImplementations": 1,
       "zeroedImplementationsList": [],
-      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
+      "premiumServicesIncluded": [
+        "vipSupport",
+        "csDedicado"
+      ]
     },
     "elite": {
       "name": "Kombo Elite",
-      "productsIncluded": ["imob", "locacao"],
-      "addonsIncluded": ["leads", "inteligencia", "pay", "assinaturas"],
+      "productsIncluded": [
+        "imob",
+        "locacao"
+      ],
+      "addonsIncluded": [
+        "leads",
+        "inteligencia",
+        "pay",
+        "assinaturas"
+      ],
       "discount": 20,
       "discountOrder": 2,
       "freeImplementations": 3,
-      "zeroedImplementationsList": ["leads", "inteligencia", "pay"],
-      "premiumServicesIncluded": ["vipSupport", "csDedicado"]
+      "zeroedImplementationsList": [
+        "leads",
+        "inteligencia",
+        "pay"
+      ],
+      "premiumServicesIncluded": [
+        "vipSupport",
+        "csDedicado"
+      ]
     }
   },
-
   "variableCosts": {
     "_description": "BLOCO F — Custos Variáveis Pós-Pago (por Faixa de Uso)",
     "additionalUsers": {
@@ -259,16 +317,40 @@
       "readOrder": 1,
       "tiers": {
         "prime": [
-          { "from": 1, "to": 999999, "price": 57 }
+          {
+            "from": 1,
+            "to": 999999,
+            "price": 57
+          }
         ],
         "k": [
-          { "from": 1, "to": 5, "price": 47 },
-          { "from": 6, "to": 999999, "price": 37 }
+          {
+            "from": 1,
+            "to": 5,
+            "price": 47
+          },
+          {
+            "from": 6,
+            "to": 999999,
+            "price": 37
+          }
         ],
         "k2": [
-          { "from": 1, "to": 10, "price": 37 },
-          { "from": 11, "to": 100, "price": 27 },
-          { "from": 101, "to": 999999, "price": 17 }
+          {
+            "from": 1,
+            "to": 10,
+            "price": 37
+          },
+          {
+            "from": 11,
+            "to": 100,
+            "price": 27
+          },
+          {
+            "from": 101,
+            "to": 999999,
+            "price": 17
+          }
         ]
       }
     },
@@ -278,16 +360,40 @@
       "readOrder": 1,
       "tiers": {
         "prime": [
-          { "from": 1, "to": 999999, "price": 3.0 }
+          {
+            "from": 1,
+            "to": 999999,
+            "price": 3.0
+          }
         ],
         "k": [
-          { "from": 1, "to": 250, "price": 3.0 },
-          { "from": 251, "to": 999999, "price": 2.5 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 3.0
+          },
+          {
+            "from": 251,
+            "to": 999999,
+            "price": 2.5
+          }
         ],
         "k2": [
-          { "from": 1, "to": 250, "price": 3.0 },
-          { "from": 251, "to": 500, "price": 2.5 },
-          { "from": 501, "to": 999999, "price": 2.0 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 3.0
+          },
+          {
+            "from": 251,
+            "to": 500,
+            "price": 2.5
+          },
+          {
+            "from": 501,
+            "to": 999999,
+            "price": 2.0
+          }
         ]
       }
     },
@@ -297,10 +403,26 @@
       "readOrder": 1,
       "tiers": {
         "all_plans": [
-          { "from": 1, "to": 200, "price": 1.5 },
-          { "from": 201, "to": 350, "price": 1.3 },
-          { "from": 351, "to": 1000, "price": 1.1 },
-          { "from": 1001, "to": 999999, "price": 0.9 }
+          {
+            "from": 1,
+            "to": 200,
+            "price": 1.5
+          },
+          {
+            "from": 201,
+            "to": 350,
+            "price": 1.3
+          },
+          {
+            "from": 351,
+            "to": 1000,
+            "price": 1.1
+          },
+          {
+            "from": 1001,
+            "to": 999999,
+            "price": 0.9
+          }
         ]
       }
     },
@@ -310,9 +432,21 @@
       "readOrder": 1,
       "tiers": {
         "all_plans": [
-          { "from": 1, "to": 20, "price": 1.8 },
-          { "from": 21, "to": 40, "price": 1.7 },
-          { "from": 41, "to": 999999, "price": 1.5 }
+          {
+            "from": 1,
+            "to": 20,
+            "price": 1.8
+          },
+          {
+            "from": 21,
+            "to": 40,
+            "price": 1.7
+          },
+          {
+            "from": 41,
+            "to": 999999,
+            "price": 1.5
+          }
         ]
       }
     },
@@ -322,16 +456,40 @@
       "readOrder": 1,
       "tiers": {
         "prime": [
-          { "from": 1, "to": 999999, "price": 4.0 }
+          {
+            "from": 1,
+            "to": 999999,
+            "price": 4.0
+          }
         ],
         "k": [
-          { "from": 1, "to": 250, "price": 4.0 },
-          { "from": 251, "to": 999999, "price": 3.5 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 4.0
+          },
+          {
+            "from": 251,
+            "to": 999999,
+            "price": 3.5
+          }
         ],
         "k2": [
-          { "from": 1, "to": 250, "price": 4.0 },
-          { "from": 251, "to": 500, "price": 3.5 },
-          { "from": 501, "to": 999999, "price": 3.0 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 4.0
+          },
+          {
+            "from": 251,
+            "to": 500,
+            "price": 3.5
+          },
+          {
+            "from": 501,
+            "to": 999999,
+            "price": 3.0
+          }
         ]
       }
     },
@@ -341,16 +499,40 @@
       "readOrder": 1,
       "tiers": {
         "prime": [
-          { "from": 1, "to": 999999, "price": 4.0 }
+          {
+            "from": 1,
+            "to": 999999,
+            "price": 4.0
+          }
         ],
         "k": [
-          { "from": 1, "to": 250, "price": 4.0 },
-          { "from": 251, "to": 999999, "price": 3.5 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 4.0
+          },
+          {
+            "from": 251,
+            "to": 999999,
+            "price": 3.5
+          }
         ],
         "k2": [
-          { "from": 1, "to": 250, "price": 4.0 },
-          { "from": 251, "to": 500, "price": 3.5 },
-          { "from": 501, "to": 999999, "price": 3.0 }
+          {
+            "from": 1,
+            "to": 250,
+            "price": 4.0
+          },
+          {
+            "from": 251,
+            "to": 500,
+            "price": 3.5
+          },
+          {
+            "from": 501,
+            "to": 999999,
+            "price": 3.0
+          }
         ]
       }
     },
@@ -360,19 +542,30 @@
       "readOrder": 1,
       "tiers": {
         "prime": [
-          { "from": 0, "to": 999999, "rate": 0.35 }
+          {
+            "from": 0,
+            "to": 999999,
+            "rate": 0.35
+          }
         ],
         "k": [
-          { "from": 0, "to": 999999, "rate": 0.40 }
+          {
+            "from": 0,
+            "to": 999999,
+            "rate": 0.4
+          }
         ],
         "k2": [
-          { "from": 0, "to": 999999, "rate": 0.45 }
+          {
+            "from": 0,
+            "to": 999999,
+            "rate": 0.45
+          }
         ]
       },
       "_note": "Comissão sobre valor do seguro vendido"
     }
   },
-
   "featureMatrix": {
     "_description": "BLOCO G — Matriz de Funcionalidades — Fonte Única de Verdade",
     "_warning": "Qualquer alteração aqui impacta imediatamente calculadora, páginas públicas e PDFs",
@@ -383,84 +576,96 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "App Corretor",
           "description": "Aplicativo para corretores",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "CRM Completo",
           "description": "Gestão de leads e vendas",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Integração com Portais",
           "description": "Integração automática com portais (Zap, Viva Real, etc.)",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Blog",
           "description": "Blog integrado ao site",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "avancado"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Omnichannel/WhatsApp",
           "description": "Comunicação via WhatsApp integrada",
           "included": false,
           "linkedToAddon": "omnichannel",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ],
       "k": [
@@ -469,84 +674,96 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "App Corretor",
           "description": "Aplicativo para corretores",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "CRM Completo",
           "description": "Gestão de leads e vendas",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Integração com Portais",
           "description": "Integração automática com portais (Zap, Viva Real, etc.)",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Blog",
           "description": "Blog integrado ao site",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "avancado"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Omnichannel/WhatsApp",
           "description": "Comunicação via WhatsApp integrada",
           "included": false,
           "linkedToAddon": "omnichannel",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ],
       "k2": [
@@ -555,84 +772,96 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "App Corretor",
           "description": "Aplicativo para corretores",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "CRM Completo",
           "description": "Gestão de leads e vendas",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Integração com Portais",
           "description": "Integração automática com portais (Zap, Viva Real, etc.)",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Blog",
           "description": "Blog integrado ao site",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "avancado"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Omnichannel/WhatsApp",
           "description": "Comunicação via WhatsApp integrada",
           "included": false,
           "linkedToAddon": "omnichannel",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ]
     },
@@ -643,91 +872,104 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "ERP de Locação",
           "description": "Gestão completa de contratos de locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão Financeira",
           "description": "Controle financeiro de aluguéis e pagamentos",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Emissão de Boletos",
           "description": "Geração de boletos de aluguel",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Pay",
           "description": "Split automático e conciliação financeira",
           "included": false,
           "linkedToAddon": "pay",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Seguros",
           "description": "Seguros integrados no boleto",
           "included": false,
           "linkedToAddon": "seguros",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Cash",
           "description": "Antecipação de até 24 meses de aluguel",
           "included": false,
           "linkedToAddon": "cash",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ],
       "k": [
@@ -736,91 +978,104 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "ERP de Locação",
           "description": "Gestão completa de contratos de locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão Financeira",
           "description": "Controle financeiro de aluguéis e pagamentos",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Emissão de Boletos",
           "description": "Geração de boletos de aluguel",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Pay",
           "description": "Split automático e conciliação financeira",
           "included": false,
           "linkedToAddon": "pay",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Seguros",
           "description": "Seguros integrados no boleto",
           "included": false,
           "linkedToAddon": "seguros",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Cash",
           "description": "Antecipação de até 24 meses de aluguel",
           "included": false,
           "linkedToAddon": "cash",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ],
       "k2": [
@@ -829,96 +1084,108 @@
           "description": "Website personalizado para a imobiliária",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Mobile Access",
           "description": "Acesso via dispositivos móveis",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "ERP de Locação",
           "description": "Gestão completa de contratos de locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão de Imóveis",
           "description": "Cadastro e gestão de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Portal de Imóveis",
           "description": "Portal público de imóveis para locação",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Gestão Financeira",
           "description": "Controle financeiro de aluguéis e pagamentos",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Emissão de Boletos",
           "description": "Geração de boletos de aluguel",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "core"
         },
         {
           "name": "Google Looker BI",
           "description": "Business Intelligence com Google Looker",
           "included": false,
           "linkedToAddon": "inteligencia",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Pay",
           "description": "Split automático e conciliação financeira",
           "included": false,
           "linkedToAddon": "pay",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Seguros",
           "description": "Seguros integrados no boleto",
           "included": false,
           "linkedToAddon": "seguros",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "Kenlo Cash",
           "description": "Antecipação de até 24 meses de aluguel",
           "included": false,
           "linkedToAddon": "cash",
-          "linkedToPremiumService": null
+          "linkedToPremiumService": null,
+          "category": "addons"
         },
         {
           "name": "CS Dedicado",
           "description": "Customer Success dedicado",
           "included": true,
           "linkedToAddon": null,
-          "linkedToPremiumService": "csDedicado"
+          "linkedToPremiumService": "csDedicado",
+          "category": "servicos_premium"
         },
         {
           "name": "Suporte VIP",
           "description": "Suporte prioritário",
           "included": false,
           "linkedToAddon": null,
-          "linkedToPremiumService": "vipSupport"
+          "linkedToPremiumService": "vipSupport",
+          "category": "servicos_premium"
         }
       ]
     }
   },
-
   "_legacyFields": {
     "_note": "Campos mantidos para compatibilidade com código existente - DEPRECAR GRADUALMENTE",
     "implantacaoBase": 1497

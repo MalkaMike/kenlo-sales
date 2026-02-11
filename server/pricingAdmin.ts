@@ -118,6 +118,7 @@ const VariableCostSchema = z.object({
 const FeatureSchema = z.object({
   name: z.string(),
   description: z.string(),
+  category: z.enum(["core", "avancado", "addons", "servicos_premium"]).optional(),
   included: z.boolean(),
   linkedToAddon: z.string().nullable(),
   linkedToPremiumService: z.string().nullable(),

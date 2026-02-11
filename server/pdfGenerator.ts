@@ -610,17 +610,39 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
           .text(`Kenlo IMOB (${data.imobPlan.toUpperCase()})`, M + 14, Y, { lineBreak: false });
         Y += 14;
 
-        for (const feature of allImobFeatures) {
-          if (needsNewPage(Y, 20)) Y = newPage();
-          const isIncluded = imobFeatures[feature.name];
-          const icon = isIncluded ? "✓" : "—";
-          const color = isIncluded ? C.green : C.textLight;
+        // Group features by category
+        const categoryLabels = {
+          core: "Funcionalidades Essenciais",
+          avancado: "Funcionalidades Avançadas",
+          addons: "Add-ons Opcionais",
+          servicos_premium: "Serviços Premium"
+        };
+        const categories = ["core", "avancado", "addons", "servicos_premium"] as const;
 
-          doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
-            .text(icon, M + 20, Y, { lineBreak: false });
-          doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
-            .text(feature.description, M + 32, Y, { lineBreak: false });
-          Y += 11;
+        for (const category of categories) {
+          const featuresInCategory = allImobFeatures.filter(f => f.category === category);
+          if (featuresInCategory.length === 0) continue;
+
+          if (needsNewPage(Y, 40)) Y = newPage();
+          
+          // Category header
+          doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
+            .text(categoryLabels[category], M + 20, Y, { lineBreak: false });
+          Y += 12;
+
+          for (const feature of featuresInCategory) {
+            if (needsNewPage(Y, 20)) Y = newPage();
+            const isIncluded = imobFeatures[feature.name];
+            const icon = isIncluded ? "✓" : "—";
+            const color = isIncluded ? C.green : C.textLight;
+
+            doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
+              .text(icon, M + 26, Y, { lineBreak: false });
+            doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
+              .text(feature.description, M + 38, Y, { lineBreak: false });
+            Y += 11;
+          }
+          Y += 4;
         }
         Y += 6;
       }
@@ -636,17 +658,39 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
           .text(`Kenlo Locacao (${data.locPlan.toUpperCase()})`, M + 14, Y, { lineBreak: false });
         Y += 14;
 
-        for (const feature of allLocFeatures) {
-          if (needsNewPage(Y, 20)) Y = newPage();
-          const isIncluded = locFeatures[feature.name];
-          const icon = isIncluded ? "✓" : "—";
-          const color = isIncluded ? C.green : C.textLight;
+        // Group features by category
+        const categoryLabels = {
+          core: "Funcionalidades Essenciais",
+          avancado: "Funcionalidades Avançadas",
+          addons: "Add-ons Opcionais",
+          servicos_premium: "Serviços Premium"
+        };
+        const categories = ["core", "avancado", "addons", "servicos_premium"] as const;
 
-          doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
-            .text(icon, M + 20, Y, { lineBreak: false });
-          doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
-            .text(feature.description, M + 32, Y, { lineBreak: false });
-          Y += 11;
+        for (const category of categories) {
+          const featuresInCategory = allLocFeatures.filter(f => f.category === category);
+          if (featuresInCategory.length === 0) continue;
+
+          if (needsNewPage(Y, 40)) Y = newPage();
+          
+          // Category header
+          doc.fontSize(7).fillColor(C.textMuted).font("Helvetica-Bold")
+            .text(categoryLabels[category], M + 20, Y, { lineBreak: false });
+          Y += 12;
+
+          for (const feature of featuresInCategory) {
+            if (needsNewPage(Y, 20)) Y = newPage();
+            const isIncluded = locFeatures[feature.name];
+            const icon = isIncluded ? "✓" : "—";
+            const color = isIncluded ? C.green : C.textLight;
+
+            doc.fontSize(7).fillColor(color).font("Helvetica-Bold")
+              .text(icon, M + 26, Y, { lineBreak: false });
+            doc.fontSize(7).fillColor(isIncluded ? C.text : C.textMuted).font("Helvetica")
+              .text(feature.description, M + 38, Y, { lineBreak: false });
+            Y += 11;
+          }
+          Y += 4;
         }
         Y += 6;
       }

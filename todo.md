@@ -3242,3 +3242,23 @@
 - [x] Verify PDF reads directly from deterministic structure (TRAINING, getFeatures, getAllFeatures)
 - [x] Verify no hardcoded pricing remains (all replaced with config reads)
 - [ ] Save final checkpoint
+
+## Feature Categorization in PDF - Feb 2026
+- [x] Add category field to all features in featureMatrix (pricing-values.json)
+  - [x] Define categories: core, avancado, addons, servicos_premium
+  - [x] Categorize all IMOB features (7 core, 1 avancado, 2 addons, 2 servicos_premium)
+  - [x] Categorize all LOC features (6 core, 4 addons)
+- [x] Update pricing-config.ts to expose category information
+  - [x] Update getAllFeatures() to return category field
+  - [x] Ensure backward compatibility (category defaults to "core" if missing)
+- [x] Update PDF generator to group features by category
+  - [x] Add category headers in Section 4.5 (Funcionalidades Essenciais, Avançadas, Add-ons, Serviços Premium)
+  - [x] Group features under respective categories (both IMOB and LOC)
+  - [x] Maintain visual indicators (✓/—)
+- [x] Update schema validation in pricingAdmin.ts
+  - [x] Add category field to featureMatrix schema (enum: core, avancado, addons, servicos_premium)
+- [x] Test PDF generation with categorized features
+  - [x] Verify categories display correctly (category headers added)
+  - [x] Verify all features still shown (getAllFeatures includes category)
+  - [x] All 282 tests passing
+- [ ] Save final checkpoint
