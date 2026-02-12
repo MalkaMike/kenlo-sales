@@ -3678,3 +3678,10 @@
 - [x] Kombo offer rules: Imob Start=Leads, Imob Pro=Leads+Inteligência, Loc Pro=Inteligência, Core Gestão=Imob, Elite=Imob+Leads+Inteligência
 - [x] Add "Total Implantação" row with the total per column
 - [x] Follow same visual pattern as Add-ons and Serviços Premium sections
+
+## Pós-Pago values and table row height uniformization
+
+- [x] In Pós-Pago section, show "—" when volume doesn't justify a value, show actual value when it exists
+- [x] Uniformize all table row heights to minimum possible
+- [x] Max 2 row heights: one for simple title lines, one for content lines — homogeneous throughout
+- [x] Reduce padding/spacing in all table cells for compact appearance

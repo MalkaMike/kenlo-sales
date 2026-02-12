@@ -1546,7 +1546,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               <thead className="sticky top-0 z-10 shadow-[0_2px_4px_-1px_rgba(0,0,0,0.1)]">
                 {/* Row 1: Nome do Kombo + Tooltip + Badge de Desconto */}
                 <tr className="border-b border-gray-200 bg-white">
-                  <th className="text-left py-3 px-2 bg-white"></th>
+                  <th className="text-left py-2 px-2 bg-white"></th>
                   {columns.map((col, colIndex) => {
                     const isKomboCol = !col.isCustom && col.id !== "none";
                     const tooltipData = isKomboCol && col.id in KOMBO_DEFINITIONS
@@ -1561,7 +1561,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         key={col.id}
                         onMouseEnter={() => setHoveredColumn(col.id)}
                         onClick={() => handlePlanSelect(col.id)}
-                        className={`text-center py-3 px-1 cursor-pointer transition-colors duration-150 relative ${
+                        className={`text-center py-2 px-1 cursor-pointer transition-colors duration-150 relative ${
                           isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                         } ${
                           selectedPlan === col.id
@@ -1633,7 +1633,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   })}
                   {/* "+" button to add custom column */}
                   {customColumns.length < MAX_CUSTOM_COLUMNS && (
-                    <th className="text-center py-3 px-1 bg-white align-middle" rowSpan={1}>
+                    <th className="text-center py-2 px-1 bg-white align-middle" rowSpan={1}>
                       <button
                         onClick={addCustomColumn}
                         className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-green-400 text-green-500 hover:border-green-500 hover:text-green-600 hover:bg-green-50 transition-all"
@@ -1661,7 +1661,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}
-                      className={`${row.isSubRow ? "py-0.5 px-4" : "py-3 px-4"} ${row.indent ? "pl-8" : ""} ${
+                      className={`${row.isSubRow ? "py-0.5 px-4" : row.isHeader ? "py-2 px-4" : row.isTotal ? "py-2 px-4" : "py-1.5 px-4"} ${row.indent ? "pl-8" : ""} ${
                         row.isHeader
                           ? "font-semibold text-gray-700 text-sm" 
                           : row.isTotal
@@ -1737,7 +1737,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center ${row.isSubRow ? "py-0.5 px-2" : "py-3 px-2"} transition-colors duration-150 ${
+                          className={`text-center ${row.isSubRow ? "py-0.5 px-2" : row.isHeader ? "py-2 px-2" : row.isTotal ? "py-2 px-2" : "py-1.5 px-2"} transition-colors duration-150 ${
                             isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                           } ${
                             selectedPlan === col.id
@@ -1770,7 +1770,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-gray-200 bg-gray-50/50">
-                  <td className="py-3 px-2"></td>
+                  <td className="py-2 px-2"></td>
                   {columns.map((col, colIndex) => {
                     const isFirstCustom = col.isCustom && colIndex === 1 + komboColumnCount;
                     return (
@@ -1778,7 +1778,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         key={`select-btn-${col.id}`} 
                         onMouseEnter={() => setHoveredColumn(col.id)} 
                         onClick={() => handlePlanSelect(col.id)} 
-                        className={`text-center py-3 px-1 cursor-pointer transition-colors duration-150 ${
+                        className={`text-center py-2 px-1 cursor-pointer transition-colors duration-150 ${
                           isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                         } ${
                           selectedPlan === col.id
@@ -1823,7 +1823,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   })}
                   {/* Empty cell for the "+" column in footer */}
                   {customColumns.length < MAX_CUSTOM_COLUMNS && (
-                    <td className="text-center py-3 px-1"></td>
+                    <td className="text-center py-2 px-1"></td>
                   )}
                 </tr>
               </tfoot>
