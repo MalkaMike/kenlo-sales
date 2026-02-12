@@ -3685,3 +3685,7 @@
 - [x] Uniformize all table row heights to minimum possible
 - [x] Max 2 row heights: one for simple title lines, one for content lines — homogeneous throughout
 - [x] Reduce padding/spacing in all table cells for compact appearance
+
+## Simplify Ofertado cells in Implantação
+
+- [x] Remove strikethrough price from offered implementation items, show only "Ofertado" in green

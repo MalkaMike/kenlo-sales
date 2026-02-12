@@ -1441,10 +1441,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         if (!item) return <span className="text-gray-300">—</span>;
         if (item.free) {
           return (
-            <div className="flex flex-col items-center">
-              <span className="line-through text-gray-400 text-xs">R$ {formatCurrency(item.cost)}</span>
-              <span className="text-green-600 text-[10px] font-semibold">Ofertado</span>
-            </div>
+            <span className="text-green-600 text-[11px] font-semibold">Ofertado</span>
           );
         }
         return <span className="text-sm text-gray-600">R$ {formatCurrency(item.cost)}</span>;
