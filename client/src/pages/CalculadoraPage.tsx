@@ -2299,6 +2299,7 @@ export default function CalculadoraPage() {
                           seguros: false,
                           cash: false,
                         });
+                        setMetrics(prev => ({ ...prev, wantsWhatsApp: false, usesExternalAI: false, externalAIName: "" }));
                       }}
                       className="px-4 py-2 text-sm rounded-lg transition-all border bg-white hover:bg-gray-50 text-gray-600 border-gray-200"
                     >

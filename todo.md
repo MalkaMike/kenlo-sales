@@ -3642,3 +3642,7 @@
 ## Auto-disable WhatsApp & IA SDR when Leads is off
 
 - [x] When Leads toggle is turned off, automatically reset wantsWhatsApp, usesExternalAI, and externalAIName
+
+## Limpar button resets WhatsApp & IA SDR
+
+- [x] Update Limpar button handler to also reset wantsWhatsApp, usesExternalAI, and externalAIName
