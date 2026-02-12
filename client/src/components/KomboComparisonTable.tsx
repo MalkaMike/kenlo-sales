@@ -1047,10 +1047,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "loc", label: "Loc", indent: true },
     { key: "addons", label: "Add-ons", isHeader: true },
     { key: "leads", label: "Leads", indent: true },
-    { key: "whatsapp", label: "WhatsApp", indent: true },
     { key: "inteligencia", label: "Inteligência", indent: true },
     { key: "assinatura", label: "Assinatura", indent: true },
-    { key: "pay", label: "Pay", indent: true },
 
     { key: "premium", label: "Serviços Premium", isHeader: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
@@ -1272,34 +1270,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return renderPlanCell(column.locPrice, "loc");
       case "leads":
         return renderAddonCell(column.leadsPrice, "leads");
-      case "whatsapp": {
-        // WhatsApp is tied to Leads — show "Pós-pago" when active, dash when not
-        // Sua Seleção: read-only based on props.wantsWhatsApp
-        if (isSuaSelecao) {
-          if (column.whatsAppPrice) {
-            return <span className="font-medium text-gray-700">{column.whatsAppPrice}</span>;
-          }
-          return <span className="text-gray-300">—</span>;
-        }
-        // Kombo columns: show "Pós-pago" if Kombo includes leads
-        if (isKomboCol) {
-          if (column.whatsAppPrice) {
-            return <span className="font-medium text-gray-700">{column.whatsAppPrice}</span>;
-          }
-          return <span className="text-gray-300">—</span>;
-        }
-        // Custom columns: follows leads toggle automatically
-        if (column.whatsAppPrice) {
-          return <span className="text-green-600 font-semibold text-xs">{column.whatsAppPrice}</span>;
-        }
-        return <span className="text-gray-300">—</span>;
-      }
       case "inteligencia":
         return renderAddonCell(column.inteligenciaPrice, "inteligencia");
       case "assinatura":
         return renderAddonCell(column.assinaturaPrice, "assinatura");
-      case "pay":
-        return renderAddonCell(null, "pay");
+
       case "seguros":
         return renderAddonCell(null, "seguros");
       case "cash":

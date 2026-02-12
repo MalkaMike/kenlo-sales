@@ -3658,3 +3658,8 @@
 - [x] Add smooth expand/collapse animation when Leads is toggled on/off (showing/hiding IA SDR & WhatsApp sub-items)
 - [x] Add smooth animation for WhatsApp postpaid breakdown appearing/disappearing
 - [x] Add smooth animation for IA SDR AI name input appearing/disappearing
+
+## Remove post-paid items from Kombos comparison table
+
+- [x] Remove WhatsApp row from KomboComparisonTable (post-paid only, not pre-paid)
+- [x] Remove Pay row from KomboComparisonTable (post-paid only, not pre-paid)
