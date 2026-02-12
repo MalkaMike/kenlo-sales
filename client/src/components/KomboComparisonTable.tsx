@@ -121,11 +121,16 @@ interface KomboColumnData {
   trainingPrice: number | string | null;
   // Subscription count (products + add-ons, excluding premium services)
   subscriptionCount: number;
+  // Implementation breakdown per item
+  implBreakdown: { label: string; cost: number; free: boolean }[];
   // Totals
   totalMonthly: number;
   theoreticalImplementation: number;
   implementation: number;
   annualEquivalent: number;
+  // Cycle-based total (totalMonthly * cycleMonths + implementation)
+  cycleTotalValue: number;
+  cycleMonths: number;
   // Per-column overrides (for display in UI)
   overrides?: ColumnOverrides;
 }
@@ -170,6 +175,20 @@ const PAYMENT_FREQUENCY_MULTIPLIERS: Record<PaymentFrequency, number> = {
   semestral: 1.1111,
   annual: 1.0,
   biennial: 0.90,
+};
+
+const CYCLE_MONTHS: Record<PaymentFrequency, number> = {
+  monthly: 1,
+  semestral: 6,
+  annual: 12,
+  biennial: 24,
+};
+
+const CYCLE_LABELS: Record<PaymentFrequency, string> = {
+  monthly: "Mensal",
+  semestral: "Semestral",
+  annual: "Anual",
+  biennial: "Bienal",
 };
 
 // Kombo definitions with their rules
@@ -469,6 +488,16 @@ const calculateKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
+  // Build implementation breakdown
+  const implBreakdown: { label: string; cost: number; free: boolean }[] = [];
+  if (komboIncludesImob) implBreakdown.push({ label: "Imob", cost: IMPLEMENTATION_COSTS.imob, free: true });
+  if (komboIncludesLoc) implBreakdown.push({ label: "Locação", cost: IMPLEMENTATION_COSTS.loc, free: true });
+  if (kombo.includedAddons.includes("leads")) implBreakdown.push({ label: "Leads", cost: IMPLEMENTATION_COSTS.leads, free: true });
+  if (kombo.includedAddons.includes("inteligencia")) implBreakdown.push({ label: "Inteligência", cost: IMPLEMENTATION_COSTS.inteligencia, free: true });
+
+  const cycleMonths = CYCLE_MONTHS[frequency];
+  const cycleTotalValue = totalMonthly * cycleMonths + implementation;
+
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
@@ -481,7 +510,8 @@ const calculateKomboColumn = (
     isAvailable, isRecommended, isCustom: false,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
-    subscriptionCount, totalMonthly, theoreticalImplementation, implementation, annualEquivalent,
+    implBreakdown, subscriptionCount, totalMonthly, theoreticalImplementation, implementation,
+    annualEquivalent, cycleTotalValue, cycleMonths,
     overrides,
   };
 };
@@ -574,6 +604,16 @@ const calculateNoKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
+  // Build implementation breakdown
+  const implBreakdown: { label: string; cost: number; free: boolean }[] = [];
+  if (product === "imob" || product === "both") implBreakdown.push({ label: "Imob", cost: IMPLEMENTATION_COSTS.imob, free: false });
+  if (product === "loc" || product === "both") implBreakdown.push({ label: "Locação", cost: IMPLEMENTATION_COSTS.loc, free: false });
+  if (addons.leads && (product === "imob" || product === "both")) implBreakdown.push({ label: "Leads", cost: IMPLEMENTATION_COSTS.leads, free: false });
+  if (addons.inteligencia) implBreakdown.push({ label: "Inteligência", cost: IMPLEMENTATION_COSTS.inteligencia, free: false });
+
+  const cycleMonths = CYCLE_MONTHS[frequency];
+  const cycleTotalValue = totalMonthly * cycleMonths + implementation;
+
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
@@ -586,8 +626,9 @@ const calculateNoKomboColumn = (
     isAvailable: true, isRecommended, isCustom: false,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
-    subscriptionCount, totalMonthly,
+    implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
+    cycleTotalValue, cycleMonths,
     overrides,
   };
 };
@@ -699,6 +740,17 @@ const calculateCustomColumn = (
   }
 
   const annualEquivalent = totalMonthly * 12 + implementation;
+
+  // Build implementation breakdown
+  const implBreakdown: { label: string; cost: number; free: boolean }[] = [];
+  if (product === "imob" || product === "both") implBreakdown.push({ label: "Imob", cost: IMPLEMENTATION_COSTS.imob, free: false });
+  if (product === "loc" || product === "both") implBreakdown.push({ label: "Locação", cost: IMPLEMENTATION_COSTS.loc, free: false });
+  if (addons.leads && (product === "imob" || product === "both")) implBreakdown.push({ label: "Leads", cost: IMPLEMENTATION_COSTS.leads, free: false });
+  if (addons.inteligencia) implBreakdown.push({ label: "Inteligência", cost: IMPLEMENTATION_COSTS.inteligencia, free: false });
+
+  const cycleMonths = CYCLE_MONTHS[frequency];
+  const cycleTotalValue = totalMonthly * cycleMonths + implementation;
+
   let subscriptionCount = 0;
   if (imobPrice !== null) subscriptionCount++;
   if (locPrice !== null) subscriptionCount++;
@@ -715,8 +767,9 @@ const calculateCustomColumn = (
     isCustom: true,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
-    subscriptionCount, totalMonthly,
+    implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
+    cycleTotalValue, cycleMonths,
     overrides,
   };
 };
@@ -1040,7 +1093,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Banner config
   const bannerConfig = PRODUCT_BANNER_CONFIG[props.product];
 
-  // Row definitions — Ciclo is now BELOW Anual
+  // Row definitions — restructured with Implantação section, Pós-Pago section, and cycle total
   const rows = [
     { key: "products", label: "Produtos", isHeader: true },
     { key: "imob", label: "Imob", indent: true },
@@ -1054,12 +1107,25 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidades", isTotal: true },
+    { key: "totalMonthly", label: "Mensalidades (Pré-Pago)", isTotal: true },
     { key: "subscriptionCount", label: "", isSubRow: true },
-    { key: "implementation", label: "Implantação", isTotal: true },
-    { key: "annualEquivalent", label: "Anual", isTotal: true },
+
+    { key: "implantacao", label: "Implantação", isHeader: true },
+    { key: "implBreakdown", label: "", isSubRow: true },
+    { key: "implementation", label: "Total Implantação", isTotal: true },
+
+    { key: "cycleTotal", label: "Valor Total do Ciclo", isTotal: true },
     { key: "savings", label: "", isSubRow: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
+
+    { key: "postpaid", label: "Pós-Pago", isHeader: true },
+    { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
+    { key: "postpaidContracts", label: "Contratos adicionais", indent: true },
+    { key: "postpaidWhatsApp", label: "WhatsApp Leads", indent: true },
+    { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
+    { key: "postpaidBoletos", label: "Boletos", indent: true },
+    { key: "postpaidSplits", label: "Splits", indent: true },
+    { key: "postpaidSeguros", label: "Seguros", indent: true },
   ];
 
   /**
@@ -1357,33 +1423,91 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
           </span>
         );
-      case "implementation": {
-        const hasSavings = column.theoreticalImplementation > column.implementation && column.id !== "none" && !column.isCustom;
+      case "implBreakdown": {
+        if (column.implBreakdown.length === 0) return <span className="text-gray-300">—</span>;
+        const isKombo = column.id !== "none" && !column.isCustom;
         return (
           <div className="flex flex-col items-center gap-0.5">
-            {hasSavings ? (
-              <span className="text-[10px] text-gray-400 font-normal leading-tight">
-                Sem combo: R$ {formatCurrency(column.theoreticalImplementation)}
+            {column.implBreakdown.map((item, idx) => (
+              <span key={idx} className="text-[10px] text-gray-500 font-normal leading-tight">
+                {item.label}: {isKombo ? (
+                  <span className="line-through text-gray-400">R$ {formatCurrency(item.cost)}</span>
+                ) : (
+                  <span>R$ {formatCurrency(item.cost)}</span>
+                )}
               </span>
-            ) : (
-              <span className="text-[10px] text-gray-400 font-normal leading-tight">Implantação (único)</span>
+            ))}
+            {isKombo && (
+              <span className="text-[10px] text-green-600 font-medium leading-tight">
+                Oferta Kombo: R$ {formatCurrency(column.implementation)}
+              </span>
             )}
-            <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
           </div>
         );
       }
-      case "annualEquivalent":
-        return <span className="font-bold">R$ {formatCurrency(column.annualEquivalent)}</span>;
+      case "implementation": {
+        return (
+          <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
+        );
+      }
+      case "cycleTotal": {
+        const cycleLabel = CYCLE_LABELS[column.overrides?.frequency ?? props.frequency];
+        return (
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="font-bold text-gray-800">R$ {formatCurrency(column.cycleTotalValue)}</span>
+            <span className="text-[10px] text-gray-400 font-normal">({cycleLabel})</span>
+          </div>
+        );
+      }
       case "savings": {
         const semKombo = columns[0];
-        if (column.id === "none" || semKombo.annualEquivalent === 0) return null;
-        const savings = semKombo.annualEquivalent - column.annualEquivalent;
+        if (column.id === "none" || semKombo.cycleTotalValue === 0) return null;
+        const savings = semKombo.cycleTotalValue - column.cycleTotalValue;
         if (savings <= 0) return null;
+        const cycleLabel = CYCLE_LABELS[column.overrides?.frequency ?? props.frequency].toLowerCase();
         return (
           <span className="text-[11px] text-green-600 font-semibold">
-            Economia de R$ {formatCurrency(savings)}/ano
+            Economia de R$ {formatCurrency(savings)}/{cycleLabel}
           </span>
         );
+      }
+      // Pós-Pago items
+      case "postpaidUsers": {
+        // IMOB only: show "Pós-pago" if IMOB is active
+        const hasImob = column.imobPrice !== null;
+        if (!hasImob) return <span className="text-gray-300">—</span>;
+        return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+      }
+      case "postpaidContracts": {
+        // LOC only: show "Pós-pago" if LOC is active
+        const hasLoc = column.locPrice !== null;
+        if (!hasLoc) return <span className="text-gray-300">—</span>;
+        return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+      }
+      case "postpaidWhatsApp": {
+        // IMOB only (via Leads): show "Pós-pago" if WhatsApp is active
+        if (column.whatsAppPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300">—</span>;
+      }
+      case "postpaidAssinaturas": {
+        // Both IMOB + LOC: show "Pós-pago" if Assinatura is active
+        if (column.assinaturaPrice !== null) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300">—</span>;
+      }
+      case "postpaidBoletos": {
+        // LOC only: show "Pós-pago" if Pay is active
+        if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300">—</span>;
+      }
+      case "postpaidSplits": {
+        // LOC only: show "Pós-pago" if Pay is active (splits come with Pay)
+        if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300">—</span>;
+      }
+      case "postpaidSeguros": {
+        // LOC only: show "Pós-pago" if Seguros is active
+        if (column.segurosPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300">—</span>;
       }
       default:
         return null;
@@ -1705,7 +1829,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Footnote */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              <strong>Mensalidades:</strong> Valor mensal recorrente. <strong>Anual:</strong> 12x mensalidades + taxa de implantação (cobrada apenas no primeiro ano).
+              <strong>Mensalidades (Pré-Pago):</strong> Valor mensal recorrente das assinaturas. <strong>Valor Total do Ciclo:</strong> Mensalidades × meses do ciclo + implantação (cobrada apenas no primeiro ciclo).
+              <br />
+              <strong>Pós-Pago:</strong> Itens cobrados conforme uso (usuários, contratos, boletos, etc.) — não incluídos no valor do ciclo.
               <br />
               <strong>Colunas interativas:</strong> Clique nos planos (Prime/K/K2) nas colunas de Kombo para simular cenários diferentes. A coluna "Sua Seleção" reflete a configuração principal.
               <br />

@@ -3663,3 +3663,10 @@
 
 - [x] Remove WhatsApp row from KomboComparisonTable (post-paid only, not pre-paid)
 - [x] Remove Pay row from KomboComparisonTable (post-paid only, not pre-paid)
+
+## Redesign Kombos comparison table bottom section
+
+- [x] Rename "Mensalidades" to "Mensalidades (Pré-Pago)"
+- [x] Add "Implantação" as header section (same style as Serviços Premium) with per-item breakdown (Imob, Loc, Leads, Inteligência) and Kombo "oferta" discount
+- [x] Rename "Anual" to "Valor Total do Ciclo" calculated per column cycle
+- [x] Add "Pós-Pago" header section (same style as Serviços Premium) with all post-paid items grouped by IMOB-only, LOC-only, and both
