@@ -3737,3 +3737,14 @@
 
 ## Remove Pós-Pago Section
 - [x] Remove "Investimento pós-pago mensal (estimativo)" section from calculator page
+
+## Move Postpaid Details to Main Pricing Table
+- [x] Add "Usuários Adicionais" row to Receita Extra Investimentos section (IMOB)
+- [x] Add "Contratos Adicionais" row to Receita Extra Investimentos section (LOC)
+- [x] Add "WhatsApp Mensagens" row to Receita Extra Investimentos section (Leads add-on)
+- [x] Add "Assinaturas Digitais" row to Receita Extra Investimentos section (Assinatura add-on)
+- [x] Add "Custo Boletos (Pay)" row to Receita Extra Investimentos section
+- [x] Add "Custo Split (Pay)" row to Receita Extra Investimentos section
+- [x] Add "Serviços de Atendimento" row to Receita Extra Investimentos section
+- [x] Show included/additional breakdown and per-unit cost in each row
+- [x] Replaced single "Variável sob uso (pós-pago)" aggregated line with individual detail rows
