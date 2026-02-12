@@ -3781,3 +3781,12 @@
 - [x] Add Bienal-specific test cases for Imob Prime, Leads, Inteligência, Assinatura
 - [x] Add full pipeline tests (Annual → Cycle → Kombo discount) for all cycle+kombo combinations
 - [x] All 340 tests pass (12 test files)
+
+## PDF Bienal Test, Cycle Badge, and Admin Pricing Review
+
+- [x] Test PDF generation with Bienal cycle and verify all values match comparison table
+- [x] Add discount badges to cycle dropdown options (already implemented in KomboComparisonTable)
+- [x] Review /admin/pricing page for intuitiveness and centralized variable coverage
+- [x] Improve /admin/pricing page UI: sticky sidebar TOC, collapsible sections, price previews, fixed Kombos discount display
+- [x] Fix PDF Kombo columns showing wrong cycle (always "Anual") - now passes effective frequency in overrides
+- [x] Fix Kombos discount display in admin page (was showing 1000% instead of 10%)

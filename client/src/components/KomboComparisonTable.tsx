@@ -506,7 +506,7 @@ const calculateKomboColumn = (
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     implBreakdown, subscriptionCount, totalMonthly, theoreticalImplementation, implementation,
     annualEquivalent, cycleTotalValue, cycleMonths,
-    overrides,
+    overrides: overrides ? overrides : { frequency } as ColumnOverrides,
   };
 };
 
@@ -623,7 +623,7 @@ const calculateNoKomboColumn = (
     implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
-    overrides,
+    overrides: overrides ? overrides : { frequency } as ColumnOverrides,
   };
 };
 

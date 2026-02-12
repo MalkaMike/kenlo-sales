@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, AlertCircle, Info, AlertTriangle, Check, X } from "lucide-react";
+import { Loader2, Save, AlertCircle, Info, AlertTriangle, Check, X, ChevronDown, ChevronRight, Eye } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
@@ -72,20 +72,57 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
-// Section header component
-const SectionHeader = ({ letter, title, description }: { letter: string; title: string; description: string }) => (
-  <div className="mb-6">
-    <div className="flex items-center gap-3 mb-2">
-      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+// Section header component with collapse toggle
+const SectionHeader = ({ 
+  letter, title, description, collapsed, onToggle 
+}: { 
+  letter: string; title: string; description: string; collapsed: boolean; onToggle: () => void 
+}) => (
+  <div className="mb-4 cursor-pointer select-none" onClick={onToggle}>
+    <div className="flex items-center gap-3 mb-1">
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
         <span className="text-lg font-bold text-primary">{letter}</span>
       </div>
-      <div>
-        <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <h2 className="text-2xl font-bold">{title}</h2>
+          {collapsed ? (
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+          )}
+        </div>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
     </div>
   </div>
 );
+
+// Price preview badge
+const PricePreview = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 rounded text-xs">
+    <Eye className="w-3 h-3 text-primary" />
+    <span className="text-muted-foreground">{label}:</span>
+    <span className="font-semibold text-primary">{value}</span>
+  </div>
+);
+
+// roundToSeven helper (same as shared/pricing-config.ts)
+const roundToSeven = (price: number): number => {
+  const tens = Math.ceil(price / 10) * 10;
+  return tens - 3;
+};
+
+// TOC sections definition
+const SECTIONS = [
+  { id: "section-a", letter: "A", title: "Ciclo de Pagamento" },
+  { id: "section-b", letter: "B", title: "Planos Base" },
+  { id: "section-c", letter: "C", title: "Add-ons" },
+  { id: "section-d", letter: "D", title: "Serviços Premium" },
+  { id: "section-e", letter: "E", title: "Kombos" },
+  { id: "section-f", letter: "F", title: "Custos Variáveis" },
+  { id: "section-g", letter: "G", title: "Funcionalidades" },
+];
 
 export default function PricingAdminPageV2() {
   const { data: config, isLoading, refetch } = trpc.pricingAdmin.getConfig.useQuery();
@@ -96,6 +133,14 @@ export default function PricingAdminPageV2() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [changeReason, setChangeReason] = useState("");
   const [lastModified, setLastModified] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState("section-a");
+  
+  // Collapsible sections state - all expanded by default
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (sectionId: string) => {
+    setCollapsedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
+  };
 
   useEffect(() => {
     if (config) {
@@ -103,6 +148,27 @@ export default function PricingAdminPageV2() {
       setLastModified(config._lastModified || new Date().toISOString());
     }
   }, [config]);
+
+  // Intersection observer for active section tracking
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-100px 0px -60% 0px", threshold: 0 }
+    );
+
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [formData]);
 
   const handleSaveClick = () => {
     setShowConfirmDialog(true);
@@ -112,7 +178,6 @@ export default function PricingAdminPageV2() {
     if (!formData) return;
 
     try {
-      // Update metadata
       const updatedData = {
         ...formData,
         _lastModified: new Date().toISOString(),
@@ -120,14 +185,14 @@ export default function PricingAdminPageV2() {
       };
       
       await saveConfigMutation.mutateAsync(updatedData);
-      alert(`✅ Configuração salva com sucesso!\n\nMotivo: ${changeReason || "Não informado"}`);
+      alert(`\u2705 Configuração salva com sucesso!\n\nMotivo: ${changeReason || "Não informado"}`);
       setHasChanges(false);
       setShowConfirmDialog(false);
       setChangeReason("");
       setLastModified(updatedData._lastModified);
       refetch();
     } catch (error: any) {
-      alert(`❌ Erro: ${error.message || "Erro ao salvar configuração"}`);
+      alert(`\u274C Erro: ${error.message || "Erro ao salvar configuração"}`);
     }
   };
 
@@ -144,6 +209,16 @@ export default function PricingAdminPageV2() {
     });
   };
 
+  // Calculate preview prices for a plan
+  const getPreviewPrices = (annualPrice: number) => {
+    if (!formData?.paymentCycles) return null;
+    const monthly = roundToSeven(annualPrice * (formData.paymentCycles.monthly?.multiplier || 1.25));
+    const semestral = roundToSeven(annualPrice * (formData.paymentCycles.semiannual?.multiplier || 1.125));
+    const annual = roundToSeven(annualPrice * (formData.paymentCycles.annual?.multiplier || 1));
+    const biennial = roundToSeven(annualPrice * (formData.paymentCycles.biennial?.multiplier || 0.875));
+    return { monthly, semestral, annual, biennial };
+  };
+
   if (isLoading || !formData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -153,625 +228,771 @@ export default function PricingAdminPageV2() {
   }
 
   return (
-    <div className="container max-w-7xl py-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Configuração de Preços</h1>
-            <p className="text-muted-foreground">
-              Fonte Única de Verdade — Estrutura Determinística v2.0.0
-            </p>
+    <div className="flex gap-6">
+      {/* Sticky Sidebar TOC */}
+      <aside className="hidden lg:block w-56 flex-shrink-0">
+        <div className="sticky top-24 space-y-1">
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3">
+            Navegação
           </div>
-          <Button
-            onClick={handleSaveClick}
-            disabled={!hasChanges || saveConfigMutation.isPending}
-            size="lg"
-            className="gap-2"
-          >
-            {saveConfigMutation.isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5" />
-                Salvar Alterações
-              </>
-            )}
-          </Button>
-        </div>
-
-        <Alert className="bg-primary/5 border-primary/20">
-          <Info className="w-4 h-4 text-primary" />
-          <AlertDescription className="text-sm">
-            <strong>Essa configuração é a fonte única de verdade para Calculadora e PDF.</strong>
-            {" "}Qualquer alteração aqui impacta imediatamente todas as cotações, páginas públicas e documentos gerados.
-            {lastModified && (
-              <span className="block mt-1 text-xs text-muted-foreground">
-                Última alteração em: {new Date(lastModified).toLocaleString('pt-BR')}
+          {SECTIONS.map(({ id, letter, title }) => (
+            <button
+              key={id}
+              onClick={() => {
+                const el = document.getElementById(id);
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  // Expand if collapsed
+                  if (collapsedSections[id]) {
+                    setCollapsedSections(prev => ({ ...prev, [id]: false }));
+                  }
+                }
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
+                activeSection === id
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
+                activeSection === id ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+              }`}>
+                {letter}
               </span>
-            )}
-          </AlertDescription>
-        </Alert>
-      </div>
-
-      {/* BLOCO A — Ciclo de Pagamento (Fundação) */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="A"
-            title="Ciclo de Pagamento (Fundação)"
-            description="Multiplicadores e descontos por ciclo — aplicados ANTES de qualquer desconto de combo"
-          />
-          <Alert className="bg-blue-50 border-blue-200">
-            <Info className="w-4 h-4 text-blue-600" />
-            <AlertDescription className="text-xs text-blue-900">
-              <strong>Regra global:</strong> O desconto de ciclo é sempre aplicado antes de qualquer desconto de combo.
-              Ordem: Preço Base → Ciclo → Combo.
-            </AlertDescription>
-          </Alert>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {Object.entries(formData.paymentCycles || {}).map(([cycleKey, cycleData]: [string, any]) => {
-            if (cycleKey.startsWith('_')) return null; // Skip metadata fields
-            
-            return (
-              <Card key={cycleKey} className="border-l-4 border-l-primary/30">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg capitalize">{cycleKey === 'monthly' ? 'Mensal' : cycleKey === 'semiannual' ? 'Semestral' : cycleKey === 'annual' ? 'Anual' : 'Bienal'}</CardTitle>
-                  <CardDescription className="text-xs">
-                    Tipo: <strong>{cycleData.type}</strong> • {cycleData.displayLabel}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <Label className="text-xs">Multiplicador</Label>
-                    <NumberInput
-                      value={cycleData.multiplier}
-                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'multiplier'], val)}
-                    />
-                    <HelperText>Fator aplicado ao preço anual</HelperText>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Desconto vs Mensal (%)</Label>
-                    <NumberInput
-                      value={cycleData.discountVsMonthly || 0}
-                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'discountVsMonthly'], val)}
-                    />
-                    <HelperText>{cycleData.discountVsMonthly > 0 ? `${cycleData.discountVsMonthly}% OFF` : 'Referência'}</HelperText>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Máx. Parcelas</Label>
-                    <NumberInput
-                      value={cycleData.maxInstallments || 1}
-                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'maxInstallments'], val)}
-                    />
-                    <HelperText>{cycleData.maxInstallments > 1 ? `Até ${cycleData.maxInstallments}x` : 'Pagamento único'}</HelperText>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Fórmula</Label>
-                    <Input
-                      value={cycleData.formula}
-                      onChange={(e) => updateValue(['paymentCycles', cycleKey, 'formula'], e.target.value)}
-                      className="h-7 text-sm font-mono"
-                    />
-                    <HelperText>Fórmula de cálculo explícita</HelperText>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* BLOCO B — Planos Base — Preço Anual de Fundação */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="B"
-            title="Planos Base — Preço Anual de Fundação"
-            description="Nada de mensal aqui. Nada de desconto aqui. Este é o preço raiz."
-          />
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {['imob', 'locacao'].map((product) => (
-            <div key={product} className="space-y-4">
-              <h3 className="text-lg font-semibold capitalize border-b pb-2">
-                {product === 'imob' ? 'Kenlo IMOB' : 'Kenlo Locação'}
-              </h3>
-              <div className="grid grid-cols-3 gap-4">
-                {['prime', 'k', 'k2'].map((plan) => {
-                  const planData = formData.basePlans?.[product]?.[plan];
-                  if (!planData) return null;
-                  
-                  return (
-                    <Card key={plan} className="border-l-4 border-l-secondary/30">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base uppercase">{plan}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div>
-                          <Label className="text-xs">Preço Anual Base (R$)</Label>
-                          <NumberInput
-                            value={planData.annualPrice}
-                            onChange={(val: number) => updateValue(['basePlans', product, plan, 'annualPrice'], val)}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">
-                            {planData.includedUnits?.type === 'users' ? 'Usuários Inclusos' : 'Contratos Inclusos'}
-                          </Label>
-                          <NumberInput
-                            value={planData.includedUnits?.quantity || 0}
-                            onChange={(val: number) => updateValue(['basePlans', product, plan, 'includedUnits', 'quantity'], val)}
-                          />
-                        </div>
-                        <HelperText>{planData.internalNote}</HelperText>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+              <span className="truncate">{title}</span>
+            </button>
           ))}
-        </CardContent>
-      </Card>
 
-      {/* BLOCO C — Add-ons — Preços Base e Escopo */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="C"
-            title="Add-ons — Preços Base e Escopo"
-            description="Preços recorrentes, implementação e disponibilidade por produto"
-          />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {Object.entries(formData.addons || {}).map(([addonKey, addonData]: [string, any]) => {
-            if (addonKey.startsWith('_')) return null;
-            
-            return (
-              <Card key={addonKey} className="border-l-4 border-l-accent/30">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base capitalize">Kenlo {addonKey}</CardTitle>
-                  <CardDescription className="text-xs">
-                    Disponível em: <strong>{addonData.availability?.join(', ')}</strong>
-                    {addonData.shareable && ' • Compartilhável entre produtos'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-4 gap-4">
-                  <div>
-                    <Label className="text-xs">Preço Anual (R$)</Label>
-                    <NumberInput
-                      value={addonData.annualPrice}
-                      onChange={(val: number) => updateValue(['addons', addonKey, 'annualPrice'], val)}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Implementação (R$)</Label>
-                    <NumberInput
-                      value={addonData.implementation}
-                      onChange={(val: number) => updateValue(['addons', addonKey, 'implementation'], val)}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Unidades Inclusas</Label>
-                    <NumberInput
-                      value={addonData.includedUnits?.quantity || 0}
-                      onChange={(val: number) => updateValue(['addons', addonKey, 'includedUnits', 'quantity'], val)}
-                      disabled={!addonData.includedUnits}
-                    />
-                    {addonData.includedUnits && (
-                      <HelperText>{addonData.includedUnits.type}</HelperText>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={addonData.shareable}
-                      onCheckedChange={(checked) => updateValue(['addons', addonKey, 'shareable'], checked)}
-                    />
-                    <Label className="text-xs">Compartilhável</Label>
-                  </div>
-                </CardContent>
-                {addonData._note && (
-                  <CardContent className="pt-0">
-                    <HelperText>{addonData._note}</HelperText>
-                  </CardContent>
-                )}
-              </Card>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar Alterações</DialogTitle>
-            <DialogDescription>
-              Você está prestes a alterar a configuração de preços. Isso impactará:
-            </DialogDescription>
-          </DialogHeader>
-          
-          <Alert className="bg-amber-50 border-amber-200">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <AlertDescription className="text-xs text-amber-900">
-              <ul className="list-disc list-inside space-y-1">
-                <li>Todas as novas cotações geradas pela calculadora</li>
-                <li>PDFs gerados a partir de agora</li>
-                <li>Páginas públicas de produtos</li>
-              </ul>
-            </AlertDescription>
-          </Alert>
-
-          <div className="space-y-2">
-            <Label>Motivo da alteração (opcional)</Label>
-            <Textarea
-              value={changeReason}
-              onChange={(e) => setChangeReason(e.target.value)}
-              placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K2, etc."
-              rows={3}
-            />
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
-              Cancelar
+          {/* Save button in sidebar */}
+          <div className="pt-4 border-t mt-4">
+            <Button
+              onClick={handleSaveClick}
+              disabled={!hasChanges || saveConfigMutation.isPending}
+              size="sm"
+              className="w-full gap-2"
+            >
+              {saveConfigMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              Salvar
             </Button>
-            <Button onClick={handleConfirmSave} disabled={saveConfigMutation.isPending}>
+            {hasChanges && (
+              <p className="text-[10px] text-amber-600 text-center mt-1">Alterações não salvas</p>
+            )}
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 max-w-5xl py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">Configuração de Preços</h1>
+              <p className="text-muted-foreground">
+                Fonte Única de Verdade — Estrutura Determinística v2.0.0
+              </p>
+            </div>
+            <Button
+              onClick={handleSaveClick}
+              disabled={!hasChanges || saveConfigMutation.isPending}
+              size="lg"
+              className="gap-2 lg:hidden"
+            >
               {saveConfigMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   Salvando...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Confirmar e Salvar
+                  <Save className="w-5 h-5" />
+                  Salvar Alterações
                 </>
               )}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* BLOCO D — Serviços Premium (Recorrentes e Não Recorrentes) */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="D"
-            title="Serviços Premium (Recorrentes e Não Recorrentes)"
-            description="Serviços mensais recorrentes e serviços únicos com regras de herança e duplicação"
-          />
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Recurring Services */}
-          <div>
-            <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Recorrentes Mensais</h3>
-            <div className="space-y-4">
-              {Object.entries(formData.premiumServices?.recurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
-                <Card key={serviceKey} className="border-l-4 border-l-purple-300">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">
-                      {serviceKey === 'vipSupport' ? 'Suporte VIP' : 'CS Dedicado'}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Herança: <strong>{serviceData.inheritanceRule}</strong>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-4 gap-4">
-                      <div>
-                        <Label className="text-xs">Preço Mensal (R$)</Label>
-                        <NumberInput
-                          value={serviceData.monthlyPrice}
-                          onChange={(val: number) => updateValue(['premiumServices', 'recurring', serviceKey, 'monthlyPrice'], val)}
-                        />
-                      </div>
-                      <div className="col-span-3 space-y-2">
-                        <Label className="text-xs">Habilitado por padrão em:</Label>
-                        <div className="flex gap-4">
-                          {['prime', 'k', 'k2'].map((plan) => (
-                            <div key={plan} className="flex items-center gap-2">
-                              <Checkbox
-                                checked={serviceData.defaultByPlan?.[plan]}
-                                onCheckedChange={(checked) => updateValue(['premiumServices', 'recurring', serviceKey, 'defaultByPlan', plan], checked)}
-                              />
-                              <Label className="text-xs uppercase">{plan}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    {serviceData._inheritanceNote && (
-                      <HelperText>{serviceData._inheritanceNote}</HelperText>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </div>
 
-          {/* Non-Recurring Services */}
-          <div>
-            <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Não Recorrentes (Únicos)</h3>
-            <div className="space-y-4">
-              {Object.entries(formData.premiumServices?.nonRecurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
-                <Card key={serviceKey} className="border-l-4 border-l-indigo-300">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">
-                      {serviceKey === 'treinamentoOnline' ? 'Treinamento Online' : 'Treinamento Presencial'}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Duplicação: <strong>{serviceData.duplicationRule}</strong>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-4 gap-4">
-                      <div>
-                        <Label className="text-xs">Preço Unitário (R$)</Label>
-                        <NumberInput
-                          value={serviceData.unitPrice}
-                          onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'unitPrice'], val)}
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <Label className="text-xs">Quantidade Inclusa por Plano</Label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {['prime', 'k', 'k2'].map((plan) => (
-                            <div key={plan}>
-                              <Label className="text-[10px] uppercase text-muted-foreground">{plan}</Label>
-                              <NumberInput
-                                value={serviceData.includedQuantityByPlan?.[plan] || 0}
-                                onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'includedQuantityByPlan', plan], val)}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    {serviceData._duplicationNote && (
-                      <HelperText>{serviceData._duplicationNote}</HelperText>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* BLOCO E — Kombos — Descontos Promocionais Cumulativos */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="E"
-            title="Kombos — Descontos Promocionais Cumulativos"
-            description="Descontos aplicados sobre o valor já ajustado pelo ciclo"
-          />
-          <Alert className="bg-green-50 border-green-200">
-            <Info className="w-4 h-4 text-green-600" />
-            <AlertDescription className="text-xs text-green-900">
-              <strong>Regra global:</strong> {formData.kombos?._globalRule || 'Desconto aplicado sobre o valor já ajustado pelo ciclo'}
+          <Alert className="bg-primary/5 border-primary/20">
+            <Info className="w-4 h-4 text-primary" />
+            <AlertDescription className="text-sm">
+              <strong>Essa configuração é a fonte única de verdade para Calculadora e PDF.</strong>
+              {" "}Qualquer alteração aqui impacta imediatamente todas as cotações, páginas públicas e documentos gerados.
+              {lastModified && (
+                <span className="block mt-1 text-xs text-muted-foreground">
+                  Última alteração em: {new Date(lastModified).toLocaleString('pt-BR')}
+                </span>
+              )}
             </AlertDescription>
           </Alert>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {Object.entries(formData.kombos || {}).map(([komboKey, komboData]: [string, any]) => {
-            if (komboKey.startsWith('_')) return null;
-            
-            return (
-              <Card key={komboKey} className="border-l-4 border-l-green-400">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">{komboData.name}</CardTitle>
-                  <CardDescription className="text-xs">
-                    Produtos: <strong>{komboData.productsIncluded?.join(', ')}</strong>
-                    {komboData.addonsIncluded?.length > 0 && (
-                      <> • Add-ons: <strong>{komboData.addonsIncluded.join(', ')}</strong></>
-                    )}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label className="text-xs">Desconto (%)</Label>
-                    <NumberInput
-                      value={komboData.discount * 100}
-                      onChange={(val: number) => updateValue(['kombos', komboKey, 'discount'], val / 100)}
-                    />
-                    <HelperText>Aplicado após desconto de ciclo</HelperText>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Implantações Gratuitas</Label>
-                    <NumberInput
-                      value={komboData.freeImplementations}
-                      onChange={(val: number) => updateValue(['kombos', komboKey, 'freeImplementations'], val)}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Ordem de Aplicação</Label>
-                    <Input
-                      value={komboData.discountOrder}
-                      disabled
-                      className="h-7 text-sm bg-muted"
-                    />
-                    <HelperText>Sempre após ciclo (ordem 2)</HelperText>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* BLOCO F — Custos Variáveis Pós-Pago (por Faixa de Uso) */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="F"
-            title="Custos Variáveis Pós-Pago (por Faixa de Uso)"
-            description="Preços por faixa de uso para usuários, contratos, leads, boletos, splits e seguros"
-          />
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {Object.entries(formData.variableCosts || {}).map(([costKey, costData]: [string, any]) => {
-            if (costKey.startsWith('_')) return null;
+        {/* BLOCO A — Ciclo de Pagamento (Fundação) */}
+        <div id="section-a" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="A"
+                title="Ciclo de Pagamento (Fundação)"
+                description="Multiplicadores e descontos por ciclo — aplicados ANTES de qualquer desconto de combo"
+                collapsed={!!collapsedSections["section-a"]}
+                onToggle={() => toggleSection("section-a")}
+              />
+              {!collapsedSections["section-a"] && (
+                <Alert className="bg-blue-50 border-blue-200">
+                  <Info className="w-4 h-4 text-blue-600" />
+                  <AlertDescription className="text-xs text-blue-900">
+                    <strong>Regra global:</strong> O desconto de ciclo é sempre aplicado antes de qualquer desconto de combo.
+                    Ordem: Preço Base → Ciclo → Combo.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardHeader>
+            {!collapsedSections["section-a"] && (
+              <CardContent className="space-y-6">
+                {Object.entries(formData.paymentCycles || {}).map(([cycleKey, cycleData]: [string, any]) => {
+                  if (cycleKey.startsWith('_')) return null;
+                  
+                  return (
+                    <Card key={cycleKey} className="border-l-4 border-l-primary/30">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg capitalize">{cycleKey === 'monthly' ? 'Mensal' : cycleKey === 'semiannual' ? 'Semestral' : cycleKey === 'annual' ? 'Anual' : 'Bienal'}</CardTitle>
+                        <CardDescription className="text-xs">
+                          Tipo: <strong>{cycleData.type}</strong> • {cycleData.displayLabel}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                          <Label className="text-xs">Multiplicador</Label>
+                          <NumberInput
+                            value={cycleData.multiplier}
+                            onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'multiplier'], val)}
+                          />
+                          <HelperText>Fator aplicado ao preço anual</HelperText>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Desconto vs Mensal (%)</Label>
+                          <NumberInput
+                            value={cycleData.discountVsMonthly || 0}
+                            onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'discountVsMonthly'], val)}
+                          />
+                          <HelperText>{cycleData.discountVsMonthly > 0 ? `${cycleData.discountVsMonthly}% OFF` : 'Referência'}</HelperText>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Máx. Parcelas</Label>
+                          <NumberInput
+                            value={cycleData.maxInstallments || 1}
+                            onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'maxInstallments'], val)}
+                          />
+                          <HelperText>{cycleData.maxInstallments > 1 ? `Até ${cycleData.maxInstallments}x` : 'Pagamento único'}</HelperText>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Fórmula</Label>
+                          <Input
+                            value={cycleData.formula}
+                            onChange={(e) => updateValue(['paymentCycles', cycleKey, 'formula'], e.target.value)}
+                            className="h-7 text-sm font-mono"
+                          />
+                          <HelperText>Fórmula de cálculo explícita</HelperText>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* BLOCO B — Planos Base — Preço Anual de Fundação */}
+        <div id="section-b" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="B"
+                title="Planos Base — Preço Anual de Fundação"
+                description="Nada de mensal aqui. Nada de desconto aqui. Este é o preço raiz."
+                collapsed={!!collapsedSections["section-b"]}
+                onToggle={() => toggleSection("section-b")}
+              />
+            </CardHeader>
+            {!collapsedSections["section-b"] && (
+              <CardContent className="space-y-6">
+                {['imob', 'locacao'].map((product) => (
+                  <div key={product} className="space-y-4">
+                    <h3 className="text-lg font-semibold capitalize border-b pb-2">
+                      {product === 'imob' ? 'Kenlo IMOB' : 'Kenlo Locação'}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      {['prime', 'k', 'k2'].map((plan) => {
+                        const planData = formData.basePlans?.[product]?.[plan];
+                        if (!planData) return null;
+                        const preview = getPreviewPrices(planData.annualPrice);
+                        
+                        return (
+                          <Card key={plan} className="border-l-4 border-l-secondary/30">
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-base uppercase">{plan}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <div>
+                                <Label className="text-xs">Preço Anual Base (R$)</Label>
+                                <NumberInput
+                                  value={planData.annualPrice}
+                                  onChange={(val: number) => updateValue(['basePlans', product, plan, 'annualPrice'], val)}
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-xs">
+                                  {planData.includedUnits?.type === 'users' ? 'Usuários Inclusos' : 'Contratos Inclusos'}
+                                </Label>
+                                <NumberInput
+                                  value={planData.includedUnits?.quantity || 0}
+                                  onChange={(val: number) => updateValue(['basePlans', product, plan, 'includedUnits', 'quantity'], val)}
+                                />
+                              </div>
+                              {/* Price Preview */}
+                              {preview && (
+                                <div className="pt-2 border-t border-dashed space-y-1">
+                                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                    <Eye className="w-3 h-3" /> Preview calculado
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-1">
+                                    <PricePreview label="Mensal" value={`R$ ${formatNumber(preview.monthly)}`} />
+                                    <PricePreview label="Sem." value={`R$ ${formatNumber(preview.semestral)}`} />
+                                    <PricePreview label="Anual" value={`R$ ${formatNumber(preview.annual)}`} />
+                                    <PricePreview label="Bienal" value={`R$ ${formatNumber(preview.biennial)}`} />
+                                  </div>
+                                </div>
+                              )}
+                              <HelperText>{planData.internalNote}</HelperText>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* BLOCO C — Add-ons — Preços Base e Escopo */}
+        <div id="section-c" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="C"
+                title="Add-ons — Preços Base e Escopo"
+                description="Preços recorrentes, implementação e disponibilidade por produto"
+                collapsed={!!collapsedSections["section-c"]}
+                onToggle={() => toggleSection("section-c")}
+              />
+            </CardHeader>
+            {!collapsedSections["section-c"] && (
+              <CardContent className="space-y-4">
+                {Object.entries(formData.addons || {}).map(([addonKey, addonData]: [string, any]) => {
+                  if (addonKey.startsWith('_')) return null;
+                  const preview = getPreviewPrices(addonData.annualPrice);
+                  
+                  return (
+                    <Card key={addonKey} className="border-l-4 border-l-accent/30">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-base capitalize">Kenlo {addonKey}</CardTitle>
+                            <CardDescription className="text-xs">
+                              Disponível em: <strong>{addonData.availability?.join(', ')}</strong>
+                              {addonData.shareable && ' • Compartilhável entre produtos'}
+                            </CardDescription>
+                          </div>
+                          {/* Inline price preview for add-ons */}
+                          {preview && addonData.annualPrice > 0 && (
+                            <div className="hidden md:flex items-center gap-1 text-[10px]">
+                              <Eye className="w-3 h-3 text-primary" />
+                              <span className="text-muted-foreground">M:</span>
+                              <span className="font-semibold text-primary">R$ {formatNumber(preview.monthly)}</span>
+                              <span className="text-muted-foreground ml-1">A:</span>
+                              <span className="font-semibold text-primary">R$ {formatNumber(preview.annual)}</span>
+                              <span className="text-muted-foreground ml-1">B:</span>
+                              <span className="font-semibold text-primary">R$ {formatNumber(preview.biennial)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-4 gap-4">
+                        <div>
+                          <Label className="text-xs">Preço Anual (R$)</Label>
+                          <NumberInput
+                            value={addonData.annualPrice}
+                            onChange={(val: number) => updateValue(['addons', addonKey, 'annualPrice'], val)}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Implementação (R$)</Label>
+                          <NumberInput
+                            value={addonData.implementation}
+                            onChange={(val: number) => updateValue(['addons', addonKey, 'implementation'], val)}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Unidades Inclusas</Label>
+                          <NumberInput
+                            value={addonData.includedUnits?.quantity || 0}
+                            onChange={(val: number) => updateValue(['addons', addonKey, 'includedUnits', 'quantity'], val)}
+                            disabled={!addonData.includedUnits}
+                          />
+                          {addonData.includedUnits && (
+                            <HelperText>{addonData.includedUnits.type}</HelperText>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={addonData.shareable}
+                            onCheckedChange={(checked) => updateValue(['addons', addonKey, 'shareable'], checked)}
+                          />
+                          <Label className="text-xs">Compartilhável</Label>
+                        </div>
+                      </CardContent>
+                      {addonData._note && (
+                        <CardContent className="pt-0">
+                          <HelperText>{addonData._note}</HelperText>
+                        </CardContent>
+                      )}
+                    </Card>
+                  );
+                })}
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* Confirmation Dialog */}
+        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar Alterações</DialogTitle>
+              <DialogDescription>
+                Você está prestes a alterar a configuração de preços. Isso impactará:
+              </DialogDescription>
+            </DialogHeader>
             
-            return (
-              <Card key={costKey} className="border-l-4 border-l-orange-300">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base capitalize">
-                    {costKey.replace(/([A-Z])/g, ' $1').trim()}
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Produto: <strong>{costData.product}</strong> • Unidade: <strong>{costData.unit}</strong>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {Object.entries(costData.tiers || {}).map(([planKey, tiers]: [string, any]) => (
-                    <div key={planKey} className="mb-4">
-                      <Label className="text-xs uppercase font-semibold mb-2 block">{planKey}</Label>
-                      <div className="space-y-2">
-                        {tiers.map((tier: any, idx: number) => (
-                          <div key={idx} className="grid grid-cols-4 gap-2 items-center">
+            <Alert className="bg-amber-50 border-amber-200">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <AlertDescription className="text-xs text-amber-900">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Todas as novas cotações geradas pela calculadora</li>
+                  <li>PDFs gerados a partir de agora</li>
+                  <li>Páginas públicas de produtos</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-2">
+              <Label>Motivo da alteração (opcional)</Label>
+              <Textarea
+                value={changeReason}
+                onChange={(e) => setChangeReason(e.target.value)}
+                placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K2, etc."
+                rows={3}
+              />
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleConfirmSave} disabled={saveConfigMutation.isPending}>
+                {saveConfigMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Confirmar e Salvar
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* BLOCO D — Serviços Premium (Recorrentes e Não Recorrentes) */}
+        <div id="section-d" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="D"
+                title="Serviços Premium (Recorrentes e Não Recorrentes)"
+                description="Serviços mensais recorrentes e serviços únicos com regras de herança e duplicação"
+                collapsed={!!collapsedSections["section-d"]}
+                onToggle={() => toggleSection("section-d")}
+              />
+            </CardHeader>
+            {!collapsedSections["section-d"] && (
+              <CardContent className="space-y-6">
+                {/* Recurring Services */}
+                <div>
+                  <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Recorrentes Mensais</h3>
+                  <div className="space-y-4">
+                    {Object.entries(formData.premiumServices?.recurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
+                      <Card key={serviceKey} className="border-l-4 border-l-purple-300">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            {serviceKey === 'vipSupport' ? 'Suporte VIP' : 'CS Dedicado'}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Herança: <strong>{serviceData.inheritanceRule}</strong>
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-4 gap-4">
                             <div>
-                              <Label className="text-[10px]">De</Label>
+                              <Label className="text-xs">Preço Mensal (R$)</Label>
                               <NumberInput
-                                value={tier.from || 0}
-                                onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'from'], val)}
+                                value={serviceData.monthlyPrice}
+                                onChange={(val: number) => updateValue(['premiumServices', 'recurring', serviceKey, 'monthlyPrice'], val)}
                               />
                             </div>
+                            <div className="col-span-3 space-y-2">
+                              <Label className="text-xs">Habilitado por padrão em:</Label>
+                              <div className="flex gap-4">
+                                {['prime', 'k', 'k2'].map((plan) => (
+                                  <div key={plan} className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={serviceData.defaultByPlan?.[plan]}
+                                      onCheckedChange={(checked) => updateValue(['premiumServices', 'recurring', serviceKey, 'defaultByPlan', plan], checked)}
+                                    />
+                                    <Label className="text-xs uppercase">{plan}</Label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          {serviceData._inheritanceNote && (
+                            <HelperText>{serviceData._inheritanceNote}</HelperText>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Non-Recurring Services */}
+                <div>
+                  <h3 className="text-lg font-semibold border-b pb-2 mb-4">Serviços Não Recorrentes (Únicos)</h3>
+                  <div className="space-y-4">
+                    {Object.entries(formData.premiumServices?.nonRecurring || {}).map(([serviceKey, serviceData]: [string, any]) => (
+                      <Card key={serviceKey} className="border-l-4 border-l-indigo-300">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            {serviceKey === 'treinamentoOnline' ? 'Treinamento Online' : 'Treinamento Presencial'}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Duplicação: <strong>{serviceData.duplicationRule}</strong>
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-4 gap-4">
                             <div>
-                              <Label className="text-[10px]">Até</Label>
+                              <Label className="text-xs">Preço Unitário (R$)</Label>
                               <NumberInput
-                                value={tier.to || 0}
-                                onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'to'], val)}
+                                value={serviceData.unitPrice}
+                                onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'unitPrice'], val)}
                               />
                             </div>
-                            <div>
-                              <Label className="text-[10px]">{tier.price !== undefined ? 'Preço' : 'Taxa (%)'}</Label>
-                              <NumberInput
-                                value={tier.price !== undefined ? (tier.price || 0) : ((tier.rate || 0) * 100)}
-                                onChange={(val: number) => {
-                                  if (tier.price !== undefined) {
-                                    updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'price'], val);
-                                  } else {
-                                    updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'rate'], val / 100);
-                                  }
-                                }}
-                              />
+                            <div className="col-span-3">
+                              <Label className="text-xs">Quantidade Inclusa por Plano</Label>
+                              <div className="grid grid-cols-3 gap-2">
+                                {['prime', 'k', 'k2'].map((plan) => (
+                                  <div key={plan}>
+                                    <Label className="text-[10px] uppercase text-muted-foreground">{plan}</Label>
+                                    <NumberInput
+                                      value={serviceData.includedQuantityByPlan?.[plan] || 0}
+                                      onChange={(val: number) => updateValue(['premiumServices', 'nonRecurring', serviceKey, 'includedQuantityByPlan', plan], val)}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {tier.to === 999999 ? '∞' : `Faixa ${idx + 1}`}
+                          </div>
+                          {serviceData._duplicationNote && (
+                            <HelperText>{serviceData._duplicationNote}</HelperText>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* BLOCO E — Kombos — Descontos Promocionais Cumulativos */}
+        <div id="section-e" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="E"
+                title="Kombos — Descontos Promocionais Cumulativos"
+                description="Descontos aplicados sobre o valor já ajustado pelo ciclo"
+                collapsed={!!collapsedSections["section-e"]}
+                onToggle={() => toggleSection("section-e")}
+              />
+              {!collapsedSections["section-e"] && (
+                <Alert className="bg-green-50 border-green-200">
+                  <Info className="w-4 h-4 text-green-600" />
+                  <AlertDescription className="text-xs text-green-900">
+                    <strong>Regra global:</strong> {formData.kombos?._globalRule || 'Desconto aplicado sobre o valor já ajustado pelo ciclo'}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardHeader>
+            {!collapsedSections["section-e"] && (
+              <CardContent className="space-y-4">
+                {Object.entries(formData.kombos || {}).map(([komboKey, komboData]: [string, any]) => {
+                  if (komboKey.startsWith('_')) return null;
+                  
+                  return (
+                    <Card key={komboKey} className="border-l-4 border-l-green-400">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-base">{komboData.name}</CardTitle>
+                            <CardDescription className="text-xs">
+                              Produtos: <strong>{komboData.productsIncluded?.join(', ')}</strong>
+                              {komboData.addonsIncluded?.length > 0 && (
+                                <> • Add-ons: <strong>{komboData.addonsIncluded.join(', ')}</strong></>
+                              )}
+                            </CardDescription>
+                          </div>
+                          {/* Show the actual discount percentage prominently */}
+                          <div className="px-3 py-1 bg-green-100 rounded-full text-green-700 text-sm font-bold">
+                            {Math.round(komboData.discount)}% OFF
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-3 gap-4">
+                        <div>
+                          <Label className="text-xs">Desconto (%)</Label>
+                          <NumberInput
+                            value={komboData.discount}
+                            onChange={(val: number) => updateValue(['kombos', komboKey, 'discount'], val)}
+                          />
+                          <HelperText>Aplicado após desconto de ciclo</HelperText>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Implantações Gratuitas</Label>
+                          <NumberInput
+                            value={komboData.freeImplementations}
+                            onChange={(val: number) => updateValue(['kombos', komboKey, 'freeImplementations'], val)}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Ordem de Aplicação</Label>
+                          <Input
+                            value={komboData.discountOrder}
+                            disabled
+                            className="h-7 text-sm bg-muted"
+                          />
+                          <HelperText>Sempre após ciclo (ordem 2)</HelperText>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* BLOCO F — Custos Variáveis Pós-Pago (por Faixa de Uso) */}
+        <div id="section-f" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="F"
+                title="Custos Variáveis Pós-Pago (por Faixa de Uso)"
+                description="Preços por faixa de uso para usuários, contratos, leads, boletos, splits e seguros"
+                collapsed={!!collapsedSections["section-f"]}
+                onToggle={() => toggleSection("section-f")}
+              />
+            </CardHeader>
+            {!collapsedSections["section-f"] && (
+              <CardContent className="space-y-6">
+                {Object.entries(formData.variableCosts || {}).map(([costKey, costData]: [string, any]) => {
+                  if (costKey.startsWith('_')) return null;
+                  
+                  return (
+                    <Card key={costKey} className="border-l-4 border-l-orange-300">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base capitalize">
+                          {costKey.replace(/([A-Z])/g, ' $1').trim()}
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Produto: <strong>{costData.product}</strong> • Unidade: <strong>{costData.unit}</strong>
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {Object.entries(costData.tiers || {}).map(([planKey, tiers]: [string, any]) => (
+                          <div key={planKey} className="mb-4">
+                            <Label className="text-xs uppercase font-semibold mb-2 block">{planKey}</Label>
+                            <div className="space-y-2">
+                              {tiers.map((tier: any, idx: number) => (
+                                <div key={idx} className="grid grid-cols-4 gap-2 items-center">
+                                  <div>
+                                    <Label className="text-[10px]">De</Label>
+                                    <NumberInput
+                                      value={tier.from || 0}
+                                      onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'from'], val)}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-[10px]">Até</Label>
+                                    <NumberInput
+                                      value={tier.to || 0}
+                                      onChange={(val: number) => updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'to'], val)}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-[10px]">{tier.price !== undefined ? 'Preço' : 'Taxa (%)'}</Label>
+                                    <NumberInput
+                                      value={tier.price !== undefined ? (tier.price || 0) : ((tier.rate || 0) * 100)}
+                                      onChange={(val: number) => {
+                                        if (tier.price !== undefined) {
+                                          updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'price'], val);
+                                        } else {
+                                          updateValue(['variableCosts', costKey, 'tiers', planKey, String(idx), 'rate'], val / 100);
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {tier.to === 999999 ? '\u221E' : `Faixa ${idx + 1}`}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         ))}
-                      </div>
-                    </div>
-                  ))}
-                  {costData._note && (
-                    <HelperText>{costData._note}</HelperText>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </CardContent>
-      </Card>
+                        {costData._note && (
+                          <HelperText>{costData._note}</HelperText>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </CardContent>
+            )}
+          </Card>
+        </div>
 
-      {/* BLOCO G — Matriz de Funcionalidades — Fonte Única de Verdade */}
-      <Card className="mb-8">
-        <CardHeader>
-          <SectionHeader
-            letter="G"
-            title="Matriz de Funcionalidades — Fonte Única de Verdade"
-            description="Define exatamente quais funcionalidades estão incluídas em cada plano"
-          />
-          <Alert className="bg-red-50 border-red-200">
-            <AlertTriangle className="w-4 h-4 text-red-600" />
-            <AlertDescription className="text-xs text-red-900">
-              <strong>Atenção:</strong> {formData.featureMatrix?._warning || 'Qualquer alteração aqui impacta imediatamente calculadora, páginas públicas e PDFs'}
-            </AlertDescription>
-          </Alert>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {['imob', 'locacao'].map((product) => (
-            <div key={product}>
-              <h3 className="text-lg font-semibold capitalize border-b pb-2 mb-4">
-                Kenlo {product === 'imob' ? 'IMOB' : 'Locação'}
-              </h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-2 font-semibold">Funcionalidade</th>
-                      <th className="text-center py-2 px-2 font-semibold uppercase">Prime</th>
-                      <th className="text-center py-2 px-2 font-semibold uppercase">K</th>
-                      <th className="text-center py-2 px-2 font-semibold uppercase">K2</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Get all unique features across all plans */}
-                    {(() => {
-                      const allFeatures = new Map();
-                      ['prime', 'k', 'k2'].forEach((plan) => {
-                        formData.featureMatrix?.[product]?.[plan]?.forEach((feature: any) => {
-                          if (!allFeatures.has(feature.name)) {
-                            allFeatures.set(feature.name, feature);
-                          }
-                        });
-                      });
-                      
-                      return Array.from(allFeatures.values()).map((feature: any, idx: number) => (
-                        <tr key={idx} className="border-b hover:bg-muted/50">
-                          <td className="py-2 px-2">
-                            <div>
-                              <div className="font-medium">{feature.name}</div>
-                              <div className="text-xs text-muted-foreground">{feature.description}</div>
-                              {(feature.linkedToAddon || feature.linkedToPremiumService) && (
-                                <div className="text-[10px] text-blue-600 mt-1">
-                                  → {feature.linkedToAddon ? `Add-on: ${feature.linkedToAddon}` : `Premium: ${feature.linkedToPremiumService}`}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          {['prime', 'k', 'k2'].map((plan) => {
-                            const planFeatures = formData.featureMatrix?.[product]?.[plan] || [];
-                            const planFeature = planFeatures.find((f: any) => f.name === feature.name);
-                            const isIncluded = planFeature?.included || false;
+        {/* BLOCO G — Matriz de Funcionalidades — Fonte Única de Verdade */}
+        <div id="section-g" className="scroll-mt-24">
+          <Card className="mb-8">
+            <CardHeader>
+              <SectionHeader
+                letter="G"
+                title="Matriz de Funcionalidades — Fonte Única de Verdade"
+                description="Define exatamente quais funcionalidades estão incluídas em cada plano"
+                collapsed={!!collapsedSections["section-g"]}
+                onToggle={() => toggleSection("section-g")}
+              />
+              {!collapsedSections["section-g"] && (
+                <Alert className="bg-red-50 border-red-200">
+                  <AlertTriangle className="w-4 h-4 text-red-600" />
+                  <AlertDescription className="text-xs text-red-900">
+                    <strong>Atenção:</strong> {formData.featureMatrix?._warning || 'Qualquer alteração aqui impacta imediatamente calculadora, páginas públicas e PDFs'}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardHeader>
+            {!collapsedSections["section-g"] && (
+              <CardContent className="space-y-6">
+                {['imob', 'locacao'].map((product) => (
+                  <div key={product}>
+                    <h3 className="text-lg font-semibold capitalize border-b pb-2 mb-4">
+                      Kenlo {product === 'imob' ? 'IMOB' : 'Locação'}
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-2 px-2 font-semibold">Funcionalidade</th>
+                            <th className="text-center py-2 px-2 font-semibold uppercase">Prime</th>
+                            <th className="text-center py-2 px-2 font-semibold uppercase">K</th>
+                            <th className="text-center py-2 px-2 font-semibold uppercase">K2</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(() => {
+                            const allFeatures = new Map();
+                            ['prime', 'k', 'k2'].forEach((plan) => {
+                              formData.featureMatrix?.[product]?.[plan]?.forEach((feature: any) => {
+                                if (!allFeatures.has(feature.name)) {
+                                  allFeatures.set(feature.name, feature);
+                                }
+                              });
+                            });
                             
-                            return (
-                              <td key={plan} className="text-center py-2 px-2">
-                                <button
-                                  onClick={() => {
-                                    const featureIdx = planFeatures.findIndex((f: any) => f.name === feature.name);
-                                    if (featureIdx >= 0) {
-                                      updateValue(['featureMatrix', product, plan, String(featureIdx), 'included'], !isIncluded);
-                                    }
-                                  }}
-                                  className="inline-flex items-center justify-center w-8 h-8 rounded hover:bg-muted transition-colors"
-                                >
-                                  {isIncluded ? (
-                                    <Check className="w-5 h-5 text-green-600" />
-                                  ) : (
-                                    <X className="w-5 h-5 text-muted-foreground" />
-                                  )}
-                                </button>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ));
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+                            return Array.from(allFeatures.values()).map((feature: any, idx: number) => (
+                              <tr key={idx} className="border-b hover:bg-muted/50">
+                                <td className="py-2 px-2">
+                                  <div>
+                                    <div className="font-medium">{feature.name}</div>
+                                    <div className="text-xs text-muted-foreground">{feature.description}</div>
+                                    {(feature.linkedToAddon || feature.linkedToPremiumService) && (
+                                      <div className="text-[10px] text-blue-600 mt-1">
+                                        → {feature.linkedToAddon ? `Add-on: ${feature.linkedToAddon}` : `Premium: ${feature.linkedToPremiumService}`}
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                                {['prime', 'k', 'k2'].map((plan) => {
+                                  const planFeatures = formData.featureMatrix?.[product]?.[plan] || [];
+                                  const planFeature = planFeatures.find((f: any) => f.name === feature.name);
+                                  const isIncluded = planFeature?.included || false;
+                                  
+                                  return (
+                                    <td key={plan} className="text-center py-2 px-2">
+                                      <button
+                                        onClick={() => {
+                                          const featureIdx = planFeatures.findIndex((f: any) => f.name === feature.name);
+                                          if (featureIdx >= 0) {
+                                            updateValue(['featureMatrix', product, plan, String(featureIdx), 'included'], !isIncluded);
+                                          }
+                                        }}
+                                        className="inline-flex items-center justify-center w-8 h-8 rounded hover:bg-muted transition-colors"
+                                      >
+                                        {isIncluded ? (
+                                          <Check className="w-5 h-5 text-green-600" />
+                                        ) : (
+                                          <X className="w-5 h-5 text-muted-foreground" />
+                                        )}
+                                      </button>
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ));
+                          })()}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            )}
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
