@@ -3816,3 +3816,14 @@
 - [x] Test PDF with Locação scenario (contracts, boletos, splits, assinaturas)
 - [x] Test PDF with Ambos scenario (all pós-pago items)
 - [x] Update PDF tests (all 340 tests pass)
+
+## Pre-Paid Option & Unit Price Display
+
+- [x] Add pre-paid toggle for Usuários adicionais in pós-pago section
+- [x] Add pre-paid toggle for Contratos adicionais in pós-pago section
+- [x] When pre-paid is toggled ON: move cost from pós-pago to Mensalidades (Pré-Pago) total
+- [x] When pre-paid is toggled ON: update Total 1º Ano and cycle total accordingly
+- [x] Show unit price in smaller font ABOVE the total value (subtle)
+- [x] Show "—" when item doesn't apply
+- [x] Update PDF generator to reflect pre-paid choices and unit price display
+- [x] Test with Imob, Locação, and Ambos scenarios with pre-paid toggling

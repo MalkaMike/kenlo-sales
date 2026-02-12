@@ -136,6 +136,9 @@ export interface KomboColumnData {
   postPaidBoletos: { cost: number; quantity: number; perUnit: number } | null;
   postPaidSplits: { cost: number; quantity: number; perUnit: number } | null;
   postPaidTotal: number;
+  // Pre-paid flags (when user opts to pre-pay users/contracts, cost moves to totalMonthly)
+  prePaidUsersActive: boolean;
+  prePaidContractsActive: boolean;
   // Subscription count (products + add-ons, excluding premium services)
   subscriptionCount: number;
   // Implementation breakdown per item
@@ -614,6 +617,7 @@ const calculateKomboColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
+    prePaidUsersActive: false, prePaidContractsActive: false,
     implBreakdown, subscriptionCount, totalMonthly, theoreticalImplementation, implementation,
     annualEquivalent, cycleTotalValue, cycleMonths,
     overrides: overrides ? overrides : { frequency } as ColumnOverrides,
@@ -742,6 +746,7 @@ const calculateNoKomboColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
+    prePaidUsersActive: false, prePaidContractsActive: false,
     implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
@@ -896,6 +901,7 @@ const calculateCustomColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
+    prePaidUsersActive: false, prePaidContractsActive: false,
     implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
@@ -1059,6 +1065,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Per-column overrides state: keyed by column key
   // "sua_selecao" = Sua Seleção (editable cycle only), "kombo_0", "kombo_1" = Kombo columns, "custom_0", "custom_1" = custom columns
   const [columnOverrides, setColumnOverrides] = useState<Record<string, ColumnOverrides>>({});
+
+  // Pre-paid toggles: per-column state for users and contracts
+  const [prePaidUsers, setPrePaidUsers] = useState<Record<string, boolean>>({});
+  const [prePaidContracts, setPrePaidContracts] = useState<Record<string, boolean>>({});
 
   // Initialize/reset overrides when product or parent props change
   const getDefaultOverrides = useCallback((): ColumnOverrides => ({
@@ -1237,8 +1247,45 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       return calculateCustomColumn(custom.id, idx, custom.name, props, overrides);
     });
 
-    return [suaSelecao, ...komboColumns, ...customCols];
-  }, [props, recommendedKombo, compatibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides]);
+    const allCols = [suaSelecao, ...komboColumns, ...customCols];
+
+    // Apply pre-paid transformations: move users/contracts cost from pós-pago to totalMonthly
+    return allCols.map((col, idx) => {
+      const colKey = idx === 0 ? "sua_selecao" : idx <= compatibleKomboIds.length ? `kombo_${idx - 1}` : (customColumns[idx - compatibleKomboIds.length - 1]?.id || "");
+      const isPrepaidUsers = prePaidUsers[colKey] ?? false;
+      const isPrepaidContracts = prePaidContracts[colKey] ?? false;
+
+      if (!isPrepaidUsers && !isPrepaidContracts) {
+        return { ...col, prePaidUsersActive: false, prePaidContractsActive: false };
+      }
+
+      let extraMonthly = 0;
+      let newPostPaidTotal = col.postPaidTotal;
+
+      if (isPrepaidUsers && col.postPaidUsers && col.postPaidUsers.cost > 0) {
+        extraMonthly += col.postPaidUsers.cost;
+        newPostPaidTotal -= col.postPaidUsers.cost;
+      }
+      if (isPrepaidContracts && col.postPaidContracts && col.postPaidContracts.cost > 0) {
+        extraMonthly += col.postPaidContracts.cost;
+        newPostPaidTotal -= col.postPaidContracts.cost;
+      }
+
+      const newTotalMonthly = col.totalMonthly + extraMonthly;
+      const newAnnualEquivalent = newTotalMonthly * 12 + col.implementation;
+      const newCycleTotalValue = newTotalMonthly * col.cycleMonths + col.implementation;
+
+      return {
+        ...col,
+        prePaidUsersActive: isPrepaidUsers,
+        prePaidContractsActive: isPrepaidContracts,
+        totalMonthly: newTotalMonthly,
+        annualEquivalent: newAnnualEquivalent,
+        cycleTotalValue: newCycleTotalValue,
+        postPaidTotal: Math.max(0, newPostPaidTotal),
+      };
+    });
+  }, [props, recommendedKombo, compatibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
 
   // Map column index to column key for overrides
   const getColumnKey = useCallback((colIndex: number): string => {
@@ -1640,10 +1687,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             <span className="text-[8px] text-gray-400 italic">{pp.included} incluídos</span>
           </div>
         );
+        const isPrepaid = column.prePaidUsersActive;
         return (
-          <div className="flex flex-col items-center">
-            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/usuário</span>
+            {isPrepaid ? (
+              <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+            ) : (
+              <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            )}
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
+            <button
+              className={`text-[8px] mt-0.5 px-1.5 py-0.5 rounded border transition-colors ${
+                isPrepaid
+                  ? "border-green-400 bg-green-50 text-green-700 hover:bg-green-100"
+                  : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                const ck = getColumnKey(colIndex);
+                setPrePaidUsers(prev => ({ ...prev, [ck]: !prev[ck] }));
+              }}
+            >
+              {isPrepaid ? "Voltar pós-pago" : "Pré-pagar"}
+            </button>
           </div>
         );
       }
@@ -1656,10 +1723,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             <span className="text-[8px] text-gray-400 italic">{pp.included} incluídos</span>
           </div>
         );
+        const isPrepaidC = column.prePaidContractsActive;
         return (
-          <div className="flex flex-col items-center">
-            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/contrato</span>
+            {isPrepaidC ? (
+              <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+            ) : (
+              <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            )}
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
+            <button
+              className={`text-[8px] mt-0.5 px-1.5 py-0.5 rounded border transition-colors ${
+                isPrepaidC
+                  ? "border-green-400 bg-green-50 text-green-700 hover:bg-green-100"
+                  : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                const ck = getColumnKey(colIndex);
+                setPrePaidContracts(prev => ({ ...prev, [ck]: !prev[ck] }));
+              }}
+            >
+              {isPrepaidC ? "Voltar pós-pago" : "Pré-pagar"}
+            </button>
           </div>
         );
       }
@@ -1684,8 +1771,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         );
         return (
           <div className="flex flex-col items-center">
+            <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/assinatura</span>
             <span className="text-[10px] text-amber-700 font-semibold">R$ {pp.cost.toFixed(2).replace('.', ',')}</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
           </div>
         );
       }
@@ -1694,8 +1782,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         if (!pp) return <span className="text-gray-300 text-xs">—</span>;
         return (
           <div className="flex flex-col items-center">
+            <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/boleto</span>
             <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} × R$ {pp.perUnit.toFixed(2)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} boletos</span>
           </div>
         );
       }
@@ -1704,8 +1793,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         if (!pp) return <span className="text-gray-300 text-xs">—</span>;
         return (
           <div className="flex flex-col items-center">
+            <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/split</span>
             <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} × R$ {pp.perUnit.toFixed(2)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} splits</span>
           </div>
         );
       }
@@ -1732,7 +1822,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const selectedColumnsKey = useMemo(() => {
     return selectedPlans.map(id => {
       const col = columns.find(c => c.id === id);
-      return col ? `${id}:${col.totalMonthly}:${col.implementation}:${col.cycleTotalValue}:${col.postPaidTotal ?? 0}:${col.postPaidBoletos?.cost ?? '-'}:${col.postPaidSplits?.cost ?? '-'}` : id;
+      return col ? `${id}:${col.totalMonthly}:${col.implementation}:${col.cycleTotalValue}:${col.postPaidTotal ?? 0}:${col.postPaidBoletos?.cost ?? '-'}:${col.postPaidSplits?.cost ?? '-'}:pu${col.prePaidUsersActive ? 1 : 0}:pc${col.prePaidContractsActive ? 1 : 0}` : id;
     }).join('|');
   }, [selectedPlans, columns]);
   useEffect(() => {

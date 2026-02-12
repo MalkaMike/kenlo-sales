@@ -526,6 +526,8 @@ export async function generateProposalPDFClient(
         postPaidBoletos?: { cost: number; quantity: number; perUnit: number } | null;
         postPaidSplits?: { cost: number; quantity: number; perUnit: number } | null;
         postPaidTotal?: number;
+        prePaidUsersActive?: boolean;
+        prePaidContractsActive?: boolean;
       }> = JSON.parse(data.selectedColumnsJson);
 
       console.log('[PDF DEBUG] parsed selectedCols:', selectedCols.length, 'columns');
@@ -702,7 +704,7 @@ export async function generateProposalPDFClient(
           for (let i = 0; i < numCols; i++) {
             const x = M + labelW + colW2 * i + colW2 / 2;
             const val = mainVals[i] || "—";
-            if (val === "No Plano" || val === "Sem custos") {
+            if (val === "No Plano" || val === "Sem custos" || val.includes("Pré-pago")) {
               doc.setTextColor(...rgb(C.green));
               doc.setFont("helvetica", "bold");
             } else if (val.startsWith("R$")) {
@@ -734,6 +736,7 @@ export async function generateProposalPDFClient(
           const pp = c.postPaidUsers;
           if (!pp) return "—";
           if (pp.cost === 0) return "No Plano";
+          if (c.prePaidUsersActive) return "Pré-pago ✓";
           return `R$ ${fmtNum(pp.cost)}`;
         });
         const ppUserDetail = selectedCols.map(c => {
@@ -748,6 +751,7 @@ export async function generateProposalPDFClient(
           const pp = c.postPaidContracts;
           if (!pp) return "—";
           if (pp.cost === 0) return "No Plano";
+          if (c.prePaidContractsActive) return "Pré-pago ✓";
           return `R$ ${fmtNum(pp.cost)}`;
         });
         const ppContDetail = selectedCols.map(c => {
