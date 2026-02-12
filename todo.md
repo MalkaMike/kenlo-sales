@@ -3704,3 +3704,9 @@
 - [x] Motivational message with "Kenlo" in red
 - [x] Smooth expand/collapse animation (300ms ease-in-out)
 - [x] Added 9 new tests for Assinatura breakdown display logic (320 tests total)
+
+## Kombo Comparison Table Improvements
+
+- [x] Show # assinaturas below mensalidade in small font (same style as Valor Total do Ciclo subtitle)
+- [x] Pós-Pago section: show "—" when no number, remove Seguros line entirely
+- [x] Add "Total Pós-Pago (Estimado)" row at the end of Pós-Pago section

@@ -1108,7 +1108,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
     { key: "totalMonthly", label: "Mensalidades (Pré-Pago)", isTotal: true },
-    { key: "subscriptionCount", label: "", isSubRow: true },
 
     { key: "implantacao", label: "Implantação", isHeader: true },
     { key: "implImob", label: "Imob", indent: true },
@@ -1127,7 +1126,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
-    { key: "postpaidSeguros", label: "Seguros", indent: true },
+    { key: "postpaidTotal", label: "Total Pós-Pago (Estimado)", isTotal: true },
   ];
 
   /**
@@ -1418,12 +1417,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         );
       }
       case "totalMonthly":
-        return <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>;
-      case "subscriptionCount":
         return (
-          <span className="text-[11px] text-gray-400 font-normal">
-            {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
-          </span>
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>
+            <span className="text-[10px] text-gray-400 font-normal">
+              {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
+            </span>
+          </div>
         );
       case "implImob":
       case "implLoc":
@@ -1473,41 +1473,37 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       }
       // Pós-Pago items
       case "postpaidUsers": {
-        // IMOB only: show "Pós-pago" if IMOB is active
         const hasImob = column.imobPrice !== null;
         if (!hasImob) return <span className="text-gray-300">—</span>;
         return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
       }
       case "postpaidContracts": {
-        // LOC only: show "Pós-pago" if LOC is active
         const hasLoc = column.locPrice !== null;
         if (!hasLoc) return <span className="text-gray-300">—</span>;
         return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
       }
       case "postpaidWhatsApp": {
-        // IMOB only (via Leads): show "Pós-pago" if WhatsApp is active
         if (column.whatsAppPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
         return <span className="text-gray-300">—</span>;
       }
       case "postpaidAssinaturas": {
-        // Both IMOB + LOC: show "Pós-pago" if Assinatura is active
         if (column.assinaturaPrice !== null) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
         return <span className="text-gray-300">—</span>;
       }
       case "postpaidBoletos": {
-        // LOC only: show "Pós-pago" if Pay is active
         if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
         return <span className="text-gray-300">—</span>;
       }
       case "postpaidSplits": {
-        // LOC only: show "Pós-pago" if Pay is active (splits come with Pay)
         if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
         return <span className="text-gray-300">—</span>;
       }
-      case "postpaidSeguros": {
-        // LOC only: show "Pós-pago" if Seguros is active
-        if (column.segurosPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300">—</span>;
+      case "postpaidTotal": {
+        // Calculate estimated total pós-pago for this column
+        // This is an estimate based on the column's active post-paid items
+        const hasPostpaidItems = column.imobPrice !== null || column.locPrice !== null || column.whatsAppPrice || column.assinaturaPrice !== null || column.payPrice;
+        if (!hasPostpaidItems) return <span className="text-gray-300">—</span>;
+        return <span className="text-[11px] text-amber-600 font-semibold">Variável</span>;
       }
       default:
         return null;
@@ -1650,20 +1646,16 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
                         ? "bg-gray-100/70 border-b border-gray-200"
-                        : row.isSubRow
-                        ? "border-b border-gray-100"
                         : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}
-                      className={`${row.isSubRow ? "py-0.5 px-4" : row.isHeader ? "py-2 px-4" : row.isTotal ? "py-2 px-4" : "py-1.5 px-4"} ${row.indent ? "pl-8" : ""} ${
+                      className={`${row.isHeader ? "py-2 px-4" : row.isTotal ? "py-2 px-4" : "py-1.5 px-4"} ${row.indent ? "pl-8" : ""} ${
                         row.isHeader
                           ? "font-semibold text-gray-700 text-sm" 
                           : row.isTotal
                           ? "font-bold text-gray-700"
-                          : row.isSubRow
-                          ? "text-gray-400 text-[11px]"
                           : "text-gray-600"
                       }`}
                     >
@@ -1733,7 +1725,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center ${row.isSubRow ? "py-0.5 px-2" : row.isHeader ? "py-2 px-2" : row.isTotal ? "py-2 px-2" : "py-1.5 px-2"} transition-colors duration-150 ${
+                          className={`text-center ${row.isHeader ? "py-2 px-2" : row.isTotal ? "py-2 px-2" : "py-1.5 px-2"} transition-colors duration-150 ${
                             isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                           } ${
                             selectedPlan === col.id
@@ -1748,8 +1740,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           } ${
                             row.isTotal
                               ? "font-bold text-gray-700"
-                              : row.isSubRow
-                              ? "text-gray-400"
                               : "text-gray-700"
                           }`}
                         >
