@@ -1895,40 +1895,7 @@ export default function CalculadoraPage() {
                             </div>
                           </div>
                         </div>
-                        {/* IA SDR & WhatsApp — inside Leads box */}
-                        <div className="pt-2 border-t border-blue-200/40">
-                          <div className="flex flex-col gap-1.5">
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-blue-100">
-                              <Label htmlFor="externalAI" className="text-xs text-gray-600">IA SDR</Label>
-                              <Switch
-                                id="externalAI"
-                                checked={metrics.usesExternalAI}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}), ...(!checked ? { externalAIName: "" } : {}) })}
-                              />
-                            </div>
-                            {metrics.usesExternalAI && (
-                              <div className="px-2">
-                                <Label htmlFor="aiName" className="text-[10px] text-gray-500">Qual IA você usa?</Label>
-                                <Input
-                                  id="aiName"
-                                  type="text"
-                                  value={metrics.externalAIName}
-                                  onChange={(e) => setMetrics({ ...metrics, externalAIName: e.target.value })}
-                                  placeholder="Ex: Lais, Harry, Lia..."
-                                  className="mt-0.5 h-7 text-xs"
-                                />
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-blue-100">
-                              <Label htmlFor="whatsapp" className="text-xs text-gray-600">WhatsApp</Label>
-                              <Switch
-                                id="whatsapp"
-                                checked={metrics.wantsWhatsApp}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked, ...(checked ? { usesExternalAI: false, externalAIName: "" } : {}) })}
-                              />
-                            </div>
-                          </div>
-                        </div>
+
                         {/* Plan selector inline */}
                         <div className="pt-2 border-t border-blue-200/40">
                           <div className="text-[10px] text-gray-500 mb-1.5">Plano</div>
@@ -2355,6 +2322,42 @@ export default function CalculadoraPage() {
                     <div className="text-xs text-gray-500">
                       {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
                     </div>
+                    {/* IA SDR & WhatsApp — inside Leads add-on card */}
+                    {addons.leads && isAddonAvailable("leads") && (
+                      <div className="mt-3 pt-2 border-t border-gray-200/60">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
+                            <Label htmlFor="externalAI" className="text-xs text-gray-600 cursor-pointer">IA SDR</Label>
+                            <Switch
+                              id="externalAI"
+                              checked={metrics.usesExternalAI}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}), ...(!checked ? { externalAIName: "" } : {}) })}
+                            />
+                          </div>
+                          {metrics.usesExternalAI && (
+                            <div className="px-2">
+                              <Label htmlFor="aiName" className="text-[10px] text-gray-500">Qual IA você usa?</Label>
+                              <Input
+                                id="aiName"
+                                type="text"
+                                value={metrics.externalAIName}
+                                onChange={(e) => setMetrics({ ...metrics, externalAIName: e.target.value })}
+                                placeholder="Ex: Lais, Harry, Lia..."
+                                className="mt-0.5 h-7 text-xs"
+                              />
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
+                            <Label htmlFor="whatsapp" className="text-xs text-gray-600 cursor-pointer">WhatsApp</Label>
+                            <Switch
+                              id="whatsapp"
+                              checked={metrics.wantsWhatsApp}
+                              onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked, ...(checked ? { usesExternalAI: false, externalAIName: "" } : {}) })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">

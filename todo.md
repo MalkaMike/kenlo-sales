@@ -3631,3 +3631,10 @@
 - [x] Add WhatsApp as a selectable toggle in the Kombos comparison table, just below Leads
 - [x] Do NOT add IA SDR (no charge for it)
 - [x] Ensure WhatsApp selection affects pricing calculations in the comparison
+
+## Move IA SDR & WhatsApp to Leads Add-on Card (§4)
+
+- [x] Remove IA SDR and WhatsApp toggles from the Kenlo Imob config card (§2)
+- [x] Place IA SDR and WhatsApp toggles inside the Leads add-on card in Add-ons Opcionais (§4)
+- [x] Keep AI name input field when IA SDR is enabled
+- [x] Ensure toggles only appear when Leads add-on is active
