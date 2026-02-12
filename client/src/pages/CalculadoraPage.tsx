@@ -1502,10 +1502,16 @@ export default function CalculadoraPage() {
     biennial: "Bienal",
   };
   const frequencyBadges = {
-    monthly: "+25%",
-    semestral: "+11%",
-    annual: "0% - Referência",
-    biennial: "-10%",
+    monthly: "Referência",
+    semestral: "10% OFF",
+    annual: "20% OFF",
+    biennial: "30% OFF",
+  };
+  const frequencyInstallments: Record<string, string> = {
+    monthly: "",
+    semestral: "",
+    annual: "até 3x",
+    biennial: "até 6x",
   };
 
   return (
@@ -4669,7 +4675,8 @@ export default function CalculadoraPage() {
                       )}
                     </div>
                     <div className="text-[10px] text-gray-400">
-                      {frequencyLabels[frequency]} {frequency !== 'annual' ? `(${frequencyBadges[frequency]})` : '(referência)'}
+                      {frequencyLabels[frequency]} ({frequencyBadges[frequency]})
+                      {frequencyInstallments[frequency] && ` • ${frequencyInstallments[frequency]}`}
                     </div>
                   </div>
                 </div>

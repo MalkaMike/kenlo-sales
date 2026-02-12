@@ -56,6 +56,27 @@ export const FREQUENCY_LABELS: Record<PaymentFrequency, string> = {
   biennial: pricingValues.paymentCycles.biennial.displayLabel,
 };
 
+/**
+ * Discount percentages relative to MONTHLY price (for customer display)
+ * Monthly is reference (0%), others show savings vs monthly
+ */
+export const FREQUENCY_DISCOUNTS: Record<PaymentFrequency, number> = {
+  monthly: pricingValues.paymentCycles.monthly.discountVsMonthly,
+  semiannual: pricingValues.paymentCycles.semiannual.discountVsMonthly,
+  annual: pricingValues.paymentCycles.annual.discountVsMonthly,
+  biennial: pricingValues.paymentCycles.biennial.discountVsMonthly,
+};
+
+/**
+ * Maximum installments per cycle
+ */
+export const FREQUENCY_INSTALLMENTS: Record<PaymentFrequency, number> = {
+  monthly: pricingValues.paymentCycles.monthly.maxInstallments,
+  semiannual: pricingValues.paymentCycles.semiannual.maxInstallments,
+  annual: pricingValues.paymentCycles.annual.maxInstallments,
+  biennial: pricingValues.paymentCycles.biennial.maxInstallments,
+};
+
 // ============================================================================
 // ROUNDING RULE
 // ============================================================================

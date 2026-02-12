@@ -3,24 +3,36 @@
  * 
  * These tests validate the pricing calculations and recommendation logic
  * for the "4 bis. Preço Sem Kombo vs Kombo" section
+ * 
+ * NOW USING CENTRALIZED PRICING CONFIG as single source of truth
  */
 
 import { describe, it, expect } from 'vitest';
+import {
+  IMOB_PLANS,
+  LOC_PLANS,
+  ADDONS,
+  PREMIUM_SERVICES,
+  FREQUENCY_MULTIPLIERS,
+  roundToSeven,
+  calculatePrice,
+  type PaymentFrequency,
+} from '../shared/pricing-config';
 
 // ============================================================================
-// CONSTANTS (mirrored from component for testing)
+// CONSTANTS (derived from centralized pricing config)
 // ============================================================================
 
 const PLAN_ANNUAL_PRICES = {
-  prime: 247,
-  k: 497,
-  k2: 1197,
+  prime: IMOB_PLANS.prime.annualPrice,
+  k: IMOB_PLANS.k.annualPrice,
+  k2: IMOB_PLANS.k2.annualPrice,
 };
 
 const ADDON_ANNUAL_PRICES = {
-  leads: 497,
-  inteligencia: 297,
-  assinatura: 37,
+  leads: ADDONS.leads.annualPrice,
+  inteligencia: ADDONS.inteligencia.annualPrice,
+  assinatura: ADDONS.assinaturas.annualPrice,
   pay: 0,
   seguros: 0,
   cash: 0,
@@ -29,44 +41,33 @@ const ADDON_ANNUAL_PRICES = {
 const IMPLEMENTATION_COSTS = {
   imob: 1497,
   loc: 1497,
-  leads: 497,
-  inteligencia: 497,
-  assinatura: 0,
+  leads: ADDONS.leads.implementation,
+  inteligencia: ADDONS.inteligencia.implementation,
+  assinatura: ADDONS.assinaturas.implementation,
   cash: 0,
   combo: 1497,
 };
 
 const PREMIUM_SERVICES_PRICES = {
-  vipSupport: 97,
-  dedicatedCS: 197,
-};
-
-const PAYMENT_FREQUENCY_MULTIPLIERS = {
-  monthly: 1.25,
-  semestral: 1.1111,
-  annual: 1.0,
-  biennial: 0.90,
+  vipSupport: PREMIUM_SERVICES.vipSupport.monthlyPrice,
+  dedicatedCS: PREMIUM_SERVICES.csDedicado.monthlyPrice,
 };
 
 // ============================================================================
-// HELPER FUNCTIONS (mirrored from component)
+// HELPER FUNCTIONS (using centralized pricing)
 // ============================================================================
 
 const roundToEndIn7 = (price: number): number => {
-  const lastDigit = price % 10;
-  if (lastDigit === 7) return price;
-  if (lastDigit < 7) return price - lastDigit + 7;
-  return price - lastDigit + 17;
+  return roundToSeven(price);
 };
 
-const calculatePrice = (annualPrice: number, frequency: string): number => {
-  const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[frequency as keyof typeof PAYMENT_FREQUENCY_MULTIPLIERS] || 1;
-  return roundToEndIn7(Math.round(annualPrice * multiplier));
+const calcPrice = (annualPrice: number, frequency: PaymentFrequency): number => {
+  return calculatePrice(annualPrice, frequency);
 };
 
 const applyDiscount = (price: number, discount: number): number => {
   if (discount === 0) return price;
-  return roundToEndIn7(Math.round(price * (1 - discount)));
+  return Math.round(price * (1 - discount));
 };
 
 type ProductSelection = 'imob' | 'loc' | 'both';
@@ -145,6 +146,47 @@ const getRecommendedKombo = (
 // TESTS
 // ============================================================================
 
+describe('Kombo Comparison Table - Centralized Pricing Config', () => {
+  describe('Plan annual prices match centralized config', () => {
+    it('should have IMOB Prime = 247', () => {
+      expect(PLAN_ANNUAL_PRICES.prime).toBe(247);
+    });
+    it('should have IMOB K = 497', () => {
+      expect(PLAN_ANNUAL_PRICES.k).toBe(497);
+    });
+    it('should have IMOB K2 = 1197', () => {
+      expect(PLAN_ANNUAL_PRICES.k2).toBe(1197);
+    });
+  });
+
+  describe('Add-on annual prices match centralized config', () => {
+    it('should have Leads = 497', () => {
+      expect(ADDON_ANNUAL_PRICES.leads).toBe(497);
+    });
+    it('should have Inteligência = 297', () => {
+      expect(ADDON_ANNUAL_PRICES.inteligencia).toBe(297);
+    });
+    it('should have Assinatura = 37', () => {
+      expect(ADDON_ANNUAL_PRICES.assinatura).toBe(37);
+    });
+  });
+
+  describe('Frequency multipliers match centralized config', () => {
+    it('should have monthly = 1.25', () => {
+      expect(FREQUENCY_MULTIPLIERS.monthly).toBe(1.25);
+    });
+    it('should have semiannual = 1.125', () => {
+      expect(FREQUENCY_MULTIPLIERS.semiannual).toBe(1.125);
+    });
+    it('should have annual = 1.0', () => {
+      expect(FREQUENCY_MULTIPLIERS.annual).toBe(1.0);
+    });
+    it('should have biennial = 0.875', () => {
+      expect(FREQUENCY_MULTIPLIERS.biennial).toBe(0.875);
+    });
+  });
+});
+
 describe('Kombo Comparison Table - Price Calculations', () => {
   describe('roundToEndIn7', () => {
     it('should keep prices already ending in 7', () => {
@@ -164,56 +206,128 @@ describe('Kombo Comparison Table - Price Calculations', () => {
       expect(roundToEndIn7(499)).toBe(507);
       expect(roundToEndIn7(500)).toBe(507);
     });
+
+    it('should handle small prices correctly (Assinatura)', () => {
+      // 37 * 1.25 = 46.25 → ceil = 47 → ends in 7 ✓
+      expect(roundToEndIn7(46.25)).toBe(47);
+      // 37 * 0.875 = 32.375 → ceil = 33 → ends in 3 → 37
+      expect(roundToEndIn7(32.375)).toBe(37);
+    });
   });
 
   describe('calculatePrice with frequency multipliers', () => {
     it('should apply monthly multiplier (25% more)', () => {
       const annualPrice = 497;
-      const monthlyPrice = calculatePrice(annualPrice, 'monthly');
-      // 497 * 1.25 = 621.25 → rounded to end in 7 = 627
+      const monthlyPrice = calcPrice(annualPrice, 'monthly');
+      // 497 * 1.25 = 621.25 → roundToSeven = 627
       expect(monthlyPrice).toBe(627);
     });
 
     it('should keep annual price unchanged', () => {
       const annualPrice = 497;
-      const price = calculatePrice(annualPrice, 'annual');
+      const price = calcPrice(annualPrice, 'annual');
       expect(price).toBe(497);
     });
 
-    it('should apply biennial discount (10% less)', () => {
+    it('should apply semiannual multiplier (12.5% more)', () => {
       const annualPrice = 497;
-      const biennialPrice = calculatePrice(annualPrice, 'biennial');
-      // 497 * 0.90 = 447.3 → rounded to end in 7 = 447
-      expect(biennialPrice).toBe(447);
+      const semiannualPrice = calcPrice(annualPrice, 'semiannual');
+      // 497 * 1.125 = 559.125 → roundToSeven = 567
+      expect(semiannualPrice).toBe(567);
+    });
+
+    it('should apply biennial multiplier (12.5% less / 30% OFF vs mensal)', () => {
+      const annualPrice = 497;
+      const biennialPrice = calcPrice(annualPrice, 'biennial');
+      // 497 * 0.875 = 434.875 → roundToSeven = 437
+      expect(biennialPrice).toBe(437);
+    });
+
+    it('should calculate Assinatura monthly correctly (was bug: showed 46 instead of 47)', () => {
+      const annualPrice = 37;
+      const monthlyPrice = calcPrice(annualPrice, 'monthly');
+      // 37 * 1.25 = 46.25 → roundToSeven = 47
+      expect(monthlyPrice).toBe(47);
+    });
+
+    it('should calculate Assinatura biennial correctly', () => {
+      const annualPrice = 37;
+      const biennialPrice = calcPrice(annualPrice, 'biennial');
+      // 37 * 0.875 = 32.375 → roundToSeven = 37
+      expect(biennialPrice).toBe(37);
+    });
+
+    it('should calculate Imob Prime biennial correctly', () => {
+      const annualPrice = 247;
+      const biennialPrice = calcPrice(annualPrice, 'biennial');
+      // 247 * 0.875 = 216.125 → roundToSeven = 217
+      expect(biennialPrice).toBe(217);
+    });
+
+    it('should calculate Inteligência biennial correctly', () => {
+      const annualPrice = 297;
+      const biennialPrice = calcPrice(annualPrice, 'biennial');
+      // 297 * 0.875 = 259.875 → roundToSeven = 267
+      expect(biennialPrice).toBe(267);
     });
   });
 
-  describe('applyDiscount', () => {
-    it('should apply 10% discount (Imob Start, Locação Pro)', () => {
+  describe('applyDiscount (Kombo discount applied after cycle)', () => {
+    it('should apply 10% discount (Imob Start)', () => {
       const price = 497;
       const discounted = applyDiscount(price, 0.10);
-      // 497 * 0.90 = 447.3 → rounded to end in 7 = 447
+      // 497 * 0.90 = 447.3 → round = 447
       expect(discounted).toBe(447);
     });
 
     it('should apply 15% discount (Imob Pro)', () => {
       const price = 497;
       const discounted = applyDiscount(price, 0.15);
-      // 497 * 0.85 = 422.45 → rounded to end in 7 = 427
-      expect(discounted).toBe(427);
+      // 497 * 0.85 = 422.45 → round = 422
+      expect(discounted).toBe(422);
     });
 
     it('should apply 20% discount (Elite)', () => {
       const price = 1197;
       const discounted = applyDiscount(price, 0.20);
-      // 1197 * 0.80 = 957.6 → rounded to end in 7 = 967
-      expect(discounted).toBe(967);
+      // 1197 * 0.80 = 957.6 → round = 958
+      expect(discounted).toBe(958);
     });
 
     it('should return same price when discount is 0 (Core Gestão)', () => {
       const price = 497;
       const discounted = applyDiscount(price, 0);
       expect(discounted).toBe(497);
+    });
+  });
+
+  describe('Full pipeline: Annual → Cycle → Kombo discount', () => {
+    it('Imob Prime + Bienal + Imob Start (10%)', () => {
+      const cyclePrice = calcPrice(247, 'biennial'); // 217
+      const finalPrice = applyDiscount(cyclePrice, 0.10); // 217 * 0.90 = 195.3 → 195
+      expect(cyclePrice).toBe(217);
+      expect(finalPrice).toBe(195);
+    });
+
+    it('Leads + Monthly + Imob Pro (15%)', () => {
+      const cyclePrice = calcPrice(497, 'monthly'); // 627
+      const finalPrice = applyDiscount(cyclePrice, 0.15); // 627 * 0.85 = 532.95 → 533
+      expect(cyclePrice).toBe(627);
+      expect(finalPrice).toBe(533);
+    });
+
+    it('Assinatura + Monthly + Imob Pro (15%) — regression test for rounding bug', () => {
+      const cyclePrice = calcPrice(37, 'monthly'); // 47
+      const finalPrice = applyDiscount(cyclePrice, 0.15); // 47 * 0.85 = 39.95 → 40
+      expect(cyclePrice).toBe(47);
+      expect(finalPrice).toBe(40);
+    });
+
+    it('K2 + Bienal + Elite (20%)', () => {
+      const cyclePrice = calcPrice(1197, 'biennial'); // 1197 * 0.875 = 1047.375 → ceil=1048 → roundToSeven=1057
+      const finalPrice = applyDiscount(cyclePrice, 0.20); // 1057 * 0.80 = 845.6 → round=846
+      expect(cyclePrice).toBe(1057);
+      expect(finalPrice).toBe(846);
     });
   });
 });
@@ -324,12 +438,12 @@ describe('Kombo Comparison Table - Premium Services', () => {
   });
 
   it('should have correct CS Dedicado price', () => {
-    expect(PREMIUM_SERVICES_PRICES.dedicatedCS).toBe(197);
+    expect(PREMIUM_SERVICES_PRICES.dedicatedCS).toBe(297);
   });
 
   it('should have correct total for both premium services', () => {
     const total = PREMIUM_SERVICES_PRICES.vipSupport + PREMIUM_SERVICES_PRICES.dedicatedCS;
-    expect(total).toBe(294);
+    expect(total).toBe(394);
   });
 });
 
@@ -370,17 +484,6 @@ describe('Kombo Comparison Table - Annual Equivalent Calculation', () => {
 // ============================================================================
 // KOMBO COLUMN FILTERING TESTS
 // ============================================================================
-
-/**
- * Tests for product-based Kombo column filtering
- * 
- * Business rules:
- * - Imob only → show Imob Start, Imob Pro (2 Kombos)
- * - Loc only → show Loc Pro (1 Kombo)
- * - Both (Imob + Loc) → show Core Gestão, Elite (2 Kombos)
- * - "Sua Seleção" column always appears as first column
- * - It's impossible to have all 4+ Kombos together
- */
 
 type KomboIdFilter = 'none' | 'imob_start' | 'imob_pro' | 'locacao_pro' | 'core_gestao' | 'elite';
 

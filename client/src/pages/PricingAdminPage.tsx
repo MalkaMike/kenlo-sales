@@ -225,16 +225,32 @@ export default function PricingAdminPageV2() {
                     Tipo: <strong>{cycleData.type}</strong> • {cycleData.displayLabel}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grid grid-cols-3 gap-4">
+                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <Label className="text-xs">Multiplicador</Label>
                     <NumberInput
                       value={cycleData.multiplier}
                       onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'multiplier'], val)}
                     />
-                    <HelperText>Fator aplicado ao preço base</HelperText>
+                    <HelperText>Fator aplicado ao preço anual</HelperText>
                   </div>
-                  <div className="col-span-2">
+                  <div>
+                    <Label className="text-xs">Desconto vs Mensal (%)</Label>
+                    <NumberInput
+                      value={cycleData.discountVsMonthly || 0}
+                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'discountVsMonthly'], val)}
+                    />
+                    <HelperText>{cycleData.discountVsMonthly > 0 ? `${cycleData.discountVsMonthly}% OFF` : 'Referência'}</HelperText>
+                  </div>
+                  <div>
+                    <Label className="text-xs">Máx. Parcelas</Label>
+                    <NumberInput
+                      value={cycleData.maxInstallments || 1}
+                      onChange={(val: number) => updateValue(['paymentCycles', cycleKey, 'maxInstallments'], val)}
+                    />
+                    <HelperText>{cycleData.maxInstallments > 1 ? `Até ${cycleData.maxInstallments}x` : 'Pagamento único'}</HelperText>
+                  </div>
+                  <div>
                     <Label className="text-xs">Fórmula</Label>
                     <Input
                       value={cycleData.formula}

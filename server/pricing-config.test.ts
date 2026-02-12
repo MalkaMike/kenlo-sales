@@ -22,9 +22,9 @@ describe('Pricing Configuration', () => {
   describe('Payment Frequency Multipliers', () => {
     it('should have correct multipliers for all frequencies', () => {
       expect(FREQUENCY_MULTIPLIERS.monthly).toBe(1.25);
-      expect(FREQUENCY_MULTIPLIERS.semiannual).toBeCloseTo(1.111, 3);
+      expect(FREQUENCY_MULTIPLIERS.semiannual).toBeCloseTo(1.125, 3);
       expect(FREQUENCY_MULTIPLIERS.annual).toBe(1.0);
-      expect(FREQUENCY_MULTIPLIERS.biennial).toBe(0.75); // ⚠️ UPDATED from 0.72 (was 28%, now 25%)
+      expect(FREQUENCY_MULTIPLIERS.biennial).toBe(0.875); // ⚠️ UPDATED: Anual × (1-12.5%) = 30% OFF vs mensal
     });
   });
 
@@ -143,7 +143,7 @@ describe('Pricing Configuration', () => {
       const annual = 247;
       const biennial = calculatePrice(annual, 'biennial');
       expect(biennial).toBeLessThan(annual); // Should be cheaper
-      expect(biennial).toBe(roundToSeven(annual * 0.75)); // ⚠️ NEW: 25% discount
+      expect(biennial).toBe(roundToSeven(annual * 0.875)); // ⚠️ NEW: 30% discount vs mensal
     });
   });
 

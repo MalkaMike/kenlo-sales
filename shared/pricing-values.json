@@ -7,31 +7,39 @@
     "_rule": "O desconto de ciclo é sempre aplicado antes de qualquer desconto de combo",
     "monthly": {
       "type": "acrescimo",
-      "formula": "Anual ÷ 1.25",
+      "formula": "Anual × (1+25%)",
       "multiplier": 1.25,
       "applyOrder": 1,
-      "displayLabel": "sem desconto"
+      "displayLabel": "sem desconto (referência)",
+      "maxInstallments": 1,
+      "discountVsMonthly": 0
     },
     "semiannual": {
       "type": "desconto",
-      "formula": "Anual ÷ 1.111",
-      "multiplier": 1.111,
+      "formula": "Anual × (1+12.5%)",
+      "multiplier": 1.125,
       "applyOrder": 1,
-      "displayLabel": "desconto aplicado"
+      "displayLabel": "10% OFF vs mensal",
+      "maxInstallments": 1,
+      "discountVsMonthly": 10
     },
     "annual": {
       "type": "referencia",
       "formula": "Preço base (sem multiplicador)",
       "multiplier": 1.0,
       "applyOrder": 1,
-      "displayLabel": "referência"
+      "displayLabel": "20% OFF vs mensal",
+      "maxInstallments": 3,
+      "discountVsMonthly": 20
     },
     "biennial": {
       "type": "desconto",
-      "formula": "Anual × 0.75",
-      "multiplier": 0.75,
+      "formula": "Anual × (1-12.5%)",
+      "multiplier": 0.875,
       "applyOrder": 1,
-      "displayLabel": "desconto máximo"
+      "displayLabel": "30% OFF vs mensal",
+      "maxInstallments": 6,
+      "discountVsMonthly": 30
     }
   },
   "basePlans": {

@@ -29,6 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import * as Pricing from "@/utils/pricing";
 
 // ============================================================================
 // TYPES
@@ -93,9 +94,9 @@ interface ColumnOverrides {
 // Frequency options for the per-column selector
 const FREQUENCY_OPTIONS: { id: ViewMode; label: string; shortLabel: string; discount: string }[] = [
   { id: "monthly", label: "Mensal", shortLabel: "Mensal", discount: "Ref." },
-  { id: "semestral", label: "Semestral", shortLabel: "Sem.", discount: "−10%" },
-  { id: "annual", label: "Anual", shortLabel: "Anual", discount: "−20%" },
-  { id: "biennial", label: "Bienal", shortLabel: "Bienal", discount: "−28%" },
+  { id: "semestral", label: "Semestral", shortLabel: "Sem.", discount: "10% OFF" },
+  { id: "annual", label: "Anual", shortLabel: "Anual", discount: "20% OFF" },
+  { id: "biennial", label: "Bienal", shortLabel: "Bienal", discount: "30% OFF" },
 ];
 
 // Plan tiers for clickable cycling
@@ -142,42 +143,30 @@ export interface KomboColumnData {
 // CONSTANTS
 // ============================================================================
 
-const PLAN_ANNUAL_PRICES: Record<PlanTier, number> = {
-  prime: 247,
-  k: 497,
-  k2: 1197,
-};
+// ============================================================================
+// CENTRALIZED PRICING - All values from pricing-config.ts (single source of truth)
+// ============================================================================
+
+const PLAN_ANNUAL_PRICES: Record<PlanTier, number> = Pricing.PLAN_ANNUAL_PRICES;
 
 const ADDON_ANNUAL_PRICES = {
-  leads: 497,
-  inteligencia: 297,
-  assinatura: 37,
-  pay: 0,
-  seguros: 0,
+  ...Pricing.ADDON_ANNUAL_PRICES,
   cash: 0,
 };
 
-const IMPLEMENTATION_COSTS = {
-  imob: 1497,
-  loc: 1497,
-  leads: 497,
-  inteligencia: 497,
-  assinatura: 0,
-  cash: 0,
-  combo: 1497,
-};
+const IMPLEMENTATION_COSTS = Pricing.IMPLEMENTATION_COSTS;
 
 const PREMIUM_SERVICES_ANNUAL_PRICES = {
-  vipSupport: 97,
-  dedicatedCS: 297,
+  vipSupport: Pricing.getVipSupportPrice(),
+  dedicatedCS: Pricing.getCSDedicadoPrice(),
   training: 166, // R$166/mês (anual) per training — 2 trainings per product selected
 };
 
 const PAYMENT_FREQUENCY_MULTIPLIERS: Record<PaymentFrequency, number> = {
-  monthly: 1.25,
-  semestral: 1.1111,
-  annual: 1.0,
-  biennial: 0.90,
+  monthly: Pricing.getFrequencyMultiplier("monthly"),
+  semestral: Pricing.getFrequencyMultiplier("semiannual"),
+  annual: Pricing.getFrequencyMultiplier("annual"),
+  biennial: Pricing.getFrequencyMultiplier("biennial"),
 };
 
 const CYCLE_MONTHS: Record<PaymentFrequency, number> = {
@@ -290,16 +279,18 @@ const MAX_CUSTOM_COLUMNS = 3;
 // ============================================================================
 
 const roundToEndIn7 = (price: number): number => {
-  if (price < 100) return Math.round(price);
-  const lastDigit = price % 10;
-  if (lastDigit === 7) return price;
-  if (lastDigit < 7) return price - lastDigit + 7;
-  return price - lastDigit + 17;
+  return Pricing.roundPrice(price);
 };
 
 const calculatePrice = (annualPrice: number, frequency: PaymentFrequency): number => {
-  const multiplier = PAYMENT_FREQUENCY_MULTIPLIERS[frequency];
-  return roundToEndIn7(Math.round(annualPrice * multiplier));
+  // Map local frequency names to centralized config names
+  const freqMap: Record<PaymentFrequency, "monthly" | "semiannual" | "annual" | "biennial"> = {
+    monthly: "monthly",
+    semestral: "semiannual",
+    annual: "annual",
+    biennial: "biennial",
+  };
+  return Pricing.applyFrequency(annualPrice, freqMap[frequency]);
 };
 
 const applyDiscount = (price: number, discount: number): number => {

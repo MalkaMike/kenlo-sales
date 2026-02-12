@@ -3751,3 +3751,33 @@
 
 ## Total Pós-Pago Estimado Subtotal
 - [x] Add "Total Pós-Pago Estimado" subtotal row below individual postpaid items in Investimentos section
+
+## New Licensing Pricing Structure (Pre-Pago)
+- [ ] Audit all pricing code to identify every place cycle/pricing is calculated or displayed
+- [ ] Update pricing engine: backoffice stores ANNUAL price, derive monthly/semestral/bienal from it
+- [ ] Implement new cycle multipliers: Mensal=Annual*(1+25%), Semestral=Annual*(1+12.5%), Anual=base, Bienal=Annual*(1-12.5%)
+- [ ] Display discounts relative to MONTHLY price: Semestral 10% OFF, Anual 20% OFF, Bienal 25% OFF
+- [ ] Default display cycle is Anual
+- [ ] Update calculator page pricing display and cycle logic
+- [ ] Update comparison table (Kombos) pricing with new cycle logic
+- [ ] Update PDF generator pricing with new cycle logic
+- [ ] Update product pages pricing displays
+- [ ] Update pricing admin/backoffice page to clarify annual base price
+- [ ] Add installment info: Anual up to 3 parcelas, Bienal up to 6 parcelas
+- [ ] Update all tests to match new pricing logic
+
+## Centralized Pricing Config - Comparison Table Refactor
+
+- [x] Fix roundToEndIn7 rounding bug: Assinatura monthly showed R$ 46 instead of R$ 47 (Math.round → Math.ceil)
+- [x] Replace hardcoded PLAN_ANNUAL_PRICES in KomboComparisonTable with centralized pricing-config imports
+- [x] Replace hardcoded ADDON_ANNUAL_PRICES in KomboComparisonTable with centralized pricing-config imports
+- [x] Replace hardcoded PREMIUM_SERVICES_PRICES in KomboComparisonTable with centralized pricing-config imports
+- [x] Replace hardcoded PAYMENT_FREQUENCY_MULTIPLIERS in KomboComparisonTable with centralized pricing-config imports
+- [x] Replace hardcoded LOC_PLAN_ANNUAL_PRICES in KomboComparisonTable with centralized pricing-config imports
+- [x] Replace hardcoded IMPLEMENTATION_COSTS in KomboComparisonTable with centralized pricing-config imports
+- [x] Remove local roundToEndIn7 and calculatePrice functions, use centralized roundToSeven and calculatePrice
+- [x] Verify Bienal (30% OFF vs mensal) pricing: all products and add-ons display correctly
+- [x] Update kombo-comparison.test.ts to import from centralized pricing-config instead of hardcoded constants
+- [x] Add Bienal-specific test cases for Imob Prime, Leads, Inteligência, Assinatura
+- [x] Add full pipeline tests (Annual → Cycle → Kombo discount) for all cycle+kombo combinations
+- [x] All 340 tests pass (12 test files)
