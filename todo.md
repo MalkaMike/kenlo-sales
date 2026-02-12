@@ -3722,3 +3722,9 @@
 
 - [x] Add toggle "Você cobra o boleto do inquilino?" to Kenlo Pay add-on card
 - [x] Add toggle "Você cobra o split do proprietário?" to Kenlo Pay add-on card
+
+## Pay Card - Move Boleto/Split from Receitas
+
+- [x] Add value input fields (R$ amount) when boleto/split toggles are ON in Pay card (same as Receitas)
+- [x] Remove boleto/split toggles and value inputs from Receitas section (avoid redundancy)
+- [x] Fix double R$ prefix in value inputs (formatCurrency already includes R$)

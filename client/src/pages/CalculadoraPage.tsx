@@ -2561,9 +2561,9 @@ export default function CalculadoraPage() {
                     <div className="text-xs text-gray-500">
                       {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
                     </div>
-                    {/* Boleto & Split toggles inside Pay card */}
+                    {/* Boleto & Split toggles + value inputs inside Pay card */}
                     {addons.pay && isAddonAvailable("pay") && (
-                      <div className="mt-2 space-y-0 border-t border-gray-200 pt-2">
+                      <div className="mt-2 space-y-1 border-t border-gray-200 pt-2">
                         <div className="flex items-center justify-between py-1.5 px-2 bg-yellow-50/60 rounded">
                           <Label htmlFor="chargesBoleto-card" className="text-sm text-gray-800 cursor-pointer font-normal">Você cobra o boleto do inquilino?</Label>
                           <Switch
@@ -2572,6 +2572,41 @@ export default function CalculadoraPage() {
                             onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
                           />
                         </div>
+                        {metrics.chargesBoletoToTenant && (
+                          <div className="pl-2 pb-1">
+                            <Label htmlFor="boletoAmount-card" className="text-xs text-gray-600">Quanto você cobra por boleto? (R$)</Label>
+                            <div className="relative">
+                              <Input
+                                id="boletoAmount-card"
+                                type="text"
+                                inputMode="decimal"
+                                value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : formatCurrency(metrics.boletoChargeAmount, 2)}
+                                onFocus={(e) => {
+                                  const val = toNum(metrics.boletoChargeAmount);
+                                  if (val === 0) {
+                                    setMetrics({ ...metrics, boletoChargeAmount: '' as any });
+                                  } else {
+                                    setMetrics({ ...metrics, boletoChargeAmount: String(val).replace('.', ',') as any });
+                                  }
+                                  e.target.select();
+                                }}
+                                onChange={(e) => {
+                                  const raw = e.target.value.replace(/[^0-9,]/g, '');
+                                  setMetrics({ ...metrics, boletoChargeAmount: raw as any });
+                                }}
+                                onBlur={(e) => {
+                                  const parsed = parseCurrency(e.target.value);
+                                  setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
+                                }}
+                                placeholder="Ex: 10,00"
+                                className="mt-1 h-8 text-sm pr-8"
+                              />
+                              {(typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount > 0) && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between py-1.5 px-2 bg-yellow-50/60 rounded">
                           <Label htmlFor="chargesSplit-card" className="text-sm text-gray-800 cursor-pointer font-normal">Você cobra o split do proprietário?</Label>
                           <Switch
@@ -2580,6 +2615,41 @@ export default function CalculadoraPage() {
                             onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
                           />
                         </div>
+                        {metrics.chargesSplitToOwner && (
+                          <div className="pl-2 pb-1">
+                            <Label htmlFor="splitAmount-card" className="text-xs text-gray-600">Quanto você cobra por split? (R$)</Label>
+                            <div className="relative">
+                              <Input
+                                id="splitAmount-card"
+                                type="text"
+                                inputMode="decimal"
+                                value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : formatCurrency(metrics.splitChargeAmount, 2)}
+                                onFocus={(e) => {
+                                  const val = toNum(metrics.splitChargeAmount);
+                                  if (val === 0) {
+                                    setMetrics({ ...metrics, splitChargeAmount: '' as any });
+                                  } else {
+                                    setMetrics({ ...metrics, splitChargeAmount: String(val).replace('.', ',') as any });
+                                  }
+                                  e.target.select();
+                                }}
+                                onChange={(e) => {
+                                  const raw = e.target.value.replace(/[^0-9,]/g, '');
+                                  setMetrics({ ...metrics, splitChargeAmount: raw as any });
+                                }}
+                                onBlur={(e) => {
+                                  const parsed = parseCurrency(e.target.value);
+                                  setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
+                                }}
+                                placeholder="Ex: 5,00"
+                                className="mt-1 h-8 text-sm pr-8"
+                              />
+                              {(typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount > 0) && (
+                                <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -3356,113 +3426,6 @@ export default function CalculadoraPage() {
                   
                   <Card>
                     <CardContent className="pt-4">
-                      {/* Pay Questions — moved here per master prompt §6 */}
-                      {addons.pay && (product === 'loc' || product === 'both') && (
-                        <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-semibold text-yellow-800">Kenlo Pay — Boletos & Split</span>
-                            <a href="/parecer-juridico" target="_blank" className="text-xs text-primary hover:underline">Saiba Mais</a>
-                          </div>
-                          <p className="text-xs text-gray-600 mb-3">Disponível por padrão para clientes de Locação. Ativação opcional no onboarding.</p>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesBoleto" className="text-sm">Você cobra o boleto do inquilino?</Label>
-                              <Switch
-                                id="chargesBoleto"
-                                checked={metrics.chargesBoletoToTenant}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
-                              />
-                            </div>
-                            {metrics.chargesBoletoToTenant && (
-                              <div className="pl-2">
-                                <Label htmlFor="boletoAmount" className="text-xs text-gray-600">Quanto você cobra por boleto? (R$)</Label>
-                                <div className="relative">
-                                  <Input
-                                    id="boletoAmount"
-                                     type="text"
-                                     inputMode="decimal"
-                                     value={typeof metrics.boletoChargeAmount === 'string' ? metrics.boletoChargeAmount : `R$ ${formatCurrency(metrics.boletoChargeAmount, 2)}`}
-                                     onFocus={(e) => {
-                                       // Auto-clear "R$ 0,00" on focus so user can type directly
-                                       const val = toNum(metrics.boletoChargeAmount);
-                                       if (val === 0) {
-                                         setMetrics({ ...metrics, boletoChargeAmount: '' as any });
-                                       } else {
-                                         // Show raw number for editing
-                                         setMetrics({ ...metrics, boletoChargeAmount: String(val).replace('.', ',') as any });
-                                       }
-                                       e.target.select();
-                                     }}
-                                     onChange={(e) => {
-                                       // Allow typing with comma as decimal, filter non-numeric chars except comma
-                                       const raw = e.target.value.replace(/[^0-9,]/g, '');
-                                       setMetrics({ ...metrics, boletoChargeAmount: raw as any });
-                                     }}
-                                     onBlur={(e) => {
-                                       // On blur, parse and format as currency with R$ prefix
-                                       const parsed = parseCurrency(e.target.value);
-                                       setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
-                                     }}
-                                     placeholder="Ex: 10,00"
-                                     className="mt-1 h-8 text-sm pr-8"
-                                  />
-                                  {(typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount > 0) && (
-                                    <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                              <Label htmlFor="chargesSplit" className="text-sm">Você cobra o split do proprietário?</Label>
-                              <Switch
-                                id="chargesSplit"
-                                checked={metrics.chargesSplitToOwner}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
-                              />
-                            </div>
-                            {metrics.chargesSplitToOwner && (
-                              <div className="pl-2">
-                                <Label htmlFor="splitAmount" className="text-xs text-gray-600">Quanto você cobra por split? (R$)</Label>
-                                <div className="relative">
-                                  <Input
-                                    id="splitAmount"
-                                     type="text"
-                                     inputMode="decimal"
-                                     value={typeof metrics.splitChargeAmount === 'string' ? metrics.splitChargeAmount : `R$ ${formatCurrency(metrics.splitChargeAmount, 2)}`}
-                                     onFocus={(e) => {
-                                       // Auto-clear "R$ 0,00" on focus so user can type directly
-                                       const val = toNum(metrics.splitChargeAmount);
-                                       if (val === 0) {
-                                         setMetrics({ ...metrics, splitChargeAmount: '' as any });
-                                       } else {
-                                         // Show raw number for editing
-                                         setMetrics({ ...metrics, splitChargeAmount: String(val).replace('.', ',') as any });
-                                       }
-                                       e.target.select();
-                                     }}
-                                     onChange={(e) => {
-                                       // Allow typing with comma as decimal, filter non-numeric chars except comma
-                                       const raw = e.target.value.replace(/[^0-9,]/g, '');
-                                       setMetrics({ ...metrics, splitChargeAmount: raw as any });
-                                     }}
-                                     onBlur={(e) => {
-                                       // On blur, parse and format as currency with R$ prefix
-                                       const parsed = parseCurrency(e.target.value);
-                                       setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
-                                     }}
-                                     placeholder="Ex: 5,00"
-                                     className="mt-1 h-8 text-sm pr-8"
-                                  />
-                                  {(typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount > 0) && (
-                                    <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
                       {/* Receitas Category Header */}
                       {((addons.pay && (metrics.chargesBoletoToTenant || metrics.chargesSplitToOwner) && (product === 'loc' || product === 'both')) || 
                         (addons.seguros && (product === 'loc' || product === 'both'))) && (
