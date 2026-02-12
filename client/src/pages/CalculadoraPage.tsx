@@ -2315,7 +2315,12 @@ export default function CalculadoraPage() {
                       <Switch
                         id="leads"
                         checked={addons.leads}
-                        onCheckedChange={(checked) => setAddons({ ...addons, leads: checked })}
+                        onCheckedChange={(checked) => {
+                          setAddons({ ...addons, leads: checked });
+                          if (!checked) {
+                            setMetrics(prev => ({ ...prev, wantsWhatsApp: false, usesExternalAI: false, externalAIName: "" }));
+                          }
+                        }}
                         disabled={!isAddonAvailable("leads")}
                       />
                     </div>

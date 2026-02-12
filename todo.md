@@ -3638,3 +3638,7 @@
 - [x] Place IA SDR and WhatsApp toggles inside the Leads add-on card in Add-ons Opcionais (§4)
 - [x] Keep AI name input field when IA SDR is enabled
 - [x] Ensure toggles only appear when Leads add-on is active
+
+## Auto-disable WhatsApp & IA SDR when Leads is off
+
+- [x] When Leads toggle is turned off, automatically reset wantsWhatsApp, usesExternalAI, and externalAIName
