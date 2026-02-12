@@ -3769,6 +3769,105 @@ export default function CalculadoraPage() {
                         );
                       })()}
 
+                      {/* Total Pós-Pago Estimado Subtotal */}
+                      {(() => {
+                        let totalPP = 0;
+                        // Usuários Adicionais (IMOB)
+                        if ((product === 'imob' || product === 'both') && !prepayAdditionalUsers) {
+                          const plan = imobPlan;
+                          const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
+                          const additional = Math.max(0, toNum(metrics.imobUsers) - included);
+                          if (additional > 0) {
+                            if (plan === 'prime') totalPP += additional * 57;
+                            else if (plan === 'k') {
+                              totalPP += Math.min(additional, 5) * 47 + Math.max(0, additional - 5) * 37;
+                            } else {
+                              totalPP += Math.min(additional, 10) * 37 + Math.min(Math.max(0, additional - 10), 90) * 27 + Math.max(0, additional - 100) * 17;
+                            }
+                          }
+                        }
+                        // Contratos Adicionais (LOC)
+                        if ((product === 'loc' || product === 'both') && !prepayAdditionalContracts) {
+                          const plan = locPlan;
+                          const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
+                          const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
+                          if (additional > 0) {
+                            if (plan === 'prime') totalPP += additional * 3;
+                            else if (plan === 'k') {
+                              totalPP += Math.min(additional, 250) * 3 + Math.max(0, additional - 250) * 2.5;
+                            } else {
+                              totalPP += Math.min(additional, 250) * 3 + Math.min(Math.max(0, additional - 250), 250) * 2.5 + Math.max(0, additional - 500) * 2;
+                            }
+                          }
+                        }
+                        // WhatsApp Leads
+                        if (addons.leads && metrics.wantsWhatsApp) {
+                          const additional = Math.max(0, toNum(metrics.leadsPerMonth) - 100);
+                          if (additional > 0) {
+                            totalPP += Math.min(additional, 200) * 2.0 + Math.min(Math.max(0, additional - 200), 150) * 1.8 + Math.min(Math.max(0, additional - 350), 650) * 1.5 + Math.max(0, additional - 1000) * 1.2;
+                          }
+                        }
+                        // Assinaturas Digitais
+                        if (addons.assinatura) {
+                          let totalSig = 0;
+                          if (product === 'imob') totalSig = toNum(metrics.closingsPerMonth);
+                          else if (product === 'loc') totalSig = toNum(metrics.newContractsPerMonth);
+                          else totalSig = toNum(metrics.closingsPerMonth) + toNum(metrics.newContractsPerMonth);
+                          const additional = Math.max(0, totalSig - 15);
+                          if (additional > 0) {
+                            totalPP += Math.min(additional, 20) * 1.8 + Math.min(Math.max(0, additional - 20), 20) * 1.7 + Math.max(0, additional - 40) * 1.5;
+                          }
+                        }
+                        // Boletos (Pay)
+                        if (addons.pay && (product === 'loc' || product === 'both')) {
+                          const plan = locPlan;
+                          const inclB = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const addB = Math.max(0, toNum(metrics.contractsUnderManagement) - inclB);
+                          if (addB > 0) {
+                            if (plan === 'prime') totalPP += addB * 4;
+                            else if (plan === 'k') totalPP += Math.min(addB, 250) * 4 + Math.max(0, addB - 250) * 3.5;
+                            else totalPP += Math.min(addB, 250) * 4 + Math.min(Math.max(0, addB - 250), 250) * 3.5 + Math.max(0, addB - 500) * 3;
+                          }
+                        }
+                        // Custo Boletos cobrados (Pay)
+                        if (addons.pay && metrics.chargesBoletoToTenant && (product === 'loc' || product === 'both')) {
+                          const plan = locPlan;
+                          const inclB = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const addB = Math.max(0, toNum(metrics.contractsUnderManagement) - inclB);
+                          if (addB > 0) {
+                            if (plan === 'prime') totalPP += addB * 4;
+                            else if (plan === 'k') totalPP += Math.min(addB, 250) * 4 + Math.max(0, addB - 250) * 3.5;
+                            else totalPP += Math.min(addB, 250) * 4 + Math.min(Math.max(0, addB - 250), 250) * 3.5 + Math.max(0, addB - 500) * 3;
+                          }
+                        }
+                        // Custo Split cobrados (Pay)
+                        if (addons.pay && metrics.chargesSplitToOwner && (product === 'loc' || product === 'both')) {
+                          const plan = locPlan;
+                          const inclS = plan === 'prime' ? 2 : plan === 'k' ? 5 : 15;
+                          const addS = Math.max(0, toNum(metrics.contractsUnderManagement) - inclS);
+                          if (addS > 0) {
+                            if (plan === 'prime') totalPP += addS * 4;
+                            else if (plan === 'k') totalPP += Math.min(addS, 250) * 4 + Math.max(0, addS - 250) * 3.5;
+                            else totalPP += Math.min(addS, 250) * 4 + Math.min(Math.max(0, addS - 250), 250) * 3.5 + Math.max(0, addS - 500) * 3;
+                          }
+                        }
+                        // Serviços de Atendimento
+                        if ((product === 'imob' || product === 'both') && metrics.imobVipSupport && imobPlan === 'prime') totalPP += Pricing.getVipSupportPrice();
+                        if ((product === 'imob' || product === 'both') && metrics.imobDedicatedCS && imobPlan === 'prime') totalPP += Pricing.getCSDedicadoPrice();
+                        if ((product === 'loc' || product === 'both') && metrics.locVipSupport && locPlan === 'prime') totalPP += Pricing.getVipSupportPrice();
+                        if ((product === 'loc' || product === 'both') && metrics.locDedicatedCS && locPlan === 'prime') totalPP += Pricing.getCSDedicadoPrice();
+
+                        if (totalPP === 0) return null;
+                        return (
+                          <div className="flex justify-between items-center py-3 mt-2 bg-amber-50 border border-amber-200 rounded-lg px-4">
+                            <span className="text-sm font-bold text-amber-800">Total Pós-Pago Estimado</span>
+                            <span className="text-base font-bold text-amber-700">
+                              {formatCurrency(totalPP)}/mês
+                            </span>
+                          </div>
+                        );
+                      })()}
+
                       {/* Line 5: TOTAL */}
                       {(() => {
                         const recurring = calculateMonthlyRecurring(true);

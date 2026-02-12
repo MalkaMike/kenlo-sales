@@ -3748,3 +3748,6 @@
 - [x] Add "Serviços de Atendimento" row to Receita Extra Investimentos section
 - [x] Show included/additional breakdown and per-unit cost in each row
 - [x] Replaced single "Variável sob uso (pós-pago)" aggregated line with individual detail rows
+
+## Total Pós-Pago Estimado Subtotal
+- [x] Add "Total Pós-Pago Estimado" subtotal row below individual postpaid items in Investimentos section
