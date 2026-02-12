@@ -2596,15 +2596,19 @@ export default function CalculadoraPage() {
                                 }}
                                 onBlur={(e) => {
                                   const parsed = parseCurrency(e.target.value);
-                                  setMetrics({ ...metrics, boletoChargeAmount: Math.max(0, parsed) });
+                                  const rounded = Math.round(Math.max(0, parsed) * 100) / 100;
+                                  setMetrics({ ...metrics, boletoChargeAmount: rounded });
                                 }}
                                 placeholder="Ex: 10,00"
-                                className="mt-1 h-8 text-sm pr-8"
+                                className={`mt-1 h-8 text-sm pr-8 ${typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount === 0 ? 'border-amber-400 focus:ring-amber-400' : ''}`}
                               />
                               {(typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount > 0) && (
                                 <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
                               )}
                             </div>
+                            {typeof metrics.boletoChargeAmount === 'number' && metrics.boletoChargeAmount === 0 && (
+                              <p className="text-xs text-amber-600 mt-0.5">Informe um valor maior que R$ 0,00 para impactar o cálculo</p>
+                            )}
                           </div>
                         )}
                         <div className="flex items-center justify-between py-1.5 px-2 bg-yellow-50/60 rounded">
@@ -2639,15 +2643,19 @@ export default function CalculadoraPage() {
                                 }}
                                 onBlur={(e) => {
                                   const parsed = parseCurrency(e.target.value);
-                                  setMetrics({ ...metrics, splitChargeAmount: Math.max(0, parsed) });
+                                  const rounded = Math.round(Math.max(0, parsed) * 100) / 100;
+                                  setMetrics({ ...metrics, splitChargeAmount: rounded });
                                 }}
                                 placeholder="Ex: 5,00"
-                                className="mt-1 h-8 text-sm pr-8"
+                                className={`mt-1 h-8 text-sm pr-8 ${typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount === 0 ? 'border-amber-400 focus:ring-amber-400' : ''}`}
                               />
                               {(typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount > 0) && (
                                 <Check className="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 w-4 h-4 text-green-600" />
                               )}
                             </div>
+                            {typeof metrics.splitChargeAmount === 'number' && metrics.splitChargeAmount === 0 && (
+                              <p className="text-xs text-amber-600 mt-0.5">Informe um valor maior que R$ 0,00 para impactar o cálculo</p>
+                            )}
                           </div>
                         )}
                       </div>

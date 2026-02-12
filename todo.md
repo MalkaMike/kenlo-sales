@@ -3728,3 +3728,9 @@
 - [x] Add value input fields (R$ amount) when boleto/split toggles are ON in Pay card (same as Receitas)
 - [x] Remove boleto/split toggles and value inputs from Receitas section (avoid redundancy)
 - [x] Fix double R$ prefix in value inputs (formatCurrency already includes R$)
+
+## Pay Card - Boleto/Split Validation and PDF
+
+- [x] Add validation: boleto/split values must be > 0 to impact pós-pago calculation (amber warning when 0)
+- [x] Format boleto/split inputs as price with 2 decimal places (Math.round to 2 decimals on blur)
+- [x] Include boleto/split configured values in PDF exported receitas section (breakdown per unit)

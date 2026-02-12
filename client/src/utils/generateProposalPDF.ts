@@ -909,6 +909,7 @@ export async function generateProposalPDFClient(
     Y += 16;
 
     if (data.revenueFromBoletos && data.revenueFromBoletos > 0) {
+      // Show combined total
       doc.setFontSize(8);
       doc.setTextColor(...rgb(C.text));
       doc.setFont("helvetica", "normal");
@@ -916,7 +917,29 @@ export async function generateProposalPDFClient(
       doc.setFont("helvetica", "bold");
       doc.setTextColor(...rgb(C.green));
       doc.text(fmt(data.revenueFromBoletos) + "/mês", M + CW - 14, Y, { align: "right" });
-      Y += 14;
+      Y += 12;
+
+      // Show boleto breakdown detail
+      const contracts = data.contracts || 0;
+      if (data.chargesBoletoToTenant && data.boletoAmount && data.boletoAmount > 0) {
+        const boletoRevenue = contracts * data.boletoAmount;
+        doc.setFontSize(7);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "italic");
+        doc.text(`  Boleto: ${contracts} contratos × ${fmt(data.boletoAmount)} = ${fmt(boletoRevenue)}/mês`, M + 20, Y);
+        Y += 10;
+      }
+
+      // Show split breakdown detail
+      if (data.chargesSplitToOwner && data.splitAmount && data.splitAmount > 0) {
+        const splitRevenue = contracts * data.splitAmount;
+        doc.setFontSize(7);
+        doc.setTextColor(...rgb(C.textMuted));
+        doc.setFont("helvetica", "italic");
+        doc.text(`  Split: ${contracts} contratos × ${fmt(data.splitAmount)} = ${fmt(splitRevenue)}/mês`, M + 20, Y);
+        Y += 10;
+      }
+      Y += 4;
     }
 
     if (data.revenueFromInsurance && data.revenueFromInsurance > 0) {
