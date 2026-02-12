@@ -3799,3 +3799,9 @@
 - [x] Test with Imob: 30 users, 50 closings/month, with WhatsApp
 - [x] Test with Locação scenario and verify pós-pago values
 - [x] Run multiple test scenarios to verify correctness
+
+## Ambos (Imob + Locação) Pós-Pago Test
+
+- [x] Test Ambos scenario with Imob (30 users, 50 closings) + Locação (500 contracts, 30 new/month) with WhatsApp and Pay
+- [x] Verify all pós-pago items show correct values for combined products
+- [x] Fix any issues found during testing - no bugs found, all values match expected calculations
