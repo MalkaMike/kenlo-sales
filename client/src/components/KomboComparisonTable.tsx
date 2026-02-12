@@ -1010,17 +1010,19 @@ function PersoKomboSelector({
   const currentLabel = value && value !== "none"
     ? KOMBO_DEFINITIONS[value as Exclude<KomboId, "none">]?.shortName ?? "Kombo"
     : "Personalizado";
+  const isKomboMode = value && value !== "none";
 
   return (
     <div ref={ref} className="relative inline-block">
       <button
         onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
         className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-medium rounded border transition-all ${
-          value && value !== "none"
+          isKomboMode
             ? "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10"
-            : "border-amber-300 bg-amber-50 text-amber-600 hover:bg-amber-100"
+            : "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
         }`}
       >
+        {isKomboMode && <Layers className="w-2.5 h-2.5" />}
         {currentLabel}
         <ChevronDown className={`w-2.5 h-2.5 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>

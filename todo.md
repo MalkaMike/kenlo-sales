@@ -3837,3 +3837,8 @@
 - [x] Keep manual click-on-row behavior for Personalizado mode
 - [x] Update PDF export to handle Perso columns correctly
 - [x] Test all scenarios: Perso with manual config, Perso with Kombo template, cycle comparison
+
+## Perso Column Visual Improvements
+- [x] Test Perso columns with "Ambos" product selection to verify Core Gestão and Elite appear in selector
+- [x] Add visual indicator to distinguish Kombo mode from Personalizado mode (icon or background color)
+- [ ] Verify PDF export with Perso-Kombo columns shows correct naming
