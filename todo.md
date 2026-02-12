@@ -3689,3 +3689,7 @@
 ## Simplify Ofertado cells in Implantação
 
 - [x] Remove strikethrough price from offered implementation items, show only "Ofertado" in green
+
+## Remove Economia row from Kombos table
+
+- [x] Remove the "Economia de R$" savings row from the comparison table

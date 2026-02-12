@@ -1118,7 +1118,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "implTotal", label: "Total Implantação", isTotal: true },
 
     { key: "cycleTotal", label: "Valor Total do Ciclo", isTotal: true },
-    { key: "savings", label: "", isSubRow: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
 
     { key: "postpaid", label: "Pós-Pago", isHeader: true },
