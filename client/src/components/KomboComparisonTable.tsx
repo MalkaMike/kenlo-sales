@@ -1732,7 +1732,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const selectedColumnsKey = useMemo(() => {
     return selectedPlans.map(id => {
       const col = columns.find(c => c.id === id);
-      return col ? `${id}:${col.totalMonthly}:${col.implementation}:${col.cycleTotalValue}` : id;
+      return col ? `${id}:${col.totalMonthly}:${col.implementation}:${col.cycleTotalValue}:${col.postPaidTotal ?? 0}:${col.postPaidBoletos?.cost ?? '-'}:${col.postPaidSplits?.cost ?? '-'}` : id;
     }).join('|');
   }, [selectedPlans, columns]);
   useEffect(() => {

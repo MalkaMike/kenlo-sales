@@ -3805,3 +3805,14 @@
 - [x] Test Ambos scenario with Imob (30 users, 50 closings) + Locação (500 contracts, 30 new/month) with WhatsApp and Pay
 - [x] Verify all pós-pago items show correct values for combined products
 - [x] Fix any issues found during testing - no bugs found, all values match expected calculations
+
+## PDF Pós-Pago Breakdown
+
+- [x] Add pós-pago data to PDF payload (postPaid items per column with cost, quantity, unit price)
+- [x] Implement pós-pago table rendering in PDF generator
+- [x] Show "—" for non-applicable items, "No Plano" for included items, R$ values for extras
+- [x] Include unit price breakdown (e.g., "15 extras × R$ 33,67")
+- [x] Test PDF with Imob scenario (users, assinaturas, WhatsApp)
+- [x] Test PDF with Locação scenario (contracts, boletos, splits, assinaturas)
+- [x] Test PDF with Ambos scenario (all pós-pago items)
+- [x] Update PDF tests (all 340 tests pass)

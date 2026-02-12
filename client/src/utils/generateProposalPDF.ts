@@ -519,6 +519,13 @@ export async function generateProposalPDFClient(
         implementation: number; cycleTotalValue: number; cycleMonths: number;
         implBreakdown: Array<{ label: string; cost: number; free: boolean }>;
         overrides?: { frequency: string };
+        postPaidUsers?: { cost: number; additional: number; included: number; perUnit: number } | null;
+        postPaidContracts?: { cost: number; additional: number; included: number; perUnit: number } | null;
+        postPaidWhatsApp?: { included: number; label: string } | null;
+        postPaidAssinaturas?: { cost: number; additional: number; included: number; total: number; perUnit: number } | null;
+        postPaidBoletos?: { cost: number; quantity: number; perUnit: number } | null;
+        postPaidSplits?: { cost: number; quantity: number; perUnit: number } | null;
+        postPaidTotal?: number;
       }> = JSON.parse(data.selectedColumnsJson);
 
       console.log('[PDF DEBUG] parsed selectedCols:', selectedCols.length, 'columns');
@@ -680,17 +687,142 @@ export async function generateProposalPDFClient(
         const cycleVals = selectedCols.map(c => cycleLabels[c.overrides?.frequency || "annual"] || "Anual");
         Y = drawRow("Ciclo", cycleVals, Y);
 
-        // Pós-Pago section
-        Y = drawRow("Pós-Pago", [], Y, { bg: C.bgSoft, labelBold: true });
+        // Pós-Pago section with calculated values
+        if (needsNewPage(Y, 140)) Y = newPage(doc, data);
+        Y = drawRow("Custos Variáveis (Pós-Pago)", [], Y, { bg: C.bgSoft, labelBold: true });
+
+        // Helper to draw a pós-pago row with value + sub-detail line
+        const drawPostPaidRow = (label: string, mainVals: string[], detailVals: string[], yPos: number, opts?: { mainColor?: string }): number => {
+          if (needsNewPage(yPos, 24)) yPos = newPage(doc, data);
+          // Main value row
+          doc.setFontSize(7);
+          doc.setTextColor(...rgb(C.text));
+          doc.setFont("helvetica", "normal");
+          doc.text(label, M + 4, yPos);
+          for (let i = 0; i < numCols; i++) {
+            const x = M + labelW + colW2 * i + colW2 / 2;
+            const val = mainVals[i] || "—";
+            if (val === "No Plano" || val === "Sem custos") {
+              doc.setTextColor(...rgb(C.green));
+              doc.setFont("helvetica", "bold");
+            } else if (val.startsWith("R$")) {
+              doc.setTextColor(...rgb("#B45309")); // amber-700
+              doc.setFont("helvetica", "bold");
+            } else {
+              doc.setTextColor(...rgb(C.textMuted));
+              doc.setFont("helvetica", "normal");
+            }
+            doc.text(val, x, yPos, { align: "center" });
+          }
+          // Detail sub-row (smaller, italic)
+          if (detailVals.some(v => v !== "")) {
+            const detailY = yPos + 9;
+            doc.setFontSize(5.5);
+            doc.setTextColor(...rgb(C.textLight));
+            doc.setFont("helvetica", "italic");
+            for (let i = 0; i < numCols; i++) {
+              const x = M + labelW + colW2 * i + colW2 / 2;
+              if (detailVals[i]) doc.text(detailVals[i], x, detailY, { align: "center" });
+            }
+            return detailY + 9;
+          }
+          return yPos + 14;
+        };
+
         // Usuários adicionais
-        const userVals = selectedCols.map(() => "Pós-pago");
-        Y = drawRow("  Usuários adicionais", userVals, Y);
+        const ppUserMain = selectedCols.map(c => {
+          const pp = c.postPaidUsers;
+          if (!pp) return "—";
+          if (pp.cost === 0) return "No Plano";
+          return `R$ ${fmtNum(pp.cost)}`;
+        });
+        const ppUserDetail = selectedCols.map(c => {
+          const pp = c.postPaidUsers;
+          if (!pp || pp.cost === 0) return pp ? `${pp.included} incluídos` : "";
+          return `${pp.additional} adic. × R$ ${pp.perUnit.toFixed(2)}`;
+        });
+        if (ppUserMain.some(v => v !== "—")) Y = drawPostPaidRow("  Usuários adicionais", ppUserMain, ppUserDetail, Y);
+
+        // Contratos adicionais
+        const ppContMain = selectedCols.map(c => {
+          const pp = c.postPaidContracts;
+          if (!pp) return "—";
+          if (pp.cost === 0) return "No Plano";
+          return `R$ ${fmtNum(pp.cost)}`;
+        });
+        const ppContDetail = selectedCols.map(c => {
+          const pp = c.postPaidContracts;
+          if (!pp || pp.cost === 0) return pp ? `${pp.included} incluídos` : "";
+          return `${pp.additional} adic. × R$ ${pp.perUnit.toFixed(2)}`;
+        });
+        if (ppContMain.some(v => v !== "—")) Y = drawPostPaidRow("  Contratos adicionais", ppContMain, ppContDetail, Y);
+
         // WhatsApp Leads
-        const wpVals = selectedCols.map(c => c.whatsAppPrice || "—");
-        if (wpVals.some(v => v !== "—")) Y = drawRow("  WhatsApp Leads", wpVals, Y);
+        const ppWpMain = selectedCols.map(c => {
+          const pp = c.postPaidWhatsApp;
+          if (!pp) return "—";
+          return "Pós-pago";
+        });
+        const ppWpDetail = selectedCols.map(c => {
+          const pp = c.postPaidWhatsApp;
+          if (!pp) return "";
+          return `${pp.included} incl./mês`;
+        });
+        if (ppWpMain.some(v => v !== "—")) Y = drawPostPaidRow("  WhatsApp Leads", ppWpMain, ppWpDetail, Y);
+
         // Assinaturas
-        const sigVals = selectedCols.map(c => c.assinaturaPrice !== null ? "Pós-pago" : "—");
-        if (sigVals.some(v => v !== "—")) Y = drawRow("  Assinaturas", sigVals, Y);
+        const ppSigMain = selectedCols.map(c => {
+          const pp = c.postPaidAssinaturas;
+          if (!pp) return "—";
+          if (pp.cost === 0) return "No Plano";
+          return `R$ ${pp.cost.toFixed(2).replace('.', ',')}`;
+        });
+        const ppSigDetail = selectedCols.map(c => {
+          const pp = c.postPaidAssinaturas;
+          if (!pp) return "";
+          if (pp.cost === 0) return `${pp.included} incl., ${pp.total} usadas`;
+          return `${pp.additional} adic. × R$ ${pp.perUnit.toFixed(2)}`;
+        });
+        if (ppSigMain.some(v => v !== "—")) Y = drawPostPaidRow("  Assinaturas", ppSigMain, ppSigDetail, Y);
+
+        // Boletos
+        const ppBolMain = selectedCols.map(c => {
+          const pp = c.postPaidBoletos;
+          if (!pp) return "—";
+          return `R$ ${fmtNum(pp.cost)}`;
+        });
+        const ppBolDetail = selectedCols.map(c => {
+          const pp = c.postPaidBoletos;
+          if (!pp) return "";
+          return `${pp.quantity.toLocaleString('pt-BR')} × R$ ${pp.perUnit.toFixed(2)}`;
+        });
+        if (ppBolMain.some(v => v !== "—")) Y = drawPostPaidRow("  Boletos", ppBolMain, ppBolDetail, Y);
+
+        // Splits
+        const ppSplMain = selectedCols.map(c => {
+          const pp = c.postPaidSplits;
+          if (!pp) return "—";
+          return `R$ ${fmtNum(pp.cost)}`;
+        });
+        const ppSplDetail = selectedCols.map(c => {
+          const pp = c.postPaidSplits;
+          if (!pp) return "";
+          return `${pp.quantity.toLocaleString('pt-BR')} × R$ ${pp.perUnit.toFixed(2)}`;
+        });
+        if (ppSplMain.some(v => v !== "—")) Y = drawPostPaidRow("  Splits", ppSplMain, ppSplDetail, Y);
+
+        // Total Pós-Pago
+        divider(doc, Y - 4);
+        const ppTotalMain = selectedCols.map(c => {
+          const total = c.postPaidTotal ?? 0;
+          if (total === 0) {
+            const hasAny = c.postPaidUsers || c.postPaidContracts || c.postPaidWhatsApp || c.postPaidAssinaturas || c.postPaidBoletos || c.postPaidSplits;
+            if (!hasAny) return "—";
+            return "Sem custos";
+          }
+          return `R$ ${fmtNum(total)}/mês`;
+        });
+        Y = drawRow("Total Pós-Pago (est.)", ppTotalMain, Y, { bold: true, valueColor: "#B45309" });
 
         console.log('[PDF DEBUG] Comparison table rendering COMPLETE');
         Y += 10;
