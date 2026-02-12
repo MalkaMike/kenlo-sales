@@ -3717,3 +3717,8 @@
 - [x] Reduce row height further across the comparison table
 - [x] Allow user to select up to 3 columns from the comparison table (already implemented)
 - [x] Export selected 3 columns to PDF (fixed incompatible add-ons validation bug that blocked PDF generation)
+
+## Kenlo Pay Card - Boleto and Split Toggles
+
+- [x] Add toggle "Você cobra o boleto do inquilino?" to Kenlo Pay add-on card
+- [x] Add toggle "Você cobra o split do proprietário?" to Kenlo Pay add-on card

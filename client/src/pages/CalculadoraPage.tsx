@@ -2561,6 +2561,27 @@ export default function CalculadoraPage() {
                     <div className="text-xs text-gray-500">
                       {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
                     </div>
+                    {/* Boleto & Split toggles inside Pay card */}
+                    {addons.pay && isAddonAvailable("pay") && (
+                      <div className="mt-2 space-y-0 border-t border-gray-200 pt-2">
+                        <div className="flex items-center justify-between py-1.5 px-2 bg-yellow-50/60 rounded">
+                          <Label htmlFor="chargesBoleto-card" className="text-sm text-gray-800 cursor-pointer font-normal">Você cobra o boleto do inquilino?</Label>
+                          <Switch
+                            id="chargesBoleto-card"
+                            checked={metrics.chargesBoletoToTenant}
+                            onCheckedChange={(checked) => setMetrics({ ...metrics, chargesBoletoToTenant: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between py-1.5 px-2 bg-yellow-50/60 rounded">
+                          <Label htmlFor="chargesSplit-card" className="text-sm text-gray-800 cursor-pointer font-normal">Você cobra o split do proprietário?</Label>
+                          <Switch
+                            id="chargesSplit-card"
+                            checked={metrics.chargesSplitToOwner}
+                            onCheckedChange={(checked) => setMetrics({ ...metrics, chargesSplitToOwner: checked })}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
