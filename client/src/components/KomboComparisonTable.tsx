@@ -55,6 +55,11 @@ interface KomboComparisonProps {
   frequency: PaymentFrequency;
   // WhatsApp (linked to Leads, post-paid)
   wantsWhatsApp: boolean;
+  // Client metrics for pós-pago calculations
+  imobUsers: number;
+  closingsPerMonth: number;
+  contractsUnderManagement: number;
+  newContractsPerMonth: number;
   // Premium services
   vipSupport: boolean;
   dedicatedCS: boolean;
@@ -123,6 +128,14 @@ export interface KomboColumnData {
   vipSupportPrice: number | string | null; // number, "Incluído", or null
   dedicatedCSPrice: number | string | null;
   trainingPrice: number | string | null;
+  // Pós-Pago calculated values
+  postPaidUsers: { cost: number; additional: number; included: number; perUnit: number } | null;
+  postPaidContracts: { cost: number; additional: number; included: number; perUnit: number } | null;
+  postPaidWhatsApp: { included: number; label: string } | null;
+  postPaidAssinaturas: { cost: number; additional: number; included: number; total: number; perUnit: number } | null;
+  postPaidBoletos: { cost: number; quantity: number; perUnit: number } | null;
+  postPaidSplits: { cost: number; quantity: number; perUnit: number } | null;
+  postPaidTotal: number;
   // Subscription count (products + add-ons, excluding premium services)
   subscriptionCount: number;
   // Implementation breakdown per item
@@ -355,6 +368,93 @@ const calculatePremiumPrice = (annualPrice: number, frequency: PaymentFrequency)
 // ============================================================================
 
 /**
+ * Calculate pós-pago data for a column based on client metrics and column configuration
+ */
+const calculatePostPaidData = (
+  props: KomboComparisonProps,
+  columnImobPlan: PlanTier,
+  columnLocPlan: PlanTier,
+  hasImob: boolean,
+  hasLoc: boolean,
+  hasLeads: boolean,
+  hasAssinatura: boolean,
+  hasPay: boolean,
+) => {
+  const { imobUsers, closingsPerMonth, contractsUnderManagement, newContractsPerMonth } = props;
+
+  // 1. Usuários adicionais (Imob only)
+  let postPaidUsers: KomboColumnData["postPaidUsers"] = null;
+  if (hasImob) {
+    const included = Pricing.getIncludedQuantity("imob", columnImobPlan);
+    const additional = Math.max(0, imobUsers - included);
+    if (additional > 0) {
+      const cost = Pricing.calculateAdditionalUsersCost(columnImobPlan, additional);
+      postPaidUsers = { cost, additional, included, perUnit: cost / additional };
+    } else {
+      postPaidUsers = { cost: 0, additional: 0, included, perUnit: 0 };
+    }
+  }
+
+  // 2. Contratos adicionais (Loc only)
+  let postPaidContracts: KomboColumnData["postPaidContracts"] = null;
+  if (hasLoc) {
+    const included = Pricing.getIncludedQuantity("loc", columnLocPlan);
+    const additional = Math.max(0, contractsUnderManagement - included);
+    if (additional > 0) {
+      const cost = Pricing.calculateAdditionalContractsCost(columnLocPlan, additional);
+      postPaidContracts = { cost, additional, included, perUnit: cost / additional };
+    } else {
+      postPaidContracts = { cost: 0, additional: 0, included, perUnit: 0 };
+    }
+  }
+
+  // 3. WhatsApp Leads (if leads addon active)
+  let postPaidWhatsApp: KomboColumnData["postPaidWhatsApp"] = null;
+  if (hasLeads && hasImob) {
+    const included = Pricing.getIncludedWhatsAppLeads();
+    postPaidWhatsApp = { included, label: `${included} incluídos/mês` };
+  }
+
+  // 4. Assinaturas (closings + new contracts)
+  let postPaidAssinaturas: KomboColumnData["postPaidAssinaturas"] = null;
+  if (hasAssinatura) {
+    const totalVolume = (hasImob ? closingsPerMonth : 0) + (hasLoc ? newContractsPerMonth : 0);
+    const included = Pricing.getIncludedSignatures();
+    const additional = Math.max(0, totalVolume - included);
+    if (additional > 0) {
+      const cost = Pricing.calculateAdditionalSignaturesCost(additional);
+      postPaidAssinaturas = { cost, additional, included, total: totalVolume, perUnit: cost / additional };
+    } else {
+      postPaidAssinaturas = { cost: 0, additional: 0, included, total: totalVolume, perUnit: 0 };
+    }
+  }
+
+  // 5. Boletos (Loc only, if pay addon active)
+  let postPaidBoletos: KomboColumnData["postPaidBoletos"] = null;
+  if (hasPay && hasLoc && contractsUnderManagement > 0) {
+    const cost = Pricing.calculateBoletosCost(columnLocPlan, contractsUnderManagement);
+    postPaidBoletos = { cost, quantity: contractsUnderManagement, perUnit: cost / contractsUnderManagement };
+  }
+
+  // 6. Splits (Loc only, if pay addon active)
+  let postPaidSplits: KomboColumnData["postPaidSplits"] = null;
+  if (hasPay && hasLoc && contractsUnderManagement > 0) {
+    const cost = Pricing.calculateSplitsCost(columnLocPlan, contractsUnderManagement);
+    postPaidSplits = { cost, quantity: contractsUnderManagement, perUnit: cost / contractsUnderManagement };
+  }
+
+  // Total
+  const postPaidTotal =
+    (postPaidUsers?.cost ?? 0) +
+    (postPaidContracts?.cost ?? 0) +
+    (postPaidAssinaturas?.cost ?? 0) +
+    (postPaidBoletos?.cost ?? 0) +
+    (postPaidSplits?.cost ?? 0);
+
+  return { postPaidUsers, postPaidContracts, postPaidWhatsApp, postPaidAssinaturas, postPaidBoletos, postPaidSplits, postPaidTotal };
+};
+
+/**
  * Calculate all data for a single Kombo column with optional overrides
  */
 const calculateKomboColumn = (
@@ -499,11 +599,21 @@ const calculateKomboColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
+  // Calculate pós-pago data
+  const postPaid = calculatePostPaidData(
+    props, imobPlan, locPlan,
+    komboIncludesImob, komboIncludesLoc,
+    kombo.includedAddons.includes("leads"),
+    kombo.includedAddons.includes("assinatura"),
+    kombo.includedAddons.includes("pay"),
+  );
+
   return {
     id: komboId, name: kombo.name, shortName: kombo.shortName, discount,
     isAvailable, isRecommended, isCustom: false,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
+    ...postPaid,
     implBreakdown, subscriptionCount, totalMonthly, theoreticalImplementation, implementation,
     annualEquivalent, cycleTotalValue, cycleMonths,
     overrides: overrides ? overrides : { frequency } as ColumnOverrides,
@@ -615,11 +725,23 @@ const calculateNoKomboColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
+  // Calculate pós-pago data
+  const hasImob = product === "imob" || product === "both";
+  const hasLoc = product === "loc" || product === "both";
+  const postPaid = calculatePostPaidData(
+    props, imobPlan, locPlan,
+    hasImob, hasLoc,
+    addons.leads && hasImob,
+    addons.assinatura,
+    addons.pay && hasLoc,
+  );
+
   return {
     id: "none", name: "Sua Seleção (Sem Kombo)", shortName: "Sua Seleção", discount: 0,
     isAvailable: true, isRecommended, isCustom: false,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
+    ...postPaid,
     implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
@@ -751,6 +873,18 @@ const calculateCustomColumn = (
   if (leadsPrice !== null) subscriptionCount++;
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
+
+  // Calculate pós-pago data
+  const hasImob = product === "imob" || product === "both";
+  const hasLoc = product === "loc" || product === "both";
+  const postPaid = calculatePostPaidData(
+    props, imobPlan, locPlan,
+    hasImob, hasLoc,
+    addons.leads && hasImob,
+    addons.assinatura,
+    addons.pay && hasLoc,
+  );
+
   return {
     id: customId,
     name: customName,
@@ -761,6 +895,7 @@ const calculateCustomColumn = (
     isCustom: true,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
+    ...postPaid,
     implBreakdown, subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
@@ -1495,39 +1630,94 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </span>
         );
       }
-      // Pós-Pago items
+      // Pós-Pago items — calculated values
       case "postpaidUsers": {
-        const hasImob = column.imobPrice !== null;
-        if (!hasImob) return <span className="text-gray-300 text-xs">—</span>;
-        return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        const pp = column.postPaidUsers;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        if (pp.cost === 0) return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-green-600 font-medium">No Plano</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.included} incluídos</span>
+          </div>
+        );
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+          </div>
+        );
       }
       case "postpaidContracts": {
-        const hasLoc = column.locPrice !== null;
-        if (!hasLoc) return <span className="text-gray-300 text-xs">—</span>;
-        return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        const pp = column.postPaidContracts;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        if (pp.cost === 0) return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-green-600 font-medium">No Plano</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.included} incluídos</span>
+          </div>
+        );
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+          </div>
+        );
       }
       case "postpaidWhatsApp": {
-        if (column.whatsAppPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300 text-xs">—</span>;
+        const pp = column.postPaidWhatsApp;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-green-600 font-medium">Pós-pago</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.included} incl./mês</span>
+          </div>
+        );
       }
       case "postpaidAssinaturas": {
-        if (column.assinaturaPrice !== null) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300 text-xs">—</span>;
+        const pp = column.postPaidAssinaturas;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        if (pp.cost === 0) return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-green-600 font-medium">No Plano</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.included} incl., {pp.total} usadas</span>
+          </div>
+        );
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-amber-700 font-semibold">R$ {pp.cost.toFixed(2).replace('.', ',')}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. × R$ {pp.perUnit.toFixed(2)}</span>
+          </div>
+        );
       }
       case "postpaidBoletos": {
-        if (column.payPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300 text-xs">—</span>;
+        const pp = column.postPaidBoletos;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} × R$ {pp.perUnit.toFixed(2)}</span>
+          </div>
+        );
       }
       case "postpaidSplits": {
-        if (column.payPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300 text-xs">—</span>;
+        const pp = column.postPaidSplits;
+        if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.quantity.toLocaleString('pt-BR')} × R$ {pp.perUnit.toFixed(2)}</span>
+          </div>
+        );
       }
       case "postpaidTotal": {
-        // Calculate estimated total pós-pago for this column
-        // This is an estimate based on the column's active post-paid items
-        const hasPostpaidItems = column.imobPrice !== null || column.locPrice !== null || column.whatsAppPrice || column.assinaturaPrice !== null || column.payPrice;
-        if (!hasPostpaidItems) return <span className="text-gray-300 text-xs">—</span>;
-        return <span className="text-[10px] text-amber-600 font-semibold">Variável</span>;
+        if (column.postPaidTotal === 0) {
+          const hasAnyPostPaid = column.postPaidUsers || column.postPaidContracts || column.postPaidWhatsApp || column.postPaidAssinaturas || column.postPaidBoletos || column.postPaidSplits;
+          if (!hasAnyPostPaid) return <span className="text-gray-300 text-xs">—</span>;
+          return <span className="text-[10px] text-green-600 font-semibold">Sem custos</span>;
+        }
+        return (
+          <span className="text-[11px] text-amber-700 font-bold">R$ {column.postPaidTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
+        );
       }
       default:
         return null;

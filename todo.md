@@ -3790,3 +3790,12 @@
 - [x] Improve /admin/pricing page UI: sticky sidebar TOC, collapsible sections, price previews, fixed Kombos discount display
 - [x] Fix PDF Kombo columns showing wrong cycle (always "Anual") - now passes effective frequency in overrides
 - [x] Fix Kombos discount display in admin page (was showing 1000% instead of 10%)
+
+## Pós-Pago Calculation Fix
+
+- [x] Audit how pós-pago section calculates costs in comparison table
+- [x] Fix pós-pago to calculate actual monthly costs based on client data (users, closings, contracts)
+- [x] Show '-' when pós-pago is not needed (included in plan)
+- [x] Test with Imob: 30 users, 50 closings/month, with WhatsApp
+- [x] Test with Locação scenario and verify pós-pago values
+- [x] Run multiple test scenarios to verify correctness

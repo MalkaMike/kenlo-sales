@@ -2721,6 +2721,10 @@ export default function CalculadoraPage() {
                 addons={addons}
                 frequency={frequency}
                 wantsWhatsApp={metrics.wantsWhatsApp}
+                imobUsers={toNum(metrics.imobUsers)}
+                closingsPerMonth={toNum(metrics.closingsPerMonth)}
+                contractsUnderManagement={toNum(metrics.contractsUnderManagement)}
+                newContractsPerMonth={toNum(metrics.newContractsPerMonth)}
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
                 onPlanSelected={(planId) => {
