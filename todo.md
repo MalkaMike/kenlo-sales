@@ -3670,3 +3670,11 @@
 - [x] Add "Implantação" as header section (same style as Serviços Premium) with per-item breakdown (Imob, Loc, Leads, Inteligência) and Kombo "oferta" discount
 - [x] Rename "Anual" to "Valor Total do Ciclo" calculated per column cycle
 - [x] Add "Pós-Pago" header section (same style as Serviços Premium) with all post-paid items grouped by IMOB-only, LOC-only, and both
+
+## Redesign Implantação section in Kombos comparison table
+
+- [x] Replace current implBreakdown text block with individual rows per item (Imob, Loc, Leads, Inteligência, Assinatura)
+- [x] Each row shows the item price in each column, with strikethrough for Kombo-offered items
+- [x] Kombo offer rules: Imob Start=Leads, Imob Pro=Leads+Inteligência, Loc Pro=Inteligência, Core Gestão=Imob, Elite=Imob+Leads+Inteligência
+- [x] Add "Total Implantação" row with the total per column
+- [x] Follow same visual pattern as Add-ons and Serviços Premium sections

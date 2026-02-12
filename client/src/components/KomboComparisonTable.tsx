@@ -488,12 +488,12 @@ const calculateKomboColumn = (
 
   const annualEquivalent = totalMonthly * 12 + implementation;
 
-  // Build implementation breakdown
+  // Build implementation breakdown using freeImplementations
   const implBreakdown: { label: string; cost: number; free: boolean }[] = [];
-  if (komboIncludesImob) implBreakdown.push({ label: "Imob", cost: IMPLEMENTATION_COSTS.imob, free: true });
-  if (komboIncludesLoc) implBreakdown.push({ label: "Locação", cost: IMPLEMENTATION_COSTS.loc, free: true });
-  if (kombo.includedAddons.includes("leads")) implBreakdown.push({ label: "Leads", cost: IMPLEMENTATION_COSTS.leads, free: true });
-  if (kombo.includedAddons.includes("inteligencia")) implBreakdown.push({ label: "Inteligência", cost: IMPLEMENTATION_COSTS.inteligencia, free: true });
+  if (komboIncludesImob) implBreakdown.push({ label: "Imob", cost: IMPLEMENTATION_COSTS.imob, free: kombo.freeImplementations.includes("imob") });
+  if (komboIncludesLoc) implBreakdown.push({ label: "Locação", cost: IMPLEMENTATION_COSTS.loc, free: kombo.freeImplementations.includes("loc") });
+  if (kombo.includedAddons.includes("leads")) implBreakdown.push({ label: "Leads", cost: IMPLEMENTATION_COSTS.leads, free: kombo.freeImplementations.includes("leads") });
+  if (kombo.includedAddons.includes("inteligencia")) implBreakdown.push({ label: "Inteligência", cost: IMPLEMENTATION_COSTS.inteligencia, free: kombo.freeImplementations.includes("inteligencia") });
 
   const cycleMonths = CYCLE_MONTHS[frequency];
   const cycleTotalValue = totalMonthly * cycleMonths + implementation;
@@ -1111,8 +1111,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "subscriptionCount", label: "", isSubRow: true },
 
     { key: "implantacao", label: "Implantação", isHeader: true },
-    { key: "implBreakdown", label: "", isSubRow: true },
-    { key: "implementation", label: "Total Implantação", isTotal: true },
+    { key: "implImob", label: "Imob", indent: true },
+    { key: "implLoc", label: "Locação", indent: true },
+    { key: "implLeads", label: "Leads", indent: true },
+    { key: "implInteligencia", label: "Inteligência", indent: true },
+    { key: "implTotal", label: "Total Implantação", isTotal: true },
 
     { key: "cycleTotal", label: "Valor Total do Ciclo", isTotal: true },
     { key: "savings", label: "", isSubRow: true },
@@ -1423,29 +1426,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
           </span>
         );
-      case "implBreakdown": {
-        if (column.implBreakdown.length === 0) return <span className="text-gray-300">—</span>;
-        const isKombo = column.id !== "none" && !column.isCustom;
-        return (
-          <div className="flex flex-col items-center gap-0.5">
-            {column.implBreakdown.map((item, idx) => (
-              <span key={idx} className="text-[10px] text-gray-500 font-normal leading-tight">
-                {item.label}: {isKombo ? (
-                  <span className="line-through text-gray-400">R$ {formatCurrency(item.cost)}</span>
-                ) : (
-                  <span>R$ {formatCurrency(item.cost)}</span>
-                )}
-              </span>
-            ))}
-            {isKombo && (
-              <span className="text-[10px] text-green-600 font-medium leading-tight">
-                Oferta Kombo: R$ {formatCurrency(column.implementation)}
-              </span>
-            )}
-          </div>
-        );
+      case "implImob":
+      case "implLoc":
+      case "implLeads":
+      case "implInteligencia": {
+        const implKeyMap: Record<string, string> = {
+          implImob: "Imob",
+          implLoc: "Loca\u00e7\u00e3o",
+          implLeads: "Leads",
+          implInteligencia: "Intelig\u00eancia",
+        };
+        const implLabel = implKeyMap[rowKey];
+        const item = column.implBreakdown.find(b => b.label === implLabel);
+        if (!item) return <span className="text-gray-300">—</span>;
+        if (item.free) {
+          return (
+            <div className="flex flex-col items-center">
+              <span className="line-through text-gray-400 text-xs">R$ {formatCurrency(item.cost)}</span>
+              <span className="text-green-600 text-[10px] font-semibold">Ofertado</span>
+            </div>
+          );
+        }
+        return <span className="text-sm text-gray-600">R$ {formatCurrency(item.cost)}</span>;
       }
-      case "implementation": {
+      case "implTotal": {
         return (
           <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
         );
