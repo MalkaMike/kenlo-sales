@@ -3646,3 +3646,9 @@
 ## Limpar button resets WhatsApp & IA SDR
 
 - [x] Update Limpar button handler to also reset wantsWhatsApp, usesExternalAI, and externalAIName
+
+## WhatsApp leads postpaid display in Leads add-on card
+
+- [x] Show included leads count and additional leads with per-lead price below WhatsApp toggle
+- [x] Add tiered pricing tooltip for WhatsApp leads breakdown
+- [x] Add motivational phrase "Na Kenlo, você paga só o que usa..." below WhatsApp postpaid info
