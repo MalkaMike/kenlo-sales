@@ -3827,3 +3827,13 @@
 - [x] Show "—" when item doesn't apply
 - [x] Update PDF generator to reflect pre-paid choices and unit price display
 - [x] Test with Imob, Locação, and Ambos scenarios with pre-paid toggling
+
+## Perso Column Refactor (Custom Scenarios)
+- [x] Rename custom columns from editable names to fixed "Perso 1", "Perso 2", "Perso 3"
+- [x] Remove name editing functionality (no more pencil icon / inline edit)
+- [x] Add mode selector in Perso column header: "Personalizado" (manual) or Kombo-based
+- [x] When Kombo mode selected: auto-fill all values from chosen Kombo template
+- [x] Allow user to change cycle independently even in Kombo mode
+- [x] Keep manual click-on-row behavior for Personalizado mode
+- [x] Update PDF export to handle Perso columns correctly
+- [x] Test all scenarios: Perso with manual config, Perso with Kombo template, cycle comparison

@@ -22,7 +22,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers, ChevronDown, Plus, X, Pencil } from "lucide-react";
+import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers, ChevronDown, Plus, X } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -115,6 +115,7 @@ export interface KomboColumnData {
   isAvailable: boolean;
   isRecommended: boolean;
   isCustom: boolean; // true for custom scenario columns
+  sourceKombo?: KomboId | null; // If set, this Perso column is based on a Kombo template
   // Prices for each row
   imobPrice: number | null; // null = not included
   locPrice: number | null;
@@ -613,7 +614,7 @@ const calculateKomboColumn = (
 
   return {
     id: komboId, name: kombo.name, shortName: kombo.shortName, discount,
-    isAvailable, isRecommended, isCustom: false,
+    isAvailable, isRecommended, isCustom: false, sourceKombo: null,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
@@ -742,7 +743,7 @@ const calculateNoKomboColumn = (
 
   return {
     id: "none", name: "Sua Seleção (Sem Kombo)", shortName: "Sua Seleção", discount: 0,
-    isAvailable: true, isRecommended, isCustom: false,
+    isAvailable: true, isRecommended, isCustom: false, sourceKombo: null,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
@@ -898,6 +899,7 @@ const calculateCustomColumn = (
     isAvailable: true,
     isRecommended: false,
     isCustom: true,
+    sourceKombo: null,
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
@@ -984,65 +986,75 @@ function ColumnCycleSelector({
   );
 }
 
-// Editable title component for custom columns
-function EditableTitle({
+// Perso Kombo Selector: dropdown to choose a Kombo template or "Personalizado"
+function PersoKomboSelector({
   value,
+  options,
   onChange,
-  maxLength = 11,
 }: {
-  value: string;
-  onChange: (newTitle: string) => void;
-  maxLength?: number;
+  value: KomboId | null;
+  options: Exclude<KomboId, "none">[];
+  onChange: (komboId: KomboId | null) => void;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(value);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (editing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [editing]);
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
-  const commit = () => {
-    const trimmed = draft.trim();
-    if (trimmed.length > 0) {
-      onChange(trimmed.slice(0, maxLength));
-    } else {
-      setDraft(value);
-    }
-    setEditing(false);
-  };
-
-  if (editing) {
-    return (
-      <input
-        ref={inputRef}
-        type="text"
-        value={draft}
-        maxLength={maxLength}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") commit();
-          if (e.key === "Escape") { setDraft(value); setEditing(false); }
-        }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-[90px] text-center text-xs font-bold border border-amber-400 rounded px-1 py-0.5 bg-white text-amber-700 outline-none focus:ring-2 focus:ring-amber-300"
-      />
-    );
-  }
+  const currentLabel = value && value !== "none"
+    ? KOMBO_DEFINITIONS[value as Exclude<KomboId, "none">]?.shortName ?? "Kombo"
+    : "Personalizado";
 
   return (
-    <button
-      onClick={(e) => { e.stopPropagation(); setDraft(value); setEditing(true); }}
-      className="inline-flex items-center gap-1 group"
-      title="Clique para renomear"
-    >
-      <span className="font-bold text-amber-700">{value}</span>
-      <Pencil className="w-3 h-3 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-    </button>
+    <div ref={ref} className="relative inline-block">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-medium rounded border transition-all ${
+          value && value !== "none"
+            ? "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10"
+            : "border-amber-300 bg-amber-50 text-amber-600 hover:bg-amber-100"
+        }`}
+      >
+        {currentLabel}
+        <ChevronDown className={`w-2.5 h-2.5 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 min-w-[120px]">
+          <button
+            onClick={(e) => { e.stopPropagation(); onChange(null); setOpen(false); }}
+            className={`w-full text-left px-3 py-1.5 text-[10px] hover:bg-gray-50 transition-colors ${
+              !value || value === "none" ? "font-bold text-amber-600 bg-amber-50/50" : "text-gray-600"
+            }`}
+          >
+            Personalizado
+          </button>
+          <div className="border-t border-gray-100 my-0.5" />
+          {options.map(opt => {
+            const kombo = KOMBO_DEFINITIONS[opt];
+            return (
+              <button
+                key={opt}
+                onClick={(e) => { e.stopPropagation(); onChange(opt); setOpen(false); }}
+                className={`w-full text-left px-3 py-1.5 text-[10px] hover:bg-gray-50 transition-colors ${
+                  value === opt ? "font-bold text-primary bg-primary/5" : "text-gray-600"
+                }`}
+              >
+                {kombo.shortName}
+                {kombo.discount > 0 && (
+                  <span className="text-primary ml-1">{Math.round(kombo.discount * 100)}%</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -1058,8 +1070,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const prevProductRef = useRef<ProductSelection>(props.product);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Custom scenario columns: array of { id, name }
-  const [customColumns, setCustomColumns] = useState<{ id: string; name: string }[]>([]);
+  // Perso scenario columns: array of { id, name, sourceKombo }
+  const [customColumns, setCustomColumns] = useState<{ id: string; name: string; sourceKombo: KomboId | null }[]>([]);
   const customCounterRef = useRef(0);
 
   // Per-column overrides state: keyed by column key
@@ -1149,12 +1161,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     });
   }, [getDefaultOverrides, getCustomDefaultOverrides]);
 
-  // Add a new custom column
+  // Add a new Perso column
   const addCustomColumn = useCallback(() => {
     if (customColumns.length >= MAX_CUSTOM_COLUMNS) return;
     const newId = `custom_${customCounterRef.current++}`;
-    const newName = `Cenário ${customColumns.length + 1}`;
-    setCustomColumns(prev => [...prev, { id: newId, name: newName }]);
+    const newName = `Perso ${customColumns.length + 1}`;
+    setCustomColumns(prev => [...prev, { id: newId, name: newName, sourceKombo: null }]);
     // Initialize with clean defaults
     setColumnOverrides(prev => ({
       ...prev,
@@ -1182,10 +1194,46 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     });
   }, [props.onPlansSelected, props.onPlanSelected]);
 
-  // Rename a custom column
-  const renameCustomColumn = useCallback((customId: string, newName: string) => {
-    setCustomColumns(prev => prev.map(c => c.id === customId ? { ...c, name: newName } : c));
-  }, []);
+  // Set source Kombo for a Perso column (null = personalizado, KomboId = based on Kombo)
+  const setPersoSourceKombo = useCallback((customId: string, komboId: KomboId | null) => {
+    setCustomColumns(prev => prev.map(c => {
+      if (c.id !== customId) return c;
+      return { ...c, sourceKombo: komboId };
+    }));
+    // When switching to a Kombo source, set overrides to match the Kombo's included items
+    if (komboId && komboId !== "none") {
+      const kombo = KOMBO_DEFINITIONS[komboId as Exclude<KomboId, "none">];
+      if (kombo) {
+        setColumnOverrides(prev => {
+          const current = prev[customId] || getCustomDefaultOverrides();
+          return {
+            ...prev,
+            [customId]: {
+              ...current,
+              // Keep the current frequency (user can change cycle independently)
+              addons: {
+                leads: kombo.includedAddons.includes("leads"),
+                inteligencia: kombo.includedAddons.includes("inteligencia"),
+                assinatura: kombo.includedAddons.includes("assinatura"),
+                pay: kombo.includedAddons.includes("pay"),
+                seguros: kombo.includedAddons.includes("seguros"),
+                cash: kombo.includedAddons.includes("cash"),
+              },
+              vipSupport: kombo.includesPremiumServices,
+              dedicatedCS: kombo.includesPremiumServices,
+              training: kombo.includesTraining,
+            },
+          };
+        });
+      }
+    } else {
+      // Switching to personalizado: reset to clean defaults
+      setColumnOverrides(prev => ({
+        ...prev,
+        [customId]: getCustomDefaultOverrides(),
+      }));
+    }
+  }, [getCustomDefaultOverrides]);
 
   // Notify parent when plan selection changes (toggle up to 3)
   const handlePlanSelect = (planId: ColumnId) => {
@@ -1241,10 +1289,24 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       return calculateKomboColumn(id, props, recommendedKombo, overrides);
     });
     
-    // Custom scenario columns
+    // Perso scenario columns: use Kombo calculation when sourceKombo is set, otherwise custom
     const customCols = customColumns.map((custom, idx) => {
       const overrides = columnOverrides[custom.id] || getCustomDefaultOverrides();
-      return calculateCustomColumn(custom.id, idx, custom.name, props, overrides);
+      if (custom.sourceKombo && custom.sourceKombo !== "none") {
+        // Calculate as a Kombo column but with custom id/name and isCustom=true
+        const komboResult = calculateKomboColumn(custom.sourceKombo, props, recommendedKombo, overrides);
+        return {
+          ...komboResult,
+          id: custom.id,
+          name: custom.name,
+          shortName: custom.name,
+          isCustom: true,
+          sourceKombo: custom.sourceKombo,
+          isRecommended: false,
+        };
+      }
+      const result = calculateCustomColumn(custom.id, idx, custom.name, props, overrides);
+      return { ...result, sourceKombo: null };
     });
 
     const allCols = [suaSelecao, ...komboColumns, ...customCols];
@@ -1362,8 +1424,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     const colKey = getColumnKey(colIndex);
     const col = columns[colIndex];
     
-    // For Kombo columns: add-ons are fixed, cannot be toggled
+    // For Kombo columns and Perso-Kombo columns: add-ons are fixed, cannot be toggled
     if (!col.isCustom && col.id !== "none") return;
+    if (col.isCustom && col.sourceKombo && col.sourceKombo !== "none") return;
     
     const isCustom = colKey.startsWith("custom_");
     const overrides = columnOverrides[colKey] || (isCustom ? getCustomDefaultOverrides() : getDefaultOverrides());
@@ -1382,6 +1445,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     const colKey = getColumnKey(colIndex);
     const col = columns[colIndex];
     if (!col.isCustom) return; // Only custom columns can toggle premium services
+    if (col.sourceKombo && col.sourceKombo !== "none") return; // Perso-Kombo: premium is fixed
     
     const overrides = columnOverrides[colKey] || getCustomDefaultOverrides();
     const currentValue = overrides[serviceKey] ?? false;
@@ -1395,7 +1459,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     const colKey = getColumnKey(colIndex);
     const isCustom = colKey.startsWith("custom_");
     const isSuaSelecao = colIndex === 0;
-    const isKomboCol = !column.isCustom && column.id !== "none";
+    // A Perso column in Kombo mode behaves like a Kombo column for cell rendering
+    const isPersoKombo = isCustom && !!column.sourceKombo && column.sourceKombo !== "none";
+    const isKomboCol = (!column.isCustom && column.id !== "none") || isPersoKombo;
     const overrides = colIndex > 0 ? (columnOverrides[colKey] || (isCustom ? getCustomDefaultOverrides() : getDefaultOverrides())) : null;
 
     // Helper to render a plan cell (clickable for Kombo/Custom, read-only for Sua Seleção)
@@ -1433,11 +1499,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>;
       }
 
-      // === Kombo columns: fixed, just show price or dash (no "Incluído" label, no "Adicionar" button) ===
+      // === Kombo columns (including Perso-Kombo): fixed, just show price or dash ===
       if (isKomboCol) {
         if (["pay", "seguros", "cash"].includes(addonKey)) {
-          const komboId = column.id as Exclude<KomboId, "none">;
-          const isIncluded = KOMBO_DEFINITIONS[komboId]?.includedAddons.includes(addonKey);
+          // For Perso-Kombo, use the sourceKombo to look up the definition
+          const effectiveKomboId = (isPersoKombo ? column.sourceKombo : column.id) as Exclude<KomboId, "none">;
+          const isIncluded = KOMBO_DEFINITIONS[effectiveKomboId]?.includedAddons.includes(addonKey);
           if (isIncluded) {
             const label = addonKey === "cash" ? "Grátis" : "Pós-pago";
             return <span className="font-medium text-gray-700 text-sm">{label}</span>;
@@ -1500,8 +1567,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return <span className="text-green-600 font-semibold text-xs">Incluído</span>;
       }
       
-      // Custom columns: toggleable
-      if (isCustom) {
+      // Custom columns (not Perso-Kombo): toggleable
+      if (isCustom && !isPersoKombo) {
         const overridesData = columnOverrides[colKey] || getCustomDefaultOverrides();
         const isActive = overridesData[serviceKey] ?? false;
         
@@ -1563,8 +1630,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         if (typeof column.trainingPrice === "string" && column.trainingPrice) {
           return <span className="text-green-600 font-semibold text-xs">{column.trainingPrice}</span>;
         }
-        // Custom columns: toggleable
-        if (isCustom) {
+        // Custom columns (not Perso-Kombo): toggleable
+        if (isCustom && !isPersoKombo) {
           const overridesData = columnOverrides[colKey] || getCustomDefaultOverrides();
           const isActive = overridesData.training ?? false;
           if (typeof column.trainingPrice === "number") {
@@ -1909,10 +1976,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           )}
                           {/* Column title */}
                           {col.isCustom ? (
-                            <EditableTitle
-                              value={col.shortName}
-                              onChange={(newName) => renameCustomColumn(col.id, newName)}
-                            />
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className="font-bold text-amber-700 text-sm">{col.shortName}</span>
+                              <PersoKomboSelector
+                                value={col.sourceKombo ?? null}
+                                options={compatibleKomboIds.filter(k => k !== "none") as Exclude<KomboId, "none">[]}
+                                onChange={(komboId) => setPersoSourceKombo(col.id, komboId)}
+                              />
+                            </div>
                           ) : (
                             <div className="flex items-center gap-1">
                               <span className="font-bold text-gray-900">{col.shortName}</span>
@@ -1943,9 +2014,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               {Math.round(col.discount * 100)}% OFF
                             </Badge>
                           )}
-                          {col.isCustom && (
+                          {col.isCustom && !col.sourceKombo && (
                             <Badge variant="outline" className="text-[9px] border-amber-300 text-amber-600 bg-amber-50">
-                              Livre
+                              Personalizado
                             </Badge>
                           )}
                         </div>
@@ -2157,7 +2228,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               <br />
               <strong>Seleção para PDF:</strong> Selecione até {MAX_SELECTED_PLANS} colunas clicando em "Selecionar". As colunas selecionadas serão exportadas na proposta PDF.
               <br />
-              <strong>Cenários personalizados:</strong> Use o botão "+" para adicionar cenários livres (até {MAX_CUSTOM_COLUMNS}). Clique no título para renomear (máx. 11 caracteres).
+              <strong>Perso (cenários personalizados):</strong> Use o botão "+" para adicionar até {MAX_CUSTOM_COLUMNS} cenários. Escolha "Personalizado" para configurar livremente, ou selecione um Kombo para comparar com ciclos diferentes.
             </p>
           </div>
 
