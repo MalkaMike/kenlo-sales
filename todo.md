@@ -3734,3 +3734,6 @@
 - [x] Add validation: boleto/split values must be > 0 to impact pós-pago calculation (amber warning when 0)
 - [x] Format boleto/split inputs as price with 2 decimal places (Math.round to 2 decimals on blur)
 - [x] Include boleto/split configured values in PDF exported receitas section (breakdown per unit)
+
+## Remove Pós-Pago Section
+- [x] Remove "Investimento pós-pago mensal (estimativo)" section from calculator page

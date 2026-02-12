@@ -2783,8 +2783,8 @@ export default function CalculadoraPage() {
 
 
 
-                {/* SECTION 2: CUSTOS PÓS-PAGO (VARIÁVEIS) */}
-                <div className="mt-6 mb-4">
+                {/* SECTION 2: CUSTOS PÓS-PAGO - REMOVED (moved to comparison table) */}
+                {false && (<div className="mt-6 mb-4">
                   <h2 className="text-sm font-semibold text-gray-700 mb-2">
                     Investimento pós-pago mensal (estimativo)
                   </h2>
@@ -3410,7 +3410,7 @@ export default function CalculadoraPage() {
                     </div>
                   </CardContent>
                 </Card>
-                </div>
+                </div>)}
 
 
 
