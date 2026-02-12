@@ -2451,6 +2451,7 @@ export default function CalculadoraPage() {
                 locPlan={locPlan}
                 addons={addons}
                 frequency={frequency}
+                wantsWhatsApp={metrics.wantsWhatsApp}
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}
                 dedicatedCS={metrics.imobDedicatedCS || metrics.locDedicatedCS}
                 onPlanSelected={(planId) => {

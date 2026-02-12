@@ -3625,3 +3625,9 @@
 - [x] Move WhatsApp selector into the Leads box (same container)
 - [x] Add text input for AI name when client already uses an external AI SDR
 - [x] Ensure layout matches reference image (toggle switches in a clean card layout)
+
+## WhatsApp in Kombos Comparison Table
+
+- [x] Add WhatsApp as a selectable toggle in the Kombos comparison table, just below Leads
+- [x] Do NOT add IA SDR (no charge for it)
+- [x] Ensure WhatsApp selection affects pricing calculations in the comparison

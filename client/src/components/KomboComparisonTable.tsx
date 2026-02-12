@@ -52,6 +52,8 @@ interface KomboComparisonProps {
     cash: boolean;
   };
   frequency: PaymentFrequency;
+  // WhatsApp (linked to Leads, post-paid)
+  wantsWhatsApp: boolean;
   // Premium services
   vipSupport: boolean;
   dedicatedCS: boolean;
@@ -108,6 +110,7 @@ interface KomboColumnData {
   imobPrice: number | null; // null = not included
   locPrice: number | null;
   leadsPrice: number | null;
+  whatsAppPrice: string | null; // "Pós-pago" or null
   inteligenciaPrice: number | null;
   assinaturaPrice: number | null;
   payPrice: string | null; // "Pós-pago" or null
@@ -410,6 +413,12 @@ const calculateKomboColumn = (
     leadsPrice = applyDiscount(basePrice, discount);
     totalMonthly += leadsPrice;
   }
+
+  // WhatsApp: "Pós-pago" if Kombo includes leads (WhatsApp is tied to Leads)
+  let whatsAppPrice: string | null = null;
+  if (kombo.includedAddons.includes("leads")) {
+    whatsAppPrice = "Pós-pago";
+  }
   if (kombo.includedAddons.includes("inteligencia")) {
     const basePrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
     inteligenciaPrice = applyDiscount(basePrice, discount);
@@ -470,7 +479,7 @@ const calculateKomboColumn = (
   return {
     id: komboId, name: kombo.name, shortName: kombo.shortName, discount,
     isAvailable, isRecommended, isCustom: false,
-    imobPrice, locPrice, leadsPrice, inteligenciaPrice, assinaturaPrice,
+    imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     subscriptionCount, totalMonthly, theoreticalImplementation, implementation, annualEquivalent,
     overrides,
@@ -517,6 +526,13 @@ const calculateNoKomboColumn = (
     totalMonthly += leadsPrice;
     implementation += IMPLEMENTATION_COSTS.leads;
   }
+
+  // WhatsApp: "Pós-pago" if leads is active and wantsWhatsApp is true
+  let whatsAppPrice: string | null = null;
+  if (addons.leads && (product === "imob" || product === "both") && props.wantsWhatsApp) {
+    whatsAppPrice = "Pós-pago";
+  }
+
   if (addons.inteligencia) {
     inteligenciaPrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
     totalMonthly += inteligenciaPrice;
@@ -568,7 +584,7 @@ const calculateNoKomboColumn = (
   return {
     id: "none", name: "Sua Seleção (Sem Kombo)", shortName: "Sua Seleção", discount: 0,
     isAvailable: true, isRecommended, isCustom: false,
-    imobPrice, locPrice, leadsPrice, inteligenciaPrice, assinaturaPrice,
+    imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
@@ -619,6 +635,14 @@ const calculateCustomColumn = (
     totalMonthly += leadsPrice;
     implementation += IMPLEMENTATION_COSTS.leads;
   }
+
+  // WhatsApp in custom columns: toggleable, shown as "Pós-pago" when leads is active
+  // For custom columns, WhatsApp follows the leads toggle (if leads is on, WhatsApp is available)
+  let whatsAppPrice: string | null = null;
+  if (addons.leads && (product === "imob" || product === "both")) {
+    whatsAppPrice = "Pós-pago";
+  }
+
   if (addons.inteligencia) {
     inteligenciaPrice = calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
     totalMonthly += inteligenciaPrice;
@@ -689,7 +713,7 @@ const calculateCustomColumn = (
     isAvailable: true,
     isRecommended: false,
     isCustom: true,
-    imobPrice, locPrice, leadsPrice, inteligenciaPrice, assinaturaPrice,
+    imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     subscriptionCount, totalMonthly,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
@@ -1023,6 +1047,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "loc", label: "Loc", indent: true },
     { key: "addons", label: "Add-ons", isHeader: true },
     { key: "leads", label: "Leads", indent: true },
+    { key: "whatsapp", label: "WhatsApp", indent: true },
     { key: "inteligencia", label: "Inteligência", indent: true },
     { key: "assinatura", label: "Assinatura", indent: true },
     { key: "pay", label: "Pay", indent: true },
@@ -1247,6 +1272,28 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         return renderPlanCell(column.locPrice, "loc");
       case "leads":
         return renderAddonCell(column.leadsPrice, "leads");
+      case "whatsapp": {
+        // WhatsApp is tied to Leads — show "Pós-pago" when active, dash when not
+        // Sua Seleção: read-only based on props.wantsWhatsApp
+        if (isSuaSelecao) {
+          if (column.whatsAppPrice) {
+            return <span className="font-medium text-gray-700">{column.whatsAppPrice}</span>;
+          }
+          return <span className="text-gray-300">—</span>;
+        }
+        // Kombo columns: show "Pós-pago" if Kombo includes leads
+        if (isKomboCol) {
+          if (column.whatsAppPrice) {
+            return <span className="font-medium text-gray-700">{column.whatsAppPrice}</span>;
+          }
+          return <span className="text-gray-300">—</span>;
+        }
+        // Custom columns: follows leads toggle automatically
+        if (column.whatsAppPrice) {
+          return <span className="text-green-600 font-semibold text-xs">{column.whatsAppPrice}</span>;
+        }
+        return <span className="text-gray-300">—</span>;
+      }
       case "inteligencia":
         return renderAddonCell(column.inteligenciaPrice, "inteligencia");
       case "assinatura":
