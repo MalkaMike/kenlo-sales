@@ -3693,3 +3693,14 @@
 ## Remove Economia row from Kombos table
 
 - [x] Remove the "Economia de R$" savings row from the comparison table
+
+## Assinatura breakdown display in add-on card
+
+- [x] Add Assinatura breakdown showing included vs post-paid signatures (same pattern as WhatsApp leads)
+- [x] Logic: totalSignatures = closingsPerMonth (IMOB) + newContractsPerMonth (LOC)
+- [x] When totalSignatures <= 15 included: show "X assinaturas incluídas na carência"
+- [x] When totalSignatures > 15: show included count + additional with tiered pricing tooltip
+- [x] Tiers: 1-20=R$1.80, 21-40=R$1.70, 41+=R$1.50
+- [x] Motivational message with "Kenlo" in red
+- [x] Smooth expand/collapse animation (300ms ease-in-out)
+- [x] Added 9 new tests for Assinatura breakdown display logic (320 tests total)

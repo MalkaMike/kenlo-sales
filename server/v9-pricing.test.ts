@@ -363,6 +363,86 @@ describe('V9 - Digital Signatures Tiered Pricing', () => {
 });
 
 // ============================================================
+// ASSINATURA BREAKDOWN DISPLAY LOGIC
+// ============================================================
+
+describe('Assinatura Breakdown Display Logic', () => {
+  const INCLUDED_SIGNATURES = 15;
+
+  const getSignatureBreakdown = (closings: number, newContracts: number, product: 'imob' | 'loc' | 'both') => {
+    let totalSignatures = 0;
+    if (product === 'imob') totalSignatures = closings;
+    else if (product === 'loc') totalSignatures = newContracts;
+    else totalSignatures = closings + newContracts;
+    const additional = Math.max(0, totalSignatures - INCLUDED_SIGNATURES);
+    // Tiered cost
+    const t1 = Math.min(additional, 20);
+    const t2 = Math.min(Math.max(0, additional - 20), 20);
+    const t3 = Math.max(0, additional - 40);
+    const totalCost = t1 * 1.8 + t2 * 1.7 + t3 * 1.5;
+    const avgPrice = additional > 0 ? totalCost / additional : 0;
+    return { totalSignatures, additional, totalCost, avgPrice };
+  };
+
+  it('IMOB only: totalSignatures = closingsPerMonth', () => {
+    const result = getSignatureBreakdown(10, 5, 'imob');
+    expect(result.totalSignatures).toBe(10);
+  });
+
+  it('LOC only: totalSignatures = newContractsPerMonth', () => {
+    const result = getSignatureBreakdown(10, 5, 'loc');
+    expect(result.totalSignatures).toBe(5);
+  });
+
+  it('Both: totalSignatures = closings + newContracts', () => {
+    const result = getSignatureBreakdown(10, 5, 'both');
+    expect(result.totalSignatures).toBe(15);
+  });
+
+  it('When totalSignatures <= included, additional = 0 (carência)', () => {
+    const result = getSignatureBreakdown(10, 0, 'imob');
+    expect(result.additional).toBe(0);
+    expect(result.totalCost).toBe(0);
+  });
+
+  it('When totalSignatures = included exactly, additional = 0', () => {
+    const result = getSignatureBreakdown(15, 0, 'imob');
+    expect(result.additional).toBe(0);
+    expect(result.totalCost).toBe(0);
+  });
+
+  it('When totalSignatures > included, additional = totalSignatures - 15', () => {
+    const result = getSignatureBreakdown(30, 0, 'imob');
+    expect(result.additional).toBe(15);
+    // 15 additional all in tier 1 (1-20) at R$1.80
+    expect(result.totalCost).toBeCloseTo(27); // 15 * 1.80
+    expect(result.avgPrice).toBeCloseTo(1.8);
+  });
+
+  it('Both products with excess: closings + newContracts - 15', () => {
+    const result = getSignatureBreakdown(20, 10, 'both');
+    expect(result.totalSignatures).toBe(30);
+    expect(result.additional).toBe(15);
+    expect(result.totalCost).toBeCloseTo(27); // 15 * 1.80
+  });
+
+  it('Large volume crosses multiple tiers', () => {
+    const result = getSignatureBreakdown(70, 0, 'imob');
+    expect(result.totalSignatures).toBe(70);
+    expect(result.additional).toBe(55); // 70 - 15
+    // Tier 1: 20 * 1.80 = 36, Tier 2: 20 * 1.70 = 34, Tier 3: 15 * 1.50 = 22.5
+    expect(result.totalCost).toBeCloseTo(92.5);
+  });
+
+  it('Zero closings and contracts: totalSignatures = 0, no additional', () => {
+    const result = getSignatureBreakdown(0, 0, 'both');
+    expect(result.totalSignatures).toBe(0);
+    expect(result.additional).toBe(0);
+    expect(result.totalCost).toBe(0);
+  });
+});
+
+// ============================================================
 // V9 WHATSAPP MESSAGES TIERED PRICING
 // ============================================================
 
