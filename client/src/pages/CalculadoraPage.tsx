@@ -2329,7 +2329,13 @@ export default function CalculadoraPage() {
                       {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
                     </div>
                     {/* IA SDR & WhatsApp — inside Leads add-on card */}
-                    {addons.leads && isAddonAvailable("leads") && (
+                    <div
+                      className="overflow-hidden transition-all duration-300 ease-in-out"
+                      style={{
+                        maxHeight: addons.leads && isAddonAvailable("leads") ? '600px' : '0px',
+                        opacity: addons.leads && isAddonAvailable("leads") ? 1 : 0,
+                      }}
+                    >
                       <div className="mt-3 pt-2 border-t border-gray-200/60">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
@@ -2340,7 +2346,13 @@ export default function CalculadoraPage() {
                               onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}), ...(!checked ? { externalAIName: "" } : {}) })}
                             />
                           </div>
-                          {metrics.usesExternalAI && (
+                          <div
+                            className="overflow-hidden transition-all duration-200 ease-in-out"
+                            style={{
+                              maxHeight: metrics.usesExternalAI ? '80px' : '0px',
+                              opacity: metrics.usesExternalAI ? 1 : 0,
+                            }}
+                          >
                             <div className="px-2">
                               <Label htmlFor="aiName" className="text-[10px] text-gray-500">Qual IA você usa?</Label>
                               <Input
@@ -2352,7 +2364,7 @@ export default function CalculadoraPage() {
                                 className="mt-0.5 h-7 text-xs"
                               />
                             </div>
-                          )}
+                          </div>
                           <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
                             <Label htmlFor="whatsapp" className="text-xs text-gray-600 cursor-pointer">WhatsApp</Label>
                             <Switch
@@ -2362,7 +2374,7 @@ export default function CalculadoraPage() {
                             />
                           </div>
                           {/* WhatsApp leads postpaid breakdown */}
-                          {metrics.wantsWhatsApp && (() => {
+                          {(() => {
                             const included = 100;
                             const totalLeads = toNum(metrics.leadsPerMonth);
                             const additional = Math.max(0, totalLeads - included);
@@ -2392,37 +2404,45 @@ export default function CalculadoraPage() {
                               }
                             }
                             return (
-                              <div className="mt-2 text-xs text-gray-700 leading-relaxed">
-                                <span><span className="font-bold text-red-600">{fmtNum(included)}</span> leads incluídos</span>
-                                {additional > 0 && (
-                                  <TooltipProvider delayDuration={200}>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
-                                          {fmtNum(additional)} serão cobrados pós-pago (R${fmtPrice(avgPrice)}/lead)
-                                        </span>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="bottom" className="max-w-xs">
-                                        <p className="font-semibold mb-1">Detalhamento por faixa:</p>
-                                        {breakdownLines.map((line, i) => (
-                                          <p key={i} className="text-xs">{line}</p>
-                                        ))}
-                                        <p className="text-xs mt-1 font-semibold">Total: R${fmtPrice(totalCost)}/mês</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                )}
-                                <div className="mt-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-red-50 to-orange-50 border border-red-100/60">
-                                  <p className="text-xs font-medium text-gray-700 leading-relaxed">
-                                    Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por lead.
-                                  </p>
+                              <div
+                                className="overflow-hidden transition-all duration-300 ease-in-out"
+                                style={{
+                                  maxHeight: metrics.wantsWhatsApp ? '400px' : '0px',
+                                  opacity: metrics.wantsWhatsApp ? 1 : 0,
+                                }}
+                              >
+                                <div className="mt-2 text-xs text-gray-700 leading-relaxed">
+                                  <span><span className="font-bold text-red-600">{fmtNum(included)}</span> leads incluídos</span>
+                                  {additional > 0 && (
+                                    <TooltipProvider delayDuration={200}>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <span className="block mt-0.5 cursor-help underline decoration-dotted decoration-gray-400">
+                                            {fmtNum(additional)} serão cobrados pós-pago (R${fmtPrice(avgPrice)}/lead)
+                                          </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom" className="max-w-xs">
+                                          <p className="font-semibold mb-1">Detalhamento por faixa:</p>
+                                          {breakdownLines.map((line, i) => (
+                                            <p key={i} className="text-xs">{line}</p>
+                                          ))}
+                                          <p className="text-xs mt-1 font-semibold">Total: R${fmtPrice(totalCost)}/mês</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
+                                  <div className="mt-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-red-50 to-orange-50 border border-red-100/60">
+                                    <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                                      Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por lead.
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             );
                           })()}
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
 
                   <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">

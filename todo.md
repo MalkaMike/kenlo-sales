@@ -3652,3 +3652,9 @@
 - [x] Show included leads count and additional leads with per-lead price below WhatsApp toggle
 - [x] Add tiered pricing tooltip for WhatsApp leads breakdown
 - [x] Add motivational phrase "Na Kenlo, você paga só o que usa..." below WhatsApp postpaid info
+
+## Smooth expand/collapse animations for IA SDR & WhatsApp
+
+- [x] Add smooth expand/collapse animation when Leads is toggled on/off (showing/hiding IA SDR & WhatsApp sub-items)
+- [x] Add smooth animation for WhatsApp postpaid breakdown appearing/disappearing
+- [x] Add smooth animation for IA SDR AI name input appearing/disappearing
