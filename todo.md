@@ -3710,3 +3710,10 @@
 - [x] Show # assinaturas below mensalidade in small font (same style as Valor Total do Ciclo subtitle)
 - [x] Pós-Pago section: show "—" when no number, remove Seguros line entirely
 - [x] Add "Total Pós-Pago (Estimado)" row at the end of Pós-Pago section
+
+## Kombo Table: Row order, height, and column selection
+
+- [x] Swap order: Total 1º Ano row first, then Ciclo row (swapped order)
+- [x] Reduce row height further across the comparison table
+- [x] Allow user to select up to 3 columns from the comparison table (already implemented)
+- [x] Export selected 3 columns to PDF (fixed incompatible add-ons validation bug that blocked PDF generation)

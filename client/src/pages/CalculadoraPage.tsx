@@ -11,7 +11,7 @@ import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/constants/systems";
 
-import { KomboComparisonTable } from "@/components/KomboComparisonTable";
+import { KomboComparisonTable, type KomboColumnData } from "@/components/KomboComparisonTable";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { IMOB_ADDITIONAL_USERS, LOC_ADDITIONAL_CONTRACTS } from "@shared/pricing-config";
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
@@ -297,6 +297,8 @@ export default function CalculadoraPage() {
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlans, setSelectedPlans] = useState<string[]>([]);
+  const [selectedColumnsData, setSelectedColumnsData] = useState<KomboColumnData[]>([]);
   const [pendingQuoteInfo, setPendingQuoteInfo] = useState<QuoteInfo | null>(null);
   const [animateMetrics, setAnimateMetrics] = useState(false);
   const [isGeneratingExamples, setIsGeneratingExamples] = useState(false);
@@ -2672,6 +2674,8 @@ export default function CalculadoraPage() {
                     }
                   }
                 }}
+                onPlansSelected={(planIds) => setSelectedPlans(planIds)}
+                onSelectedColumnsData={(cols) => setSelectedColumnsData(cols)}
                 onFrequencyChange={setFrequency}
               />
               </div>
@@ -3810,19 +3814,19 @@ export default function CalculadoraPage() {
 
                 {/* Actions - Always visible with validation feedback */}
                 <div className="flex flex-col gap-3 mt-6 mb-24">
-                  {selectedPlan && canExportPDF && (
+                  {selectedPlans.length > 0 && canExportPDF && (
                     <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
                       <CheckCircle2 className="w-5 h-5 text-green-600" />
                       <span className="text-sm font-medium text-green-900">
-                        Plano selecionado! Agora você pode exportar a proposta.
+                        {selectedPlans.length === 1 ? '1 coluna selecionada' : `${selectedPlans.length} colunas selecionadas`} para a proposta. {selectedPlans.length < 3 ? `Você pode selecionar até ${3 - selectedPlans.length} mais.` : 'Máximo atingido.'}
                       </span>
                     </div>
                   )}
-                  {canExportPDF && !selectedPlan && (
+                  {canExportPDF && selectedPlans.length === 0 && (
                     <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <Zap className="w-5 h-5 text-blue-600" />
                       <span className="text-sm font-medium text-blue-900">
-                        Selecione um plano ou Kombo na tabela acima para exportar a cotação.
+                        Selecione até 3 colunas na tabela acima para exportar na cotação.
                       </span>
                     </div>
                   )}
@@ -3853,11 +3857,16 @@ export default function CalculadoraPage() {
                       className="flex-1 min-h-[50px]" 
                       size="lg" 
                       onClick={() => {
+                        console.log('[EXPORT DEBUG] canExportPDF:', canExportPDF);
+                        console.log('[EXPORT DEBUG] businessNature:', JSON.stringify(businessNature));
+                        console.log('[EXPORT DEBUG] isBusinessNatureComplete:', isBusinessNatureComplete());
+                        console.log('[EXPORT DEBUG] selectedPlans:', selectedPlans);
                         if (!canExportPDF) {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
                           return;
                         }
                         const hasCompanyErrors = !businessNature.companyName.trim() || !businessNature.ownerName.trim() || !businessNature.email.trim() || !businessNature.cellphone.trim();
+                        console.log('[EXPORT DEBUG] hasCompanyErrors:', hasCompanyErrors, 'companyName:', businessNature.companyName, 'ownerName:', businessNature.ownerName, 'email:', businessNature.email, 'cellphone:', businessNature.cellphone);
                         if (!isBusinessNatureComplete() || hasCompanyErrors) {
                           setShowValidationErrors(true);
                           toast.error("Preencha todos os campos obrigatórios marcados com * antes de exportar.");
@@ -3867,8 +3876,8 @@ export default function CalculadoraPage() {
                           }
                           return;
                         }
-                        if (!selectedPlan) {
-                          toast.error("Selecione um plano ou Kombo antes de exportar a cotação.");
+                        if (selectedPlans.length === 0) {
+                          toast.error("Selecione pelo menos 1 coluna na tabela de comparação antes de exportar.");
                           const komboSection = document.getElementById('kombo-comparison-section');
                           if (komboSection) {
                             komboSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3878,7 +3887,7 @@ export default function CalculadoraPage() {
                         setShowValidationErrors(false);
                         setShowQuoteInfoDialog(true);
                       }}
-                      variant={selectedPlan && canExportPDF ? "default" : "outline"}
+                      variant={selectedPlans.length > 0 && canExportPDF ? "default" : "outline"}
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Exportar Cotação (PDF)
@@ -3908,7 +3917,7 @@ export default function CalculadoraPage() {
             {
               // Generate PDF with all quote info
               try {
-                toast.loading("Gerando PDF...");
+                const toastId = toast.loading("Gerando PDF...");
                 
                 // Get selected addons as array (exclude Cash from PDFs per business rule)
                 const selectedAddons = Object.entries(addons)
@@ -4047,7 +4056,8 @@ export default function CalculadoraPage() {
                 const prepaymentMonths = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
 
                 // ============================================
-                // VALIDATION: Verify add-ons compatibility
+                // VALIDATION: Filter add-ons by compatibility
+                // (Don't block PDF — just use compatible add-ons for the main section)
                 // ============================================
                 const compatibleAddons: string[] = [];
                 const incompatibleAddons: string[] = [];
@@ -4078,25 +4088,7 @@ export default function CalculadoraPage() {
                 console.log('[PDF Validation] Product:', product);
                 console.log('[PDF Validation] Selected add-ons:', selectedAddons);
                 console.log('[PDF Validation] Compatible add-ons:', compatibleAddons);
-                console.log('[PDF Validation] Incompatible add-ons:', incompatibleAddons);
-                
-                // Alert user if there are incompatible add-ons
-                if (incompatibleAddons.length > 0) {
-                  const addonNames: Record<string, string> = {
-                    leads: 'Leads',
-                    inteligencia: 'Inteligência',
-                    assinatura: 'Assinatura',
-                    pay: 'Pay',
-                    seguros: 'Seguros',
-                    // cash removed from PDFs
-                  };
-                  const incompatibleNames = incompatibleAddons.map(a => addonNames[a] || a).join(', ');
-                  toast.error(
-                    `Add-ons incompatíveis detectados: ${incompatibleNames}. ` +
-                    `Estes add-ons não são compatíveis com o produto selecionado (${product.toUpperCase()}).`
-                  );
-                  return; // Stop PDF generation
-                }
+                console.log('[PDF Validation] Incompatible add-ons (filtered out):', incompatibleAddons);
                 
                 
                 // Validate Premium Services logic
@@ -4335,6 +4327,8 @@ export default function CalculadoraPage() {
                       isSelected: frequency === f.key,
                     })));
                   })(),
+                  // Selected columns data from comparison table (up to 3)
+                  selectedColumnsJson: selectedColumnsData.length > 0 ? JSON.stringify(selectedColumnsData) : undefined,
                 };
 
                 // Generate PDF using client-side html2pdf.js for pixel-perfect output
@@ -4496,8 +4490,8 @@ export default function CalculadoraPage() {
                       }
                       return;
                     }
-                    if (!selectedPlan) {
-                      toast.error('Selecione um plano ou Kombo antes de exportar.');
+                    if (selectedPlans.length === 0) {
+                      toast.error('Selecione pelo menos 1 coluna na tabela antes de exportar.');
                       return;
                     }
                     setShowValidationErrors(false);

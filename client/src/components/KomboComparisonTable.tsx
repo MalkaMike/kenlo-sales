@@ -57,8 +57,11 @@ interface KomboComparisonProps {
   // Premium services
   vipSupport: boolean;
   dedicatedCS: boolean;
-  // Callback when user selects a plan
+  // Callback when user selects plans (up to 3 columns)
   onPlanSelected?: (planId: KomboId | null) => void;
+  onPlansSelected?: (planIds: ColumnId[]) => void;
+  // Callback with full column data for selected columns (for PDF export)
+  onSelectedColumnsData?: (columns: KomboColumnData[]) => void;
   // Callback when user changes frequency in the comparison table
   onFrequencyChange?: (frequency: PaymentFrequency) => void;
 }
@@ -98,7 +101,7 @@ const FREQUENCY_OPTIONS: { id: ViewMode; label: string; shortLabel: string; disc
 // Plan tiers for clickable cycling
 const PLAN_TIERS: PlanTier[] = ["prime", "k", "k2"];
 
-interface KomboColumnData {
+export interface KomboColumnData {
   id: ColumnId;
   name: string;
   shortName: string;
@@ -912,8 +915,9 @@ function EditableTitle({
 }
 
 export function KomboComparisonTable(props: KomboComparisonProps) {
-  // Selected Plan for export (user confirms their choice)
-  const [selectedPlan, setSelectedPlan] = useState<ColumnId | null>(null);
+  // Selected Plans for export (user can select up to 3 columns)
+  const MAX_SELECTED_PLANS = 3;
+  const [selectedPlans, setSelectedPlans] = useState<ColumnId[]>([]);
 
   // Hovered column for temporary visual focus
   const [hoveredColumn, setHoveredColumn] = useState<ColumnId | null>(null);
@@ -963,7 +967,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       setCustomColumns([]);
       customCounterRef.current = 0;
       
-      if (selectedPlan && selectedPlan !== "none" && !String(selectedPlan).startsWith("custom_")) {
+      // Filter out any selected plans that are no longer compatible
+      setSelectedPlans(prev => {
         const newCompatible = (() => {
           switch (props.product) {
             case "imob": return ["imob_start", "imob_pro"];
@@ -972,11 +977,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             default: return [];
           }
         })();
-        if (!newCompatible.includes(selectedPlan as string)) {
-          setSelectedPlan(null);
-          props.onPlanSelected?.(null);
+        const filtered = prev.filter(p => 
+          p === "none" || String(p).startsWith("custom_") || newCompatible.includes(p as string)
+        );
+        if (filtered.length !== prev.length) {
+          // Defer parent state updates to avoid setState-during-render
+          setTimeout(() => {
+            props.onPlansSelected?.(filtered);
+            props.onPlanSelected?.(filtered.length > 0 ? filtered[0] as KomboId : null);
+          }, 0);
         }
-      }
+        return filtered;
+      });
 
       setIsTransitioning(true);
       const timer = setTimeout(() => setIsTransitioning(false), 400);
@@ -1022,25 +1034,46 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       delete next[customId];
       return next;
     });
-    if (selectedPlan === customId) {
-      setSelectedPlan(null);
-      props.onPlanSelected?.(null);
-    }
-  }, [selectedPlan, props.onPlanSelected]);
+    setSelectedPlans(prev => {
+      const filtered = prev.filter(p => p !== customId);
+      if (filtered.length !== prev.length) {
+        setTimeout(() => {
+          props.onPlansSelected?.(filtered);
+          props.onPlanSelected?.(filtered.length > 0 ? filtered[0] as KomboId : null);
+        }, 0);
+      }
+      return filtered;
+    });
+  }, [props.onPlansSelected, props.onPlanSelected]);
 
   // Rename a custom column
   const renameCustomColumn = useCallback((customId: string, newName: string) => {
     setCustomColumns(prev => prev.map(c => c.id === customId ? { ...c, name: newName } : c));
   }, []);
 
-  // Notify parent when plan selection changes
+  // Notify parent when plan selection changes (toggle up to 3)
   const handlePlanSelect = (planId: ColumnId) => {
-    if (String(planId).startsWith("custom_")) {
-      setSelectedPlan(planId);
-      return;
-    }
-    setSelectedPlan(planId);
-    props.onPlanSelected?.(planId as KomboId);
+    setSelectedPlans(prev => {
+      let next: ColumnId[];
+      if (prev.includes(planId)) {
+        // Deselect
+        next = prev.filter(p => p !== planId);
+      } else if (prev.length < MAX_SELECTED_PLANS) {
+        // Add to selection
+        next = [...prev, planId];
+      } else {
+        // Already at max: replace the oldest selection
+        next = [...prev.slice(1), planId];
+      }
+      // Defer parent state updates to avoid setState-during-render
+      setTimeout(() => {
+        props.onPlansSelected?.(next);
+        // Legacy single-select callback: use first selected non-custom plan, or first plan
+        const firstKombo = next.find(p => !String(p).startsWith("custom_"));
+        props.onPlanSelected?.(firstKombo ? firstKombo as KomboId : null);
+      }, 0);
+      return next;
+    });
   };
 
   // Determine recommended Kombo
@@ -1116,7 +1149,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "implInteligencia", label: "Inteligência", indent: true },
     { key: "implTotal", label: "Total Implantação", isTotal: true },
 
-    { key: "cycleTotal", label: "Valor Total do Ciclo", isTotal: true },
+    { key: "cycleTotal", label: "Total 1\u00ba Ano", isTotal: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
 
     { key: "postpaid", label: "Pós-Pago", isHeader: true },
@@ -1206,8 +1239,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           className={`flex flex-col items-center gap-0.5 ${isEditable ? "cursor-pointer group" : ""}`}
           onClick={isEditable ? (e) => handlePlanCellClick(colIndex, planType, e) : undefined}
         >
-          <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>
-          <span className={`text-[10px] font-bold ${isEditable ? "text-primary group-hover:underline" : "text-gray-500"}`}>
+          <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>
+          <span className={`text-[9px] font-bold ${isEditable ? "text-primary group-hover:underline" : "text-gray-500"}`}>
             {currentPlan.toUpperCase()}
           </span>
         </div>
@@ -1220,11 +1253,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       if (isSuaSelecao) {
         if (["pay", "seguros", "cash"].includes(addonKey)) {
           const isOn = props.addons[addonKey as keyof typeof props.addons];
-          if (!isOn) return <span className="text-gray-300">—</span>;
-          return <span className="font-medium text-gray-700">{addonKey === "cash" ? "Grátis" : "Pós-pago"}</span>;
+          if (!isOn) return <span className="text-gray-300 text-sm">—</span>;
+          return <span className="font-medium text-gray-700 text-sm">{addonKey === "cash" ? "Grátis" : "Pós-pago"}</span>;
         }
-        if (price === null) return <span className="text-gray-300">—</span>;
-        return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
+        if (price === null) return <span className="text-gray-300 text-sm">—</span>;
+        return <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>;
       }
 
       // === Kombo columns: fixed, just show price or dash (no "Incluído" label, no "Adicionar" button) ===
@@ -1234,15 +1267,15 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           const isIncluded = KOMBO_DEFINITIONS[komboId]?.includedAddons.includes(addonKey);
           if (isIncluded) {
             const label = addonKey === "cash" ? "Grátis" : "Pós-pago";
-            return <span className="font-medium text-gray-700">{label}</span>;
+            return <span className="font-medium text-gray-700 text-sm">{label}</span>;
           }
-          return <span className="text-gray-300">—</span>;
+          return <span className="text-gray-300 text-sm">—</span>;
         }
         // Paid add-ons
         if (price !== null) {
-          return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
+          return <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>;
         }
-        return <span className="text-gray-300">—</span>;
+        return <span className="text-gray-300 text-sm">—</span>;
       }
 
       // === Custom columns: fully toggleable ===
@@ -1271,7 +1304,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
             className="cursor-pointer group"
             onClick={(e) => handleAddonCellClick(colIndex, addonKey, e)}
           >
-            <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
+            <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
               R$ {formatCurrency(price)}
             </span>
           </div>
@@ -1305,7 +1338,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               className="cursor-pointer group"
               onClick={(e) => handlePremiumCellClick(colIndex, serviceKey, e)}
             >
-              <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
+              <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
                 R$ {formatCurrency(priceOrLabel)}
               </span>
             </div>
@@ -1325,9 +1358,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       
       // Non-custom columns: just show price or dash
       if (typeof priceOrLabel === "number") {
-        return <span className="font-medium">R$ {formatCurrency(priceOrLabel)}</span>;
+        return <span className="font-medium text-sm">R$ {formatCurrency(priceOrLabel)}</span>;
       }
-      return <span className="text-gray-300">—</span>;
+      return <span className="text-gray-300 text-sm">—</span>;
     };
 
     switch (rowKey) {
@@ -1367,7 +1400,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 className="cursor-pointer group"
                 onClick={(e) => handlePremiumCellClick(colIndex, "training", e)}
               >
-                <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
+                <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
                   R$ {formatCurrency(column.trainingPrice)}
                 </span>
               </div>
@@ -1385,9 +1418,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         }
         // Non-custom, non-Kombo: just show dash
         if (typeof column.trainingPrice === "number") {
-          return <span className="font-medium">R$ {formatCurrency(column.trainingPrice)}</span>;
+          return <span className="font-medium text-sm">R$ {formatCurrency(column.trainingPrice)}</span>;
         }
-        return <span className="text-gray-300">—</span>;
+        return <span className="text-gray-300 text-sm">—</span>;
       }
       case "cycle": {
         // Per-column cycle selector — ALL columns are editable (including Sua Seleção)
@@ -1418,9 +1451,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       }
       case "totalMonthly":
         return (
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="font-bold">R$ {formatCurrency(column.totalMonthly)}</span>
-            <span className="text-[10px] text-gray-400 font-normal">
+          <div className="flex flex-col items-center gap-0">
+            <span className="font-bold text-sm">R$ {formatCurrency(column.totalMonthly)}</span>
+            <span className="text-[9px] text-gray-400 font-normal">
               {column.subscriptionCount} {column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
             </span>
           </div>
@@ -1437,25 +1470,25 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         };
         const implLabel = implKeyMap[rowKey];
         const item = column.implBreakdown.find(b => b.label === implLabel);
-        if (!item) return <span className="text-gray-300">—</span>;
+        if (!item) return <span className="text-gray-300 text-sm">—</span>;
         if (item.free) {
           return (
-            <span className="text-green-600 text-[11px] font-semibold">Ofertado</span>
+            <span className="text-green-600 text-[10px] font-semibold">Ofertado</span>
           );
         }
-        return <span className="text-sm text-gray-600">R$ {formatCurrency(item.cost)}</span>;
+        return <span className="text-xs text-gray-600">R$ {formatCurrency(item.cost)}</span>;
       }
       case "implTotal": {
         return (
-          <span className="font-bold text-gray-700">R$ {formatCurrency(column.implementation)}</span>
+          <span className="font-bold text-gray-700 text-sm">R$ {formatCurrency(column.implementation)}</span>
         );
       }
       case "cycleTotal": {
         const cycleLabel = CYCLE_LABELS[column.overrides?.frequency ?? props.frequency];
         return (
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="font-bold text-gray-800">R$ {formatCurrency(column.cycleTotalValue)}</span>
-            <span className="text-[10px] text-gray-400 font-normal">({cycleLabel})</span>
+          <div className="flex flex-col items-center gap-0">
+            <span className="font-bold text-gray-800 text-sm">R$ {formatCurrency(column.cycleTotalValue)}</span>
+            <span className="text-[9px] text-gray-400 font-normal">({cycleLabel})</span>
           </div>
         );
       }
@@ -1474,41 +1507,66 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       // Pós-Pago items
       case "postpaidUsers": {
         const hasImob = column.imobPrice !== null;
-        if (!hasImob) return <span className="text-gray-300">—</span>;
-        return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        if (!hasImob) return <span className="text-gray-300 text-xs">—</span>;
+        return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
       }
       case "postpaidContracts": {
         const hasLoc = column.locPrice !== null;
-        if (!hasLoc) return <span className="text-gray-300">—</span>;
-        return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
+        if (!hasLoc) return <span className="text-gray-300 text-xs">—</span>;
+        return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
       }
       case "postpaidWhatsApp": {
-        if (column.whatsAppPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300">—</span>;
+        if (column.whatsAppPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300 text-xs">—</span>;
       }
       case "postpaidAssinaturas": {
-        if (column.assinaturaPrice !== null) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300">—</span>;
+        if (column.assinaturaPrice !== null) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300 text-xs">—</span>;
       }
       case "postpaidBoletos": {
-        if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300">—</span>;
+        if (column.payPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300 text-xs">—</span>;
       }
       case "postpaidSplits": {
-        if (column.payPrice) return <span className="text-[11px] text-amber-600 font-medium">Pós-pago</span>;
-        return <span className="text-gray-300">—</span>;
+        if (column.payPrice) return <span className="text-[10px] text-amber-600 font-medium">Pós-pago</span>;
+        return <span className="text-gray-300 text-xs">—</span>;
       }
       case "postpaidTotal": {
         // Calculate estimated total pós-pago for this column
         // This is an estimate based on the column's active post-paid items
         const hasPostpaidItems = column.imobPrice !== null || column.locPrice !== null || column.whatsAppPrice || column.assinaturaPrice !== null || column.payPrice;
-        if (!hasPostpaidItems) return <span className="text-gray-300">—</span>;
-        return <span className="text-[11px] text-amber-600 font-semibold">Variável</span>;
+        if (!hasPostpaidItems) return <span className="text-gray-300 text-xs">—</span>;
+        return <span className="text-[10px] text-amber-600 font-semibold">Variável</span>;
       }
       default:
         return null;
     }
   };
+
+  // Emit selected columns data to parent for PDF export
+  // Use a ref for the callback to avoid infinite loops
+  const onSelectedColumnsDataRef = useRef(props.onSelectedColumnsData);
+  onSelectedColumnsDataRef.current = props.onSelectedColumnsData;
+  // Serialize selectedPlans + column totals to detect real changes
+  const selectedColumnsKey = useMemo(() => {
+    return selectedPlans.map(id => {
+      const col = columns.find(c => c.id === id);
+      return col ? `${id}:${col.totalMonthly}:${col.implementation}:${col.cycleTotalValue}` : id;
+    }).join('|');
+  }, [selectedPlans, columns]);
+  useEffect(() => {
+    const cb = onSelectedColumnsDataRef.current;
+    if (!cb) return;
+    if (selectedPlans.length > 0) {
+      const selectedCols = selectedPlans
+        .map(id => columns.find(c => c.id === id))
+        .filter((c): c is KomboColumnData => c !== undefined);
+      cb(selectedCols);
+    } else {
+      cb([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedColumnsKey]);
 
   // Determine the number of kombo columns (for visual separator)
   const komboColumnCount = compatibleKomboIds.length;
@@ -1556,11 +1614,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         className={`text-center py-2 px-1 cursor-pointer transition-colors duration-150 relative ${
                           isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                         } ${
-                          selectedPlan === col.id
+                          selectedPlans.includes(col.id)
                             ? col.isCustom
                               ? "bg-amber-50 border-t-4 border-l-4 border-r-4 border-amber-500 rounded-t-xl shadow-lg shadow-amber-100"
                               : "bg-green-50 border-t-4 border-l-4 border-r-4 border-green-600 rounded-t-xl shadow-lg shadow-green-200"
-                            : hoveredColumn === col.id && selectedPlan !== col.id
+                            : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                             ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                             : colIndex % 2 === 1
                             ? "bg-gray-50/50"
@@ -1651,12 +1709,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}
-                      className={`${row.isHeader ? "py-2 px-4" : row.isTotal ? "py-2 px-4" : "py-1.5 px-4"} ${row.indent ? "pl-8" : ""} ${
+                      className={`${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"} ${row.indent ? "pl-8" : ""} ${
                         row.isHeader
-                          ? "font-semibold text-gray-700 text-sm" 
+                          ? "font-semibold text-gray-700 text-xs" 
                           : row.isTotal
-                          ? "font-bold text-gray-700"
-                          : "text-gray-600"
+                          ? "font-bold text-gray-700 text-xs"
+                          : "text-gray-600 text-xs"
                       }`}
                     >
                       {row.key === "training" ? (
@@ -1725,14 +1783,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center ${row.isHeader ? "py-2 px-2" : row.isTotal ? "py-2 px-2" : "py-1.5 px-2"} transition-colors duration-150 ${
+                          className={`text-center ${row.isHeader ? "py-0.5 px-2" : row.isTotal ? "py-0.5 px-2" : "py-px px-2"} transition-colors duration-150 ${
                             isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                           } ${
-                            selectedPlan === col.id
+                            selectedPlans.includes(col.id)
                               ? col.isCustom
                                 ? "bg-amber-50 border-l-4 border-r-4 border-amber-500 shadow-lg shadow-amber-100"
                                 : "bg-green-50 border-l-4 border-r-4 border-green-600 shadow-lg shadow-green-200"
-                              : hoveredColumn === col.id && selectedPlan !== col.id
+                              : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                               ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                               : colIndex % 2 === 1
                               ? "bg-gray-50/50"
@@ -1763,15 +1821,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <td 
                         key={`select-btn-${col.id}`} 
                         onMouseEnter={() => setHoveredColumn(col.id)} 
-                        onClick={() => handlePlanSelect(col.id)} 
                         className={`text-center py-2 px-1 cursor-pointer transition-colors duration-150 ${
                           isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
                         } ${
-                          selectedPlan === col.id
+                          selectedPlans.includes(col.id)
                             ? col.isCustom
                               ? "bg-amber-50 border-l-4 border-r-4 border-b-4 border-amber-500 rounded-b-xl shadow-lg shadow-amber-100"
                               : "bg-green-50 border-l-4 border-r-4 border-b-4 border-green-600 rounded-b-xl shadow-lg shadow-green-200"
-                            : hoveredColumn === col.id && selectedPlan !== col.id
+                            : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                             ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                             : colIndex % 2 === 1
                             ? "bg-gray-50/50"
@@ -1780,28 +1837,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       >
                         <Button
                           onClick={() => handlePlanSelect(col.id)}
-                          variant={selectedPlan === col.id ? "default" : "outline"}
+                          variant={selectedPlans.includes(col.id) ? "default" : "outline"}
                           className={`w-full text-xs transition-all duration-300 ${
-                            selectedPlan === col.id 
+                            selectedPlans.includes(col.id) 
                               ? col.isCustom
                                 ? "bg-amber-500 hover:bg-amber-600 text-white"
                                 : "bg-green-600 hover:bg-green-700 text-white" 
+                              : selectedPlans.length >= MAX_SELECTED_PLANS
+                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-green-50 hover:border-green-500 hover:text-green-700"
                           }`}
                           size="sm"
                         >
-                          {col.isRecommended && !selectedPlan ? (
+                          {selectedPlans.includes(col.id) ? (
+                            <>
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              {selectedPlans.indexOf(col.id) + 1}º Selecionado
+                            </>
+                          ) : col.isRecommended && selectedPlans.length === 0 ? (
                             <>
                               <Star className="w-3 h-3 mr-1 fill-current" />
                               Selecionar
                             </>
-                          ) : selectedPlan === col.id ? (
-                            <>
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Selecionado
-                            </>
                           ) : (
-                            "Selecionar"
+                            `Selecionar${selectedPlans.length > 0 ? ` (${selectedPlans.length}/${MAX_SELECTED_PLANS})` : ""}`
                           )}
                         </Button>
                       </td>
@@ -1819,11 +1878,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           {/* Footnote */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              <strong>Mensalidades (Pré-Pago):</strong> Valor mensal recorrente das assinaturas. <strong>Valor Total do Ciclo:</strong> Mensalidades × meses do ciclo + implantação (cobrada apenas no primeiro ciclo).
+              <strong>Mensalidades (Pré-Pago):</strong> Valor mensal recorrente das assinaturas. <strong>Total 1º Ano:</strong> Mensalidades × meses do ciclo + implantação (cobrada apenas no primeiro ciclo).
               <br />
               <strong>Pós-Pago:</strong> Itens cobrados conforme uso (usuários, contratos, boletos, etc.) — não incluídos no valor do ciclo.
               <br />
               <strong>Colunas interativas:</strong> Clique nos planos (Prime/K/K2) nas colunas de Kombo para simular cenários diferentes. A coluna "Sua Seleção" reflete a configuração principal.
+              <br />
+              <strong>Seleção para PDF:</strong> Selecione até {MAX_SELECTED_PLANS} colunas clicando em "Selecionar". As colunas selecionadas serão exportadas na proposta PDF.
               <br />
               <strong>Cenários personalizados:</strong> Use o botão "+" para adicionar cenários livres (até {MAX_CUSTOM_COLUMNS}). Clique no título para renomear (máx. 11 caracteres).
             </p>
