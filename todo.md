@@ -3613,3 +3613,15 @@
 - [x] Add motivational phrase below IMOB postpaid text: "Na Kenlo, você paga só o que usa. E mais você usa, menos você paga por usuário" with Kenlo in red
 - [x] Add motivational phrase below Locação postpaid text: "Na Kenlo, você paga só o que usa. E mais você usa, menos você paga por contrato" with Kenlo in red
 - [x] Audit all number displays in CalculadoraPage, KomboComparisonTable, and other pages
+
+## Motivational Phrase Styling Enhancement
+
+- [x] Make motivational phrase bigger and more highlighted (classy but prominent)
+- [x] Apply consistent styling for both IMOB (por usuário) and LOC (por contrato) versions
+
+## Leads Box Reorganization — IA SDR + WhatsApp Inside
+
+- [x] Move IA SDR selector into the Leads box (same container)
+- [x] Move WhatsApp selector into the Leads box (same container)
+- [x] Add text input for AI name when client already uses an external AI SDR
+- [x] Ensure layout matches reference image (toggle switches in a clean card layout)

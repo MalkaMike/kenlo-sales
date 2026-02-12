@@ -268,6 +268,7 @@ export default function CalculadoraPage() {
     closingsPerMonth: "" as number | "",
     leadsPerMonth: "" as number | "",  // Number of leads received per month for WhatsApp calculation
     usesExternalAI: false,
+    externalAIName: "",  // Name of external AI SDR if client uses one
     wantsWhatsApp: false,  // WhatsApp disabled by default
     imobVipSupport: false,  // VIP Support for IMOB
     imobDedicatedCS: false, // Dedicated CS for IMOB
@@ -353,6 +354,7 @@ export default function CalculadoraPage() {
       closingsPerMonth: 1,
       leadsPerMonth: 0,
       usesExternalAI: false,
+      externalAIName: "",
       wantsWhatsApp: false,
       imobVipSupport: false,
       imobDedicatedCS: false,
@@ -1892,23 +1894,37 @@ export default function CalculadoraPage() {
                               )}
                             </div>
                           </div>
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center justify-between p-1.5 bg-white rounded border border-blue-100">
-                              <Label htmlFor="externalAI" className="text-[10px] text-gray-600">IA SDR</Label>
+                        </div>
+                        {/* IA SDR & WhatsApp — inside Leads box */}
+                        <div className="pt-2 border-t border-blue-200/40">
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-blue-100">
+                              <Label htmlFor="externalAI" className="text-xs text-gray-600">IA SDR</Label>
                               <Switch
                                 id="externalAI"
                                 checked={metrics.usesExternalAI}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}) })}
-                                className="scale-75"
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, usesExternalAI: checked, ...(checked ? { wantsWhatsApp: false } : {}), ...(!checked ? { externalAIName: "" } : {}) })}
                               />
                             </div>
-                            <div className="flex items-center justify-between p-1.5 bg-white rounded border border-blue-100">
-                              <Label htmlFor="whatsapp" className="text-[10px] text-gray-600">WhatsApp</Label>
+                            {metrics.usesExternalAI && (
+                              <div className="px-2">
+                                <Label htmlFor="aiName" className="text-[10px] text-gray-500">Qual IA você usa?</Label>
+                                <Input
+                                  id="aiName"
+                                  type="text"
+                                  value={metrics.externalAIName}
+                                  onChange={(e) => setMetrics({ ...metrics, externalAIName: e.target.value })}
+                                  placeholder="Ex: Lais, Harry, Lia..."
+                                  className="mt-0.5 h-7 text-xs"
+                                />
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-blue-100">
+                              <Label htmlFor="whatsapp" className="text-xs text-gray-600">WhatsApp</Label>
                               <Switch
                                 id="whatsapp"
                                 checked={metrics.wantsWhatsApp}
-                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked, ...(checked ? { usesExternalAI: false } : {}) })}
-                                className="scale-75"
+                                onCheckedChange={(checked) => setMetrics({ ...metrics, wantsWhatsApp: checked, ...(checked ? { usesExternalAI: false, externalAIName: "" } : {}) })}
                               />
                             </div>
                           </div>
@@ -1976,9 +1992,11 @@ export default function CalculadoraPage() {
                                   </TooltipProvider>
                                 )}
                                 {additional > 0 && (
-                                  <p className="mt-1.5 text-[10px] text-gray-500 italic leading-snug">
-                                    Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por usuário.
-                                  </p>
+                                  <div className="mt-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-red-50 to-orange-50 border border-red-100/60">
+                                    <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                                      Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por usuário.
+                                    </p>
+                                  </div>
                                 )}
                               </div>
                             );
@@ -2102,9 +2120,11 @@ export default function CalculadoraPage() {
                                   </TooltipProvider>
                                 )}
                                 {additional > 0 && (
-                                  <p className="mt-1.5 text-[10px] text-gray-500 italic leading-snug">
-                                    Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por contrato.
-                                  </p>
+                                  <div className="mt-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-red-50 to-orange-50 border border-red-100/60">
+                                    <p className="text-xs font-medium text-gray-700 leading-relaxed">
+                                      Na <span className="font-bold text-red-600">Kenlo</span>, você paga só o que usa. E mais você usa, menos você paga por contrato.
+                                    </p>
+                                  </div>
                                 )}
                               </div>
                             );
