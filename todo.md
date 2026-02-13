@@ -4114,3 +4114,46 @@
   - index.ts (8 lines) — barrel export
 - [x] Add 23 unit tests for performanceCalculators (metrics, kombo/plan/vendor/frequency/addon breakdown, trend data)
 - [x] Verify all 463 tests pass (440 existing + 23 new) and TypeScript compiles with 0 errors
+
+## Code Optimization Pass 2 — Remaining Large Files
+- [x] Split client generateProposalPDF.ts (1227 → 68 lines, 94% reduction) into 8 sub-modules:
+  - pdf/pdfHelpers.ts — shared types, constants, helpers
+  - pdf/pdfCoverSection.ts — Section 1: Capa
+  - pdf/pdfProfileSection.ts — Section 2: Perfil Operacional
+  - pdf/pdfContractSection.ts — Sections 3-6: Three-box layout
+  - pdf/pdfComparisonSection.ts — Section 4B: Comparativo de Cenários
+  - pdf/pdfFeaturesSection.ts — Section 7: Funcionalidades
+  - pdf/pdfRevenueSection.ts — Section 8: Receita Extra + Conclusion
+  - pdf/index.ts — barrel export
+- [x] Split PricingAdminPage.tsx (998 → 155 lines, 84% reduction) into 9 sub-modules:
+  - pricing-admin/pricingAdminShared.tsx — shared UI atoms and helpers
+  - pricing-admin/SectionPaymentCycles.tsx — Block A
+  - pricing-admin/SectionBasePlans.tsx — Block B
+  - pricing-admin/SectionAddons.tsx — Block C
+  - pricing-admin/SectionPremiumServices.tsx — Block D
+  - pricing-admin/SectionKombos.tsx — Block E
+  - pricing-admin/SectionVariableCosts.tsx — Block F
+  - pricing-admin/SectionFeatureMatrix.tsx — Block G
+  - pricing-admin/index.ts — barrel export
+- [x] Split HistoricoPage.tsx (995 → 268 lines, 73% reduction) into 7 sub-modules:
+  - historico/historicoConstants.ts — shared helpers, display maps, chart colors
+  - historico/historicoChartData.ts — pure chart data computation
+  - historico/HistoricoCharts.tsx — 4 analytics charts
+  - historico/HistoricoFilters.tsx — filter panel
+  - historico/HistoricoTable.tsx — desktop table + mobile cards
+  - historico/historicoExcelExport.ts — Excel export logic
+  - historico/index.ts — barrel export
+- [x] Split server/pdfGenerator.ts (952 → 61 lines, 94% reduction) into 6 sub-modules:
+  - pdf/pdfTypes.ts (309 lines) — shared interfaces, constants, helpers
+  - pdf/pdfCoverPage.ts (69 lines) — Page 1: Cover
+  - pdf/pdfStrategicPage.ts (218 lines) — Page 2: Strategic Overview
+  - pdf/pdfFeaturesPage.ts (105 lines) — Page 3: Platform Functionalities
+  - pdf/pdfRevenuePage.ts (235 lines) — Page 4: Extra Revenue
+  - pdf/index.ts — barrel export
+- [x] Split server/routers.ts (564 → 30 lines, 95% reduction) into 4 sub-routers:
+  - routers/salespersonAuth.ts (170 lines) — JWT helpers + login/logout/me/list
+  - routers/quotesRouter.ts (124 lines) — save/list/stats/delete/performance
+  - routers/proposalsRouter.ts (132 lines) — create + generatePDF
+  - routers/profileRouter.ts (69 lines) — me/update/uploadAvatar/proposalHistory
+- [x] Remaining large files (LocacaoPage 537, PayPage 502, ImobPage 480, Home 455) are JSX-heavy product pages — splitting would fragment layout without logic extraction benefit; left as-is
+- [x] All 463 tests pass and TypeScript compiles with 0 errors
