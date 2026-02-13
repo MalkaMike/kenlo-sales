@@ -3,6 +3,7 @@
  */
 
 import type { jsPDF } from "jspdf";
+import { KENLO_LOGO_RED_BASE64 } from "../kenloLogoBase64";
 
 // ── Data Interface ──────────────────────────────────────────────
 export interface ProposalPrintData {
@@ -150,9 +151,13 @@ export function newPage(doc: jsPDF, data: ProposalPrintData): number {
   // Top accent
   doc.setFillColor(...rgb(C.primary));
   doc.rect(0, 0, PW, 2, "F");
+  // Kenlo logo — top-left header
+  const logoW = 60;
+  const logoH = 18;
+  doc.addImage(KENLO_LOGO_RED_BASE64, "PNG", M, 8, logoW, logoH);
   // Footer
   renderPageFooter(doc, data);
-  return 30;
+  return 32;
 }
 
 /** Shared footer renderer — salesperson contact on the left, proposal label on the right, page number centered */

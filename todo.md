@@ -4213,3 +4213,7 @@
 - [x] Add validity notice to conclusion section using validityDays field
 - [x] Optimize Page 2 bottom spacing so features table starts on same page if room
 - [x] Add page numbers (e.g. "Página 2 de 3") to footer on all pages
+
+## PDF Content Page Header Logo
+
+- [x] Add Kenlo logo to the top-left of all content page headers (not cover page)
