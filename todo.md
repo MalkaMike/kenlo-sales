@@ -4073,3 +4073,14 @@
 - [x] Refactor buildProposalData.ts to compose extracted builders (803 → 295 lines, 63% reduction)
 - [x] Verify all 340 tests pass after refactoring
 - [x] Verify TypeScript compiles with 0 errors
+
+## Refactor useExampleGenerator into Smaller Utilities
+- [x] Analyze useExampleGenerator structure and identify logical sections
+- [x] Extract random config generation into exampleConfigGenerator.ts pure utility (263 lines)
+- [x] Extract proposal data assembly into exampleConfigGenerator.ts (buildExampleProposalData)
+- [x] Reuse postPaidBuilder.ts tier helpers instead of duplicating (eliminated ~108 lines of duplication)
+- [x] Export tier calculation helpers from postPaidBuilder.ts for cross-module reuse
+- [x] Refactor useExampleGenerator.ts to thin hook (404 → 74 lines, 82% reduction)
+- [x] Add 36 unit tests for extracted utilities (tier calcs, plan recommendation, post-paid breakdown, proposal builder)
+- [x] Verify all 376 tests pass after refactoring (340 existing + 36 new)
+- [x] Verify TypeScript compiles with 0 errors

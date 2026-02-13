@@ -30,7 +30,7 @@ export interface PostPaidInput {
 
 // ─── Tier Calculation Helpers ──────────────────────────────────────────────
 
-function calcContractsTierCost(locPlan: PlanTier, additional: number): number {
+export function calcContractsTierCost(locPlan: PlanTier, additional: number): number {
   if (additional <= 0) return 0;
   if (locPlan === "prime") {
     return additional * 3;
@@ -46,7 +46,7 @@ function calcContractsTierCost(locPlan: PlanTier, additional: number): number {
   }
 }
 
-function calcBoletoSplitTierCost(locPlan: PlanTier, additional: number): number {
+export function calcBoletoSplitTierCost(locPlan: PlanTier, additional: number): number {
   if (additional <= 0) return 0;
   if (locPlan === "prime") {
     return additional * 4;
@@ -62,7 +62,7 @@ function calcBoletoSplitTierCost(locPlan: PlanTier, additional: number): number 
   }
 }
 
-function calcSignaturesTierCost(additional: number): number {
+export function calcSignaturesTierCost(additional: number): number {
   if (additional <= 0) return 0;
   const t1 = Math.min(additional, 20);
   const t2 = Math.min(Math.max(0, additional - 20), 20);
@@ -70,7 +70,7 @@ function calcSignaturesTierCost(additional: number): number {
   return t1 * 1.8 + t2 * 1.7 + t3 * 1.5;
 }
 
-function calcWhatsAppTierCost(additional: number): number {
+export function calcWhatsAppTierCost(additional: number): number {
   if (additional <= 0) return 0;
   const t1 = Math.min(additional, 200);
   const t2 = Math.min(Math.max(0, additional - 200), 150);
@@ -81,15 +81,15 @@ function calcWhatsAppTierCost(additional: number): number {
 
 // ─── Included Quantities ───────────────────────────────────────────────────
 
-function getIncludedUsers(plan: PlanTier): number {
+export function getIncludedUsers(plan: PlanTier): number {
   return plan === "prime" ? 2 : plan === "k" ? 5 : 10;
 }
 
-function getIncludedContracts(plan: PlanTier): number {
+export function getIncludedContracts(plan: PlanTier): number {
   return plan === "prime" ? 100 : plan === "k" ? 150 : 500;
 }
 
-function getIncludedBoletosSplits(plan: PlanTier): number {
+export function getIncludedBoletosSplits(plan: PlanTier): number {
   return plan === "prime" ? 2 : plan === "k" ? 5 : 15;
 }
 
