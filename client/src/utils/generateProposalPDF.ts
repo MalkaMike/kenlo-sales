@@ -255,251 +255,346 @@ export async function generateProposalPDFClient(
   let Y = newPage(doc, data);
   Y = sectionTitle(doc, "Perfil Operacional do Cliente", Y);
 
-  const gridData: Array<{ label: string; value: string }> = [
-    { label: "Razão Social", value: data.agencyName || "—" },
-    { label: "Proprietário", value: data.clientName || "—" },
-    { label: "Natureza do Negócio", value: businessTypeDisplay },
-    { label: "Email", value: data.email || "—" },
-    { label: "Celular", value: data.cellphone || "—" },
-  ];
+  // Centered 3-column layout for client profile
+  const profColW = (CW - 20) / 3; // 3 columns with 10px gap between
 
-  if (showImob) {
-    gridData.push({ label: "Usuários (Vendas)", value: data.imobUsers ? fmtNum(data.imobUsers) : "—" });
-    gridData.push({ label: "Fechamentos/mês", value: data.closings ? fmtNum(data.closings) : "—" });
-    gridData.push({ label: "Leads/mês", value: data.leadsPerMonth ? fmtNum(data.leadsPerMonth) : "—" });
-  }
-  if (showLoc) {
-    gridData.push({ label: "Contratos sob gestão", value: data.contracts ? fmtNum(data.contracts) : "—" });
-    gridData.push({ label: "Novos contratos/mês", value: data.newContracts ? fmtNum(data.newContracts) : "—" });
-  }
-
-  // Render as 2-column grid
-  const colW = CW / 2 - 10;
-  let row = 0;
-  for (let i = 0; i < gridData.length; i++) {
-    const col = i % 2;
-    const x = M + col * (colW + 20);
-    const y = Y + row * 18;
-    
+  // Helper to render a profile field
+  const renderProfileField = (label: string, value: string, x: number, y: number) => {
     doc.setFontSize(7);
     doc.setTextColor(...rgb(C.textMuted));
     doc.setFont("helvetica", "normal");
-    doc.text(gridData[i].label, x, y);
-    
+    doc.text(label, x, y);
     doc.setFontSize(9);
     doc.setTextColor(...rgb(C.dark));
     doc.setFont("helvetica", "bold");
-    doc.text(gridData[i].value, x, y + 10);
-    
-    if (col === 1) row++;
-  }
-  Y += Math.ceil(gridData.length / 2) * 18 + 10;
+    doc.text(value, x, y + 11);
+  };
 
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION 3: ESTRUTURA CONTRATADA
-  // ══════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 120)) Y = newPage(doc, data);
-  Y = sectionTitle(doc, "Estrutura Contratada", Y);
+  // Row 1: Razão Social | Proprietário | Natureza do Negócio
+  const natureDisplay = (showImob && showLoc) ? "Ambos" : businessTypeDisplay;
+  renderProfileField("Razão Social", data.agencyName || "—", M, Y);
+  renderProfileField("Proprietário", data.clientName || "—", M + profColW + 10, Y);
+  renderProfileField("Natureza do Negócio", natureDisplay, M + (profColW + 10) * 2, Y);
+  Y += 28;
 
-  // Cycle
-  doc.setFontSize(8);
-  doc.setTextColor(...rgb(C.textMuted));
-  doc.setFont("helvetica", "normal");
-  doc.text("Ciclo de Pagamento", M, Y);
-  doc.setFontSize(10);
-  doc.setTextColor(...rgb(C.primary));
-  doc.setFont("helvetica", "bold");
-  doc.text(cycleDisplay, M, Y + 12);
-  Y += 26;
+  // Row 2: Email | Celular
+  renderProfileField("Email", data.email || "—", M, Y);
+  renderProfileField("Celular", data.cellphone || "—", M + profColW + 10, Y);
+  Y += 28;
 
-  // Products
-  doc.setFontSize(8);
-  doc.setTextColor(...rgb(C.textMuted));
-  doc.setFont("helvetica", "normal");
-  doc.text("Produtos", M, Y);
-  
-  let productsLine = "";
-  if (showImob && showLoc) {
-    productsLine = `Kenlo Imob (${(data.imobPlan || "K").toUpperCase()}) & Kenlo Locação (${(data.locPlan || "K").toUpperCase()})`;
-  } else if (showImob) {
-    productsLine = `Kenlo Imob (${(data.imobPlan || "K").toUpperCase()})`;
-  } else if (showLoc) {
-    productsLine = `Kenlo Locação (${(data.locPlan || "K").toUpperCase()})`;
-  }
-  
-  doc.setFontSize(10);
-  doc.setTextColor(...rgb(C.dark));
-  doc.setFont("helvetica", "bold");
-  doc.text(productsLine, M, Y + 12);
-  Y += 26;
+  // Divider
+  divider(doc, Y);
+  Y += 14;
 
-  // Kombo (if any)
-  if (data.komboName && data.komboName !== "Sem Kombo") {
+  // Business metrics grouped by type
+  if (showImob) {
     doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text("Kombo Ativo", M, Y);
-    
-    doc.setFontSize(10);
     doc.setTextColor(...rgb(C.primary));
     doc.setFont("helvetica", "bold");
-    const komboText = data.komboDiscount 
-      ? `${data.komboName} (${data.komboDiscount}% de desconto)`
-      : data.komboName;
-    doc.text(komboText, M, Y + 12);
-    Y += 26;
-  }
-
-  // Add-ons (bullets)
-  if (selAddons.length > 0) {
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text("Add-ons Contratados", M, Y);
+    doc.text("Corretagem", M, Y);
     Y += 14;
 
-    const addonNameMap: Record<string, string> = {
-      leads: "Kenlo Leads",
-      inteligencia: "Kenlo Inteligência",
-      assinatura: "Kenlo Assinatura",
-      pay: "Kenlo Pay",
-      seguros: "Kenlo Seguros",
-    };
-
-    selAddons.forEach((addon) => {
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(C.text));
-      doc.setFont("helvetica", "normal");
-      doc.text("•", M + 5, Y);
-      doc.text(addonNameMap[addon] || addon, M + 15, Y);
-      Y += 12;
-    });
-    Y += 6;
-  } else {
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text("Add-ons Contratados", M, Y);
-    doc.setFontSize(9);
-    doc.setTextColor(...rgb(C.text));
-    doc.text("Nenhum add-on contratado", M, Y + 12);
-    Y += 26;
+    renderProfileField("Número de Usuários", data.imobUsers ? fmtNum(data.imobUsers) : "—", M, Y);
+    renderProfileField("Leads por Mês", data.leadsPerMonth ? fmtNum(data.leadsPerMonth) : "—", M + profColW + 10, Y);
+    renderProfileField("Fechamentos por Mês", data.closings ? fmtNum(data.closings) : "—", M + (profColW + 10) * 2, Y);
+    Y += 28;
   }
 
+  if (showLoc) {
+    if (showImob) { divider(doc, Y); Y += 14; }
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.primary));
+    doc.setFont("helvetica", "bold");
+    doc.text("Administração de Aluguel", M, Y);
+    Y += 14;
+
+    renderProfileField("Contratos sob Gestão", data.contracts ? fmtNum(data.contracts) : "—", M, Y);
+    renderProfileField("Novos Contratos/Mês", data.newContracts ? fmtNum(data.newContracts) : "—", M + profColW + 10, Y);
+    Y += 28;
+
+    // Boleto and Split info
+    const boletoInfo = data.chargesBoletoToTenant ? `Sim — ${fmt(data.boletoAmount || 0)}` : "Não";
+    const splitInfo = data.chargesSplitToOwner ? `Sim — ${fmt(data.splitAmount || 0)}` : "Não";
+    renderProfileField("Inquilino Paga Boleto?", boletoInfo, M, Y);
+    renderProfileField("Proprietário Paga Split?", splitInfo, M + profColW + 10, Y);
+    Y += 28;
+  }
+
+  Y += 6;
+
   // ══════════════════════════════════════════════════════════════════
-  // SECTION 4: INVESTIMENTO CONTRATUAL
+  // SECTIONS 3-6: THREE-BOX LAYOUT
+  // Left = Estrutura Contratada, Right Top = Investimento + Escopo, Right Bottom = Premium
   // ══════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 200)) Y = newPage(doc, data);
-  Y = sectionTitle(doc, "Investimento Contratual", Y);
+  Y = newPage(doc, data);
 
   // Calculate REAL charged value based on cycle
   let chargedValue = 0;
   const monthlyBase = data.totalAnnual / 12;
-  
-  if (data.paymentPlan === "monthly") {
-    chargedValue = monthlyBase;
-  } else if (data.paymentPlan === "semestral") {
-    chargedValue = monthlyBase * 6;
-  } else if (data.paymentPlan === "annual") {
-    chargedValue = monthlyBase * 12;
-  } else if (data.paymentPlan === "biennial") {
-    chargedValue = monthlyBase * 24;
-  }
+  if (data.paymentPlan === "monthly") chargedValue = monthlyBase;
+  else if (data.paymentPlan === "semestral") chargedValue = monthlyBase * 6;
+  else if (data.paymentPlan === "annual") chargedValue = monthlyBase * 12;
+  else if (data.paymentPlan === "biennial") chargedValue = monthlyBase * 24;
 
-  // Main investment card
-  doc.setFillColor(...rgb(C.primaryLight));
-  doc.setDrawColor(...rgb(C.primary));
-  doc.setLineWidth(1);
-  doc.roundedRect(M, Y, CW, 60, 4, 4, "FD");
+  const addonNameMap: Record<string, string> = {
+    leads: "Kenlo Leads",
+    inteligencia: "Kenlo Inteligência",
+    assinatura: "Kenlo Assinatura",
+    pay: "Kenlo Pay",
+    seguros: "Kenlo Seguros",
+    cash: "Kenlo Cash",
+  };
+  const allAddonKeys = ["leads", "inteligencia", "assinatura", "pay", "seguros", "cash"];
+  const notSelectedAddons = allAddonKeys.filter(k => !selAddons.includes(k));
 
-  doc.setFontSize(8);
+  // Layout constants
+  const leftW = CW * 0.48;
+  const rightW = CW * 0.48;
+  const gap = CW * 0.04;
+  const leftX = M;
+  const rightX = M + leftW + gap;
+
+  // ── LEFT BOX: Estrutura Contratada ──
+  const leftBoxY = Y;
+
+  // Title with red bar
+  doc.setFillColor(...rgb(C.primary));
+  doc.rect(leftX, leftBoxY, 3, 10, "F");
+  doc.setFontSize(10);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Estrutura Contratada", leftX + 10, leftBoxY + 8);
+  let lY = leftBoxY + 24;
+
+  // Ciclo de Pagamento
+  doc.setFontSize(7);
   doc.setTextColor(...rgb(C.textMuted));
   doc.setFont("helvetica", "normal");
-  doc.text(`Valor ${cycleDisplay}`, M + 14, Y + 20);
-
-  doc.setFontSize(20);
+  doc.text("Ciclo de Pagamento", leftX, lY);
+  doc.setFontSize(11);
   doc.setTextColor(...rgb(C.primary));
   doc.setFont("helvetica", "bold");
-  doc.text(fmt(chargedValue), M + 14, Y + 42);
+  doc.text(cycleDisplay, leftX, lY + 13);
+  lY += 28;
 
-  Y += 70;
+  // Produtos e Planos
+  doc.setFontSize(7);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "normal");
+  doc.text("Produtos e Planos", leftX, lY);
+  let productsLine = "";
+  if (showImob && showLoc) {
+    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase()} & Locação ${(data.locPlan || "K").toUpperCase()}`;
+  } else if (showImob) {
+    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase()}`;
+  } else if (showLoc) {
+    productsLine = `Locação ${(data.locPlan || "K").toUpperCase()}`;
+  }
+  doc.setFontSize(10);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text(productsLine, leftX, lY + 13);
+  lY += 28;
 
-  // Breakdown table
-  divider(doc, Y);
-  Y += 10;
-
-  // Products
-  if (showImob && data.imobPrice) {
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.text));
+  // Kombo (if any)
+  if (data.komboName && data.komboName !== "Sem Kombo") {
+    doc.setFontSize(7);
+    doc.setTextColor(...rgb(C.textMuted));
     doc.setFont("helvetica", "normal");
-    doc.text(`Kenlo Imob (${(data.imobPlan || "K").toUpperCase()})`, M + 14, Y);
+    doc.text("Kombo Ativo", leftX, lY);
+    doc.setFontSize(10);
+    doc.setTextColor(...rgb(C.primary));
     doc.setFont("helvetica", "bold");
-    doc.text(fmt(data.imobPrice), M + CW - 14, Y, { align: "right" });
-    Y += 14;
+    const komboText = data.komboDiscount
+      ? `${data.komboName} (${data.komboDiscount}% OFF)`
+      : data.komboName;
+    doc.text(komboText, leftX, lY + 13);
+    lY += 28;
   }
 
-  if (showLoc && data.locPrice) {
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.text));
-    doc.setFont("helvetica", "normal");
-    doc.text(`Kenlo Locação (${(data.locPlan || "K").toUpperCase()})`, M + 14, Y);
-    doc.setFont("helvetica", "bold");
-    doc.text(fmt(data.locPrice), M + CW - 14, Y, { align: "right" });
-    Y += 14;
-  }
+  // Add-ons Selecionados
+  doc.setFontSize(8);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Add-ons Selecionados", leftX, lY);
+  lY += 14;
 
-  // Add-ons
-  selAddons.forEach((addon) => {
-    const price = addonPrices[addon];
-    if (price && price > 0) {
-      const addonNameMap: Record<string, string> = {
-        leads: "Kenlo Leads",
-        inteligencia: "Kenlo Inteligência",
-        assinatura: "Kenlo Assinatura",
-        pay: "Kenlo Pay",
-        seguros: "Kenlo Seguros",
-      };
+  if (selAddons.length > 0) {
+    selAddons.forEach((addon) => {
+      // Green left border + text
+      doc.setFillColor(...rgb(C.green));
+      doc.rect(leftX, lY - 7, 2, 12, "F");
       doc.setFontSize(8);
-      doc.setTextColor(...rgb(C.text));
+      doc.setTextColor(...rgb(C.dark));
       doc.setFont("helvetica", "normal");
-      doc.text(addonNameMap[addon] || addon, M + 14, Y);
-      doc.setFont("helvetica", "bold");
-      doc.text(fmt(price), M + CW - 14, Y, { align: "right" });
-      Y += 14;
-    }
-  });
-
-  divider(doc, Y);
-  Y += 10;
-
-  // Implantation (if annual/biennial)
-  if (data.implantationFee > 0 && (data.paymentPlan === "annual" || data.paymentPlan === "biennial")) {
+      doc.text(addonNameMap[addon] || addon, leftX + 8, lY);
+      lY += 16;
+    });
+  } else {
     doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.text));
+    doc.setTextColor(...rgb(C.textMuted));
     doc.setFont("helvetica", "normal");
-    doc.text("Taxa de Implantação (única, 1º ano)", M + 14, Y);
-    doc.setFont("helvetica", "bold");
-    doc.text(fmt(data.implantationFee), M + CW - 14, Y, { align: "right" });
-    Y += 14;
-    
-    divider(doc, Y);
-    Y += 10;
+    doc.text("Nenhum selecionado", leftX + 8, lY);
+    lY += 16;
   }
 
-  // Installments (if applicable)
+  // Add-ons Não Incluídos
+  if (notSelectedAddons.length > 0) {
+    lY += 6;
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.textMuted));
+    doc.setFont("helvetica", "bold");
+    doc.text("Add-ons Não Incluídos", leftX, lY);
+    lY += 14;
+
+    notSelectedAddons.forEach((addon) => {
+      // Gray left border + gray text
+      doc.setFillColor(...rgb(C.border));
+      doc.rect(leftX, lY - 7, 2, 12, "F");
+      doc.setFontSize(8);
+      doc.setTextColor(...rgb(C.textLight));
+      doc.setFont("helvetica", "normal");
+      doc.text(addonNameMap[addon] || addon, leftX + 8, lY);
+      lY += 16;
+    });
+  }
+
+  // ── RIGHT TOP BOX: Investimento Contratual + Escopo ──
+  let rY = leftBoxY;
+
+  // Title with red bar
+  doc.setFillColor(...rgb(C.primary));
+  doc.rect(rightX, rY, 3, 10, "F");
+  doc.setFontSize(10);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Investimento Contratual", rightX + 10, rY + 8);
+  rY += 24;
+
+  // Contract type label
+  doc.setFontSize(7);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "normal");
+  doc.text(`Contrato ${cycleDisplay}`, rightX, rY);
+  rY += 6;
+
+  // Investment label
+  doc.setFontSize(7);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "normal");
+  doc.text("Investimento Total:", rightX, rY);
+  rY += 4;
+
+  // Big price
+  doc.setFontSize(18);
+  doc.setTextColor(...rgb(C.primary));
+  doc.setFont("helvetica", "bold");
+  doc.text(fmt(chargedValue), rightX, rY + 14);
+  rY += 22;
+
+  // Installments
   if (data.installments && data.installments > 1) {
     const totalWithImpl = chargedValue + (data.implantationFee || 0);
     const installmentValue = totalWithImpl / data.installments;
-    
+    doc.setFontSize(7);
+    doc.setTextColor(...rgb(C.textMuted));
+    doc.setFont("helvetica", "normal");
+    doc.text(`Parcelado em ${data.installments}x de ${fmt(installmentValue)}`, rightX, rY);
+    rY += 12;
+  }
+
+  rY += 6;
+
+  // Escopo Incluído na Contratação (sub-section)
+  doc.setFillColor(...rgb(C.primary));
+  doc.rect(rightX, rY, 3, 10, "F");
+  doc.setFontSize(9);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Escopo Incluído na Contratação", rightX + 10, rY + 8);
+  rY += 20;
+
+  const scopeItems: string[] = [];
+  if (showImob) {
+    const imobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 5 : 10;
+    scopeItems.push(`${imobUsers} usuários inclusos`);
+  }
+  if (showLoc) {
+    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 150 : 500;
+    scopeItems.push(`${locContracts} contratos inclusos`);
+  }
+  if (selAddons.includes("leads")) scopeItems.push("WhatsApp integrado");
+  if (data.implantationFee > 0) scopeItems.push(`Implantação: ${fmt(data.implantationFee)}`);
+
+  scopeItems.forEach((item) => {
     doc.setFontSize(8);
     doc.setTextColor(...rgb(C.text));
     doc.setFont("helvetica", "normal");
-    doc.text(`Parcelamento (${data.installments}x)`, M + 14, Y);
+    doc.text("•", rightX + 4, rY);
+    doc.text(item, rightX + 12, rY);
+    rY += 13;
+  });
+
+  rY += 10;
+
+  // ── RIGHT BOTTOM BOX: Serviços Premium Ativados ──
+  doc.setFillColor(...rgb(C.primary));
+  doc.rect(rightX, rY, 3, 10, "F");
+  doc.setFontSize(9);
+  doc.setTextColor(...rgb(C.dark));
+  doc.setFont("helvetica", "bold");
+  doc.text("Serviços Premium Ativados", rightX + 10, rY + 8);
+  rY += 22;
+
+  const premiumServices = [
+    {
+      name: "Suporte VIP",
+      included: data.vipIncluded || false,
+      price: data.vipPrice || 0,
+      detail: "",
+    },
+    {
+      name: "CS Dedicado",
+      included: data.csIncluded || false,
+      price: data.csPrice || 0,
+      detail: "",
+    },
+    {
+      name: "Treinamentos",
+      included: (data.imobPlan?.toLowerCase() === "k2" || data.locPlan?.toLowerCase() === "k2"),
+      price: 0,
+      detail: "2x online ou 1x presencial",
+    },
+  ];
+
+  premiumServices.forEach((service) => {
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.dark));
     doc.setFont("helvetica", "bold");
-    doc.text(`${data.installments}x de ${fmt(installmentValue)}`, M + CW - 14, Y, { align: "right" });
-    Y += 20;
-  }
+    doc.text(service.name, rightX, rY);
+
+    if (service.included) {
+      doc.setFontSize(7);
+      doc.setTextColor(...rgb(C.green));
+      doc.setFont("helvetica", "bold");
+      const statusText = service.detail ? `Incluído (${service.detail})` : "Incluído";
+      doc.text(statusText, rightX + rightW - 4, rY, { align: "right" });
+    } else if (service.price > 0) {
+      doc.setFontSize(7);
+      doc.setTextColor(...rgb(C.text));
+      doc.setFont("helvetica", "normal");
+      doc.text(fmt(service.price) + "/mês", rightX + rightW - 4, rY, { align: "right" });
+    } else {
+      doc.setFontSize(8);
+      doc.setTextColor(...rgb(C.textLight));
+      doc.setFont("helvetica", "normal");
+      doc.text("—", rightX + rightW - 4, rY, { align: "right" });
+    }
+    rY += 18;
+  });
+
+  // Set Y to the max of left and right columns
+  Y = Math.max(lY, rY) + 16;
 
   // ══════════════════════════════════════════════════════════════════
   // SECTION 4B: COMPARATIVO DE CENÁRIOS (selected columns)
@@ -835,114 +930,6 @@ export async function generateProposalPDFClient(
       console.error("Error parsing selectedColumnsJson:", e);
     }
   }
-
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION 5: ESCOPO INCLUÍDO NA CONTRATAÇÃO
-  // ══════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 150)) Y = newPage(doc, data);
-  Y = sectionTitle(doc, "Escopo Incluído na Contratação", Y);
-
-  const scopeItems: string[] = [];
-
-  if (showImob) {
-    scopeItems.push(`Plataforma Kenlo Imob (${(data.imobPlan || "K").toUpperCase()})`);
-    const imobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 5 : 10;
-    scopeItems.push(`Até ${imobUsers} usuários simultâneos (Vendas)`);
-  }
-
-  if (showLoc) {
-    scopeItems.push(`Plataforma Kenlo Locação (${(data.locPlan || "K").toUpperCase()})`);
-    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 150 : 500;
-    scopeItems.push(`Até ${locContracts} contratos sob gestão`);
-  }
-
-  selAddons.forEach((addon) => {
-    const addonNameMap: Record<string, string> = {
-      leads: "Kenlo Leads — Gestão automatizada de leads",
-      inteligencia: "Kenlo Inteligência — BI de KPIs de performance",
-      assinatura: "Kenlo Assinatura — Assinatura digital embutida (15 assinaturas/mês incluídas)",
-      pay: "Kenlo Pay — Boleto e Split digital embutido",
-      seguros: "Kenlo Seguros — Seguros embutido no boleto",
-    };
-    scopeItems.push(addonNameMap[addon] || addon);
-  });
-
-  scopeItems.push("Suporte técnico padrão");
-  scopeItems.push("Atualizações contínuas da plataforma");
-  scopeItems.push("Infraestrutura cloud segura e escalável");
-
-  scopeItems.forEach((item) => {
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.text));
-    doc.setFont("helvetica", "normal");
-    doc.text("✔", M + 5, Y);
-    
-    // Word wrap for long items
-    const maxWidth = CW - 25;
-    const lines = doc.splitTextToSize(item, maxWidth);
-    doc.text(lines, M + 15, Y);
-    Y += lines.length * 12;
-  });
-
-  Y += 10;
-
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION 6: SERVIÇOS PREMIUM ATIVADOS
-  // ══════════════════════════════════════════════════════════════════
-  if (needsNewPage(Y, 120)) Y = newPage(doc, data);
-  Y = sectionTitle(doc, "Serviços Premium Ativados", Y);
-
-  const premiumServices = [
-    {
-      name: "Suporte VIP",
-      desc: "Atendimento prioritário com SLA reduzido",
-      included: data.vipIncluded || false,
-      price: data.vipPrice || 0,
-    },
-    {
-      name: "CS Dedicado",
-      desc: "Customer Success dedicado para acompanhamento estratégico",
-      included: data.csIncluded || false,
-      price: data.csPrice || 0,
-    },
-    {
-      name: "Treinamentos",
-      desc: "Treinamentos exclusivos para sua equipe",
-      included: (data.imobPlan?.toLowerCase() === "k2" || data.locPlan?.toLowerCase() === "k2"),
-      price: 0,
-    },
-  ];
-
-  premiumServices.forEach((service) => {
-    doc.setFontSize(9);
-    doc.setTextColor(...rgb(C.dark));
-    doc.setFont("helvetica", "bold");
-    doc.text(service.name, M + 14, Y);
-
-    if (service.included) {
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(C.green));
-      doc.setFont("helvetica", "bold");
-      doc.text("Incluído", M + CW - 14, Y, { align: "right" });
-    } else if (service.price > 0) {
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(C.text));
-      doc.setFont("helvetica", "normal");
-      doc.text(fmt(service.price) + "/mês", M + CW - 14, Y, { align: "right" });
-    } else {
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(C.textLight));
-      doc.setFont("helvetica", "normal");
-      doc.text("—", M + CW - 14, Y, { align: "right" });
-    }
-
-    doc.setFontSize(7);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text(service.desc, M + 14, Y + 10);
-
-    Y += 26;
-  });
 
   // ══════════════════════════════════════════════════════════════════
   // SECTION 7: FUNCIONALIDADES DA PLATAFORMA

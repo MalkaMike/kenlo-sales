@@ -3939,3 +3939,45 @@
 - [x] Show total post-paid revenue at the top of the grouped section
 - [x] List individual post-paid items (Usuários Adicionais, Contratos Adicionais, WhatsApp, Assinaturas Digitais, Boletos, Splits) within the grouped block
 - [x] Test PDF export to verify grouped post-paid section appears correctly
+
+## PDF Redesign - All Sections (Comments2.pdf)
+
+### Section 1: Perfil Operacional do Cliente
+- [x] Restructure layout to 2/3 columns centered on page
+- [x] Add "Natureza de negócio" field - if both products selected, show "Ambos"
+- [x] Add "Coretagem" section with:
+  - [x] Número de usuários
+  - [x] Leads por mês
+  - [x] Fechamento por mês
+- [x] Add "Administração de aluguel" section with:
+  - [x] Número de contratos sob gestão
+  - [x] Novos contratos por mês
+  - [x] Inquilino paga o boleto? Sim. Quanto?
+  - [x] Proprietario paga o split? Sim. Quanto?
+
+### Section 2: Estrutura Contratada + Investimento + Serviços Premium
+- [x] Create 3-box layout (1 large left, 2 stacked right)
+- [x] Box 1 (left): "Estrutura Contratada"
+  - [x] Ciclo de Pagamento (Anual/Mensal)
+  - [x] Produtos e Planos (e.g., "Imob K2")
+  - [x] Add-ons Selecionados (highlight in green)
+  - [x] Add-ons Não Incluídos (gray list)
+- [x] Box 2 (top right): "Investimento Contractual e Escopo Incluído na Contratação"
+  - [x] Contrato Anual/Mensal
+  - [x] Investimento Total (large red number)
+  - [x] Parcelamento info if applicable
+  - [x] Escopo bullets: usuários inclusos, contratos inclusos, WhatsApp, Implantação
+- [x] Box 3 (bottom right): "Serviços Premium Ativados"
+  - [x] List: Suporte VIP, CS Dedicado, Treinamentos
+  - [x] Show "Incluído" with details or "—" if not included
+
+### Section 3: Funcionalidade da Plataforma
+- [ ] Redesign to visual comparison table (like example image)
+- [ ] Highlight selected plan column with visual emphasis
+- [ ] If 2 products (Imob + Loc), show them side-by-side or one after another
+- [ ] Include all features from pricing-config with checkmarks/X marks
+- [ ] Show "Usuários Adicionais (pós-pago)" row with pricing
+
+### Section 4: Receita Kenlo Extra
+- [x] Already implemented with grouped post-paid items
+
