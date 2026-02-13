@@ -3932,3 +3932,10 @@
 - [x] Abbreviate "Usuários adicionais" to "Usuários adic." in row label
 - [x] Abbreviate "Contratos adicionais" to "Contratos adic." in row label
 - [x] Verify all rows have uniform height after abbreviation changes
+
+## PDF Receita Extra Section - Group Post-Paid Items
+- [x] Locate PDF generation code for "Receita Extra" section
+- [x] Group all post-paid monthly fees together in a single consolidated block instead of listing separately
+- [x] Show total post-paid revenue at the top of the grouped section
+- [x] List individual post-paid items (Usuários Adicionais, Contratos Adicionais, WhatsApp, Assinaturas Digitais, Boletos, Splits) within the grouped block
+- [x] Test PDF export to verify grouped post-paid section appears correctly

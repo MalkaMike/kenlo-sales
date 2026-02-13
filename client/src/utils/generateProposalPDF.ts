@@ -1034,7 +1034,10 @@ export async function generateProposalPDFClient(
   // ══════════════════════════════════════════════════════════════════
   // SECTION 8: POTENCIAL DE RECEITA EXTRA (only if applicable)
   // ══════════════════════════════════════════════════════════════════
-  if (hasRevenue) {
+  const hasPostPaid = data.postPaidTotal && data.postPaidTotal > 0;
+  const hasRevenueItems = hasRevenue || hasPostPaid;
+  
+  if (hasRevenueItems) {
     if (needsNewPage(Y, 150)) Y = newPage(doc, data);
     Y = sectionTitle(doc, "Potencial de Receita Extra", Y);
 
@@ -1044,6 +1047,64 @@ export async function generateProposalPDFClient(
     doc.text("Com os add-ons contratados, você pode gerar receita adicional:", M, Y);
     Y += 16;
 
+    // Parse post-paid breakdown if available
+    let postPaidItems: Array<{label: string; cost: number; detail: string}> = [];
+    if (data.postPaidBreakdown) {
+      try {
+        const breakdown = JSON.parse(data.postPaidBreakdown);
+        // Extract items from grouped structure (imobAddons, locAddons, sharedAddons)
+        const groups = [breakdown.imobAddons, breakdown.locAddons, breakdown.sharedAddons].filter(Boolean);
+        for (const group of groups) {
+          if (group.items && Array.isArray(group.items)) {
+            for (const item of group.items) {
+              if (item.total > 0) {
+                const detail = `Incluídos: ${item.included} | Adicionais: ${item.additional} × R$ ${item.perUnit.toFixed(2)}/${item.unitLabel}`;
+                postPaidItems.push({
+                  label: item.label,
+                  cost: item.total,
+                  detail
+                });
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse postPaidBreakdown:", e);
+      }
+    }
+
+    // Group 1: Mensalidades Pós-Pago (if any)
+    if (postPaidItems.length > 0) {
+      doc.setFontSize(8);
+      doc.setTextColor(...rgb(C.text));
+      doc.setFont("helvetica", "bold");
+      doc.text("Mensalidades Pós-Pago", M + 14, Y);
+      Y += 12;
+
+      // Show each post-paid item
+      for (const item of postPaidItems) {
+        doc.setFontSize(8);
+        doc.setTextColor(...rgb(C.text));
+        doc.setFont("helvetica", "normal");
+        doc.text(item.label, M + 20, Y);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(...rgb("#B45309")); // amber-700
+        doc.text(`-${fmt(item.cost)}/mês`, M + CW - 14, Y, { align: "right" });
+        Y += 10;
+
+        // Show detail if available
+        if (item.detail) {
+          doc.setFontSize(7);
+          doc.setTextColor(...rgb(C.textMuted));
+          doc.setFont("helvetica", "italic");
+          doc.text(item.detail, M + 26, Y);
+          Y += 9;
+        }
+      }
+      Y += 4;
+    }
+
+    // Group 2: Revenue items (Boletos/Split, Seguros)
     if (data.revenueFromBoletos && data.revenueFromBoletos > 0) {
       // Show combined total
       doc.setFontSize(8);
@@ -1092,14 +1153,18 @@ export async function generateProposalPDFClient(
     divider(doc, Y);
     Y += 10;
 
+    // Calculate total: revenue minus post-paid costs
     const totalRevenue = (data.revenueFromBoletos || 0) + (data.revenueFromInsurance || 0);
+    const totalPostPaid = data.postPaidTotal || 0;
+    const netRevenue = totalRevenue - totalPostPaid;
+    
     doc.setFontSize(9);
     doc.setTextColor(...rgb(C.dark));
     doc.setFont("helvetica", "bold");
     doc.text("Total de Receita Extra Mensal", M + 14, Y);
     doc.setFontSize(11);
-    doc.setTextColor(...rgb(C.green));
-    doc.text(fmt(totalRevenue), M + CW - 14, Y, { align: "right" });
+    doc.setTextColor(...rgb(netRevenue >= 0 ? C.green : "#B45309"));
+    doc.text(fmt(Math.abs(netRevenue)), M + CW - 14, Y, { align: "right" });
     Y += 20;
 
     // ROI indicator
