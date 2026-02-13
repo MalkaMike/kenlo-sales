@@ -4189,3 +4189,7 @@
 - [x] Revert client-side PDF cover page to preferred version: white background, centered red Kenlo logo, "Proposta Comercial" bold title, thin divider, client name, plan name in red, frequency label, date
 - [x] Added top double bar (dark charcoal + red) and bottom red bar matching the screenshot
 - [x] All 509 tests pass, 0 TypeScript errors
+
+## PDF Próximos Passos Box Fix
+
+- [x] Move "Próximos Passos" title outside/above the box (not inside it), matching the UI pattern for section titles like "Add-ons Opcionais" and "Sua Seleção vs Kombos"

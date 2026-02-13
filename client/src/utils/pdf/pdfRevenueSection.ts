@@ -163,15 +163,19 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
 }
 
 export function renderConclusion(doc: jsPDF, data: ProposalPrintData, Y: number): void {
-  if (needsNewPage(Y, 100)) Y = newPage(doc, data);
+  if (needsNewPage(Y, 120)) Y = newPage(doc, data);
 
-  doc.setFillColor(...rgb(C.bgSoft));
-  doc.roundedRect(M, Y, CW, 80, 4, 4, "F");
-
+  // Title OUTSIDE the box (above it)
   doc.setFontSize(10);
   doc.setTextColor(...rgb(C.dark));
   doc.setFont("helvetica", "bold");
-  doc.text("Próximos Passos", M + 14, Y + 20);
+  doc.text("Próximos Passos", M, Y);
+  Y += 14;
+
+  // Box with steps only (no title inside)
+  const boxH = 68;
+  doc.setFillColor(...rgb(C.bgSoft));
+  doc.roundedRect(M, Y, CW, boxH, 4, 4, "F");
 
   doc.setFontSize(8);
   doc.setTextColor(...rgb(C.text));
@@ -183,9 +187,9 @@ export function renderConclusion(doc: jsPDF, data: ProposalPrintData, Y: number)
     "4. Treinamento da equipe",
   ];
 
-  let stepY = Y + 35;
+  let stepY = Y + 16;
   steps.forEach((step) => {
     doc.text(step, M + 14, stepY);
-    stepY += 12;
+    stepY += 13;
   });
 }
