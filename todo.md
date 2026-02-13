@@ -3857,3 +3857,10 @@
 - [x] Test WhatsApp calculation with 200 leads/month (100 excess × R$1,50 = R$150/mês)
 - [x] Verify calculation works correctly when WhatsApp toggle is enabled
 - [x] Confirmed: Code is working correctly, WhatsApp pós-pago appears when toggle is ON
+
+## IA SDR vs WhatsApp Mutual Exclusion and Visual Feedback
+- [x] Implement mutual exclusion logic: when IA SDR is toggled ON, automatically turn WhatsApp OFF (and vice versa)
+- [x] Add visual feedback when WhatsApp is OFF: tooltip explaining that pós-pago only appears when WhatsApp is active
+- [x] Update UI to show disabled state when one toggle blocks the other
+- [x] Test all scenarios: IA SDR ON → WhatsApp disabled, WhatsApp ON → IA SDR disabled
+- [x] Verify tooltip appears correctly and explains the 3 Leads usage modes
