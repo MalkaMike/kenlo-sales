@@ -4009,3 +4009,20 @@
 - [x] Update App.tsx import to use new calculadora directory
 - [x] Verify all 340 tests pass after refactoring
 - [x] Verify calculator renders correctly in browser
+
+## Refactor ProductConfigSection into Smaller Sub-Components
+- [x] Analyze ProductConfigSection structure and identify logical sections
+- [x] Extract TierBreakdown shared component (tier pricing tooltip)
+- [x] Extract ImobCard sub-component (IMOB product configuration)
+- [x] Extract LocCard sub-component (LOC product configuration)
+- [x] Extract BenefitsSection sub-component (Premium Services)
+- [x] Extract AddonsSection container sub-component
+- [x] Extract LeadsAddonCard sub-component (with IA SDR & WhatsApp)
+- [x] Extract InteligenciaAddonCard sub-component
+- [x] Extract AssinaturaAddonCard sub-component
+- [x] Extract PayAddonCard sub-component
+- [x] Extract SegurosAddonCard sub-component
+- [x] Extract CashAddonCard sub-component
+- [x] Refactor ProductConfigSection to compose new sub-components (57 lines)
+- [x] Verify all 340 tests pass after refactoring
+- [x] Verify calculator renders correctly in browser
