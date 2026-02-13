@@ -30,6 +30,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import * as Pricing from "@/utils/pricing";
+import { PrePagoPosPagoModal } from "@/components/PrePagoPosPagoModal";
 
 // ============================================================================
 // TYPES
@@ -1096,6 +1097,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const [prePaidUsers, setPrePaidUsers] = useState<Record<string, boolean>>({});
   const [prePaidContracts, setPrePaidContracts] = useState<Record<string, boolean>>({});
 
+  // Pré-Pago/Pós-Pago modal state
+  const [showPrePagoPosPagoModal, setShowPrePagoPosPagoModal] = useState(false);
+
   // Initialize/reset overrides when product or parent props change
   const getDefaultOverrides = useCallback((): ColumnOverrides => ({
     frequency: props.frequency,
@@ -1389,7 +1393,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago", isTotal: true },
+    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true },
     { key: "separator1", isSeparator: true },
 
     { key: "implantacao", label: "Implantação", isHeader: true },
@@ -1411,10 +1415,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
-    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago", isTotal: true },
+    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago¹", isTotal: true },
     { key: "separator4", isSeparator: true },
 
-    { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago + Pós-Pago", isTotal: true, isGrandTotal: true },
+    { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago¹ + Pós-Pago¹", isTotal: true, isGrandTotal: true },
   ];
 
   /**
@@ -2078,10 +2082,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               </thead>
               <tbody>
                 {rows.map((row) => {
-                  // Separator row: thin white space
+                  // Separator row: white space between blocks
                   if ((row as any).isSeparator) {
                     return (
-                      <tr key={row.key} className="h-1 bg-white">
+                      <tr key={row.key} className="h-3 bg-white">
                         <td colSpan={columns.length + 1} className="p-0"></td>
                       </tr>
                     );
@@ -2109,7 +2113,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           ? "font-extrabold text-primary text-sm"
                           : row.isTotal
                           ? "font-bold text-gray-700 text-xs"
-                          : "text-gray-600 text-xs"
+                          : "text-gray-600 text-sm"
                       }`}
                     >
                       {row.key === "training" ? (
@@ -2167,7 +2171,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       ) : (row as any).sublabel ? (
                         <div className="flex flex-col items-start">
                           <span>{row.label}</span>
-                          <span className="text-[10px] italic text-gray-500">{(row as any).sublabel}</span>
+                          <span 
+                            className="text-[11px] italic text-gray-500 cursor-pointer hover:text-primary transition-colors"
+                            onClick={() => setShowPrePagoPosPagoModal(true)}
+                            title="Clique para saber mais sobre Pré-Pago e Pós-Pago"
+                          >
+                            {(row as any).sublabel}
+                          </span>
                         </div>
                       ) : (
                         row.label
@@ -2277,22 +2287,16 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </div>
 
           {/* Footnote */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              <strong>Mensalidades (Pré-Pago):</strong> Valor mensal recorrente das assinaturas. <strong>Total 1º Ano:</strong> Mensalidades × meses do ciclo + implantação (cobrada apenas no primeiro ciclo).
-              <br />
-              <strong>Pós-Pago:</strong> Itens cobrados conforme uso (usuários, contratos, boletos, etc.) — não incluídos no valor do ciclo.
-              <br />
-              <strong>Colunas interativas:</strong> Clique nos planos (Prime/K/K2) nas colunas de Kombo para simular cenários diferentes. A coluna "Sua Seleção" reflete a configuração principal.
-              <br />
-              <strong>Seleção para PDF:</strong> Selecione até {MAX_SELECTED_PLANS} colunas clicando em "Selecionar". As colunas selecionadas serão exportadas na proposta PDF.
-              <br />
-              <strong>Perso (cenários personalizados):</strong> Use o botão "+" para adicionar até {MAX_CUSTOM_COLUMNS} cenários. Escolha "Personalizado" para configurar livremente, ou selecione um Kombo para comparar com ciclos diferentes.
-            </p>
-          </div>
+          {/* Explanatory text removed - information now in contextual tooltips and modal */}
 
         </CardContent>
       </Card>
+
+      {/* Pré-Pago/Pós-Pago Explanation Modal */}
+      <PrePagoPosPagoModal 
+        open={showPrePagoPosPagoModal} 
+        onOpenChange={setShowPrePagoPosPagoModal} 
+      />
     </div>
   );
 }

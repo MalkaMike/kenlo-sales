@@ -3877,3 +3877,12 @@
 - [x] Change "Total Pós-Pago Estimado" to "Mensalidade (est.)" with "Pós-Pago" in italic/smaller on second line
 - [x] Add visual block separators (thin white rows) between: Mensalidade Pré-Pago | Implantação | Total 1º Ano/Ciclo | Pós-Pago items | Total Mensalidade (est.)
 - [x] Make Total Mensalidade (est.) row red background for emphasis
+
+## Additional Formatting Improvements (Kombo Table)
+- [x] Review and adjust font sizes across all table cells for better readability
+- [x] Increase spacing between visual blocks (make separator rows taller/more visible)
+- [x] Remove explanatory text paragraph below table
+- [x] Add contextual tooltips where the explanatory information makes sense
+- [x] Implement Pré-Pago¹ and Pós-Pago¹ superscript notation
+- [x] Create modal dialog "Como funciona o modelo Pré-Pago e Pós-Pago na Kenlo" with approved content
+- [x] Add click handler on superscript to open modal
