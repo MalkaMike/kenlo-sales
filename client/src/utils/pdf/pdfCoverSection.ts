@@ -7,7 +7,7 @@
 
 import type { jsPDF } from "jspdf";
 import { KENLO_LOGO_RED_BASE64 } from "../kenloLogoBase64";
-import { type ProposalPrintData, PW, PH, rgb, C } from "./pdfHelpers";
+import { type ProposalPrintData, PW, PH, M, CW, rgb, C } from "./pdfHelpers";
 
 /** Frequency key → display label */
 const FREQ_LABELS: Record<string, string> = {
@@ -106,4 +106,18 @@ export function renderCover(doc: jsPDF, data: ProposalPrintData): void {
     year: "numeric",
   });
   doc.text(today, cx, infoY, { align: "center" });
+
+  // ── Salesperson footer (above bottom bar) ─────────────────────
+  const footerY = PH - 30;
+  const parts: string[] = [];
+  if (data.salesPersonName) parts.push(data.salesPersonName);
+  if (data.vendorEmail) parts.push(data.vendorEmail);
+  if (data.vendorPhone) parts.push(data.vendorPhone);
+  const sellerLine = parts.join("  \u00b7  ");
+  if (sellerLine) {
+    doc.setFontSize(7);
+    doc.setTextColor(...rgb(C.textMuted));
+    doc.setFont("helvetica", "normal");
+    doc.text(sellerLine, cx, footerY, { align: "center" });
+  }
 }

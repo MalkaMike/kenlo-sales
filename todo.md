@@ -4203,3 +4203,7 @@
 ## PDF Page 2 Divider
 
 - [x] Add a visual divider between Profile and Contract sections on PDF Page 2
+
+## PDF Salesperson Footer
+
+- [x] Add salesperson name, email, and phone to the footer of every PDF page

@@ -151,11 +151,36 @@ export function newPage(doc: jsPDF, data: ProposalPrintData): number {
   doc.setFillColor(...rgb(C.primary));
   doc.rect(0, 0, PW, 2, "F");
   // Footer
-  doc.setFontSize(6);
+  renderPageFooter(doc, data);
+  return 30;
+}
+
+/** Shared footer renderer — salesperson contact on the left, proposal label on the right */
+export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
+  const footerY = PH - 28;
+
+  // Thin divider line above footer
+  doc.setDrawColor(...rgb(C.border));
+  doc.setLineWidth(0.3);
+  doc.line(M, footerY, M + CW, footerY);
+
+  // Left side: salesperson info
+  const parts: string[] = [];
+  if (data.salesPersonName) parts.push(data.salesPersonName);
+  if (data.vendorEmail) parts.push(data.vendorEmail);
+  if (data.vendorPhone) parts.push(data.vendorPhone);
+  const sellerLine = parts.join("  ·  ");
+
+  doc.setFontSize(5.5);
   doc.setTextColor(...rgb(C.textLight));
   doc.setFont("helvetica", "normal");
-  doc.text(`${data.agencyName || "Cliente"} — Proposta Comercial Kenlo`, M, PH - 20);
-  return 30;
+  if (sellerLine) {
+    doc.text(sellerLine, M, footerY + 10);
+  }
+
+  // Right side: proposal label
+  const proposalLabel = `${data.agencyName || "Cliente"} — Proposta Comercial Kenlo`;
+  doc.text(proposalLabel, M + CW, footerY + 10, { align: "right" });
 }
 
 // ── Parse Helpers ───────────────────────────────────────────────
