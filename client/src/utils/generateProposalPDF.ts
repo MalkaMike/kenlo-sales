@@ -30,6 +30,7 @@ import { renderRevenue, renderConclusion } from "./pdf/pdfRevenueSection";
 // Re-export the data interface for consumers
 export type { ProposalPrintData } from "./pdf/pdfHelpers";
 import type { ProposalPrintData } from "./pdf/pdfHelpers";
+import { rgb, C, M, CW } from "./pdf/pdfHelpers";
 
 // ══════════════════════════════════════════════════════════════════
 // MAIN PDF GENERATION
@@ -44,6 +45,13 @@ export async function generateProposalPDFClient(
 
   // Section 2: Perfil Operacional do Cliente
   let Y = renderProfile(doc, data);
+
+  // ── Visual divider between Profile and Contract sections ──
+  Y += 8;
+  doc.setDrawColor(...rgb(C.border));
+  doc.setLineWidth(0.5);
+  doc.line(M, Y, M + CW, Y);
+  Y += 16;
 
   // Sections 3-6: Estrutura Contratada + Investimento + Escopo + Premium
   Y = renderContractLayout(doc, data, Y);
