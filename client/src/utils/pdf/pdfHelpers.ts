@@ -155,7 +155,7 @@ export function newPage(doc: jsPDF, data: ProposalPrintData): number {
   return 30;
 }
 
-/** Shared footer renderer — salesperson contact on the left, proposal label on the right */
+/** Shared footer renderer — salesperson contact on the left, proposal label on the right, page number centered */
 export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
   const footerY = PH - 28;
 
@@ -169,7 +169,7 @@ export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
   if (data.salesPersonName) parts.push(data.salesPersonName);
   if (data.vendorEmail) parts.push(data.vendorEmail);
   if (data.vendorPhone) parts.push(data.vendorPhone);
-  const sellerLine = parts.join("  ·  ");
+  const sellerLine = parts.join("  \u00b7  ");
 
   doc.setFontSize(5.5);
   doc.setTextColor(...rgb(C.textLight));
@@ -179,8 +179,26 @@ export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
   }
 
   // Right side: proposal label
-  const proposalLabel = `${data.agencyName || "Cliente"} — Proposta Comercial Kenlo`;
+  const proposalLabel = `${data.agencyName || "Cliente"} \u2014 Proposta Comercial Kenlo`;
   doc.text(proposalLabel, M + CW, footerY + 10, { align: "right" });
+}
+
+/**
+ * Add page numbers to all pages after the PDF is fully built.
+ * Call this once at the end, after all sections are rendered.
+ * Cover page (page 1) is excluded from numbering.
+ */
+export function addPageNumbers(doc: jsPDF): void {
+  const totalPages = doc.getNumberOfPages();
+  // Skip cover (page 1), number content pages starting from 1
+  for (let i = 2; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(6);
+    doc.setTextColor(...rgb(C.textLight));
+    doc.setFont("helvetica", "normal");
+    const label = `P\u00e1gina ${i - 1} de ${totalPages - 1}`;
+    doc.text(label, PW / 2, PH - 18, { align: "center" });
+  }
 }
 
 // ── Parse Helpers ───────────────────────────────────────────────

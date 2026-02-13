@@ -13,7 +13,8 @@ import {
 export function renderFeatures(doc: jsPDF, data: ProposalPrintData, Y: number): number {
   const { showImob, showLoc, imobPlanKey, locPlanKey } = getDerivedFlags(data);
 
-  if (needsNewPage(Y, 300)) Y = newPage(doc, data);
+  // Only force a new page if there's not enough room for the header + a few rows
+  if (needsNewPage(Y, 80)) Y = newPage(doc, data);
   Y = sectionTitle(doc, "Funcionalidades da Plataforma", Y);
 
   const imobAllFeatures = showImob ? getAllFeatures("imob") : [];

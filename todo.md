@@ -4207,3 +4207,9 @@
 ## PDF Salesperson Footer
 
 - [x] Add salesperson name, email, and phone to the footer of every PDF page
+
+## PDF Improvements Round 2
+
+- [x] Add validity notice to conclusion section using validityDays field
+- [x] Optimize Page 2 bottom spacing so features table starts on same page if room
+- [x] Add page numbers (e.g. "Página 2 de 3") to footer on all pages

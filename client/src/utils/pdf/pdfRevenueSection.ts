@@ -192,4 +192,12 @@ export function renderConclusion(doc: jsPDF, data: ProposalPrintData, Y: number)
     doc.text(step, M + 14, stepY);
     stepY += 13;
   });
+
+  // Validity notice below the box
+  const validityY = Y + boxH + 14;
+  const days = data.validityDays || 30;
+  doc.setFontSize(7);
+  doc.setTextColor(...rgb(C.textMuted));
+  doc.setFont("helvetica", "italic");
+  doc.text(`Proposta válida por ${days} dias a partir da data de emissão.`, M, validityY);
 }

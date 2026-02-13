@@ -30,7 +30,7 @@ import { renderRevenue, renderConclusion } from "./pdf/pdfRevenueSection";
 // Re-export the data interface for consumers
 export type { ProposalPrintData } from "./pdf/pdfHelpers";
 import type { ProposalPrintData } from "./pdf/pdfHelpers";
-import { rgb, C, M, CW } from "./pdf/pdfHelpers";
+import { rgb, C, M, CW, addPageNumbers } from "./pdf/pdfHelpers";
 
 // ══════════════════════════════════════════════════════════════════
 // MAIN PDF GENERATION
@@ -67,6 +67,9 @@ export async function generateProposalPDFClient(
 
   // Final: Conclusion (Próximos Passos)
   renderConclusion(doc, data, Y);
+
+  // ── Page Numbers (added last, after all pages exist) ──
+  addPageNumbers(doc);
 
   // ── Generate Output ──
   const pdfBlob = doc.output("blob");
