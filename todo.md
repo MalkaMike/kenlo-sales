@@ -3871,3 +3871,9 @@
 - [x] Calculate total: monthly pre-paid + estimated post-paid costs for each column
 - [x] Test with different scenarios (WhatsApp ON/OFF, different user/contract counts)
 - [x] Verify visual design is clear and helps user understand total monthly investment
+
+## Formatting Improvements (Kombo Table)
+- [x] Change "Mensalidades (Pré-Pago)" to "Mensalidade" with "Pré-Pago" in italic/smaller on second line
+- [x] Change "Total Pós-Pago Estimado" to "Mensalidade (est.)" with "Pós-Pago" in italic/smaller on second line
+- [x] Add visual block separators (thin white rows) between: Mensalidade Pré-Pago | Implantação | Total 1º Ano/Ciclo | Pós-Pago items | Total Mensalidade (est.)
+- [x] Make Total Mensalidade (est.) row red background for emphasis

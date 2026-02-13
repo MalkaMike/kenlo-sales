@@ -1389,7 +1389,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidades (Pré-Pago)", isTotal: true },
+    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago", isTotal: true },
+    { key: "separator1", isSeparator: true },
 
     { key: "implantacao", label: "Implantação", isHeader: true },
     { key: "implImob", label: "Imob", indent: true },
@@ -1397,9 +1398,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "implLeads", label: "Leads", indent: true },
     { key: "implInteligencia", label: "Inteligência", indent: true },
     { key: "implTotal", label: "Total Implantação", isTotal: true },
+    { key: "separator2", isSeparator: true },
 
-    { key: "cycleTotal", label: "Total 1\u00ba Ano", isTotal: true },
+    { key: "cycleTotal", label: "Total 1º Ano", isTotal: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
+    { key: "separator3", isSeparator: true },
 
     { key: "postpaid", label: "Pós-Pago", isHeader: true },
     { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
@@ -1408,8 +1411,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
-    { key: "postpaidTotal", label: "Total Pós-Pago (Estimado)", isTotal: true },
-    { key: "totalMonthlyEstimate", label: "Est. Mensalidades Total (Pré+Pós)", isTotal: true, isGrandTotal: true },
+    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago", isTotal: true },
+    { key: "separator4", isSeparator: true },
+
+    { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago + Pós-Pago", isTotal: true, isGrandTotal: true },
   ];
 
   /**
@@ -2072,11 +2077,23 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
+                {rows.map((row) => {
+                  // Separator row: thin white space
+                  if ((row as any).isSeparator) {
+                    return (
+                      <tr key={row.key} className="h-1 bg-white">
+                        <td colSpan={columns.length + 1} className="p-0"></td>
+                      </tr>
+                    );
+                  }
+                  
+                  return (
                   <tr
                     key={row.key}
                     className={
-                      row.isHeader
+                      (row as any).isGrandTotal
+                        ? "bg-red-50 border-t-2 border-b-2 border-red-200"
+                        : row.isHeader
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
                         ? "bg-gray-100/70 border-b border-gray-200"
@@ -2147,6 +2164,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             </Tooltip>
                           </TooltipProvider>
                         </span>
+                      ) : (row as any).sublabel ? (
+                        <div className="flex flex-col items-start">
+                          <span>{row.label}</span>
+                          <span className="text-[10px] italic text-gray-500">{(row as any).sublabel}</span>
+                        </div>
                       ) : (
                         row.label
                       )}
@@ -2188,7 +2210,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <td className="text-center py-2 px-1"></td>
                     )}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-gray-200 bg-gray-50/50">
