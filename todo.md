@@ -4084,3 +4084,9 @@
 - [x] Add 36 unit tests for extracted utilities (tier calcs, plan recommendation, post-paid breakdown, proposal builder)
 - [x] Verify all 376 tests pass after refactoring (340 existing + 36 new)
 - [x] Verify TypeScript compiles with 0 errors
+
+## Final Refactoring Cleanup
+- [x] Consolidate postPaidCalc.ts to reuse tier helpers from postPaidBuilder.ts (eliminated duplicated tier logic)
+- [x] Add 31 unit tests for postPaidCalc (breakdown + revenue calculations)
+- [x] Add 33 unit tests for builders (comparisonBuilders + proposalHelpers: classifyAddons, calculatePremiumServices, calculateRevenue, getProductPrice, getAddonPrices, buildKomboComparison, buildFrequencyComparison)
+- [x] Verify all 440 tests pass (376 existing + 64 new) and TypeScript compiles with 0 errors

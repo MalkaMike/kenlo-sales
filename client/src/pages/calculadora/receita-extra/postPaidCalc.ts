@@ -1,11 +1,20 @@
 /**
  * Post-Paid Calculation Utility
- * Centralizes all post-paid cost calculations to eliminate duplication
- * between PostPaidTotalRow, GrandTotalRow, and individual row components.
+ * Centralizes all post-paid cost calculations for the UI rows.
+ * Reuses tier calculation helpers from postPaidBuilder to avoid duplication.
  */
 
 import { toNum } from "../types";
 import type { ProductSelection, PlanTier, AddonsState, MetricsState } from "../types";
+import {
+  calcContractsTierCost,
+  calcBoletoSplitTierCost,
+  calcSignaturesTierCost,
+  calcWhatsAppTierCost,
+  getIncludedUsers,
+  getIncludedContracts,
+} from "../quote/postPaidBuilder";
+import { calculateAdditionalUsersCost } from "../types";
 import * as Pricing from "@/utils/pricing";
 
 export interface PostPaidCalcInput {
@@ -38,7 +47,9 @@ export interface RevenueBreakdown {
 }
 
 /**
- * Calculate all post-paid costs in a single pass
+ * Calculate all post-paid costs in a single pass.
+ * Uses shared tier helpers from postPaidBuilder for contracts, boletos, splits,
+ * signatures, and WhatsApp — eliminating duplicated tier logic.
  */
 export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBreakdown {
   const { product, imobPlan, locPlan, addons, metrics, prepayAdditionalUsers, prepayAdditionalContracts } = input;
@@ -53,49 +64,49 @@ export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBr
 
   // Additional Users (IMOB)
   if ((product === "imob" || product === "both") && !prepayAdditionalUsers) {
-    const included = Pricing.getIncludedQuantity("imob", imobPlan);
+    const included = getIncludedUsers(imobPlan);
     const extra = Math.max(0, toNum(metrics.imobUsers) - included);
     if (extra > 0) {
-      additionalUsers = Pricing.calculateAdditionalUsersCost(imobPlan, extra);
+      additionalUsers = calculateAdditionalUsersCost(imobPlan, extra);
     }
   }
 
-  // Additional Contracts (LOC)
+  // Additional Contracts (LOC) - uses shared tier helper
   if ((product === "loc" || product === "both") && !prepayAdditionalContracts) {
-    const included = Pricing.getIncludedQuantity("loc", locPlan);
+    const included = getIncludedContracts(locPlan);
     const extra = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
     if (extra > 0) {
-      additionalContracts = Pricing.calculateAdditionalContractsCost(locPlan, extra);
+      additionalContracts = calcContractsTierCost(locPlan, extra);
     }
   }
 
-  // WhatsApp Leads
+  // WhatsApp Leads - uses shared tier helper
   if (addons.leads && metrics.wantsWhatsApp) {
-    const included = Pricing.getIncludedWhatsAppLeads();
+    const included = 100; // getIncludedWhatsAppLeads
     const extra = Math.max(0, toNum(metrics.leadsPerMonth) - included);
     if (extra > 0) {
-      whatsApp = Pricing.calculateAdditionalWhatsAppLeadsCost(extra);
+      whatsApp = calcWhatsAppTierCost(extra);
     }
   }
 
-  // Assinaturas Digitais
+  // Assinaturas Digitais - uses shared tier helper
   if (addons.assinatura) {
-    const included = Pricing.getIncludedSignatures();
+    const included = 15; // getIncludedSignatures
     let totalSig = 0;
     if (product === "imob") totalSig = toNum(metrics.closingsPerMonth);
     else if (product === "loc") totalSig = toNum(metrics.newContractsPerMonth);
     else totalSig = toNum(metrics.closingsPerMonth) + toNum(metrics.newContractsPerMonth);
     const extra = Math.max(0, totalSig - included);
     if (extra > 0) {
-      assinaturas = Pricing.calculateAdditionalSignaturesCost(extra);
+      assinaturas = calcSignaturesTierCost(extra);
     }
   }
 
-  // Boletos (Pay) - base cost
+  // Boletos (Pay) - base cost using shared tier helper
   if (addons.pay && (product === "loc" || product === "both")) {
     const totalBoletos = toNum(metrics.contractsUnderManagement);
     if (totalBoletos > 0) {
-      boletos = Pricing.calculateBoletosCost(locPlan, totalBoletos);
+      boletos = calcBoletoSplitTierCost(locPlan, totalBoletos);
     }
   }
 
@@ -103,7 +114,7 @@ export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBr
   if (addons.pay && metrics.chargesBoletoToTenant && (product === "loc" || product === "both")) {
     const totalBoletos = toNum(metrics.contractsUnderManagement);
     if (totalBoletos > 0) {
-      boletoCharges = Pricing.calculateBoletosCost(locPlan, totalBoletos);
+      boletoCharges = calcBoletoSplitTierCost(locPlan, totalBoletos);
     }
   }
 
@@ -111,7 +122,7 @@ export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBr
   if (addons.pay && metrics.chargesSplitToOwner && (product === "loc" || product === "both")) {
     const totalSplits = toNum(metrics.contractsUnderManagement);
     if (totalSplits > 0) {
-      splitCharges = Pricing.calculateSplitsCost(locPlan, totalSplits);
+      splitCharges = calcBoletoSplitTierCost(locPlan, totalSplits);
     }
   }
 
