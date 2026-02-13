@@ -1188,10 +1188,6 @@ export default function CalculadoraPage() {
     const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
     const additional = Math.max(0, users - included);
     
-    // Custo de usuários adicionais (V9)
-    // Prime: R$57 fixo por usuário
-    // K: 1-5 = R$47, 6+ = R$37
-    // K2: 1-10 = R$37, 11-100 = R$27, 101+ = R$17
     let additionalCost = 0;
     if (additional > 0) {
       additionalCost = calculateAdditionalUsersCost(plan, additional);
@@ -1233,17 +1229,10 @@ export default function CalculadoraPage() {
     return baseCost + additionalCost;
   };
 
-  // Auto-recommend plans based on CAPACITY (número de usuários/contratos)
-  // Regra: Número de usuários ou contratos define o nível mínimo do plano
-  // This sets BOTH the user-selected plan AND the recommended plan tracker
   useEffect(() => {
     if (product === "imob" || product === "both") {
       const users = toNum(metrics.imobUsers);
       
-      // IMOB: Baseado em número de usuários (V9)
-      // Prime: 1-4 usuários
-      // K: 5-15 usuários
-      // K2: 16+ usuários
       let recommended: PlanTier = 'prime';
       
       if (users >= 16) {
@@ -1261,10 +1250,6 @@ export default function CalculadoraPage() {
     if (product === "loc" || product === "both") {
       const contracts = toNum(metrics.contractsUnderManagement);
       
-      // LOC: Baseado em número de contratos (V9)
-      // Prime: 1-199 contratos
-      // K: 200-499 contratos
-      // K2: 500+ contratos
       let recommended: PlanTier = 'prime';
       
       if (contracts >= 500) {
@@ -1280,12 +1265,6 @@ export default function CalculadoraPage() {
     }
   }, [metrics.imobUsers, metrics.contractsUnderManagement, product]);
 
-  // Auto-activate Suporte Premium and CS Dedicado based on HIGHEST plan across products (V9 rules)
-  // HIGHEST-PLAN-WINS: Benefits are determined by the highest plan across IMOB and LOCAÇÃO.
-  // Plan hierarchy: K2 > K > Prime
-  // - Suporte VIP: Included (locked ON) for K and K2, Optional (paid R$97) for Prime
-  // - CS Dedicado: Included (locked ON) for K2, NOT AVAILABLE for K, Optional (paid R$197) for Prime
-  // - Benefits apply to the ENTIRE account, not per-product
   useEffect(() => {
     setMetrics(prev => {
       const newMetrics = { ...prev };
@@ -1317,9 +1296,6 @@ export default function CalculadoraPage() {
 
   // WhatsApp and IA SDR are mutually exclusive - cannot both be ON at the same time
 
-  // Pre-select product based on businessType from §1
-  // Corretora → imob, Administrador → loc, Ambos → both
-  // User can always override this pre-selection in §2 (Solução e Plano Recomendados)
   useEffect(() => {
     const bt = businessNature.businessType;
     if (bt === "broker") {
@@ -2733,7 +2709,6 @@ export default function CalculadoraPage() {
               </div>
 
 
-
               {/* Old §5 Benefícios removed — now at §3 above */}
 
 
@@ -2804,9 +2779,6 @@ export default function CalculadoraPage() {
                         setAddons(newAddons);
                       }
                       
-                      console.log('[Kombo Selection] Selected:', planId);
-                      console.log('[Kombo Selection] Required add-ons:', requiredAddons);
-                      console.log('[Kombo Selection] New add-ons state:', maxAddons === 0 ? 'all disabled' : newAddons);
                     }
                   }
                 }}
@@ -2815,9 +2787,6 @@ export default function CalculadoraPage() {
                 onFrequencyChange={setFrequency}
               />
               </div>
-
-
-
 
 
                 {/* SECTION 2: CUSTOS PÓS-PAGO - REMOVED (moved to comparison table) */}
@@ -3189,7 +3158,6 @@ export default function CalculadoraPage() {
                       })()}
 
 
-
                       {/* SHARED ADD-ONS GROUP */}
                       {(() => {
                         // Calculate Shared subtotal
@@ -3448,7 +3416,6 @@ export default function CalculadoraPage() {
                   </CardContent>
                 </Card>
                 </div>)}
-
 
 
                 {/* SECTION 6: KENLO RECEITA EXTRA - Only show when there are revenues */}
@@ -4088,7 +4055,6 @@ export default function CalculadoraPage() {
                 })()}
 
 
-
                 {/* Actions - Always visible with validation feedback */}
                 <div className="flex flex-col gap-3 mt-6 mb-24">
                   {selectedPlans.length > 0 && canExportPDF && (
@@ -4134,16 +4100,11 @@ export default function CalculadoraPage() {
                       className="flex-1 min-h-[50px]" 
                       size="lg" 
                       onClick={() => {
-                        console.log('[EXPORT DEBUG] canExportPDF:', canExportPDF);
-                        console.log('[EXPORT DEBUG] businessNature:', JSON.stringify(businessNature));
-                        console.log('[EXPORT DEBUG] isBusinessNatureComplete:', isBusinessNatureComplete());
-                        console.log('[EXPORT DEBUG] selectedPlans:', selectedPlans);
                         if (!canExportPDF) {
                           toast.error("Faça login como vendedor autorizado para exportar cotações.");
                           return;
                         }
                         const hasCompanyErrors = !businessNature.companyName.trim() || !businessNature.ownerName.trim() || !businessNature.email.trim() || !businessNature.cellphone.trim();
-                        console.log('[EXPORT DEBUG] hasCompanyErrors:', hasCompanyErrors, 'companyName:', businessNature.companyName, 'ownerName:', businessNature.ownerName, 'email:', businessNature.email, 'cellphone:', businessNature.cellphone);
                         if (!isBusinessNatureComplete() || hasCompanyErrors) {
                           setShowValidationErrors(true);
                           toast.error("Preencha todos os campos obrigatórios marcados com * antes de exportar.");
@@ -4332,10 +4293,6 @@ export default function CalculadoraPage() {
                 const prepayment = calculatePrepaymentAmount();
                 const prepaymentMonths = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
 
-                // ============================================
-                // VALIDATION: Filter add-ons by compatibility
-                // (Don't block PDF — just use compatible add-ons for the main section)
-                // ============================================
                 const compatibleAddons: string[] = [];
                 const incompatibleAddons: string[] = [];
                 
@@ -4362,10 +4319,6 @@ export default function CalculadoraPage() {
                 });
                 
                 // Log validation results
-                console.log('[PDF Validation] Product:', product);
-                console.log('[PDF Validation] Selected add-ons:', selectedAddons);
-                console.log('[PDF Validation] Compatible add-ons:', compatibleAddons);
-                console.log('[PDF Validation] Incompatible add-ons (filtered out):', incompatibleAddons);
                 
                 
                 // Validate Premium Services logic
@@ -4608,7 +4561,6 @@ export default function CalculadoraPage() {
                   selectedColumnsJson: selectedColumnsData.length > 0 ? JSON.stringify(selectedColumnsData) : undefined,
                 };
 
-                // Generate PDF using client-side html2pdf.js for pixel-perfect output
                 await downloadProposalPDF(proposalData);
                   
                   toast.dismiss();

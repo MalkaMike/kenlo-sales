@@ -134,7 +134,6 @@ export default function HistoricoPage() {
   const { data: stats } = trpc.quotes.stats.useQuery();
   const deleteMutation = trpc.quotes.delete.useMutation({
     onSuccess: () => {
-      console.log("Cotação deletado com sucesso");
       utils.quotes.list.invalidate();
       utils.quotes.stats.invalidate();
     },

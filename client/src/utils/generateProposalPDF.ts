@@ -184,7 +184,6 @@ function parseAddonPrices(raw?: string | Record<string, number>): Record<string,
 export async function generateProposalPDFClient(
   data: ProposalPrintData
 ): Promise<{ blob: Blob; filename: string }> {
-  console.log('[PDF_GEN] Starting generateProposalPDFClient', { hasSelectedColumns: !!data.selectedColumnsJson });
   const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
 
   // ── Derived flags ──────────────────────────────────────────────
@@ -601,7 +600,6 @@ export async function generateProposalPDFClient(
   // ══════════════════════════════════════════════════════════════════
   if (data.selectedColumnsJson) {
     try {
-      console.log('[PDF DEBUG] selectedColumnsJson exists, length:', data.selectedColumnsJson.length);
       const selectedCols: Array<{
         id: string; name: string; shortName: string; discount: number;
         imobPrice: number | null; locPrice: number | null;
@@ -625,9 +623,7 @@ export async function generateProposalPDFClient(
         prePaidContractsActive?: boolean;
       }> = JSON.parse(data.selectedColumnsJson);
 
-      console.log('[PDF DEBUG] parsed selectedCols:', selectedCols.length, 'columns');
       if (selectedCols.length > 0) {
-        console.log('[PDF DEBUG] Starting comparison table rendering');
         if (needsNewPage(Y, 300)) Y = newPage(doc, data);
         Y = sectionTitle(doc, "Comparativo de Cenários", Y);
 
@@ -923,7 +919,6 @@ export async function generateProposalPDFClient(
         });
         Y = drawRow("Total Pós-Pago (est.)", ppTotalMain, Y, { bold: true, valueColor: "#B45309" });
 
-        console.log('[PDF DEBUG] Comparison table rendering COMPLETE');
         Y += 10;
       }
     } catch (e) {

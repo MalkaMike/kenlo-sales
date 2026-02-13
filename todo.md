@@ -3981,3 +3981,14 @@
 ### Section 4: Receita Kenlo Extra
 - [x] Already implemented with grouped post-paid items
 
+
+## Full Codebase Cleanup and Optimization
+- [x] Audit all files for dead code, unused imports, unused variables
+- [x] Remove unused/dead components and pages (4 files: 3 backups + ProposalPrintLayout)
+- [x] Remove 29 unused UI components (~3,400 lines)
+- [x] Remove 18 console.log debug statements
+- [x] Remove 49 lines of dead commented-out code blocks
+- [x] Remove 9 unused npm dependencies
+- [x] Clean up excessive blank lines
+- [x] Verify all 340 tests pass after cleanup
+- [x] Total: ~6,600 lines removed (36,371 → 29,769)

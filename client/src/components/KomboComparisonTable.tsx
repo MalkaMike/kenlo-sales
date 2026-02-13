@@ -32,9 +32,6 @@ import {
 import * as Pricing from "@/utils/pricing";
 import { PrePagoPosPagoModal } from "@/components/PrePagoPosPagoModal";
 
-// ============================================================================
-// TYPES
-// ============================================================================
 
 type ProductSelection = "imob" | "loc" | "both";
 type PlanTier = "prime" | "k" | "k2";
@@ -158,13 +155,6 @@ export interface KomboColumnData {
   overrides?: ColumnOverrides;
 }
 
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-
-// ============================================================================
-// CENTRALIZED PRICING - All values from pricing-config.ts (single source of truth)
-// ============================================================================
 
 const PLAN_ANNUAL_PRICES: Record<PlanTier, number> = Pricing.PLAN_ANNUAL_PRICES;
 
@@ -293,9 +283,6 @@ const KOMBO_DEFINITIONS = {
 
 const MAX_CUSTOM_COLUMNS = 3;
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
 
 const roundToEndIn7 = (price: number): number => {
   return Pricing.roundPrice(price);
@@ -369,9 +356,6 @@ const calculatePremiumPrice = (annualPrice: number, frequency: PaymentFrequency)
   return Math.round(annualPrice * multiplier);
 };
 
-// ============================================================================
-// CALCULATION FUNCTIONS
-// ============================================================================
 
 /**
  * Calculate pós-pago data for a column based on client metrics and column configuration
@@ -614,9 +598,6 @@ const calculateKomboColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
-  // Calculate pós-pago data
-  // Note: hasLeads should check if user enabled Leads addon globally (props.addons.leads)
-  // not just if the Kombo includes it, because WhatsApp is tied to the user's Leads addon choice
   const postPaid = calculatePostPaidData(
     props, imobPlan, locPlan,
     komboIncludesImob, komboIncludesLoc,
@@ -924,9 +905,6 @@ const calculateCustomColumn = (
   };
 };
 
-// ============================================================================
-// COMPONENT
-// ============================================================================
 
 // Contextual banner config per product type
 const PRODUCT_BANNER_CONFIG: Record<ProductSelection, { icon: typeof Building2; title: string; description: string; color: string }> = {
