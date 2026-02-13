@@ -4064,3 +4064,12 @@
 - [x] Refactor useCalculadora to compose extracted hooks (992 → 310 lines, 69% reduction)
 - [x] Verify all 340 tests pass after refactoring
 - [x] Verify TypeScript compiles with 0 errors
+
+## Refactor buildProposalData.ts into Smaller Builder Functions
+- [x] Analyze buildProposalData structure and identify logical builder functions
+- [x] Extract postPaidBuilder.ts (343 lines) - post-paid calculation + breakdown for PDF
+- [x] Extract comparisonBuilders.ts (104 lines) - kombo + frequency comparison for PDF
+- [x] Extract proposalHelpers.ts (130 lines) - addon classification, premium services, revenue, price helpers
+- [x] Refactor buildProposalData.ts to compose extracted builders (803 → 295 lines, 63% reduction)
+- [x] Verify all 340 tests pass after refactoring
+- [x] Verify TypeScript compiles with 0 errors
