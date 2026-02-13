@@ -74,12 +74,8 @@ export const applyDiscount = (price: number, discount: number): number => {
   return Math.round(price * (1 - discount));
 };
 
-export const formatCurrency = (value: number): string => {
-  return value.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-};
+import { formatCurrencyCompact } from "@shared/formatters";
+export const formatCurrency = formatCurrencyCompact;
 
 export const isPremiumIncludedInPlan = (plan: PlanTier): boolean => {
   return plan === "k" || plan === "k2";

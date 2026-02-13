@@ -87,16 +87,8 @@ export const C = {
   bgSoft: "#F8FAFC",
 } as const;
 
-// ── Formatters ──────────────────────────────────────────────────
-export const fmt = (v: number) =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-  }).format(v);
-
-export const fmtNum = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(v);
+// ── Formatters (re-exported from shared) ────────────────────────
+export { fmt, fmtNum } from "@shared/formatters";
 
 // ── Display Maps ────────────────────────────────────────────────
 export const cycleMap: Record<string, string> = {

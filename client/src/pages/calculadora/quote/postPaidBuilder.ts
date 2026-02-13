@@ -2,9 +2,11 @@
  * postPaidBuilder.ts
  * Pure utility functions for calculating post-paid costs and building
  * the post-paid breakdown section for PDF generation.
+ *
+ * Tier calculation helpers are the single source of truth — imported by
+ * receita-extra/postPaidCalc.ts and hooks/exampleConfigGenerator.ts.
  */
 
-import * as Pricing from "@/utils/pricing";
 import {
   toNum,
   calculateAdditionalUsersCost,
@@ -93,93 +95,16 @@ export function getIncludedBoletosSplits(plan: PlanTier): number {
   return plan === "prime" ? 2 : plan === "k" ? 5 : 15;
 }
 
-// ─── Post-Paid Total Calculation ───────────────────────────────────────────
+// ─── Post-Paid Total Calculation (delegates to postPaidCalc) ──────────────
 
+import { calculatePostPaidBreakdown } from "../receita-extra/postPaidCalc";
+
+/**
+ * Returns the total post-paid cost. Delegates to the canonical
+ * calculatePostPaidBreakdown in postPaidCalc.ts to avoid duplicated logic.
+ */
 export function calculatePostPaidTotal(input: PostPaidInput): number {
-  const {
-    product,
-    imobPlan,
-    locPlan,
-    addons,
-    metrics,
-    prepayAdditionalUsers,
-    prepayAdditionalContracts,
-  } = input;
-
-  let total = 0;
-
-  // Support Services
-  if (product === "imob" || product === "both") {
-    if (metrics.imobVipSupport && imobPlan === "prime")
-      total += Pricing.getVipSupportPrice();
-    if (metrics.imobDedicatedCS && imobPlan === "prime")
-      total += Pricing.getCSDedicadoPrice();
-  }
-  if (product === "loc" || product === "both") {
-    if (metrics.locVipSupport && locPlan === "prime")
-      total += Pricing.getVipSupportPrice();
-    if (metrics.locDedicatedCS && locPlan === "prime")
-      total += Pricing.getCSDedicadoPrice();
-  }
-
-  // Additional Users (Imob)
-  if ((product === "imob" || product === "both") && !prepayAdditionalUsers) {
-    const included = getIncludedUsers(imobPlan);
-    const additional = Math.max(0, toNum(metrics.imobUsers) - included);
-    if (additional > 0) {
-      total += calculateAdditionalUsersCost(imobPlan, additional);
-    }
-  }
-
-  // Additional Contracts (Loc)
-  if ((product === "loc" || product === "both") && !prepayAdditionalContracts) {
-    const included = getIncludedContracts(locPlan);
-    const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-    if (additional > 0) {
-      total += calcContractsTierCost(locPlan, additional);
-    }
-  }
-
-  // WhatsApp Messages
-  if (addons.leads && metrics.wantsWhatsApp) {
-    const additional = Math.max(0, toNum(metrics.leadsPerMonth) - 100);
-    if (additional > 0) {
-      total += calcWhatsAppTierCost(additional);
-    }
-  }
-
-  // Digital Signatures
-  if (addons.assinatura) {
-    let totalSigs = 0;
-    if (product === "imob" || product === "both")
-      totalSigs += toNum(metrics.closingsPerMonth);
-    if (product === "loc" || product === "both")
-      totalSigs += toNum(metrics.newContractsPerMonth);
-    const additional = Math.max(0, totalSigs - 15);
-    if (additional > 0) {
-      total += calcSignaturesTierCost(additional);
-    }
-  }
-
-  // Boleto costs
-  if (addons.pay && metrics.chargesBoletoToTenant && (product === "loc" || product === "both")) {
-    const included = getIncludedBoletosSplits(locPlan);
-    const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-    if (additional > 0) {
-      total += calcBoletoSplitTierCost(locPlan, additional);
-    }
-  }
-
-  // Split costs
-  if (addons.pay && metrics.chargesSplitToOwner && (product === "loc" || product === "both")) {
-    const included = getIncludedBoletosSplits(locPlan);
-    const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-    if (additional > 0) {
-      total += calcBoletoSplitTierCost(locPlan, additional);
-    }
-  }
-
-  return total;
+  return calculatePostPaidBreakdown(input).total;
 }
 
 // ─── Post-Paid Breakdown (for PDF Section) ─────────────────────────────────

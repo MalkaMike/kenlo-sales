@@ -3,16 +3,10 @@
  * Pure functions — no React dependencies.
  */
 
-// ─── Formatters ─────────────────────────────────────────────────────────────
+// ─── Formatters (from shared) ───────────────────────────────────────────────
 
-export const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-};
+import { formatCurrencyRounded } from "@shared/formatters";
+export const formatCurrency = formatCurrencyRounded;
 
 export const formatCompactCurrency = (value: number): string => {
   if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1)}M`;

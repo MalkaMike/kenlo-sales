@@ -6,12 +6,9 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Info, ChevronDown, ChevronRight, Eye } from "lucide-react";
 
-// ── Format helpers ──────────────────────────────────────────────
-export const formatNumber = (num: number): string =>
-  new Intl.NumberFormat("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(num);
+// ── Format helpers (from shared) ──────────────────────────────
+import { formatNumberFlexible } from "@shared/formatters";
+export const formatNumber = formatNumberFlexible;
 
 export const parseFormattedNumber = (str: string): number =>
   parseFloat(str.replace(/\./g, "").replace(",", ".")) || 0;

@@ -1,5 +1,6 @@
 import { useCountUp } from "@/hooks/useCountUp";
 import { LucideIcon } from "lucide-react";
+import { formatNumber } from "@shared/formatters";
 
 interface AnimatedStatProps {
   icon: LucideIcon;
@@ -14,15 +15,7 @@ interface AnimatedStatProps {
 export function AnimatedStat({ icon: Icon, numericValue, label, prefix = "", suffix = "", color = "text-primary", bgColor = "bg-primary/10" }: AnimatedStatProps) {
   const { count, elementRef } = useCountUp({ end: numericValue, duration: 2000 });
 
-  // Formatar o número com separador de milhares
-  const formatNumber = (num: number) => {
-    // Para números decimais (como 1.2), manter o decimal
-    if (num % 1 !== 0) {
-      return num.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-    }
-    // Para números inteiros, adicionar separador de milhares
-    return num.toLocaleString('pt-BR');
-  };
+  // formatNumber imported from @shared/formatters
 
   return (
     <div ref={elementRef} className="text-center group p-3 sm:p-4">

@@ -134,12 +134,8 @@ export const CW = PW - M * 2;
 export const GAP = 10;
 export const MAX_Y = PH - 40;
 
-// ── Formatters ──────────────────────────────────────────────────
-export const fmt = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2 }).format(v);
-
-export const fmtNum = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(v);
+// ── Formatters (re-exported from shared) ────────────────────────
+export { fmt, fmtNum } from "@shared/formatters";
 
 // ── Typography helpers ──────────────────────────────────────────
 export const h1 = (doc: PDFKit.PDFDocument, text: string, x: number, y: number, maxW?: number): number => {

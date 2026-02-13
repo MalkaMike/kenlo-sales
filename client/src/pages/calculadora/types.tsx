@@ -171,20 +171,11 @@ export const parseCurrency = (value: string): number => {
 };
 
 /** Format number as BRL currency */
-export const formatCurrency = (value: number, decimals: number = 2): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value);
-};
+import { formatCurrency as _formatCurrency, fmtNumFromAny } from "@shared/formatters";
+export const formatCurrency = _formatCurrency;
 
 /** Format number with thousands separator (pt-BR) */
-export const fmtNum = (value: number | string): string => {
-  const num = typeof value === 'number' ? value : toNum(value);
-  return num.toLocaleString('pt-BR');
-};
+export const fmtNum = fmtNumFromAny;
 
 /** Format price with comma decimal (e.g., 37,00) */
 export const fmtPrice = (value: number): string => {

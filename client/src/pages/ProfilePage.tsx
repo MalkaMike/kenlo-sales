@@ -12,6 +12,7 @@ import { Loader2, Upload, Save, FileText, Calendar, Building2, DollarSign } from
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { formatCurrencyFromCents } from "@shared/formatters";
 
 export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,12 +114,7 @@ export default function ProfilePage() {
     uploadReader.readAsDataURL(file);
   };
   
-  const formatCurrency = (cents: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(cents / 100);
-  };
+  const formatCurrency = formatCurrencyFromCents;
   
   const getInitials = (name: string | null | undefined) => {
     if (!name) return "?";

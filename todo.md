@@ -4157,3 +4157,24 @@
   - routers/profileRouter.ts (69 lines) — me/update/uploadAvatar/proposalHistory
 - [x] Remaining large files (LocacaoPage 537, PayPage 502, ImobPage 480, Home 455) are JSX-heavy product pages — splitting would fragment layout without logic extraction benefit; left as-is
 - [x] All 463 tests pass and TypeScript compiles with 0 errors
+
+## Code Optimization Pass 3 — Final Cleanup
+- [x] Extract shared formatting utilities into shared/formatters.ts (103 lines, 12 functions)
+- [x] Replace duplicated formatter definitions across 8 files with imports from shared:
+  - server/pdf/pdfTypes.ts — re-exports fmt, fmtNum
+  - client/src/utils/pdf/pdfHelpers.ts — re-exports fmt, fmtNum
+  - performanceConstants.ts — formatCurrencyRounded
+  - historicoConstants.ts — formatCurrency
+  - komboColumnCalculators.ts — formatCurrencyCompact
+  - calculadora/types.tsx — formatCurrency, fmtNum
+  - ProfilePage.tsx — formatCurrencyFromCents
+  - pricingAdminShared.tsx — formatNumberFlexible
+  - AnimatedStat.tsx — formatNumber
+- [x] Consolidate postPaidBuilder.calculatePostPaidTotal to delegate to postPaidCalc.calculatePostPaidBreakdown (eliminated ~80 lines of duplicated logic)
+- [x] Add 27 unit tests for shared/formatters.ts (currency, number, percentage formatters)
+- [x] Add 19 E2E tests for proposal pipeline (post-paid consistency, revenue consistency, buildProposalData, buildQuoteSaveData, addon classification)
+- [x] All 509 tests pass (463 existing + 46 new) and TypeScript compiles with 0 errors
+
+## PDF Cover Page & Example Generator Fix
+- [ ] Revert PDF cover page (Capa) to preferred version: centered Kenlo logo, "Proposta Comercial" title, client name, plan info, date, red/dark border bars at top and bottom
+- [ ] Make "Gerar 3 Exemplos" use the same PDF generator as "Gerar Cotação" (the main server-side PDF)

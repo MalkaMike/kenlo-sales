@@ -2,14 +2,9 @@
  * Shared constants and helpers for the Histórico page.
  */
 
-// ── Currency formatter ──────────────────────────────────────────
-export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
+/// ── Currency formatter (from shared) ─────────────────────────
+import { formatCurrencyRounded } from "@shared/formatters";
+export const formatCurrency = formatCurrencyRounded;
 
 // ── Safe JSON parser ────────────────────────────────────────────
 export const parseJSON = (str: string | null) => {
