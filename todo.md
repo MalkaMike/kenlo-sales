@@ -4184,3 +4184,8 @@
 - [x] Removed dependency on server-side generatePDF tRPC mutation from useExampleGenerator
 - [x] Simplified useExampleGenerator interface (removed generatePDF parameter)
 - [x] Verified all 509 tests pass, 0 TypeScript errors, dev server running clean
+
+## PDF Cover Page Revert
+- [x] Revert client-side PDF cover page to preferred version: white background, centered red Kenlo logo, "Proposta Comercial" bold title, thin divider, client name, plan name in red, frequency label, date
+- [x] Added top double bar (dark charcoal + red) and bottom red bar matching the screenshot
+- [x] All 509 tests pass, 0 TypeScript errors
