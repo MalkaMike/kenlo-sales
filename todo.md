@@ -4026,3 +4026,22 @@
 - [x] Refactor ProductConfigSection to compose new sub-components (57 lines)
 - [x] Verify all 340 tests pass after refactoring
 - [x] Verify calculator renders correctly in browser
+
+## Refactor ReceitaExtraSection into Smaller Sub-Components
+- [x] Analyze ReceitaExtraSection structure and identify logical sections
+- [x] Create shared postPaidCalc.ts utility to eliminate duplicated tier calculations
+- [x] Extract BoletosSplitRevenueRow sub-component
+- [x] Extract SegurosRevenueRow sub-component
+- [x] Extract MensalidadeRow sub-component
+- [x] Extract AdditionalUsersRow sub-component
+- [x] Extract AdditionalContractsRow sub-component
+- [x] Extract WhatsAppRow sub-component
+- [x] Extract AssinaturasRow sub-component
+- [x] Extract BoletoCostRow sub-component
+- [x] Extract SplitCostRow sub-component
+- [x] Extract SupportServicesRow sub-component
+- [x] Extract PostPaidTotalRow sub-component (uses shared postPaidCalc)
+- [x] Extract GrandTotalRow sub-component (uses shared postPaidCalc)
+- [x] Refactor ReceitaExtraSection to compose new sub-components (79 lines)
+- [x] Verify all 340 tests pass after refactoring
+- [x] Verify calculator renders correctly in browser
