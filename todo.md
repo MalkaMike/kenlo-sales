@@ -4053,3 +4053,14 @@
 - [x] Refactor QuoteInfoHandler to use extracted utilities (799 → 99 lines, 88% reduction)
 - [x] Verify all 340 tests pass after refactoring
 - [x] Verify dev server running with 0 TypeScript errors
+
+## Refactor useCalculadora Hook into Domain-Specific Hooks
+- [x] Analyze useCalculadora structure and identify logical domains
+- [x] Extract usePricing hook (275 lines) - all pricing calculation functions
+- [x] Extract useExampleGenerator hook (404 lines) - 3-example PDF generation
+- [x] Extract useUrlParams hook (138 lines) - URL parameter loading and shareable URL generation
+- [x] Extract useKomboRecommendation hook (91 lines) - kombo recommendation engine
+- [x] Extract useAutoEffects hook (111 lines) - plan recommendation, premium services sync, product sync, sticky bar
+- [x] Refactor useCalculadora to compose extracted hooks (992 → 310 lines, 69% reduction)
+- [x] Verify all 340 tests pass after refactoring
+- [x] Verify TypeScript compiles with 0 errors
