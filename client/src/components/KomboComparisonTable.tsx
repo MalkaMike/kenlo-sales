@@ -18,7 +18,7 @@
  * - Cycle row placed below Anual row
  */
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1393,17 +1393,17 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsTopSpacing: true },
+    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsTopSpacing: true, needsBottomSpacing: true, isMensalidadeRow: true },
 
     { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
     { key: "implImob", label: "Imob", indent: true },
     { key: "implLoc", label: "Locação", indent: true },
     { key: "implLeads", label: "Leads", indent: true },
     { key: "implInteligencia", label: "Inteligência", indent: true },
-    { key: "implTotal", label: "Total Implantação", isTotal: true },
+    { key: "implTotal", label: "Total Implantação", isTotal: true, needsBottomSpacing: true },
 
     { key: "cycleTotal", label: "Total 1º Ano", isTotal: true },
-    { key: "cycle", label: "Ciclo", isTotal: true },
+    { key: "cycle", label: "Ciclo", isTotal: true, needsBottomSpacing: true },
 
     { key: "postpaid", label: "Pós-Pago", isHeader: true, needsTopSpacing: true },
     { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
@@ -1412,9 +1412,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
-    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago¹", isTotal: true },
+    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago¹", isTotal: true, needsBottomSpacing: true, isMensalidadeRow: true },
 
-    { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago¹ + Pós-Pago¹", isTotal: true, isGrandTotal: true },
+    { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago¹ + Pós-Pago¹", isTotal: true, isGrandTotal: true, isMensalidadeRow: true },
   ];
 
   /**
@@ -2077,18 +2077,19 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => {
-
-                  
-
+                {rows.map((row, rowIndex) => {
+                  const needsSpacerAfter = (row as any).needsBottomSpacing;
                   
                   return (
+                  <React.Fragment key={`row-fragment-${row.key}`}>
                   <tr
                     key={row.key}
                     className={`
                       ${(row as any).needsTopSpacing ? "mt-2" : ""}
                       ${
-                        (row as any).isGrandTotal
+                        (row as any).isMensalidadeRow
+                          ? "bg-blue-50/50 rounded-lg border-2 border-blue-200/60"
+                          : (row as any).isGrandTotal
                           ? ""
                           : row.isHeader
                           ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
@@ -2103,6 +2104,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       className={`
                         ${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"} 
                         ${row.indent ? "pl-8" : ""} 
+                        ${(row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
                         ${row.isHeader
                           ? "font-semibold text-gray-700 text-xs" 
                           : (row as any).isGrandTotal
@@ -2188,13 +2190,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       const isFirstCustom = col.isCustom && colIndex === 1 + komboColumnCount;
                       
                       return (
-                        <td
+                                      <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center 
-                            ${row.isHeader ? "py-0.5 px-2" : row.isTotal ? "py-0.5 px-2" : "py-px px-2"} 
-                            transition-colors duration-150 
-
+                          onMouseLeave={() => setHoveredColumn(null)}
+                          className={`py-0.5 px-2 text-center text-xs transition-colors duration-150
+                            ${(row as any).isMensalidadeRow && colIndex === columns.length - 1 ? "rounded-r-lg" : ""}
                             ${isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""} ${
                             selectedPlans.includes(col.id)
                               ? col.isCustom
@@ -2220,6 +2221,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <td className="text-center py-2 px-1"></td>
                     )}
                   </tr>
+                  {/* Spacer row for prominent separation */}
+                  {needsSpacerAfter && (
+                    <tr key={`spacer-${row.key}`} className="h-6">
+                      <td colSpan={columns.length + 2}></td>
+                    </tr>
+                  )}
+                  </React.Fragment>
                   );
                 })}
               </tbody>

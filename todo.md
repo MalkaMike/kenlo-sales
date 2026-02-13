@@ -3912,3 +3912,17 @@
 - [x] Implement mt-2 (8px) spacing before: Add-ons, Serviços Premium, Mensalidade, Implantação, Pós-Pago sections
 - [x] Keep Produtos section without top margin (first section)
 - [x] Test visual spacing to ensure improved scannability without visual clutter
+
+## Prominent Block Separations and Unified Mensalidade Styling
+- [x] Increase spacing after Mensalidade Pré-Pago row (using h-6 spacer rows)
+- [x] Increase spacing after Total Implantação row (using h-6 spacer rows)
+- [x] Increase spacing after Ciclo row (using h-6 spacer rows)
+- [x] Increase spacing after Mensalidade Pós-Pago row (using h-6 spacer rows)
+- [x] Create unified visual styling for all three Mensalidade rows:
+  - [x] Mensalidade Pré-Pago
+  - [x] Mensalidade Pós-Pago  
+  - [x] Total Mensalidade (est.)
+- [x] Apply matching background color (bg-blue-50/50) to all three Mensalidade rows
+- [x] Add subtle rounded borders (rounded-lg, border-2 border-blue-200/60) to all three Mensalidade rows
+- [x] Ensure Mensalidade rows stand out distinctly from all other rows (headers, regular rows, other totals)
+- [x] Test visual separation is clear enough to understand each block boundary
