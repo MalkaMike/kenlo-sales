@@ -4193,3 +4193,9 @@
 ## PDF Próximos Passos Box Fix
 
 - [x] Move "Próximos Passos" title outside/above the box (not inside it), matching the UI pattern for section titles like "Add-ons Opcionais" and "Sua Seleção vs Kombos"
+
+## PDF Follow-up Fixes
+
+- [x] Reduce empty space on Page 2: continue contract sections on the same page after Perfil Operacional instead of forcing a new page
+- [x] Enlarge feature table checkmarks: replace small dot symbols with green filled circles with white checkmark for readability
+- [x] Align server-side PDF cover page to match client-side design (double top bar, bottom red bar, centered layout)

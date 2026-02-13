@@ -59,13 +59,34 @@ export function renderFeatures(doc: jsPDF, data: ProposalPrintData, Y: number): 
       doc.setFont("helvetica", "normal");
       doc.text(fname, M + 14, Y);
 
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(imobHas ? C.green : C.textLight));
-      doc.setFont("helvetica", "bold");
-      doc.text(imobHas ? "✔" : "—", M + CW - 80, Y, { align: "center" });
+      // Checkmarks — use filled circles + text for better visibility
+      if (imobHas) {
+        doc.setFillColor(...rgb(C.green));
+        doc.circle(M + CW - 80, Y - 2, 4, "F");
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.text("✓", M + CW - 80, Y, { align: "center" });
+      } else {
+        doc.setFontSize(9);
+        doc.setTextColor(...rgb(C.textLight));
+        doc.setFont("helvetica", "normal");
+        doc.text("—", M + CW - 80, Y, { align: "center" });
+      }
 
-      doc.setTextColor(...rgb(locHas ? C.green : C.textLight));
-      doc.text(locHas ? "✔" : "—", M + CW - 20, Y, { align: "center" });
+      if (locHas) {
+        doc.setFillColor(...rgb(C.green));
+        doc.circle(M + CW - 20, Y - 2, 4, "F");
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.text("✓", M + CW - 20, Y, { align: "center" });
+      } else {
+        doc.setFontSize(9);
+        doc.setTextColor(...rgb(C.textLight));
+        doc.setFont("helvetica", "normal");
+        doc.text("—", M + CW - 20, Y, { align: "center" });
+      }
 
       Y += 12;
     }
@@ -75,18 +96,24 @@ export function renderFeatures(doc: jsPDF, data: ProposalPrintData, Y: number): 
     for (const feat of features) {
       if (needsNewPage(Y, 20)) Y = newPage(doc, data);
 
-      const symbol = feat.included ? "✔" : "—";
-      const color = feat.included ? C.green : C.textLight;
-
       doc.setFontSize(7);
       doc.setTextColor(...rgb(C.text));
       doc.setFont("helvetica", "normal");
       doc.text(feat.name, M + 14, Y);
 
-      doc.setFontSize(8);
-      doc.setTextColor(...rgb(color));
-      doc.setFont("helvetica", "bold");
-      doc.text(symbol, M + CW - 14, Y, { align: "right" });
+      if (feat.included) {
+        doc.setFillColor(...rgb(C.green));
+        doc.circle(M + CW - 18, Y - 2, 4, "F");
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.text("✓", M + CW - 18, Y, { align: "center" });
+      } else {
+        doc.setFontSize(9);
+        doc.setTextColor(...rgb(C.textLight));
+        doc.setFont("helvetica", "normal");
+        doc.text("—", M + CW - 18, Y, { align: "right" });
+      }
 
       Y += 12;
     }

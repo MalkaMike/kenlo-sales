@@ -46,7 +46,7 @@ export async function generateProposalPDFClient(
   let Y = renderProfile(doc, data);
 
   // Sections 3-6: Estrutura Contratada + Investimento + Escopo + Premium
-  Y = renderContractLayout(doc, data);
+  Y = renderContractLayout(doc, data, Y);
 
   // Section 4B: Comparativo de Cenários (selected columns)
   Y = renderComparison(doc, data, Y);

@@ -1,13 +1,19 @@
 /**
  * Page 1 — Cover page for the server-side PDF.
+ *
+ * Design aligned with client-side cover:
+ *   - White background
+ *   - Top double bar (dark charcoal + red)
+ *   - Bottom red bar
+ *   - Centered Kenlo logo, "Proposta Comercial" title
+ *   - Client name, plan name in red, frequency with discount, date
  */
 
 import path from "path";
 import fs from "fs";
 import {
   type ProposalData, type DerivedData,
-  C, PW, PH, M, CW, fmt, fmtNum,
-  label, value, divider, h1,
+  C, PW, PH, M, CW,
 } from "./pdfTypes";
 
 export function renderCoverPage(
@@ -15,55 +21,68 @@ export function renderCoverPage(
   data: ProposalData,
   derived: DerivedData,
 ): number {
-  let Y = 0;
   const cx = PW / 2;
 
-  // Top accent
-  doc.rect(0, 0, PW, 4).fill(C.primary);
+  // ── White background ──────────────────────────────────────────
+  doc.rect(0, 0, PW, PH).fill("#FFFFFF");
 
-  // Logo
+  // ── Top border bars (dark charcoal + red) ─────────────────────
+  doc.rect(0, 0, PW, 6).fill(C.dark);
+  doc.rect(0, 6, PW, 4).fill(C.primary);
+
+  // ── Bottom border bar (red) ───────────────────────────────────
+  doc.rect(0, PH - 5, PW, 5).fill(C.primary);
+
+  // ── Logo (centered) ───────────────────────────────────────────
+  const logoY = 210;
   const logoPath = path.join(process.cwd(), "client/public/kenlo-logo-red.png");
   if (fs.existsSync(logoPath)) {
-    try { doc.image(logoPath, cx - 55, 200, { height: 32 }); } catch (_) {}
+    try { doc.image(logoPath, cx - 60, logoY, { height: 36 }); } catch (_) {}
   } else {
     doc.fontSize(28).fillColor(C.primary).font("Helvetica-Bold")
-      .text("Kenlo", 0, 210, { width: PW, align: "center" });
+      .text("Kenlo", 0, logoY + 4, { width: PW, align: "center" });
   }
 
-  // Title
-  doc.fontSize(24).fillColor(C.dark).font("Helvetica-Bold")
-    .text("Proposta Comercial", 0, 260, { width: PW, align: "center" });
+  // ── "Proposta Comercial" title ────────────────────────────────
+  const titleY = logoY + 36 + 50;
+  doc.fontSize(26).fillColor(C.dark).font("Helvetica-Bold")
+    .text("Proposta Comercial", 0, titleY, { width: PW, align: "center" });
 
-  // Thin divider
-  doc.moveTo(cx - 50, 292).lineTo(cx + 50, 292).lineWidth(0.5).strokeColor(C.border).stroke();
+  // ── Thin divider line ─────────────────────────────────────────
+  const dividerY = titleY + 32;
+  doc.moveTo(cx - 25, dividerY).lineTo(cx + 25, dividerY)
+    .lineWidth(0.5).strokeColor(C.textLight).stroke();
 
-  // Agency name
-  const coverName = data.agencyName || data.clientName || "";
-  if (coverName) {
-    doc.fontSize(15).fillColor(C.text).font("Helvetica")
-      .text(coverName, 0, 310, { width: PW, align: "center" });
-  }
+  // ── Client / agency name ──────────────────────────────────────
+  let infoY = dividerY + 28;
+  const clientLabel = data.agencyName || data.clientName || "Cliente";
+  doc.fontSize(16).fillColor(C.text).font("Helvetica")
+    .text(clientLabel, 0, infoY, { width: PW, align: "center" });
 
-  // Products contracted
+  // ── Plan name in red bold ─────────────────────────────────────
+  infoY += 30;
   const prodParts: string[] = [];
   if (derived.showImob) prodParts.push(`Kenlo Imob ${(data.imobPlan || "K").toUpperCase()}`);
   if (derived.showLoc) prodParts.push(`Kenlo Locação ${(data.locPlan || "K").toUpperCase()}`);
-  doc.fontSize(11).fillColor(C.primary).font("Helvetica-Bold")
-    .text(prodParts.join(" & "), 0, 340, { width: PW, align: "center" });
+  const planLabel = prodParts.join(" + ") || "Kenlo";
+  doc.fontSize(13).fillColor(C.primary).font("Helvetica-Bold")
+    .text(planLabel, 0, infoY, { width: PW, align: "center" });
 
-  // Cycle
+  // ── Frequency with discount ───────────────────────────────────
+  infoY += 22;
   const cycleText = `Plano ${derived.freqInfo.label}${derived.freqInfo.discount ? ` (${derived.freqInfo.discount})` : ""}`;
-  doc.fontSize(9).fillColor(C.textMuted).font("Helvetica")
-    .text(cycleText, 0, 360, { width: PW, align: "center" });
+  doc.fontSize(10).fillColor(C.textMuted).font("Helvetica")
+    .text(cycleText, 0, infoY, { width: PW, align: "center" });
 
-  // Date
-  const dateStr = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
-  doc.fontSize(9).fillColor(C.textLight).font("Helvetica")
-    .text(dateStr, 0, 380, { width: PW, align: "center" });
+  // ── Date ──────────────────────────────────────────────────────
+  infoY += 18;
+  const dateStr = new Date().toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  doc.fontSize(10).fillColor(C.textLight).font("Helvetica")
+    .text(dateStr, 0, infoY, { width: PW, align: "center" });
 
-  // Bottom accent
-  doc.rect(0, PH - 4, PW, 4).fill(C.primary);
-  Y = PH;
-
-  return Y;
+  return PH;
 }

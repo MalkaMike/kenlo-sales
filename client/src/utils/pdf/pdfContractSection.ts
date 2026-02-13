@@ -8,13 +8,19 @@
 import type { jsPDF } from "jspdf";
 import {
   type ProposalPrintData, M, CW,
-  rgb, C, sectionTitle, fmt, newPage,
+  rgb, C, sectionTitle, fmt, newPage, needsNewPage,
   addonNameMap, allAddonKeys,
   getDerivedFlags,
 } from "./pdfHelpers";
 
-export function renderContractLayout(doc: jsPDF, data: ProposalPrintData): number {
-  let Y = newPage(doc, data);
+export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY?: number): number {
+  // Estimate ~300pt needed for the contract layout; only add a new page if insufficient space
+  let Y: number;
+  if (startY !== undefined && !needsNewPage(startY, 300)) {
+    Y = startY;
+  } else {
+    Y = newPage(doc, data);
+  }
 
   const { showImob, showLoc, selAddons, cycleDisplay } = getDerivedFlags(data);
   const notSelectedAddons = allAddonKeys.filter(k => !selAddons.includes(k));

@@ -10,6 +10,7 @@ import {
 } from "./pdfHelpers";
 
 export function renderProfile(doc: jsPDF, data: ProposalPrintData): number {
+  // Start a new page after the cover
   let Y = newPage(doc, data);
   Y = sectionTitle(doc, "Perfil Operacional do Cliente", Y);
 
