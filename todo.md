@@ -3899,3 +3899,10 @@
 - [x] Implement rounded border for Total Mensalidade (est.) row with gradient background
 - [x] Add proper padding and spacing to accommodate borders
 - [x] Test visual hierarchy and adjust colors/thickness as needed
+
+## Remove All Visual Separators
+- [x] Remove L-bracket border styling from all table sections
+- [x] Remove rounded border from Total Mensalidade (est.) row
+- [x] Remove section metadata (sectionStart, sectionEnd, sectionType) from rows array
+- [x] Remove separator rows between blocks
+- [x] Clean up unused styling code
