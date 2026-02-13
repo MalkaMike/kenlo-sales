@@ -3864,3 +3864,10 @@
 - [x] Update UI to show disabled state when one toggle blocks the other
 - [x] Test all scenarios: IA SDR ON → WhatsApp disabled, WhatsApp ON → IA SDR disabled
 - [x] Verify tooltip appears correctly and explains the 3 Leads usage modes
+
+## Post-Paid Visual Improvements and Total Monthly Estimate
+- [x] Add visual indicators (icon or color) to post-paid items with variable costs (WhatsApp Leads, Usuários, Contratos, etc.)
+- [x] Add "Est. Mensalidades Total (Pré+Pós)" row at the end of comparison table showing total monthly investment estimate
+- [x] Calculate total: monthly pre-paid + estimated post-paid costs for each column
+- [x] Test with different scenarios (WhatsApp ON/OFF, different user/contract counts)
+- [x] Verify visual design is clear and helps user understand total monthly investment

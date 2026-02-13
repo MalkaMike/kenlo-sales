@@ -22,7 +22,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers, ChevronDown, Plus, X } from "lucide-react";
+import { Check, Star, Info, CheckCircle2, Sparkles, Building2, Home, Layers, ChevronDown, Plus, X, TrendingUp } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -1409,6 +1409,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
     { key: "postpaidTotal", label: "Total Pós-Pago (Estimado)", isTotal: true },
+    { key: "totalMonthlyEstimate", label: "Est. Mensalidades Total (Pré+Pós)", isTotal: true, isGrandTotal: true },
   ];
 
   /**
@@ -1841,10 +1842,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </div>
         );
         return (
-          <div className="flex flex-col items-center">
-            <span className="text-[8px] text-gray-400 italic mb-0.5">
-              R$ {pp.perUnit.toFixed(2)}/lead × {pp.additional} add.
-            </span>
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-1">
+              <TrendingUp className="w-3 h-3 text-amber-600" />
+              <span className="text-[8px] text-gray-400 italic">
+                R$ {pp.perUnit.toFixed(2)}/lead × {pp.additional} add.
+              </span>
+            </div>
             <span className="text-[11px] text-amber-700 font-bold">
               R$ {pp.cost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês
             </span>
@@ -1898,6 +1902,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         }
         return (
           <span className="text-[11px] text-amber-700 font-bold">R$ {column.postPaidTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
+        );
+      }
+      case "totalMonthlyEstimate": {
+        const totalEstimate = column.totalMonthly + column.postPaidTotal;
+        return (
+          <span className="text-[13px] text-primary font-extrabold">R$ {totalEstimate.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
         );
       }
       default:
@@ -2078,6 +2088,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       className={`${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"} ${row.indent ? "pl-8" : ""} ${
                         row.isHeader
                           ? "font-semibold text-gray-700 text-xs" 
+                          : (row as any).isGrandTotal
+                          ? "font-extrabold text-primary text-sm"
                           : row.isTotal
                           ? "font-bold text-gray-700 text-xs"
                           : "text-gray-600 text-xs"
