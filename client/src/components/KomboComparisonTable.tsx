@@ -1100,9 +1100,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // Pré-Pago/Pós-Pago modal state
   const [showPrePagoPosPagoModal, setShowPrePagoPosPagoModal] = useState(false);
 
-  // Hover state for L-bracket sections
-  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
-
   // Initialize/reset overrides when product or parent props change
   const getDefaultOverrides = useCallback((): ColumnOverrides => ({
     frequency: props.frequency,
@@ -2099,30 +2096,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   const sectionStart = (row as any).sectionStart;
                   const sectionEnd = (row as any).sectionEnd;
                   const sectionType = (row as any).sectionType; // "primary" or "secondary"
-                  const sectionId = sectionStart || sectionEnd; // Section identifier for hover tracking
                   const hasSectionBracket = sectionStart || sectionEnd;
-                  const isHovered = hoveredSection === sectionId;
-                  
-                  // Base and hover colors for L-brackets
-                  const baseBracketColor = sectionType === "primary" ? "border-primary" : "border-gray-400";
-                  const hoverBracketColor = "border-primary"; // Always pink on hover
-                  const bracketColor = isHovered ? hoverBracketColor : baseBracketColor;
-                  const bracketWidth = isHovered ? "border-l-[4px] border-t-[4px]" : "border-l-[3px] border-t-[3px]";
-                  const bracketShadow = isHovered ? "shadow-[0_0_8px_rgba(236,72,153,0.3)]" : "";
+                  const bracketColor = sectionType === "primary" ? "border-primary" : "border-gray-400";
                   
                   return (
                   <tr
                     key={row.key}
-                    onMouseEnter={() => sectionId && setHoveredSection(sectionId)}
-                    onMouseLeave={() => sectionId && setHoveredSection(null)}
                     className={
                       (row as any).isGrandTotal
-                        ? "bg-gradient-to-r from-red-50 to-transparent transition-all duration-300"
+                        ? "bg-gradient-to-r from-red-50 to-transparent"
                         : row.isHeader
-                        ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200 transition-all duration-300"
+                        ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
-                        ? "bg-gray-100/70 border-b border-gray-200 transition-all duration-300"
-                        : "border-b border-gray-100 hover:bg-gray-50/30 transition-all duration-300"
+                        ? "bg-gray-100/70 border-b border-gray-200"
+                        : "border-b border-gray-100 hover:bg-gray-50/30"
                     }
                   >
                     <td
@@ -2138,10 +2125,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           ? "font-bold text-gray-700 text-xs"
                           : "text-gray-600 text-sm"
                         }
-                        ${(row as any).isGrandTotal ? "border-2 border-primary rounded-l-xl py-3 transition-all duration-300" : ""}
-                        ${sectionStart && !(row as any).isGrandTotal ? `${bracketWidth} ${bracketColor} ${bracketShadow} pl-5 pt-2 transition-all duration-300` : ""}
-                        ${sectionEnd && !sectionStart && !(row as any).isGrandTotal ? `border-l-[3px] ${bracketColor} ${bracketShadow} pl-5 transition-all duration-300` : ""}
-                        ${sectionStart && sectionEnd && !(row as any).isGrandTotal ? `${bracketWidth} ${bracketColor} ${bracketShadow} pl-5 pt-2 transition-all duration-300` : ""}
+                        ${(row as any).isGrandTotal ? "border-2 border-primary rounded-l-xl py-3" : ""}
+                        ${sectionStart && !(row as any).isGrandTotal ? `border-l-[3px] border-t-[3px] ${bracketColor} pl-5 pt-2` : ""}
+                        ${sectionEnd && !sectionStart && !(row as any).isGrandTotal ? `border-l-[3px] ${bracketColor} pl-5` : ""}
+                        ${sectionStart && sectionEnd && !(row as any).isGrandTotal ? `border-l-[3px] border-t-[3px] ${bracketColor} pl-5 pt-2` : ""}
                       `}
                     >
                       {row.key === "training" ? (
