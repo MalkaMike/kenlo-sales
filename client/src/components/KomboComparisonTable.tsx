@@ -1384,18 +1384,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "products", label: "Produtos", isHeader: true },
     { key: "imob", label: "Imob", indent: true },
     { key: "loc", label: "Loc", indent: true },
-    { key: "addons", label: "Add-ons", isHeader: true },
+    { key: "addons", label: "Add-ons", isHeader: true, needsTopSpacing: true },
     { key: "leads", label: "Leads", indent: true },
     { key: "inteligencia", label: "Inteligência", indent: true },
     { key: "assinatura", label: "Assinatura", indent: true },
 
-    { key: "premium", label: "Serviços Premium", isHeader: true },
+    { key: "premium", label: "Serviços Premium", isHeader: true, needsTopSpacing: true },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
     { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true },
+    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsTopSpacing: true },
 
-    { key: "implantacao", label: "Implantação", isHeader: true },
+    { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
     { key: "implImob", label: "Imob", indent: true },
     { key: "implLoc", label: "Locação", indent: true },
     { key: "implLeads", label: "Leads", indent: true },
@@ -1405,7 +1405,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "cycleTotal", label: "Total 1º Ano", isTotal: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
 
-    { key: "postpaid", label: "Pós-Pago", isHeader: true },
+    { key: "postpaid", label: "Pós-Pago", isHeader: true, needsTopSpacing: true },
     { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
     { key: "postpaidContracts", label: "Contratos adicionais", indent: true },
     { key: "postpaidWhatsApp", label: "WhatsApp Leads", indent: true },
@@ -2085,15 +2085,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   return (
                   <tr
                     key={row.key}
-                    className={
-                      (row as any).isGrandTotal
-                        ? ""
-                        : row.isHeader
-                        ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
-                        : row.isTotal
-                        ? "bg-gray-100/70 border-b border-gray-200"
-                        : "border-b border-gray-100 hover:bg-gray-50/30"
-                    }
+                    className={`
+                      ${(row as any).needsTopSpacing ? "mt-2" : ""}
+                      ${
+                        (row as any).isGrandTotal
+                          ? ""
+                          : row.isHeader
+                          ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
+                          : row.isTotal
+                          ? "bg-gray-100/70 border-b border-gray-200"
+                          : "border-b border-gray-100 hover:bg-gray-50/30"
+                      }
+                    `}
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}

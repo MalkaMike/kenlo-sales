@@ -3906,3 +3906,9 @@
 - [x] Remove section metadata (sectionStart, sectionEnd, sectionType) from rows array
 - [x] Remove separator rows between blocks
 - [x] Clean up unused styling code
+
+## Subtle Vertical Spacing Between Sections
+- [x] Add spacing marker to rows array for sections that need top margin
+- [x] Implement mt-2 (8px) spacing before: Add-ons, Serviços Premium, Mensalidade, Implantação, Pós-Pago sections
+- [x] Keep Produtos section without top margin (first section)
+- [x] Test visual spacing to ensure improved scannability without visual clutter
