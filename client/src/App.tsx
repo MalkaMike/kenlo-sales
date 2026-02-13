@@ -19,7 +19,7 @@ import PayPage from "./pages/addons/PayPage";
 import SegurosPage from "./pages/addons/SegurosPage";
 import CashPage from "./pages/addons/CashPage";
 import KombosPage from "./pages/KombosPage";
-import CalculadoraPage from "./pages/CalculadoraPage";
+import CalculadoraPage from "./pages/calculadora";
 import HistoricoPage from "./pages/HistoricoPage";
 import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";

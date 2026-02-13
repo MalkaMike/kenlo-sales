@@ -3992,3 +3992,20 @@
 - [x] Clean up excessive blank lines
 - [x] Verify all 340 tests pass after cleanup
 - [x] Total: ~6,600 lines removed (36,371 → 29,769)
+
+## Refactor CalculadoraPage.tsx into Sub-Components
+- [x] Analyze CalculadoraPage structure and identify logical sections
+- [x] Extract shared types, constants, and utility functions into calculadora/types.tsx
+- [x] Extract useCalculadora custom hook with all state and business logic (992 lines)
+- [x] Create CalculadoraContext for sharing state across sub-components
+- [x] Extract BusinessNatureSection sub-component (279 lines)
+- [x] Extract ProductConfigSection sub-component with Benefits + Addons (1,012 lines)
+- [x] Extract KomboComparisonSection sub-component (115 lines)
+- [x] Extract ReceitaExtraSection sub-component (994 lines)
+- [x] Extract ExportActionsSection sub-component (124 lines)
+- [x] Extract QuoteInfoHandler sub-component with PDF generation (799 lines)
+- [x] Extract StickyBar sub-component (172 lines)
+- [x] Create refactored index.tsx composing all sub-components (~100 lines)
+- [x] Update App.tsx import to use new calculadora directory
+- [x] Verify all 340 tests pass after refactoring
+- [x] Verify calculator renders correctly in browser
