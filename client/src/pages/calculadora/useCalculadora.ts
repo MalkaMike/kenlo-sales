@@ -181,7 +181,6 @@ export function useCalculadora() {
   // Example generation
   const { isGeneratingExamples, handleGenerate3Examples } = useExampleGenerator({
     canExportPDF,
-    generatePDF,
   });
 
   // URL params

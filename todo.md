@@ -4178,3 +4178,9 @@
 ## PDF Cover Page & Example Generator Fix
 - [ ] Revert PDF cover page (Capa) to preferred version: centered Kenlo logo, "Proposta Comercial" title, client name, plan info, date, red/dark border bars at top and bottom
 - [ ] Make "Gerar 3 Exemplos" use the same PDF generator as "Gerar Cotação" (the main server-side PDF)
+
+## Gerar 3 Exemplos PDF Unification
+- [x] Make "Gerar 3 Exemplos" use the same client-side jsPDF generator as "Gerar Cotação" (downloadProposalPDF)
+- [x] Removed dependency on server-side generatePDF tRPC mutation from useExampleGenerator
+- [x] Simplified useExampleGenerator interface (removed generatePDF parameter)
+- [x] Verified all 509 tests pass, 0 TypeScript errors, dev server running clean

@@ -1,20 +1,21 @@
 /**
  * useExampleGenerator - Generates 3 random example PDFs for demonstration.
- * Thin React hook that delegates all data generation to exampleConfigGenerator.
+ * Uses the same client-side PDF generator (jsPDF) as "Gerar Cotação".
  */
 
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { buildExampleProposalData } from "./exampleConfigGenerator";
+import { downloadProposalPDF } from "@/utils/generateProposalPDF";
+import type { ProposalPrintData } from "@/utils/pdf/pdfHelpers";
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 interface UseExampleGeneratorParams {
   canExportPDF: boolean;
-  generatePDF: { mutateAsync: (data: any) => Promise<{ success: boolean; pdf?: string }> };
 }
 
-export function useExampleGenerator({ canExportPDF, generatePDF }: UseExampleGeneratorParams) {
+export function useExampleGenerator({ canExportPDF }: UseExampleGeneratorParams) {
   const [isGeneratingExamples, setIsGeneratingExamples] = useState(false);
 
   const handleGenerate3Examples = useCallback(async () => {
@@ -29,27 +30,15 @@ export function useExampleGenerator({ canExportPDF, generatePDF }: UseExampleGen
 
     for (let i = 0; i < 3; i++) {
       try {
-        const { proposalData, company, komboId } = buildExampleProposalData();
+        const { proposalData } = buildExampleProposalData();
 
-        const pdfResult = await generatePDF.mutateAsync(proposalData);
+        // Use the same client-side PDF generator as "Gerar Cotação"
+        await downloadProposalPDF(proposalData as ProposalPrintData);
 
-        if (pdfResult.success && pdfResult.pdf) {
-          const pdfBlob = new Blob(
-            [Uint8Array.from(atob(pdfResult.pdf), (c) => c.charCodeAt(0))],
-            { type: "application/pdf" }
-          );
-          const url = URL.createObjectURL(pdfBlob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `Exemplo_${i + 1}_${company.replace(/\s+/g, "_")}_${komboId || "sem_kombo"}.pdf`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          successCount++;
-        }
+        successCount++;
 
-        if (i < 2) await new Promise(r => setTimeout(r, 1500));
+        // Small delay between downloads to avoid browser throttling
+        if (i < 2) await new Promise(r => setTimeout(r, 800));
       } catch (error) {
         console.error(`Erro ao gerar exemplo ${i + 1}:`, error);
       }
@@ -65,7 +54,7 @@ export function useExampleGenerator({ canExportPDF, generatePDF }: UseExampleGen
     } else {
       toast.error("Falha ao gerar exemplos. Verifique o login.");
     }
-  }, [canExportPDF, generatePDF]);
+  }, [canExportPDF]);
 
   return {
     isGeneratingExamples,
