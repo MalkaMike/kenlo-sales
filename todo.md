@@ -3842,3 +3842,18 @@
 - [x] Test Perso columns with "Ambos" product selection to verify Core Gestão and Elite appear in selector
 - [x] Add visual indicator to distinguish Kombo mode from Personalizado mode (icon or background color)
 - [ ] Verify PDF export with Perso-Kombo columns shows correct naming
+
+## WhatsApp Leads Post-Paid Bug Fix
+- [ ] Fix WhatsApp Leads post-paid calculation to consider leads/month input
+- [ ] Apply 100 leads carência (included)
+- [ ] Show excess leads (leads/month - 100) in post-paid section when > 100
+- [ ] Test with different leads/month values (50, 100, 200, 500)
+
+## WhatsApp Leads Post-Paid Bug Investigation
+- [x] Investigate WhatsApp Leads post-paid calculation logic
+- [x] Add calculateAdditionalWhatsAppLeadsCost function with tier pricing
+- [x] Update calculatePostPaidData to calculate WhatsApp cost with excess leads
+- [x] Update postPaidWhatsApp rendering to show cost, additional, and perUnit
+- [x] Test WhatsApp calculation with 200 leads/month (100 excess × R$1,50 = R$150/mês)
+- [x] Verify calculation works correctly when WhatsApp toggle is enabled
+- [x] Confirmed: Code is working correctly, WhatsApp pós-pago appears when toggle is ON

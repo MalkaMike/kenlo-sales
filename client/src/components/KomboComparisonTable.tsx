@@ -58,6 +58,7 @@ interface KomboComparisonProps {
   // Client metrics for pós-pago calculations
   imobUsers: number;
   closingsPerMonth: number;
+  leadsPerMonth: number; // For WhatsApp Leads post-paid calculation
   contractsUnderManagement: number;
   newContractsPerMonth: number;
   // Premium services
@@ -132,7 +133,7 @@ export interface KomboColumnData {
   // Pós-Pago calculated values
   postPaidUsers: { cost: number; additional: number; included: number; perUnit: number } | null;
   postPaidContracts: { cost: number; additional: number; included: number; perUnit: number } | null;
-  postPaidWhatsApp: { included: number; label: string } | null;
+  postPaidWhatsApp: { cost: number; additional: number; included: number; perUnit: number } | null;
   postPaidAssinaturas: { cost: number; additional: number; included: number; total: number; perUnit: number } | null;
   postPaidBoletos: { cost: number; quantity: number; perUnit: number } | null;
   postPaidSplits: { cost: number; quantity: number; perUnit: number } | null;
@@ -384,7 +385,7 @@ const calculatePostPaidData = (
   hasAssinatura: boolean,
   hasPay: boolean,
 ) => {
-  const { imobUsers, closingsPerMonth, contractsUnderManagement, newContractsPerMonth } = props;
+  const { imobUsers, closingsPerMonth, leadsPerMonth, contractsUnderManagement, newContractsPerMonth, wantsWhatsApp } = props;
 
   // 1. Usuários adicionais (Imob only)
   let postPaidUsers: KomboColumnData["postPaidUsers"] = null;
@@ -412,11 +413,19 @@ const calculatePostPaidData = (
     }
   }
 
-  // 3. WhatsApp Leads (if leads addon active)
+  // 3. WhatsApp Leads (if leads addon active and wantsWhatsApp is true)
   let postPaidWhatsApp: KomboColumnData["postPaidWhatsApp"] = null;
-  if (hasLeads && hasImob) {
+  if (hasLeads && hasImob && wantsWhatsApp) {
     const included = Pricing.getIncludedWhatsAppLeads();
-    postPaidWhatsApp = { included, label: `${included} incluídos/mês` };
+    const additional = Math.max(0, leadsPerMonth - included);
+    if (additional > 0) {
+      const cost = Pricing.calculateAdditionalWhatsAppLeadsCost(additional);
+      // Get first tier price for perUnit display
+      const perUnit = 1.5; // First tier price from additionalLeadsTiers
+      postPaidWhatsApp = { cost, additional, included, perUnit };
+    } else {
+      postPaidWhatsApp = { cost: 0, additional: 0, included, perUnit: 0 };
+    }
   }
 
   // 4. Assinaturas (closings + new contracts)
@@ -451,6 +460,7 @@ const calculatePostPaidData = (
   const postPaidTotal =
     (postPaidUsers?.cost ?? 0) +
     (postPaidContracts?.cost ?? 0) +
+    (postPaidWhatsApp?.cost ?? 0) +
     (postPaidAssinaturas?.cost ?? 0) +
     (postPaidBoletos?.cost ?? 0) +
     (postPaidSplits?.cost ?? 0);
@@ -604,10 +614,12 @@ const calculateKomboColumn = (
   if (assinaturaPrice !== null) subscriptionCount++;
 
   // Calculate pós-pago data
+  // Note: hasLeads should check if user enabled Leads addon globally (props.addons.leads)
+  // not just if the Kombo includes it, because WhatsApp is tied to the user's Leads addon choice
   const postPaid = calculatePostPaidData(
     props, imobPlan, locPlan,
     komboIncludesImob, komboIncludesLoc,
-    kombo.includedAddons.includes("leads"),
+    props.addons.leads && komboIncludesImob,
     kombo.includedAddons.includes("assinatura"),
     kombo.includedAddons.includes("pay"),
   );
@@ -1349,7 +1361,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         postPaidTotal: Math.max(0, newPostPaidTotal),
       };
     });
-  }, [props, recommendedKombo, compatibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
+  }, [props, props.wantsWhatsApp, props.leadsPerMonth, recommendedKombo, compatibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
 
   // Map column index to column key for overrides
   const getColumnKey = useCallback((colIndex: number): string => {
@@ -1822,10 +1834,20 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       case "postpaidWhatsApp": {
         const pp = column.postPaidWhatsApp;
         if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+        if (pp.cost === 0) return (
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-green-600 font-semibold">Sem custos</span>
+            <span className="text-[8px] text-gray-400 italic">{pp.included} incl./mês</span>
+          </div>
+        );
         return (
           <div className="flex flex-col items-center">
-            <span className="text-[10px] text-green-600 font-medium">Pós-pago</span>
-            <span className="text-[8px] text-gray-400 italic">{pp.included} incl./mês</span>
+            <span className="text-[8px] text-gray-400 italic mb-0.5">
+              R$ {pp.perUnit.toFixed(2)}/lead × {pp.additional} add.
+            </span>
+            <span className="text-[11px] text-amber-700 font-bold">
+              R$ {pp.cost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês
+            </span>
           </div>
         );
       }

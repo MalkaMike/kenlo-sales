@@ -2723,6 +2723,7 @@ export default function CalculadoraPage() {
                 wantsWhatsApp={metrics.wantsWhatsApp}
                 imobUsers={toNum(metrics.imobUsers)}
                 closingsPerMonth={toNum(metrics.closingsPerMonth)}
+                leadsPerMonth={toNum(metrics.leadsPerMonth)}
                 contractsUnderManagement={toNum(metrics.contractsUnderManagement)}
                 newContractsPerMonth={toNum(metrics.newContractsPerMonth)}
                 vipSupport={metrics.imobVipSupport || metrics.locVipSupport}

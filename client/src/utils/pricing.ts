@@ -222,6 +222,13 @@ export function getIncludedWhatsAppLeads(): number {
   return ADDONS.leads.includedWhatsAppLeads;
 }
 
+/**
+ * Calculate cost of additional WhatsApp leads (same tiers as Leads)
+ */
+export function calculateAdditionalWhatsAppLeadsCost(additionalLeads: number): number {
+  return calculateTieredPrice(additionalLeads, ADDONS.leads.additionalLeadsTiers);
+}
+
 // ============================================================================
 // PREMIUM SERVICES
 // ============================================================================
