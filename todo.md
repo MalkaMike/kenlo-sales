@@ -3926,3 +3926,9 @@
 - [x] Add subtle rounded borders (rounded-lg, border-2 border-blue-200/60) to all three Mensalidade rows
 - [x] Ensure Mensalidade rows stand out distinctly from all other rows (headers, regular rows, other totals)
 - [x] Test visual separation is clear enough to understand each block boundary
+
+## Reduce Spacer Height and Abbreviate Labels
+- [x] Reduce spacer row height from h-6 (24px) to h-3 (12px) for less prominent but still visible separation
+- [x] Abbreviate "Usuários adicionais" to "Usuários adic." in row label
+- [x] Abbreviate "Contratos adicionais" to "Contratos adic." in row label
+- [x] Verify all rows have uniform height after abbreviation changes

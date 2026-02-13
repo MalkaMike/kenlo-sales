@@ -1406,8 +1406,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     { key: "cycle", label: "Ciclo", isTotal: true, needsBottomSpacing: true },
 
     { key: "postpaid", label: "Pós-Pago", isHeader: true, needsTopSpacing: true },
-    { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
-    { key: "postpaidContracts", label: "Contratos adicionais", indent: true },
+    { key: "postpaidUsers", label: "Usuários adic.", indent: true },
+    { key: "postpaidContracts", label: "Contratos adic.", indent: true },
     { key: "postpaidWhatsApp", label: "WhatsApp Leads", indent: true },
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
@@ -2223,7 +2223,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   </tr>
                   {/* Spacer row for prominent separation */}
                   {needsSpacerAfter && (
-                    <tr key={`spacer-${row.key}`} className="h-6">
+                    <tr key={`spacer-${row.key}`} className="h-3">
                       <td colSpan={columns.length + 2}></td>
                     </tr>
                   )}
