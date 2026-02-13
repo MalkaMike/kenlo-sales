@@ -1380,42 +1380,43 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const bannerConfig = PRODUCT_BANNER_CONFIG[props.product];
 
   // Row definitions — restructured with Implantação section, Pós-Pago section, and cycle total
+  // Section metadata: sectionStart/sectionEnd for L-bracket visual grouping
   const rows = [
-    { key: "products", label: "Produtos", isHeader: true },
+    { key: "products", label: "Produtos", isHeader: true, sectionStart: "produtos", sectionType: "primary" },
     { key: "imob", label: "Imob", indent: true },
-    { key: "loc", label: "Loc", indent: true },
-    { key: "addons", label: "Add-ons", isHeader: true },
+    { key: "loc", label: "Loc", indent: true, sectionEnd: "produtos" },
+    { key: "addons", label: "Add-ons", isHeader: true, sectionStart: "addons", sectionType: "secondary" },
     { key: "leads", label: "Leads", indent: true },
     { key: "inteligencia", label: "Inteligência", indent: true },
-    { key: "assinatura", label: "Assinatura", indent: true },
+    { key: "assinatura", label: "Assinatura", indent: true, sectionEnd: "addons" },
 
-    { key: "premium", label: "Serviços Premium", isHeader: true },
+    { key: "premium", label: "Serviços Premium", isHeader: true, sectionStart: "premium", sectionType: "secondary" },
     { key: "vipSupport", label: "Suporte VIP", indent: true },
     { key: "dedicatedCS", label: "CS Dedicado", indent: true },
-    { key: "training", label: "Treinamentos", indent: true },
-    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true },
+    { key: "training", label: "Treinamentos", indent: true, sectionEnd: "premium" },
+    { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, sectionStart: "mensalidade", sectionEnd: "mensalidade", sectionType: "primary" },
     { key: "separator1", isSeparator: true },
 
-    { key: "implantacao", label: "Implantação", isHeader: true },
+    { key: "implantacao", label: "Implantação", isHeader: true, sectionStart: "implantacao", sectionType: "secondary" },
     { key: "implImob", label: "Imob", indent: true },
     { key: "implLoc", label: "Locação", indent: true },
     { key: "implLeads", label: "Leads", indent: true },
     { key: "implInteligencia", label: "Inteligência", indent: true },
-    { key: "implTotal", label: "Total Implantação", isTotal: true },
+    { key: "implTotal", label: "Total Implantação", isTotal: true, sectionEnd: "implantacao" },
     { key: "separator2", isSeparator: true },
 
     { key: "cycleTotal", label: "Total 1º Ano", isTotal: true },
     { key: "cycle", label: "Ciclo", isTotal: true },
     { key: "separator3", isSeparator: true },
 
-    { key: "postpaid", label: "Pós-Pago", isHeader: true },
+    { key: "postpaid", label: "Pós-Pago", isHeader: true, sectionStart: "postpaid", sectionType: "secondary" },
     { key: "postpaidUsers", label: "Usuários adicionais", indent: true },
     { key: "postpaidContracts", label: "Contratos adicionais", indent: true },
     { key: "postpaidWhatsApp", label: "WhatsApp Leads", indent: true },
     { key: "postpaidAssinaturas", label: "Assinaturas", indent: true },
     { key: "postpaidBoletos", label: "Boletos", indent: true },
     { key: "postpaidSplits", label: "Splits", indent: true },
-    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago¹", isTotal: true },
+    { key: "postpaidTotal", label: "Mensalidade (est.)", sublabel: "Pós-Pago¹", isTotal: true, sectionEnd: "postpaid" },
     { key: "separator4", isSeparator: true },
 
     { key: "totalMonthlyEstimate", label: "Total Mensalidade (est.)", sublabel: "Pré-Pago¹ + Pós-Pago¹", isTotal: true, isGrandTotal: true },
@@ -2091,12 +2092,19 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                     );
                   }
                   
+                  // Determine L-bracket styling based on section metadata
+                  const sectionStart = (row as any).sectionStart;
+                  const sectionEnd = (row as any).sectionEnd;
+                  const sectionType = (row as any).sectionType; // "primary" or "secondary"
+                  const hasSectionBracket = sectionStart || sectionEnd;
+                  const bracketColor = sectionType === "primary" ? "border-primary" : "border-gray-400";
+                  
                   return (
                   <tr
                     key={row.key}
                     className={
                       (row as any).isGrandTotal
-                        ? "bg-red-50 border-t-2 border-b-2 border-red-200"
+                        ? "bg-gradient-to-r from-red-50 to-transparent"
                         : row.isHeader
                         ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                         : row.isTotal
@@ -2106,15 +2114,22 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   >
                     <td
                       colSpan={row.isHeader ? 2 : 1}
-                      className={`${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"} ${row.indent ? "pl-8" : ""} ${
-                        row.isHeader
+                      className={`
+                        ${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"} 
+                        ${row.indent ? "pl-8" : ""} 
+                        ${row.isHeader
                           ? "font-semibold text-gray-700 text-xs" 
                           : (row as any).isGrandTotal
                           ? "font-extrabold text-primary text-sm"
                           : row.isTotal
                           ? "font-bold text-gray-700 text-xs"
                           : "text-gray-600 text-sm"
-                      }`}
+                        }
+                        ${(row as any).isGrandTotal ? "border-2 border-primary rounded-l-xl py-3" : ""}
+                        ${sectionStart && !(row as any).isGrandTotal ? `border-l-[3px] border-t-[3px] ${bracketColor} pl-5 pt-2` : ""}
+                        ${sectionEnd && !sectionStart && !(row as any).isGrandTotal ? `border-l-[3px] ${bracketColor} pl-5` : ""}
+                        ${sectionStart && sectionEnd && !(row as any).isGrandTotal ? `border-l-[3px] border-t-[3px] ${bracketColor} pl-5 pt-2` : ""}
+                      `}
                     >
                       {row.key === "training" ? (
                         <span className="inline-flex items-center gap-1">
@@ -2193,9 +2208,12 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                         <td
                           key={`${row.key}-${col.id}`}
                           onMouseEnter={() => setHoveredColumn(col.id)}
-                          className={`text-center ${row.isHeader ? "py-0.5 px-2" : row.isTotal ? "py-0.5 px-2" : "py-px px-2"} transition-colors duration-150 ${
-                            isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""
-                          } ${
+                          className={`text-center 
+                            ${row.isHeader ? "py-0.5 px-2" : row.isTotal ? "py-0.5 px-2" : "py-px px-2"} 
+                            transition-colors duration-150 
+                            ${(row as any).isGrandTotal ? "border-t-2 border-b-2 border-primary py-3" : ""}
+                            ${(row as any).isGrandTotal && colIndex === columns.length - 1 ? "rounded-r-xl border-r-2" : ""}
+                            ${isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""} ${
                             selectedPlans.includes(col.id)
                               ? col.isCustom
                                 ? "bg-amber-50 border-l-4 border-r-4 border-amber-500 shadow-lg shadow-amber-100"

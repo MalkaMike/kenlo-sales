@@ -3886,3 +3886,16 @@
 - [x] Implement Pré-Pago¹ and Pós-Pago¹ superscript notation
 - [x] Create modal dialog "Como funciona o modelo Pré-Pago e Pós-Pago na Kenlo" with approved content
 - [x] Add click handler on superscript to open modal
+
+## Visual Section Highlighting (Hybrid Approach)
+- [x] Add section grouping metadata to rows array (sectionStart, sectionEnd, sectionType)
+- [x] Implement L-bracket angular borders for main sections:
+  - [x] Produtos section (Imob + Loc rows) - primary color
+  - [x] Add-ons section (Leads + Inteligência + Assinatura) - gray color
+  - [x] Serviços Premium section (Suporte VIP + CS + Treinamentos) - gray color
+  - [x] Mensalidade Pré-Pago row - primary color, prominent
+  - [x] Implantação section (all impl rows) - gray color
+  - [x] Pós-Pago section (all variable items) - gray color
+- [x] Implement rounded border for Total Mensalidade (est.) row with gradient background
+- [x] Add proper padding and spacing to accommodate borders
+- [x] Test visual hierarchy and adjust colors/thickness as needed
