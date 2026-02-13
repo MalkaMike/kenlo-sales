@@ -4090,3 +4090,27 @@
 - [x] Add 31 unit tests for postPaidCalc (breakdown + revenue calculations)
 - [x] Add 33 unit tests for builders (comparisonBuilders + proposalHelpers: classifyAddons, calculatePremiumServices, calculateRevenue, getProductPrice, getAddonPrices, buildKomboComparison, buildFrequencyComparison)
 - [x] Verify all 440 tests pass (376 existing + 64 new) and TypeScript compiles with 0 errors
+
+## Code Optimization Pass
+- [x] Audit all files by line count — identified KomboComparisonTable (2290 lines) and PerformancePage (1457 lines) as top targets
+- [x] Analyzed receita-extra rows (25-71 lines each) — too varied for generic CostRow; left as-is (correct decision)
+- [x] Split KomboComparisonTable.tsx (2290 → 710 lines, 69% reduction) into 7 sub-modules:
+  - komboComparisonTypes.ts (112 lines) — shared types & constants
+  - komboDefinitions.ts (181 lines) — Kombo definitions, banner config, helpers
+  - komboColumnCalculators.ts (613 lines) — pure calculation functions
+  - KomboCellRenderers.tsx (529 lines) — cell rendering functions
+  - ColumnCycleSelector.tsx (55 lines) — column cycle selector component
+  - PersoKomboSelector.tsx (79 lines) — personalized Kombo selector
+  - index.ts (11 lines) — barrel export
+- [x] Split PerformancePage.tsx (1457 → 390 lines, 73% reduction) into 9 sub-modules:
+  - performanceConstants.ts (85 lines) — formatters, display name maps, chart colors
+  - performanceCalculators.ts (324 lines) — 7 pure metric calculators
+  - MetricsCards.tsx (104 lines) — 6 KPI cards
+  - PerformanceCharts.tsx (249 lines) — MRR trend, Kombo pie, Plan bar charts
+  - VendorRankingTable.tsx (88 lines) — salesperson ranking table
+  - FrequencyAddonCharts.tsx (101 lines) — frequency & add-on popularity
+  - QuotesTable.tsx (305 lines) — recent quotes table + delete dialogs
+  - PerformanceFilters.tsx (234 lines) — view mode, quick period, filter panel
+  - index.ts (8 lines) — barrel export
+- [x] Add 23 unit tests for performanceCalculators (metrics, kombo/plan/vendor/frequency/addon breakdown, trend data)
+- [x] Verify all 463 tests pass (440 existing + 23 new) and TypeScript compiles with 0 errors
