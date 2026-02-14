@@ -22,9 +22,9 @@ export function BusinessNatureSection() {
     <div id="business-nature-section" className="mb-4">
       <h3 className="text-sm font-semibold text-gray-700 mb-2">Natureza do Negócio</h3>
       <Card>
-        <CardContent className="pt-4">
+        <CardContent className="pt-4 space-y-5">
           {/* Business type selector */}
-          <div className="flex items-center gap-1.5 mb-4">
+          <div className="flex items-center gap-1.5">
             {([
               { value: "broker", label: "Corretora" },
               { value: "rental_admin", label: "Administradora" },
@@ -58,12 +58,12 @@ export function BusinessNatureSection() {
           </div>
 
           {/* Conditional questions based on business type */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
             {/* Tem site? - Show for Corretora or Ambos */}
             {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-              <div>
-                <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasWebsite === null ? "text-red-600" : ""}`}>Tem site? *</Label>
-                <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasWebsite === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
+              <div className="space-y-2">
+                <Label className={`text-sm font-medium block ${showValidationErrors && businessNature.hasWebsite === null ? "text-red-600" : ""}`}>Tem site? *</Label>
+                <div className={`flex items-center gap-2 ${showValidationErrors && businessNature.hasWebsite === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                   <button
                     onClick={() => setBusinessNature({ ...businessNature, hasWebsite: true })}
                     className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -101,9 +101,9 @@ export function BusinessNatureSection() {
 
             {/* Tem CRM? - Show for Corretora or Ambos */}
             {(businessNature.businessType === "broker" || businessNature.businessType === "both") && (
-              <div>
-                <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasCRM === null ? "text-red-600" : ""}`}>Já usa CRM? *</Label>
-                <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasCRM === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
+              <div className="space-y-2">
+                <Label className={`text-sm font-medium block ${showValidationErrors && businessNature.hasCRM === null ? "text-red-600" : ""}`}>Já usa CRM? *</Label>
+                <div className={`flex items-center gap-2 ${showValidationErrors && businessNature.hasCRM === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                   <button
                     onClick={() => setBusinessNature({ ...businessNature, hasCRM: true })}
                     className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -158,9 +158,9 @@ export function BusinessNatureSection() {
 
             {/* Tem ERP? - Show for Administradora or Ambos */}
             {(businessNature.businessType === "rental_admin" || businessNature.businessType === "both") && (
-              <div>
-                <Label className={`text-sm font-medium mb-2 block ${showValidationErrors && businessNature.hasERP === null ? "text-red-600" : ""}`}>Já usa ERP? *</Label>
-                <div className={`flex items-center gap-2 mb-2 ${showValidationErrors && businessNature.hasERP === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
+              <div className="space-y-2">
+                <Label className={`text-sm font-medium block ${showValidationErrors && businessNature.hasERP === null ? "text-red-600" : ""}`}>Já usa ERP? *</Label>
+                <div className={`flex items-center gap-2 ${showValidationErrors && businessNature.hasERP === null ? "ring-1 ring-red-500 rounded-md p-1" : ""}`}>
                   <button
                     onClick={() => setBusinessNature({ ...businessNature, hasERP: true })}
                     className={`px-3 py-1.5 text-xs rounded-md border transition-all ${
@@ -215,9 +215,9 @@ export function BusinessNatureSection() {
           </div>
 
           {/* Company Information */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="companyName" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.companyName.trim() ? "text-red-600" : ""}`}>Nome da Imobiliária *</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="companyName" className={`text-sm font-semibold block ${showValidationErrors && !businessNature.companyName.trim() ? "text-red-600" : ""}`}>Nome da Imobiliária *</Label>
               <Input
                 id="companyName"
                 value={businessNature.companyName}
@@ -226,8 +226,8 @@ export function BusinessNatureSection() {
                 className={showValidationErrors && !businessNature.companyName.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
               />
             </div>
-            <div>
-              <Label htmlFor="ownerName" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.ownerName.trim() ? "text-red-600" : ""}`}>Nome do Proprietário *</Label>
+            <div className="space-y-2">
+              <Label htmlFor="ownerName" className={`text-sm font-semibold block ${showValidationErrors && !businessNature.ownerName.trim() ? "text-red-600" : ""}`}>Nome do Proprietário *</Label>
               <Input
                 id="ownerName"
                 value={businessNature.ownerName}
@@ -239,9 +239,9 @@ export function BusinessNatureSection() {
           </div>
 
           {/* Contact Information */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="email" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.email.trim() ? "text-red-600" : ""}`}>Email *</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="email" className={`text-sm font-semibold block ${showValidationErrors && !businessNature.email.trim() ? "text-red-600" : ""}`}>Email *</Label>
               <Input
                 id="email"
                 type="email"
@@ -251,8 +251,8 @@ export function BusinessNatureSection() {
                 className={showValidationErrors && !businessNature.email.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
               />
             </div>
-            <div>
-              <Label htmlFor="cellphone" className={`text-sm font-semibold mb-2 block ${showValidationErrors && !businessNature.cellphone.trim() ? "text-red-600" : ""}`}>Celular *</Label>
+            <div className="space-y-2">
+              <Label htmlFor="cellphone" className={`text-sm font-semibold block ${showValidationErrors && !businessNature.cellphone.trim() ? "text-red-600" : ""}`}>Celular *</Label>
               <Input
                 id="cellphone"
                 value={businessNature.cellphone}
@@ -261,8 +261,8 @@ export function BusinessNatureSection() {
                 className={showValidationErrors && !businessNature.cellphone.trim() ? "border-red-500 ring-1 ring-red-500" : ""}
               />
             </div>
-            <div>
-              <Label htmlFor="landline" className="text-sm font-semibold mb-2 block">Telefone Fixo</Label>
+            <div className="space-y-2">
+              <Label htmlFor="landline" className="text-sm font-semibold block">Telefone Fixo</Label>
               <Input
                 id="landline"
                 value={businessNature.landline}

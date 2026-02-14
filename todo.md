@@ -4232,3 +4232,7 @@
 ## PDF Cover Page Salesperson Info
 
 - [x] Add salesperson name, email, and phone prominently below the date on the PDF cover page
+
+## Calculadora - Natureza de Negócio Spacing Fix
+
+- [x] Fix spacing between fields and lines in Natureza de Negócio section — ensure consistent spacing with no overlaps
