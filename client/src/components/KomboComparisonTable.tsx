@@ -229,11 +229,11 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     setSelectedPlans(prev => {
       let next: ColumnId[];
       if (prev.includes(planId)) {
-        next = prev.filter(p => p !== planId);
-      } else if (prev.length < MAX_SELECTED_PLANS) {
-        next = [...prev, planId];
+        // Deselect if already selected
+        next = [];
       } else {
-        next = [...prev.slice(1), planId];
+        // Single plan mode: always replace
+        next = [planId];
       }
       setTimeout(() => {
         props.onPlansSelected?.(next);
@@ -668,8 +668,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               ? col.isCustom
                                 ? "bg-amber-500 hover:bg-amber-600 text-white"
                                 : "bg-green-600 hover:bg-green-700 text-white"
-                              : selectedPlans.length >= MAX_SELECTED_PLANS
-                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-green-50 hover:border-green-500 hover:text-green-700"
                           }`}
                           size="sm"
@@ -677,7 +675,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           {selectedPlans.includes(col.id) ? (
                             <>
                               <CheckCircle2 className="w-3 h-3 mr-1" />
-                              {selectedPlans.indexOf(col.id) + 1}º Selecionado
+                              Selecionado
                             </>
                           ) : col.isRecommended && selectedPlans.length === 0 ? (
                             <>
@@ -685,7 +683,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               Selecionar
                             </>
                           ) : (
-                            `Selecionar${selectedPlans.length > 0 ? ` (${selectedPlans.length}/${MAX_SELECTED_PLANS})` : ""}`
+                            "Selecionar"
                           )}
                         </Button>
                       </td>

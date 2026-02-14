@@ -109,4 +109,4 @@ export const PLAN_TIERS: PlanTier[] = ["prime", "k", "k2"];
 export const MAX_CUSTOM_COLUMNS = 3;
 
 /** Max columns user can select for PDF export */
-export const MAX_SELECTED_PLANS = 3;
+export const MAX_SELECTED_PLANS = 1;

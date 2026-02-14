@@ -4240,3 +4240,10 @@
 ## Popup Pré-Pago/Pós-Pago Redesign
 
 - [x] Redesign "Como funciona o modelo Pré-Pago e Pós-Pago na Kenlo" popup — make it more visual with shorter text and better readability
+
+## Calculadora Rework - Single Plan + Receitas Kenlo Extra
+
+- [x] Remove 3-plan comparison feature from calculadora (always single plan selection)
+- [x] Add new "Receitas Kenlo Extra" section that shows only when Boleto/Split or Seguros revenues exist
+- [x] In Receitas section: show revenues first (Boleto/Split & Seguros), then investment (mensalidades pré+pós), then net result
+- [x] PDF generation already handles single-plan correctly (1-column comparison table)

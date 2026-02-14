@@ -48,7 +48,7 @@ export function ExportActionsSection() {
     }
     if (selectedPlans.length === 0) {
       toast.error(
-        "Selecione pelo menos 1 coluna na tabela de comparação antes de exportar."
+        "Selecione um plano na tabela de comparação antes de exportar."
       );
       const komboSection = document.getElementById("kombo-comparison-section");
       if (komboSection) {
@@ -66,13 +66,7 @@ export function ExportActionsSection() {
         <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
           <CheckCircle2 className="w-5 h-5 text-green-600" />
           <span className="text-sm font-medium text-green-900">
-            {selectedPlans.length === 1
-              ? "1 coluna selecionada"
-              : `${selectedPlans.length} colunas selecionadas`}{" "}
-            para a proposta.{" "}
-            {selectedPlans.length < 3
-              ? `Você pode selecionar até ${3 - selectedPlans.length} mais.`
-              : "Máximo atingido."}
+            Plano selecionado para a proposta. Clique em "Exportar Cotação" para gerar o PDF.
           </span>
         </div>
       )}
@@ -80,7 +74,7 @@ export function ExportActionsSection() {
         <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
           <Zap className="w-5 h-5 text-blue-600" />
           <span className="text-sm font-medium text-blue-900">
-            Selecione até 3 colunas na tabela acima para exportar na cotação.
+            Selecione um plano na tabela acima para exportar na cotação.
           </span>
         </div>
       )}
