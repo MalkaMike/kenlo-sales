@@ -4337,3 +4337,7 @@
 - [x] Reformat Pay add-on card description with bullet points
 - [x] Reformat Seguros add-on card description with bullet points
 - [x] Reformat Cash add-on card description with bullet points
+
+## Add-on Card Hover Effect
+
+- [x] Add hover effect on all add-on cards (scale + shadow) for better interactivity

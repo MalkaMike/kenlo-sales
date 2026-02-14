@@ -10,7 +10,7 @@ export function InteligenciaAddonCard() {
   const { addons, setAddons } = useCalc();
 
   return (
-    <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0">
+    <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md">
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <Label htmlFor="inteligencia" className="font-semibold text-sm cursor-pointer">Inteligência</Label>
         <Switch

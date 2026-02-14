@@ -10,7 +10,7 @@ export function SegurosAddonCard() {
   const { addons, setAddons, isAddonAvailable } = useCalc();
 
   return (
-    <div className={`p-3 rounded-lg border ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md ${!isAddonAvailable("seguros") ? "opacity-50 bg-gray-50" : ""}`}>
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="seguros" className="font-semibold text-sm cursor-pointer">Seguros</Label>
