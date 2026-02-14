@@ -188,7 +188,7 @@ export function ReceitaExtraSection() {
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
                 <span className="text-base font-bold text-gray-900">
-                  {isProfit ? "Ganho Líquido" : "Investimento Líquido"}
+                  {isProfit ? "Ganho Líquido" : "Custo Reduzido"}
                 </span>
               </div>
               <span className="text-xl font-bold text-green-600">

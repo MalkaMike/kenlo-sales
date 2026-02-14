@@ -4280,3 +4280,9 @@
 ## Revenue Color Always Green
 
 - [x] Make revenue/receita extra values always display in green (even when negative), since revenue is always a positive benefit for the client
+
+## Revenue Improvements (3 items)
+
+- [x] Make PDF revenue section always green (consistent with web calculadora)
+- [x] Change negative result label from "Investimento Líquido" to "Custo Reduzido" in web and PDF
+- [x] Test extreme scenarios with Pay + Seguros and high contract values

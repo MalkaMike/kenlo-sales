@@ -124,7 +124,7 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
   divider(doc, Y);
   Y += 10;
 
-  // Net revenue summary
+  // Net revenue summary — always green (revenue is always a positive benefit for the client)
   const totalRevenue = (data.revenueFromBoletos || 0) + (data.revenueFromInsurance || 0);
   const totalPostPaid = data.postPaidTotal || 0;
   const netRevenue = totalRevenue - totalPostPaid;
@@ -132,34 +132,33 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
   doc.setFontSize(9);
   doc.setTextColor(...rgb(C.dark));
   doc.setFont("helvetica", "bold");
-  doc.text(netRevenue >= 0 ? "Receita Líquida Mensal:" : "Custo Líquido Mensal:", M, Y);
+  doc.text(netRevenue >= 0 ? "Receita Líquida Mensal:" : "Custo Reduzido Mensal:", M, Y);
   doc.setFontSize(11);
-  doc.setTextColor(...rgb(netRevenue >= 0 ? C.green : "#B45309"));
+  doc.setTextColor(...rgb(C.green));
   doc.text(fmt(Math.abs(netRevenue)), M + CW - 14, Y, { align: "right" });
   Y += 20;
 
-  // ROI indicator
+  // ROI indicator — always shown in green (even when negative, it means the system costs less)
   const monthlyInvestment = data.totalAnnual / 12;
   const netGain = totalRevenue - monthlyInvestment - (data.postPaidTotal || 0);
+  const isProfit = netGain > 0;
 
-  if (netGain > 0) {
-    doc.setFillColor(...rgb(C.greenLight));
-    doc.setDrawColor(...rgb(C.green));
-    doc.setLineWidth(1);
-    doc.roundedRect(M, Y, CW, 40, 4, 4, "FD");
+  doc.setFillColor(...rgb(C.greenLight));
+  doc.setDrawColor(...rgb(C.green));
+  doc.setLineWidth(1);
+  doc.roundedRect(M, Y, CW, 40, 4, 4, "FD");
 
-    doc.setFontSize(8);
-    doc.setTextColor(...rgb(C.text));
-    doc.setFont("helvetica", "normal");
-    doc.text("Ganho Líquido Mensal Estimado", M + 14, Y + 16);
+  doc.setFontSize(8);
+  doc.setTextColor(...rgb(C.text));
+  doc.setFont("helvetica", "normal");
+  doc.text(isProfit ? "Ganho Líquido Mensal Estimado" : "Custo Reduzido Mensal Estimado", M + 14, Y + 16);
 
-    doc.setFontSize(14);
-    doc.setTextColor(...rgb(C.green));
-    doc.setFont("helvetica", "bold");
-    doc.text(fmt(netGain), M + 14, Y + 32);
+  doc.setFontSize(14);
+  doc.setTextColor(...rgb(C.green));
+  doc.setFont("helvetica", "bold");
+  doc.text(fmt(Math.abs(netGain)), M + 14, Y + 32);
 
-    Y += 60;
-  }
+  Y += 60;
 
   return Y;
 }

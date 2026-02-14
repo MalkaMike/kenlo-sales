@@ -40,7 +40,7 @@ export function GrandTotalRow() {
     <>
       <div className="flex justify-between items-center py-4 mt-2 bg-green-50 border border-green-200 rounded-lg px-4">
         <span className="text-base font-bold text-gray-900">
-          {isProfit ? "Ganho" : "Investimento"}
+          {isProfit ? "Ganho" : "Custo Reduzido"}
         </span>
         <span className="text-xl font-bold text-green-600">
           {formatCurrency(Math.abs(total))}/mês
