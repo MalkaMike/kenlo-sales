@@ -4272,3 +4272,7 @@
 ## Kombo Comparison Title Font Size
 
 - [x] Increase "Sua Seleção vs Kombos" title font size to match other section headers
+
+## Kombo Comparison Title Color Accent
+
+- [x] Add subtle Kenlo red accent to "Sua Seleção vs Kombos" title
