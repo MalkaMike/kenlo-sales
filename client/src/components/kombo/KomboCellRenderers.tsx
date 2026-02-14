@@ -61,7 +61,7 @@ export function renderPlanCell(
     >
       <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>
       <span className={`text-[9px] font-bold ${isEditable ? "text-primary group-hover:underline" : "text-gray-500"}`}>
-        {currentPlan.toUpperCase()}
+        {currentPlan === "k2" ? <>K<sup className="text-[0.6em]">2</sup></> : currentPlan.toUpperCase()}
       </span>
     </div>
   );

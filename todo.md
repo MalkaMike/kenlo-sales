@@ -4421,3 +4421,10 @@
 - [x] Replace all "K2" in shared pricing config data
 - [x] Ensure K² renders correctly in pricing tables, badges, calculadora, PDF, and all other contexts
 - [x] Verify consistent rendering across all pages
+
+## K2 → K² Fix: Remaining Occurrences (Calculadora Plan Buttons + Full Sweep)
+
+- [x] Fix calculadora plan selector buttons showing "K2" instead of "K²"
+- [x] Comprehensive sweep of ALL .tsx, .ts files for any remaining K2 display text
+- [x] Fix StickyBar plan display, KomboCellRenderers, usePricing line items, PDF cover/contract sections
+- [x] Verify fix across entire website

@@ -69,11 +69,11 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
   doc.text("Produtos e Planos", leftX, lY);
   let productsLine = "";
   if (showImob && showLoc) {
-    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase()} & Locação ${(data.locPlan || "K").toUpperCase()}`;
+    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")} & Locação ${(data.locPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`;
   } else if (showImob) {
-    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase()}`;
+    productsLine = `Imob ${(data.imobPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`;
   } else if (showLoc) {
-    productsLine = `Locação ${(data.locPlan || "K").toUpperCase()}`;
+    productsLine = `Locação ${(data.locPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`;
   }
   doc.setFontSize(10);
   doc.setTextColor(...rgb(C.dark));

@@ -75,7 +75,7 @@ export function usePricing({
       const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[imobPlan]);
       const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
       items.push({
-        name: `Imob - ${imobPlan.toUpperCase()}`,
+        name: `Imob - ${imobPlan === "k2" ? "K\u00B2" : imobPlan.toUpperCase()}`,
         monthlyRefSemKombo: baseMonthlyRef,
         monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
         priceSemKombo: basePrice,
@@ -88,7 +88,7 @@ export function usePricing({
       const baseMonthlyRef = calculateMonthlyReference(PLAN_ANNUAL_PRICES[locPlan]);
       const basePrice = calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
       items.push({
-        name: `Loc - ${locPlan.toUpperCase()}`,
+        name: `Loc - ${locPlan === "k2" ? "K\u00B2" : locPlan.toUpperCase()}`,
         monthlyRefSemKombo: baseMonthlyRef,
         monthlyRefComKombo: Math.round(baseMonthlyRef * komboDiscount),
         priceSemKombo: basePrice,

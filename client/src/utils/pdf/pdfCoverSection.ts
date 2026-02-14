@@ -75,10 +75,10 @@ export function renderCover(doc: jsPDF, data: ProposalPrintData): void {
   infoY += 30;
   const planParts: string[] = [];
   if (data.productType === "imob" || data.productType === "both") {
-    planParts.push(`Kenlo Imob ${(data.imobPlan || "").toUpperCase()}`);
+    planParts.push(`Kenlo Imob ${(data.imobPlan || "").toUpperCase().replace(/K2/gi, "K\u00B2")}`);
   }
   if (data.productType === "locacao" || data.productType === "both") {
-    planParts.push(`Kenlo Locação ${(data.locPlan || "").toUpperCase()}`);
+    planParts.push(`Kenlo Locação ${(data.locPlan || "").toUpperCase().replace(/K2/gi, "K\u00B2")}`);
   }
   if (data.komboName) {
     planParts.length = 0;

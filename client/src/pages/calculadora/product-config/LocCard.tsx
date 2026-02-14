@@ -100,7 +100,7 @@ export function LocCard() {
                       : "border-gray-200 hover:border-gray-300 bg-white"
                   }`}
                 >
-                  <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan.toUpperCase()}</div>
+                  <div className="font-bold text-xs">{plan === "prime" ? "Prime" : plan === "k2" ? <>K<sup className="text-[0.7em]">2</sup></> : "K"}</div>
                 </button>
               );
             })}

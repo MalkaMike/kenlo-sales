@@ -54,11 +54,11 @@ export function StickyBar() {
                     <span className="text-xs text-gray-300">|</span>
                     <span className="text-xs font-medium text-gray-500">
                       {product === "imob" || product === "both"
-                        ? imobPlan.toUpperCase()
+                        ? (imobPlan === "k2" ? <>K<sup className="text-[0.7em]">2</sup></> : imobPlan.toUpperCase())
                         : ""}
                       {product === "both" ? " + " : ""}
                       {product === "loc" || product === "both"
-                        ? locPlan.toUpperCase()
+                        ? (locPlan === "k2" ? <>K<sup className="text-[0.7em]">2</sup></> : locPlan.toUpperCase())
                         : ""}
                     </span>
                     {komboInfo && (
