@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot } from "lucide-react";
+import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot, Globe, Repeat, BarChart3 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -23,6 +23,12 @@ const pricingData = {
         {
           feature: "Implantação/Treinamento (única)",
           value: "R$ 497",
+          tooltip: undefined,
+        },
+        {
+          feature: "Produtos atendidos",
+          value: "IMOB",
+          tooltip: "Funciona exclusivamente com Kenlo IMOB",
         },
       ],
     },
@@ -37,38 +43,67 @@ const pricingData = {
         {
           feature: "Com WhatsApp",
           value: "100 leads/mês via WhatsApp",
-          tooltip: "Atendimento automatizado via WhatsApp incluído",
+          tooltip: "Pré-atendimento automatizado via WhatsApp incluído na carência",
         },
       ],
     },
     {
-      title: "Leads Adicionais (pós-pago)",
+      title: "Leads Adicionais via WhatsApp (pós-pago)",
       rows: [
         {
           feature: "1 a 200 leads",
           value: "R$ 2,00/lead",
+          tooltip: undefined,
         },
         {
           feature: "201 a 350 leads",
           value: "R$ 1,80/lead",
+          tooltip: undefined,
         },
         {
           feature: "351 a 1.000 leads",
           value: "R$ 1,50/lead",
+          tooltip: undefined,
         },
         {
           feature: "Acima de 1.000 leads",
           value: "R$ 1,20/lead",
+          tooltip: undefined,
         },
       ],
     },
     {
-      title: "Integração com IA",
+      title: "Funcionalidades Incluídas",
       rows: [
         {
-          feature: "Integração com IA",
+          feature: "Distribuição automática de leads",
           value: true,
-          tooltip: "Parceiro homologado (Ex: Lais). Não requer WhatsApp.",
+          tooltip: "Leads distribuídos por região, especialidade ou rodízio",
+        },
+        {
+          feature: "Redistribuição por tempo de resposta",
+          value: true,
+          tooltip: "Lead não atendido em 5 min é redistribuído automaticamente",
+        },
+        {
+          feature: "Integração com portais imobiliários",
+          value: true,
+          tooltip: "Captação automática de leads dos principais portais",
+        },
+        {
+          feature: "Integração com redes sociais",
+          value: true,
+          tooltip: "Leads vindos de Facebook, Instagram e Google Ads",
+        },
+        {
+          feature: "Qualificação por score",
+          value: true,
+          tooltip: "Score baseado em comportamento e interesse do lead",
+        },
+        {
+          feature: "Integração com IA externa",
+          value: true,
+          tooltip: "Parceiro homologado (Ex: Lais, Harry). Não requer WhatsApp.",
         },
       ],
     },
@@ -79,22 +114,45 @@ const highlights = [
   {
     icon: Zap,
     title: "Distribuição Automática",
-    description: "Leads distribuídos por região, especialidade ou rodízio",
+    description: "Leads distribuídos por região, especialidade ou rodízio — sem intervenção manual",
   },
   {
     icon: Clock,
     title: "Tempo de Resposta",
-    description: "Lead não atendido em 5 min? Vai para o próximo corretor",
+    description: "Lead não atendido em 5 min? Redistribuído automaticamente para o próximo corretor",
   },
   {
     icon: Target,
     title: "Qualificação Inteligente",
-    description: "Score baseado em comportamento e interesse",
+    description: "Score baseado em comportamento e interesse — priorize quem está pronto para comprar",
   },
   {
     icon: MessageSquare,
     title: "WhatsApp Integrado",
-    description: "Atendimento automatizado via WhatsApp",
+    description: "Pré-atendimento automatizado via WhatsApp com 100 leads/mês incluídos",
+  },
+];
+
+const useCases = [
+  {
+    icon: Globe,
+    title: "Captação Multi-canal",
+    description: "Receba leads de portais, redes sociais, Google Ads e site próprio em um único lugar. Nunca mais perca um lead por falta de integração.",
+  },
+  {
+    icon: Repeat,
+    title: "Rodízio Inteligente",
+    description: "Configure regras de distribuição por região, tipo de imóvel ou rodízio. Garanta que cada corretor receba leads qualificados para seu perfil.",
+  },
+  {
+    icon: Bot,
+    title: "IA + WhatsApp",
+    description: "Combine pré-atendimento via WhatsApp ou IA parceira (Lais, Harry) para qualificar leads antes de chegar ao corretor. Mais conversão, menos esforço.",
+  },
+  {
+    icon: BarChart3,
+    title: "Métricas de Conversão",
+    description: "Acompanhe taxa de conversão por corretor, canal e região. Identifique gargalos e otimize sua operação com dados reais.",
   },
 ];
 
@@ -136,8 +194,8 @@ export default function LeadsPage() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-6">
-              Gestão automatizada de leads com distribuição inteligente. 
-              Zero leads perdidos, máxima conversão.
+              Gestão automatizada de leads com distribuição inteligente.
+              Atenda em segundos, nunca perca uma oportunidade — <span className="font-semibold text-foreground">zero leads perdidos, máxima conversão</span>.
             </p>
             
             <div className="flex flex-wrap gap-3 mb-8">
@@ -192,13 +250,37 @@ export default function LeadsPage() {
         </div>
       </section>
 
-      {/* Pricing Table */}
+      {/* Use Cases */}
       <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Veja como o Kenlo Leads transforma a captação e conversão da sua imobiliária
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {useCases.map((item, index) => (
+              <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-4">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Table */}
+      <section className="py-20 bg-card/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Modelo transparente com preços por faixas. Quanto mais leads, menor o custo por unidade.
+              Modelo transparente com preços por faixas. <span className="font-semibold text-foreground">Quanto mais leads, menor o custo por unidade.</span>
             </p>
           </div>
           
@@ -264,7 +346,7 @@ export default function LeadsPage() {
             
             <div className="mt-6 p-4 bg-muted/30 rounded-lg">
               <p className="text-sm text-muted-foreground">
-                <strong>Exemplo de cálculo:</strong> Se a imobiliária tiver 500 leads adicionais/mês, 
+                <strong>Exemplo de cálculo:</strong> Se a imobiliária tiver 500 leads adicionais/mês via WhatsApp, 
                 paga 200 × R$ 2,00 + 150 × R$ 1,80 + 150 × R$ 1,50 = <strong>R$ 895/mês</strong> em leads adicionais.
               </p>
             </div>
@@ -273,7 +355,7 @@ export default function LeadsPage() {
       </section>
 
       {/* Kombos CTA */}
-      <section className="py-16 bg-card/30">
+      <section className="py-16">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <Users className="w-16 h-16 text-primary mx-auto mb-6" />

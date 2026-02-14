@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, FileSignature, Shield, Clock, Smartphone, ArrowRight, Calculator, ScanFace } from "lucide-react";
+import { Check, FileSignature, Shield, Clock, Smartphone, ArrowRight, Calculator, ScanFace, FileCheck, Workflow, Lock } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +28,12 @@ const pricingData = {
         {
           feature: "Assinaturas inclusas/mês",
           value: "15 assinaturas",
-          tooltip: undefined,
+          tooltip: "Carência mensal de 15 assinaturas digitais incluídas",
+        },
+        {
+          feature: "Produtos atendidos",
+          value: "IMOB e LOC",
+          tooltip: "Funciona com Kenlo IMOB e/ou Kenlo Locação",
         },
       ],
     },
@@ -53,12 +58,32 @@ const pricingData = {
       ],
     },
     {
-      title: "Serviços Adicionais",
+      title: "Funcionalidades Incluídas",
       rows: [
+        {
+          feature: "Assinatura digital com validade jurídica",
+          value: true,
+          tooltip: "Certificado digital reconhecido — substitui cartório",
+        },
+        {
+          feature: "Envio por e-mail e WhatsApp",
+          value: true,
+          tooltip: "Cliente recebe o contrato e assina pelo celular",
+        },
         {
           feature: "Validação biométrica facial",
           value: "R$ 7,00/validação",
-          tooltip: "Validação de identidade por reconhecimento facial",
+          tooltip: "Validação de identidade por reconhecimento facial — opcional",
+        },
+        {
+          feature: "Histórico e auditoria",
+          value: true,
+          tooltip: "Registro completo de todas as assinaturas com trilha de auditoria",
+        },
+        {
+          feature: "Templates de contrato",
+          value: true,
+          tooltip: "Modelos pré-configurados para contratos de venda e locação",
         },
       ],
     },
@@ -69,22 +94,45 @@ const highlights = [
   {
     icon: FileSignature,
     title: "Assinatura Digital",
-    description: "Contratos assinados digitalmente com validade jurídica",
+    description: "Contratos assinados digitalmente com validade jurídica — sem cartório, sem papel",
   },
   {
     icon: Shield,
     title: "Validade Jurídica",
-    description: "Assinatura com certificado digital reconhecido",
+    description: "Certificado digital reconhecido que substitui a necessidade de cartório",
   },
   {
     icon: Clock,
     title: "Fechamento em 5 Min",
-    description: "Cliente assina pelo celular, sem cartório",
+    description: "Cliente assina pelo celular em minutos — sem deslocamento, sem atraso",
   },
   {
     icon: Smartphone,
     title: "100% Mobile",
-    description: "Processo completo pelo smartphone do cliente",
+    description: "Processo completo pelo smartphone do cliente — envio por e-mail ou WhatsApp",
+  },
+];
+
+const useCases = [
+  {
+    icon: FileCheck,
+    title: "Contratos de Venda",
+    description: "Feche contratos de compra e venda em minutos. O comprador assina pelo celular, você acompanha em tempo real e o contrato fica armazenado com validade jurídica.",
+  },
+  {
+    icon: Workflow,
+    title: "Contratos de Locação",
+    description: "Novos contratos de locação assinados digitalmente. Inquilino, proprietário e fiador assinam de qualquer lugar — sem burocracia.",
+  },
+  {
+    icon: ScanFace,
+    title: "Validação Biométrica",
+    description: "Para contratos de alto valor, adicione validação biométrica facial por R$ 7,00/validação. Segurança extra com reconhecimento de identidade.",
+  },
+  {
+    icon: Lock,
+    title: "Auditoria e Compliance",
+    description: "Histórico completo de todas as assinaturas com trilha de auditoria. Prove quem assinou, quando e de onde — tudo registrado.",
   },
 ];
 
@@ -126,8 +174,8 @@ export default function AssinaturaPage() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-6">
-              Assinatura digital embutida na plataforma. 
-              Feche contratos em 5 minutos, sem cartório.
+              Assinatura digital embutida na plataforma.
+              Feche contratos em <span className="font-semibold text-foreground">5 minutos, sem cartório</span> — com validade jurídica completa.
             </p>
             
             <div className="flex flex-wrap gap-3 mb-8">
@@ -182,13 +230,37 @@ export default function AssinaturaPage() {
         </div>
       </section>
 
-      {/* Pricing Table */}
+      {/* Use Cases */}
       <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Veja como o Kenlo Assinatura elimina burocracia e acelera o fechamento de contratos
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {useCases.map((item, index) => (
+              <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-4">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Table */}
+      <section className="py-20 bg-card/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              O add-on mais acessível da Kenlo. Implantação gratuita e 20 assinaturas inclusas por mês.
+              O add-on mais acessível da Kenlo. <span className="font-semibold text-foreground">Implantação gratuita</span> e 15 assinaturas inclusas por mês.
             </p>
           </div>
           
@@ -263,7 +335,7 @@ export default function AssinaturaPage() {
       </section>
 
       {/* Kombos CTA */}
-      <section className="py-16 bg-card/30">
+      <section className="py-16">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <FileSignature className="w-16 h-16 text-primary mx-auto mb-6" />

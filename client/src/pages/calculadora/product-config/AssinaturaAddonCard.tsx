@@ -8,9 +8,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCalc } from "../CalculadoraContext";
 import { toNum, fmtNum, fmtPrice } from "../types";
+import { useAddonPulse } from "./useAddonPulse";
 
 export function AssinaturaAddonCard() {
   const { product, addons, setAddons, metrics } = useCalc();
+  const { cardRef, activeClass } = useAddonPulse(addons.assinatura);
 
   const included = 15;
   let totalSignatures = 0;
@@ -43,7 +45,10 @@ export function AssinaturaAddonCard() {
   }
 
   return (
-    <div className="p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer">
+    <div
+      ref={cardRef}
+      className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${activeClass}`}
+    >
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <Label htmlFor="assinatura" className="font-semibold text-sm cursor-pointer">Assinatura</Label>
         <Switch

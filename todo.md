@@ -4358,3 +4358,22 @@
 - [x] Kombo comparison table interactive elements
 - [x] Any other clickable cards, toggles, or interactive elements missing cursor-pointer
 - [x] Add global CSS rule for common interactive patterns
+
+## Micro-Animation on Add-on Toggle
+
+- [x] Add pulse animation when toggling add-ons on/off for visual feedback
+- [x] Animation should be brief (300-500ms) and subtle
+
+## Active State Visual Feedback on Add-on Cards
+
+- [x] Add colored border when add-on is activated (Kenlo red/pink)
+- [x] Clear visual distinction between active and inactive add-on cards
+- [x] Smooth transition for border color change
+
+## Update Dedicated Add-on Pages (Same Detail as Inteligência)
+
+- [x] Update Leads dedicated page with detailed features, use cases, and pricing breakdown
+- [x] Update Assinatura dedicated page with detailed features, use cases, and pricing breakdown
+- [x] Update Pay dedicated page with detailed features, use cases, and pricing breakdown
+- [x] Update Seguros dedicated page with detailed features, use cases, and pricing breakdown
+- [x] Update Cash dedicated page with detailed features, use cases, and pricing breakdown

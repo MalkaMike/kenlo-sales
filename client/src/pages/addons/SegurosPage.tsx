@@ -1,46 +1,154 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, DollarSign, Zap, FileText, TrendingUp, ArrowRight, Check } from "lucide-react";
+import { Check, Shield, DollarSign, Zap, FileText, TrendingUp, ArrowRight, Calculator, Receipt, Users, Handshake } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const features = [
+// Pricing data based on the official table
+const pricingData = {
+  sections: [
+    {
+      title: "Investimento",
+      rows: [
+        {
+          feature: "Licença mensal",
+          value: "Sem custo",
+          highlight: true,
+          tooltip: "Não há mensalidade para ativar o Kenlo Seguros",
+        },
+        {
+          feature: "Implantação (única)",
+          value: "Sem custo",
+          tooltip: "Implantação gratuita para todos os clientes",
+        },
+        {
+          feature: "Produtos atendidos",
+          value: "LOCAÇÃO",
+          tooltip: "Funciona exclusivamente com Kenlo Locação",
+        },
+      ],
+    },
+    {
+      title: "Receita para a Imobiliária",
+      rows: [
+        {
+          feature: "Receita por contrato/mês",
+          value: "R$ 10,00",
+          highlight: false,
+          tooltip: "Receita fixa por contrato ativo com seguro",
+        },
+        {
+          feature: "Custo para a imobiliária",
+          value: "R$ 0,00",
+          highlight: false,
+          tooltip: "Sem custo — o seguro é cobrado do inquilino via boleto",
+        },
+      ],
+    },
+    {
+      title: "Funcionalidades Incluídas",
+      rows: [
+        {
+          feature: "Seguro embutido no boleto",
+          value: true,
+          tooltip: "O valor do seguro é adicionado automaticamente ao boleto do inquilino",
+        },
+        {
+          feature: "Ativação automática com contrato",
+          value: true,
+          tooltip: "Seguro ativado automaticamente quando o contrato de locação é criado",
+        },
+        {
+          feature: "Cobertura completa",
+          value: true,
+          tooltip: "Cobertura contra incêndio, danos elétricos, vendaval e mais",
+        },
+        {
+          feature: "Gestão centralizada no painel",
+          value: true,
+          tooltip: "Acompanhe todos os seguros ativos em um único painel",
+        },
+        {
+          feature: "Relatórios de receita",
+          value: true,
+          tooltip: "Visualize a receita gerada por seguros mês a mês",
+        },
+      ],
+    },
+  ],
+};
+
+const highlights = [
   {
     icon: Shield,
     title: "Seguro no Boleto",
-    description: "Seguro embutido automaticamente no boleto do inquilino",
+    description: "Seguro embutido automaticamente no boleto do inquilino — sem esforço",
   },
   {
     icon: DollarSign,
     title: "Receita Passiva",
-    description: "Ganhe R$10 por contrato/mês sem esforço adicional",
+    description: "Ganhe R$ 10 por contrato/mês sem nenhum custo ou trabalho adicional",
   },
   {
     icon: Zap,
     title: "Ativação Automática",
-    description: "Seguro ativado automaticamente com o contrato",
+    description: "Seguro ativado automaticamente com o contrato de locação",
   },
   {
     icon: FileText,
     title: "Gestão Simplificada",
-    description: "Acompanhe todos os seguros em um único painel",
+    description: "Acompanhe todos os seguros e receita em um único painel",
   },
 ];
 
-const benefits = [
-  "Seguro embutido no boleto",
-  "R$10/contrato/mês de receita",
-  "Ativação automática",
-  "Sem burocracia",
-  "Cobertura completa",
-  "Gestão centralizada",
+const useCases = [
+  {
+    icon: Receipt,
+    title: "Receita sem Esforço",
+    description: "O seguro é cobrado automaticamente no boleto do inquilino. Você não precisa fazer nada — a receita de R$ 10/contrato/mês cai na sua conta sem trabalho adicional.",
+  },
+  {
+    icon: Users,
+    title: "Proteção para o Inquilino",
+    description: "Ofereça seguro residencial completo para seus inquilinos. Cobertura contra incêndio, danos elétricos, vendaval e mais — tudo integrado ao contrato.",
+  },
+  {
+    icon: Handshake,
+    title: "Diferencial Competitivo",
+    description: "Destaque-se no mercado oferecendo seguro integrado. Proprietários valorizam imobiliárias que protegem seu patrimônio com soluções modernas.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Escala Linear",
+    description: "Quanto mais contratos, mais receita. Com 500 contratos ativos, são R$ 5.000/mês de receita passiva. Com 1.000, R$ 10.000/mês. Sem teto.",
+  },
 ];
 
-const pricing = {
-  revenue: "10,00",
-};
-
 export default function SegurosPage() {
+  const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
+    if (typeof row.value === "boolean") {
+      return row.value ? (
+        <div className="flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+            <Check className="w-5 h-5 text-green-600" />
+          </div>
+        </div>
+      ) : (
+        <span className="text-muted-foreground">—</span>
+      );
+    }
+    
+    if (row.highlight) {
+      return <span className="text-lg font-bold text-secondary">{row.value}</span>;
+    }
+    
+    return <span className="font-medium">{row.value}</span>;
+  };
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -58,25 +166,36 @@ export default function SegurosPage() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-6">
-              Seguros embutido no boleto do inquilino. 
-              Ganhe R$10 por contrato/mês sem esforço.
+              Seguros embutido no boleto do inquilino.
+              Ganhe <span className="font-semibold text-foreground">R$ 10 por contrato/mês</span> sem esforço — receita passiva garantida.
             </p>
             
-            <div className="flex items-baseline gap-2 mb-8">
-              <span className="text-sm text-muted-foreground">Ganhe</span>
-              <span className="text-4xl font-bold text-secondary">R$ {pricing.revenue}</span>
-              <span className="text-muted-foreground">/contrato/mês</span>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <Badge variant="outline" className="text-sm py-1">
+                <Shield className="w-4 h-4 mr-1" />
+                Seguro no boleto
+              </Badge>
+              <Badge variant="outline" className="text-sm py-1">
+                <DollarSign className="w-4 h-4 mr-1" />
+                R$ 10/contrato/mês
+              </Badge>
+              <Badge variant="outline" className="text-sm py-1">
+                <Zap className="w-4 h-4 mr-1" />
+                Ativação automática
+              </Badge>
             </div>
             
             <div className="flex gap-4">
               <Link href="/calculadora">
-                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
+                  <Calculator className="w-5 h-5" />
                   Simular Cotação
                 </Button>
               </Link>
               <Link href="/produtos/locacao">
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="gap-2">
                   Ver Kenlo Locação
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -84,74 +203,148 @@ export default function SegurosPage() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20">
+      {/* Highlights */}
+      <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Como Funciona</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Transforme seguros em receita passiva
-            </p>
-          </div>
-          
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <div key={index} className="kenlo-card p-6">
-                <div className="p-3 rounded-xl bg-secondary/10 text-secondary w-fit mb-4">
-                  <feature.icon className="w-6 h-6" />
+            {highlights.map((item, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                  <item.icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <div>
+                  <h3 className="font-semibold mb-1">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Use Cases */}
+      <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Veja como o Kenlo Seguros gera receita passiva e protege sua carteira
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {useCases.map((item, index) => (
+              <div key={index} className="p-6 rounded-xl border border-border hover:border-secondary/30 hover:shadow-md transition-all">
+                <div className="p-3 rounded-xl bg-secondary/10 text-secondary w-fit mb-4">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Table */}
       <section className="py-20 bg-card/30">
         <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Benefícios do Kenlo Seguros
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <Check className="w-5 h-5 text-secondary flex-shrink-0" />
-                    <span>{benefit}</span>
-                  </div>
-                ))}
-              </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              <span className="font-semibold text-foreground">Sem custo para a imobiliária.</span> O seguro é cobrado do inquilino e você ganha R$ 10/contrato/mês.
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+              <table className="w-full border-collapse min-w-[400px]">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-4 px-4 font-medium text-muted-foreground">
+                      Categoria / Recurso
+                    </th>
+                    <th className="text-center py-4 px-4 min-w-[200px]">
+                      <div className="flex flex-col items-center">
+                        <Shield className="w-8 h-8 text-secondary mb-2" />
+                        <span className="font-bold text-lg">Seguros</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pricingData.sections.map((section, sectionIndex) => (
+                    <>
+                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                        <td
+                          colSpan={2}
+                          className="py-3 px-4 font-semibold text-foreground"
+                        >
+                          {section.title}
+                        </td>
+                      </tr>
+                      {section.rows.map((row, rowIndex) => (
+                        <tr
+                          key={`row-${sectionIndex}-${rowIndex}`}
+                          className="border-b border-border/50 hover:bg-muted/20 transition-colors"
+                        >
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <span>{row.feature}</span>
+                              {row.tooltip && (
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <span className="text-muted-foreground hover:text-foreground cursor-help">
+                                      ⓘ
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="max-w-xs">{row.tooltip}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            {renderValue(row)}
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            
-            <div className="kenlo-card p-6">
-              <h3 className="text-xl font-semibold mb-2">Simulação de Receita</h3>
-              <p className="text-sm text-muted-foreground mb-6">Exemplo com 500 contratos</p>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-3 border-b border-border">
-                  <span className="text-muted-foreground">Contratos ativos</span>
-                  <span className="font-semibold">500</span>
+          </div>
+
+          {/* Revenue Simulation */}
+          <div className="max-w-2xl mx-auto mt-12">
+            <div className="bg-secondary/10 rounded-xl p-6 border border-secondary/20">
+              <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-secondary" />
+                Simulação de Receita
+              </h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                  <span className="text-muted-foreground">100 contratos ativos</span>
+                  <span className="font-semibold text-secondary">R$ 1.000/mês</span>
                 </div>
-                <div className="flex justify-between items-center py-3 border-b border-border">
-                  <span className="text-muted-foreground">Receita por contrato</span>
-                  <span className="font-semibold">R$ {pricing.revenue}</span>
+                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                  <span className="text-muted-foreground">300 contratos ativos</span>
+                  <span className="font-semibold text-secondary">R$ 3.000/mês</span>
                 </div>
-                <div className="flex justify-between items-center py-3 border-b border-border">
-                  <span className="text-muted-foreground">Receita mensal</span>
-                  <span className="font-semibold text-secondary">R$ 5.000</span>
+                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                  <span className="text-muted-foreground">500 contratos ativos</span>
+                  <span className="font-semibold text-secondary">R$ 5.000/mês</span>
                 </div>
-                <div className="flex justify-between items-center py-3">
-                  <span className="text-muted-foreground">Receita anual</span>
-                  <span className="font-semibold text-secondary">R$ 60.000</span>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-muted-foreground">1.000 contratos ativos</span>
+                  <span className="font-bold text-lg text-secondary">R$ 10.000/mês</span>
                 </div>
-                <Link href="/calculadora" className="block pt-4">
-                  <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                    Calcular minha receita
-                  </Button>
-                </Link>
               </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                Receita anual com 500 contratos: <strong>R$ 60.000</strong> — sem custo, sem esforço.
+              </p>
             </div>
           </div>
         </div>
@@ -166,14 +359,23 @@ export default function SegurosPage() {
               Gere receita passiva com seguros
             </h2>
             <p className="text-muted-foreground mb-6">
-              Adicione Kenlo Seguros e ganhe R$10 por contrato/mês
+              Adicione Kenlo Seguros e ganhe R$ 10 por contrato/mês.
+              Combine com outros add-ons nos Kombos e economize ainda mais.
             </p>
-            <Link href="/calculadora">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
-                Simular Cotação
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
+            <div className="flex gap-4 justify-center">
+              <Link href="/kombos">
+                <Button size="lg" variant="outline" className="gap-2">
+                  Explorar Kombos
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/calculadora">
+                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
+                  <Calculator className="w-5 h-5" />
+                  Simular Cotação
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

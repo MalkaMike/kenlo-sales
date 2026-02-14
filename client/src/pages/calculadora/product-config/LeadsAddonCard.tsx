@@ -9,9 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCalc } from "../CalculadoraContext";
 import { toNum, fmtNum, fmtPrice } from "../types";
+import { useAddonPulse } from "./useAddonPulse";
 
 export function LeadsAddonCard() {
   const { addons, setAddons, metrics, setMetrics, isAddonAvailable } = useCalc();
+  const { cardRef, activeClass } = useAddonPulse(addons.leads);
 
   const waTiers = [
     { from: 1, to: 200, price: 2.0 },
@@ -44,7 +46,10 @@ export function LeadsAddonCard() {
   }
 
   return (
-    <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div
+      ref={cardRef}
+      className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : activeClass}`}
+    >
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>

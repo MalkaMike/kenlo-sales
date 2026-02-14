@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, CreditCard, Split, Receipt, DollarSign, ArrowRight, Calculator, Zap, Info } from "lucide-react";
+import { Check, X, CreditCard, Split, Receipt, DollarSign, ArrowRight, Calculator, Zap, Info, Wallet, RefreshCw, BarChart3 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -125,22 +125,45 @@ const highlights = [
   {
     icon: Receipt,
     title: "Boleto Digital",
-    description: "Emissão automática com baixa automática",
+    description: "Emissão automática com baixa automática — zero trabalho manual",
   },
   {
     icon: Split,
     title: "Split de Pagamento",
-    description: "Divisão automática entre imobiliária e proprietário",
+    description: "Divisão automática entre imobiliária e proprietário no mesmo dia",
   },
   {
     icon: Zap,
     title: "PIX Integrado",
-    description: "Recebimento instantâneo via PIX",
+    description: "Recebimento instantâneo via PIX — inquilino paga, dinheiro cai na hora",
   },
   {
     icon: DollarSign,
     title: "Receita Extra",
-    description: "Cobre taxa do inquilino e gere receita",
+    description: "Cobre taxa do inquilino e gere receita de R$ 1,00 a R$ 2,00 por boleto",
+  },
+];
+
+const useCases = [
+  {
+    icon: Wallet,
+    title: "Cobrança Automatizada",
+    description: "Boletos emitidos automaticamente todo mês. Baixa automática quando o inquilino paga. Sem planilhas, sem conferência manual — a conciliação é 100% automática.",
+  },
+  {
+    icon: RefreshCw,
+    title: "Repasse Automático",
+    description: "O split divide o pagamento automaticamente: a parte do proprietário vai direto para a conta dele, a taxa da imobiliária fica com você. Tudo no mesmo dia.",
+  },
+  {
+    icon: DollarSign,
+    title: "Geração de Receita",
+    description: "Cobre R$ 5,00 do inquilino por boleto e gere receita de R$ 1,00 a R$ 2,00 por transação. Com 500 boletos/mês, são até R$ 1.000/mês de receita extra!",
+  },
+  {
+    icon: BarChart3,
+    title: "Relatórios Financeiros",
+    description: "Acompanhe inadimplência, fluxo de caixa e performance financeira em tempo real. Dados que ajudam a tomar decisões melhores para sua carteira.",
   },
 ];
 
@@ -182,8 +205,8 @@ export default function PayPage() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-6">
-              Boleto e Split digital embutido na plataforma. 
-              Cobre do inquilino e repasse automático para o proprietário.
+              Boleto e Split digital embutido na plataforma.
+              Inquilino paga, <span className="font-semibold text-foreground">dinheiro cai na conta certa</span> — zero trabalho manual, conciliação automática.
             </p>
             
             <div className="flex flex-wrap gap-3 mb-8">
@@ -238,8 +261,32 @@ export default function PayPage() {
         </div>
       </section>
 
-      {/* Pricing Table */}
+      {/* Use Cases */}
       <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Veja como o Kenlo Pay transforma a gestão financeira da sua carteira de locação
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {useCases.map((item, index) => (
+              <div key={index} className="p-6 rounded-xl border border-border hover:border-secondary/30 hover:shadow-md transition-all">
+                <div className="p-3 rounded-xl bg-secondary/10 text-secondary w-fit mb-4">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Table */}
+      <section className="py-20 bg-card/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Preços por Plano</h2>
@@ -322,7 +369,7 @@ export default function PayPage() {
       </section>
 
       {/* Tier Pricing Details */}
-      <section className="py-16 bg-card/30">
+      <section className="py-16">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Detalhes de Preços por Faixas</h2>
@@ -468,8 +515,8 @@ export default function PayPage() {
         </div>
       </section>
 
-      {/* Revenue Generation */}
-      <section className="py-16">
+      {/* Revenue Generation CTA */}
+      <section className="py-16 bg-card/30">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <DollarSign className="w-16 h-16 text-secondary mx-auto mb-6" />

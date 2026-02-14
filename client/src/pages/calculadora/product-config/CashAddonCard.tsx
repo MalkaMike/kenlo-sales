@@ -5,12 +5,17 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCalc } from "../CalculadoraContext";
+import { useAddonPulse } from "./useAddonPulse";
 
 export function CashAddonCard() {
   const { addons, setAddons, isAddonAvailable } = useCalc();
+  const { cardRef, activeClass } = useAddonPulse(addons.cash);
 
   return (
-    <div className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div
+      ref={cardRef}
+      className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("cash") ? "opacity-50 bg-gray-50" : activeClass}`}
+    >
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="cash" className="font-semibold text-sm cursor-pointer">Cash</Label>

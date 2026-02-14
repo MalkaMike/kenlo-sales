@@ -8,12 +8,17 @@ import { Switch } from "@/components/ui/switch";
 import { Check } from "lucide-react";
 import { useCalc } from "../CalculadoraContext";
 import { toNum, formatCurrency, parseCurrency } from "../types";
+import { useAddonPulse } from "./useAddonPulse";
 
 export function PayAddonCard() {
   const { addons, setAddons, metrics, setMetrics, isAddonAvailable } = useCalc();
+  const { cardRef, activeClass } = useAddonPulse(addons.pay);
 
   return (
-    <div className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div
+      ref={cardRef}
+      className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : activeClass}`}
+    >
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>
