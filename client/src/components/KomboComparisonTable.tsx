@@ -629,13 +629,13 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               <button
                                 onClick={addCustomColumnFromSelection}
                                 className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-blue-400 text-blue-500 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
-                                title="Copiar seleção atual"
+                                title="Copiar Sua Seleção"
                               >
                                 <Plus className="w-4 h-4" />
                               </button>
                             </TooltipTrigger>
                             <TooltipContent side="top" className="text-xs">
-                              Copiar seleção atual
+                              Copiar Sua Seleção
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
