@@ -14,7 +14,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2, Sparkles, Plus, X } from "lucide-react";
+import { Check, Star, Info, CheckCircle2, Sparkles, Plus, X, Minus, RotateCcw } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -95,6 +95,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const prevProductRef = useRef<ProductSelection>(props.product);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // ── Hidden Kombos ──
+  const [hiddenKombos, setHiddenKombos] = useState<KomboId[]>([]);
+
   // ── Perso Columns ──
   const [customColumns, setCustomColumns] = useState<{ id: string; name: string; sourceKombo: KomboId | null }[]>([]);
   const customCounterRef = useRef(0);
@@ -130,6 +133,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     if (prevProductRef.current !== props.product) {
       setColumnOverrides({});
       setCustomColumns([]);
+      setHiddenKombos([]);
       customCounterRef.current = 0;
 
       setSelectedPlans(prev => {
@@ -177,6 +181,23 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     setCustomColumns(prev => [...prev, { id: newId, name: newName, sourceKombo: null }]);
     setColumnOverrides(prev => ({ ...prev, [newId]: getCustomDefaultOverrides() }));
   }, [customColumns.length, getCustomDefaultOverrides]);
+
+  const addCustomColumnFromSelection = useCallback(() => {
+    if (customColumns.length >= MAX_CUSTOM_COLUMNS) return;
+    const newId = `custom_${customCounterRef.current++}`;
+    const newName = `Cópia ${customColumns.length + 1}`;
+    setCustomColumns(prev => [...prev, { id: newId, name: newName, sourceKombo: null }]);
+    // Copy the current selection's config (products, addons, premium services) but allow cycle editing
+    setColumnOverrides(prev => ({
+      ...prev,
+      [newId]: {
+        ...getDefaultOverrides(),
+        vipSupport: props.vipSupport ?? false,
+        dedicatedCS: props.dedicatedCS ?? false,
+        training: false,
+      },
+    }));
+  }, [customColumns.length, getDefaultOverrides, props.vipSupport, props.dedicatedCS]);
 
   const removeCustomColumn = useCallback((customId: string) => {
     setCustomColumns(prev => prev.filter(c => c.id !== customId));
@@ -284,7 +305,32 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // ── Derived Data ──
   const recommendedKombo = getRecommendedKombo(props.product, props.addons);
   const compatibleKomboIds = useMemo(() => getCompatibleKomboIds(props.product), [props.product]);
-  const komboColumnCount = compatibleKomboIds.length;
+  const visibleKomboIds = useMemo(() => compatibleKomboIds.filter(id => !hiddenKombos.includes(id)), [compatibleKomboIds, hiddenKombos]);
+  const komboColumnCount = visibleKomboIds.length;
+
+  // ── Hide/Restore Kombo Helpers ──
+  const hideKombo = useCallback((komboId: KomboId) => {
+    setHiddenKombos(prev => [...prev, komboId]);
+    // Deselect if it was selected
+    setSelectedPlans(prev => {
+      const filtered = prev.filter(p => p !== komboId);
+      if (filtered.length !== prev.length) {
+        setTimeout(() => {
+          props.onPlansSelected?.(filtered);
+          props.onPlanSelected?.(filtered.length > 0 ? filtered[0] as KomboId : null);
+        }, 0);
+      }
+      return filtered;
+    });
+  }, [props.onPlansSelected, props.onPlanSelected]);
+
+  const restoreKombo = useCallback((komboId: KomboId) => {
+    setHiddenKombos(prev => prev.filter(id => id !== komboId));
+  }, []);
+
+  const restoreAllKombos = useCallback(() => {
+    setHiddenKombos([]);
+  }, []);
 
   // ── Column Computation ──
   const columns: KomboColumnData[] = useMemo(() => {
@@ -294,7 +340,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       : undefined;
     const suaSelecao = calculateKomboColumn("none", props, recommendedKombo, suaSelecaoFreqOverride);
 
-    const komboColumns = compatibleKomboIds.map((id, idx) => {
+    const komboColumns = visibleKomboIds.map((id, idx) => {
       const colKey = `kombo_${idx}`;
       const overrides = columnOverrides[colKey] || undefined;
       return calculateKomboColumn(id, props, recommendedKombo, overrides);
@@ -314,7 +360,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
 
     // Apply pre-paid transformations
     return allCols.map((col, idx) => {
-      const colKey = idx === 0 ? "sua_selecao" : idx <= compatibleKomboIds.length ? `kombo_${idx - 1}` : (customColumns[idx - compatibleKomboIds.length - 1]?.id || "");
+      const colKey = idx === 0 ? "sua_selecao" : idx <= visibleKomboIds.length ? `kombo_${idx - 1}` : (customColumns[idx - visibleKomboIds.length - 1]?.id || "");
       const isPrepaidUsers = prePaidUsers[colKey] ?? false;
       const isPrepaidContracts = prePaidContracts[colKey] ?? false;
 
@@ -345,16 +391,16 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         postPaidTotal: Math.max(0, newPostPaidTotal),
       };
     });
-  }, [props, props.wantsWhatsApp, props.leadsPerMonth, recommendedKombo, compatibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
+  }, [props, props.wantsWhatsApp, props.leadsPerMonth, recommendedKombo, visibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
 
   // ── Column Key Mapper ──
   const getColumnKey = useCallback((colIndex: number): string => {
     if (colIndex === 0) return "sua_selecao";
-    const komboCount = compatibleKomboIds.length;
+    const komboCount = visibleKomboIds.length;
     if (colIndex <= komboCount) return `kombo_${colIndex - 1}`;
     const customIdx = colIndex - komboCount - 1;
     return customColumns[customIdx]?.id || "";
-  }, [compatibleKomboIds.length, customColumns]);
+  }, [visibleKomboIds.length, customColumns]);
 
   // ── Emit Selected Columns Data ──
   const onSelectedColumnsDataRef = useRef(props.onSelectedColumnsData);
@@ -451,6 +497,15 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               <X className="w-3 h-3" />
                             </button>
                           )}
+                          {isKomboCol && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); hideKombo(col.id as KomboId); }}
+                              className="absolute top-1 right-1 p-0.5 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500 transition-colors"
+                              title="Remover kombo da tabela"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                          )}
                           {col.isCustom ? (
                             <div className="flex flex-col items-center gap-0.5">
                               <span className="font-bold text-amber-700 text-sm">{col.shortName}</span>
@@ -501,13 +556,40 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   })}
                   {customColumns.length < MAX_CUSTOM_COLUMNS && (
                     <th className="text-center py-2 px-1 bg-white align-middle" rowSpan={1}>
-                      <button
-                        onClick={addCustomColumn}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-green-400 text-green-500 hover:border-green-500 hover:text-green-600 hover:bg-green-50 transition-all"
-                        title="Adicionar cenário personalizado"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
+                      <div className="flex flex-col items-center gap-1.5">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={addCustomColumnFromSelection}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-dashed border-blue-400 text-blue-500 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                                title="Copiar seleção atual"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">
+                              Copiar seleção atual
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={addCustomColumn}
+                                className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-dashed border-gray-300 text-gray-400 hover:border-green-400 hover:text-green-500 hover:bg-green-50 transition-all"
+                                title="Cenário em branco"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">
+                              Cenário em branco
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </th>
                   )}
                 </tr>
@@ -694,6 +776,37 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Restore hidden kombos bar */}
+      {hiddenKombos.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-2 px-1">
+          <span className="text-xs text-gray-500">Kombos ocultos:</span>
+          {hiddenKombos.map(komboId => {
+            const def = KOMBO_DEFINITIONS[komboId as Exclude<KomboId, "none">];
+            return (
+              <button
+                key={komboId}
+                onClick={() => restoreKombo(komboId)}
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border border-gray-300 bg-white text-gray-600 hover:bg-green-50 hover:border-green-400 hover:text-green-700 transition-colors"
+                title={`Restaurar ${def?.name || komboId}`}
+              >
+                <Plus className="w-3 h-3" />
+                {def?.name || komboId}
+              </button>
+            );
+          })}
+          {hiddenKombos.length > 1 && (
+            <button
+              onClick={restoreAllKombos}
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border border-gray-300 bg-white text-gray-600 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 transition-colors"
+              title="Restaurar todos os kombos"
+            >
+              <RotateCcw className="w-3 h-3" />
+              Restaurar todos
+            </button>
+          )}
+        </div>
+      )}
 
       <PrePagoPosPagoModal
         open={showPrePagoPosPagoModal}

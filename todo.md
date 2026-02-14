@@ -4298,3 +4298,10 @@
 - [x] Add green progress bar next to coverage percentage in ReceitaExtraSection
 - [x] Add green progress bar next to coverage percentage in GrandTotalRow
 - [x] Add green progress bar in PDF revenue section
+
+## Kombo Table Column Management
+
+- [x] Add '-' button on each Kombo column header to remove it from the table (except "Sua Seleção")
+- [x] Add '+' button to add new custom plans (copied from current selection) where user can adjust the ciclo
+- [x] All possible kombos shown by default, user can remove one by one
+- [x] "Sua Seleção" column is always visible and cannot be removed
