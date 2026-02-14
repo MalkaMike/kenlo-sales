@@ -484,6 +484,21 @@ html {
   font-weight: 500;
 }
 
+/* Standardized Pricing Table Text Color */
+.pricing-table-text {
+  color: #141313;
+}
+
+.pricing-table-text-sm {
+  color: #141313;
+  font-size: 0.875rem;
+}
+
+.pricing-table-text-xs {
+  color: #141313;
+  font-size: 0.75rem;
+}
+
 /* Sticky Pricing Table Header */
 .pricing-sticky-header {
   position: sticky;

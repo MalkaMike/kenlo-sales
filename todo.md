@@ -4428,3 +4428,13 @@
 - [x] Comprehensive sweep of ALL .tsx, .ts files for any remaining K2 display text
 - [x] Fix StickyBar plan display, KomboCellRenderers, usePricing line items, PDF cover/contract sections
 - [x] Verify fix across entire website
+
+## Standardize Pricing Table Text Colors to #141313
+
+- [x] Audit all pricing table text colors across all pages (ImobPage, LocacaoPage, InteligenciaPage, LeadsPage, AssinaturaPage, PayPage, SegurosPage, CashPage, KombosPage)
+- [x] Replace all text-gray-700, text-gray-800, text-muted-foreground with consistent #141313 color
+- [x] Update table header text colors to use #141313
+- [x] Update table body cell text colors to use #141313
+- [x] Update price value text colors to use #141313
+- [x] Verify consistency across all pages and components
+- [x] Ensure no red/primary/secondary color text remains in pricing tables

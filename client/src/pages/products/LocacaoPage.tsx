@@ -372,7 +372,7 @@ export default function LocacaoPage() {
                           key={`row-${sectionIndex}-${rowIndex}`}
                           className="border-b border-border/20 pricing-row"
                         >
-                          <td className="p-4 text-sm">
+                          <td className="p-4 text-sm pricing-table-text">
                             <div className="flex items-center gap-2">
                               {typedRow.feature}
                               {typedRow.tooltip && (
@@ -390,7 +390,7 @@ export default function LocacaoPage() {
                           {pricingData.plans.map((_, planIndex) => (
                             <td 
                               key={planIndex} 
-                              className="p-4 text-center text-sm"
+                              className="p-4 text-center text-sm pricing-table-text"
                             >
                               {renderValue(typedRow, planIndex)}
                             </td>

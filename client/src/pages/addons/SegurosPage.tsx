@@ -312,7 +312,7 @@ export default function SegurosPage() {
                               )}
                             </div>
                           </td>
-                          <td className="py-4 px-4 text-center">
+                          <td className="py-4 px-4 text-center pricing-table-text">
                             {renderValue(row)}
                           </td>
                         </tr>

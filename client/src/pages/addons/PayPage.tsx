@@ -351,13 +351,13 @@ export default function PayPage() {
                             )}
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-center">
+                        <td className="py-4 px-4 text-center pricing-table-text">
                           {renderValue(row.prime)}
                         </td>
-                        <td className="py-4 px-4 text-center">
+                        <td className="py-4 px-4 text-center pricing-table-text">
                           {renderValue(row.k)}
                         </td>
-                        <td className="py-4 px-4 text-center">
+                        <td className="py-4 px-4 text-center pricing-table-text">
                           {renderValue(row.k2)}
                         </td>
                       </tr>

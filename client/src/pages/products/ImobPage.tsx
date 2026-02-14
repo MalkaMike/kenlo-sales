@@ -308,7 +308,7 @@ export default function ImobPage() {
                       <tr>
                         <td 
                           colSpan={4} 
-                          className="p-3 bg-primary/5 font-semibold text-primary border-t border-border/40"
+                          className="p-3 bg-primary/5 font-semibold pricing-table-text border-t border-border/40"
                         >
                           {section.title}
                         </td>
@@ -322,7 +322,7 @@ export default function ImobPage() {
                           key={`row-${sectionIndex}-${rowIndex}`}
                           className="border-b border-border/20 pricing-row"
                         >
-                          <td className="p-4 text-sm">
+                          <td className="p-4 text-sm pricing-table-text">
                             <div className="flex items-center gap-2">
                               {typedRow.feature}
                               {typedRow.tooltip && (                                <Tooltip>
@@ -339,7 +339,7 @@ export default function ImobPage() {
                           {pricingData.plans.map((_, planIndex) => (
                             <td 
                               key={planIndex} 
-                              className="p-4 text-center text-sm"
+                              className="p-4 text-center text-sm pricing-table-text"
                             >
                               {renderValue(typedRow, planIndex)}
                             </td>
@@ -398,17 +398,17 @@ export default function ImobPage() {
                 </thead>
                 <tbody>
                   <tr className="border-b border-border/40">
-                    <td className="py-2 px-3 font-medium">Usuários Adicionais</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 57/un</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 47 (1-10)<br/>R$ 37 (11+)</td>
-                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 47 (1-10)<br/>R$ 37 (11-50)<br/>R$ 27 (51+)</td>
+                    <td className="py-2 px-3 font-medium pricing-table-text">Usuários Adicionais</td>
+                    <td className="py-2 px-3 text-center text-xs pricing-table-text">R$ 57/un</td>
+                    <td className="py-2 px-3 text-center text-xs pricing-table-text">R$ 47 (1-10)<br/>R$ 37 (11+)</td>
+                    <td className="py-2 px-3 text-center text-xs font-semibold pricing-table-text">R$ 47 (1-10)<br/>R$ 37 (11-50)<br/>R$ 27 (51+)</td>
                     <td className="py-2 px-3 text-center text-green-600 font-semibold">53%</td>
                   </tr>
                   <tr className="border-b border-border/40">
-                    <td className="py-2 px-3 font-medium">Leads (WhatsApp)</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 2,00/msg</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 2,00/msg</td>
-                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 font-medium pricing-table-text">Leads (WhatsApp)</td>
+                    <td className="py-2 px-3 text-center text-xs pricing-table-text">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 text-center text-xs pricing-table-text">R$ 2,00/msg</td>
+                    <td className="py-2 px-3 text-center text-xs font-semibold pricing-table-text">R$ 2,00/msg</td>
                     <td className="py-2 px-3 text-center text-gray-400">—</td>
                   </tr>
                 </tbody>
