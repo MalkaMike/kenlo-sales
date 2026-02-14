@@ -4286,3 +4286,9 @@
 - [x] Make PDF revenue section always green (consistent with web calculadora)
 - [x] Change negative result label from "Investimento Líquido" to "Custo Reduzido" in web and PDF
 - [x] Test extreme scenarios with Pay + Seguros and high contract values
+
+## Revenue Coverage Percentage + PDF Testing
+
+- [x] Add revenue coverage percentage over investment in web (ReceitaExtraSection + GrandTotalRow)
+- [x] Add revenue coverage percentage in PDF revenue section
+- [x] Test full PDF with Locação + Pay + Seguros + 500+ contracts (no overflow)

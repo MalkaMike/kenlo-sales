@@ -47,15 +47,24 @@ export function GrandTotalRow() {
         </span>
       </div>
 
+      {/* Coverage percentage */}
+      {(recurring + postPaid.total) > 0 && (
+        <div className="mt-2 text-center">
+          <span className="text-sm text-green-700 font-medium">
+            A receita cobre {Math.min(Math.round((revenue.total / (recurring + postPaid.total)) * 100), 999)}% do investimento mensal
+          </span>
+        </div>
+      )}
+
       {/* Killer phrase */}
-      <div className="mt-4 text-center">
+      <div className="mt-3 text-center">
         <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">
           Kenlo é a única plataforma que pode se pagar enquanto você usa.
         </p>
       </div>
 
       {/* Footnote */}
-      <div className="mt-4 text-xs text-gray-500 italic">
+      <div className="mt-3 text-xs text-gray-500 italic">
         Não inclui impostos.
       </div>
     </>

@@ -196,6 +196,15 @@ export function ReceitaExtraSection() {
               </span>
             </div>
 
+            {/* Coverage percentage */}
+            {totalInvestment > 0 && (
+              <div className="mt-2 text-center">
+                <span className="text-sm text-green-700 font-medium">
+                  A receita cobre {Math.min(Math.round((revenue.total / totalInvestment) * 100), 999)}% do investimento mensal
+                </span>
+              </div>
+            )}
+
             {/* Killer phrase */}
             <div className="mt-3 text-center">
               <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">

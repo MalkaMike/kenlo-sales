@@ -136,10 +136,23 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
   doc.setFontSize(11);
   doc.setTextColor(...rgb(C.green));
   doc.text(fmt(Math.abs(netRevenue)), M + CW - 14, Y, { align: "right" });
-  Y += 20;
+  Y += 14;
+
+  // Coverage percentage
+  const monthlyInvestment = data.totalAnnual / 12;
+  const totalInvestmentForCoverage = monthlyInvestment + totalPostPaid;
+  if (totalInvestmentForCoverage > 0) {
+    const coveragePct = Math.min(Math.round((totalRevenue / totalInvestmentForCoverage) * 100), 999);
+    doc.setFontSize(8);
+    doc.setTextColor(...rgb(C.green));
+    doc.setFont("helvetica", "italic");
+    doc.text(`A receita cobre ${coveragePct}% do investimento mensal`, M + CW / 2, Y, { align: "center" });
+    Y += 14;
+  } else {
+    Y += 6;
+  }
 
   // ROI indicator — always shown in green (even when negative, it means the system costs less)
-  const monthlyInvestment = data.totalAnnual / 12;
   const netGain = totalRevenue - monthlyInvestment - (data.postPaidTotal || 0);
   const isProfit = netGain > 0;
 
