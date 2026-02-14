@@ -400,7 +400,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // ── Render ──
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
+      <h3 className="text-base font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
       <Card>
         <CardContent className="p-4">
 

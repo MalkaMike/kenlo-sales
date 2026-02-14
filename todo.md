@@ -4268,3 +4268,7 @@
 ## Kombo Comparison Title Position Fix
 
 - [x] Move "Sua Seleção vs Kombos" title outside/above the box (consistent with other section titles)
+
+## Kombo Comparison Title Font Size
+
+- [x] Increase "Sua Seleção vs Kombos" title font size to match other section headers
