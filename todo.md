@@ -4481,3 +4481,14 @@
 - [x] Show feature descriptions for each feature
 - [x] Integrate new features page into pdfGenerator.ts
 - [x] Ensure features page respects selected product (IMOB only, Locação only, Both)
+
+## Custom Notification System
+
+- [x] Create NotificationContext for global notification state management
+- [x] Create useNotification hook for easy access to notification functions
+- [x] Create Toast/Alert UI component with support for success, error, warning, info types
+- [x] Add notification animations (slide-in, fade-out)
+- [x] Integrate notifications into key user actions (PDF export in QuoteInfoHandler)
+- [x] Add auto-dismiss functionality with customizable duration
+- [x] Support for action buttons in notifications (e.g., "Undo", "Retry")
+- [x] Ensure notifications are accessible and follow WCAG guidelines

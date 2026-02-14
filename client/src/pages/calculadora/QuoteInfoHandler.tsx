@@ -4,12 +4,13 @@
  */
 
 import { QuoteInfoDialog, type QuoteInfo } from "@/components/QuoteInfoDialog";
-import { toast } from "sonner";
+import { useNotification } from "@/hooks/useNotification";
 import { downloadProposalPDF } from "@/utils/generateProposalPDF";
 import { useCalc } from "./CalculadoraContext";
 import { buildProposalData, buildQuoteSaveData } from "./quote/buildProposalData";
 
 export function QuoteInfoHandler() {
+  const notification = useNotification();
   const {
     product,
     imobPlan,
@@ -38,7 +39,7 @@ export function QuoteInfoHandler() {
     setShowQuoteInfoDialog(false);
 
     try {
-      const toastId = toast.loading("Gerando PDF...");
+      notification.info("Gerando PDF", "Por favor aguarde...", 0);
 
       // Build proposal data using the pure utility function
       const input = {
@@ -65,8 +66,7 @@ export function QuoteInfoHandler() {
       // Download the PDF
       await downloadProposalPDF(proposalData as any);
 
-      toast.dismiss();
-      toast.success("PDF baixado com sucesso!");
+      notification.success("PDF baixado", "Seu orcamento foi gerado com sucesso!");
 
       // Save to proposals database
       await createProposal.mutateAsync(proposalData as any);
@@ -79,11 +79,9 @@ export function QuoteInfoHandler() {
         console.error("Failed to save quote:", quoteError);
       }
 
-      toast.dismiss();
-      toast.success("Proposta gerada e salva com sucesso!");
+      notification.success("Proposta salva", "Sua proposta foi salva com sucesso!");
     } catch (error) {
-      toast.dismiss();
-      toast.error("Erro ao gerar proposta. Tente novamente.");
+      notification.error("Erro ao gerar proposta", "Tente novamente ou entre em contato com o suporte.");
       console.error("Error generating proposal:", error);
     }
   };
