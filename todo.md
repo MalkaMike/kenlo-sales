@@ -4247,3 +4247,7 @@
 - [x] Add new "Receitas Kenlo Extra" section that shows only when Boleto/Split or Seguros revenues exist
 - [x] In Receitas section: show revenues first (Boleto/Split & Seguros), then investment (mensalidades pré+pós), then net result
 - [x] PDF generation already handles single-plan correctly (1-column comparison table)
+
+## PDF Comparison Section - Single Column Detail View
+
+- [x] Rewrite pdfComparisonSection.ts from multi-column table to clean single-column detail view
