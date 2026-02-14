@@ -190,6 +190,7 @@ export function renderComparison(doc: jsPDF, data: ProposalPrintData, Y: number)
     const x = M + labelW + colW * i + colW / 2;
     doc.text(subVals[i], x, Y - 6, { align: "center" });
   }
+  Y += 4; // Extra spacing to prevent sub-line clipping into next row
 
   // ── Implantação ──
   Y = drawRow(doc, "Implantação", [], Y, numCols, labelW, colW, { bg: C.bgSoft, labelBold: true });

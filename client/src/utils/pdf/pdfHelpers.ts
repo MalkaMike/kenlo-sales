@@ -71,7 +71,7 @@ export const PW = 595.28;
 export const PH = 841.89;
 export const M = 40;
 export const CW = PW - M * 2;
-export const MAX_Y = PH - 50;
+export const MAX_Y = PH - 58;
 
 // ── Color Palette ───────────────────────────────────────────────
 export const C = {
@@ -157,7 +157,7 @@ export function newPage(doc: jsPDF, data: ProposalPrintData): number {
   doc.addImage(KENLO_LOGO_RED_BASE64, "PNG", M, 8, logoW, logoH);
   // Footer
   renderPageFooter(doc, data);
-  return 32;
+  return 38;
 }
 
 /** Shared footer renderer — salesperson contact on the left, proposal label on the right, page number centered */

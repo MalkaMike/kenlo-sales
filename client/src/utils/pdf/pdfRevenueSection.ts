@@ -156,7 +156,7 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
     doc.setFont("helvetica", "bold");
     doc.text(fmt(netGain), M + 14, Y + 32);
 
-    Y += 50;
+    Y += 60;
   }
 
   return Y;
