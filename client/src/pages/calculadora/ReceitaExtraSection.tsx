@@ -196,14 +196,39 @@ export function ReceitaExtraSection() {
               </span>
             </div>
 
-            {/* Coverage percentage */}
-            {totalInvestment > 0 && (
-              <div className="mt-2 text-center">
-                <span className="text-sm text-green-700 font-medium">
-                  A receita cobre {Math.min(Math.round((revenue.total / totalInvestment) * 100), 999)}% do investimento mensal
-                </span>
-              </div>
-            )}
+            {/* Coverage percentage with progress bar */}
+            {totalInvestment > 0 && (() => {
+              const coveragePct = Math.min(Math.round((revenue.total / totalInvestment) * 100), 999);
+              const barPct = Math.min(coveragePct, 100);
+              return (
+                <div className="mt-3 px-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-green-700 font-medium">
+                      A receita cobre {coveragePct}% do investimento mensal
+                    </span>
+                    <span className="text-xs font-bold text-green-600">
+                      {coveragePct}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500 ease-out"
+                      style={{
+                        width: `${barPct}%`,
+                        background: coveragePct >= 100
+                          ? 'linear-gradient(90deg, #16a34a, #22c55e)'
+                          : 'linear-gradient(90deg, #22c55e, #4ade80)',
+                      }}
+                    />
+                  </div>
+                  {coveragePct >= 100 && (
+                    <div className="text-xs text-green-600 font-medium mt-1 text-center">
+                      A receita supera o investimento!
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Killer phrase */}
             <div className="mt-3 text-center">

@@ -138,16 +138,48 @@ export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): n
   doc.text(fmt(Math.abs(netRevenue)), M + CW - 14, Y, { align: "right" });
   Y += 14;
 
-  // Coverage percentage
+  // Coverage percentage with progress bar
   const monthlyInvestment = data.totalAnnual / 12;
   const totalInvestmentForCoverage = monthlyInvestment + totalPostPaid;
   if (totalInvestmentForCoverage > 0) {
     const coveragePct = Math.min(Math.round((totalRevenue / totalInvestmentForCoverage) * 100), 999);
+    const barPct = Math.min(coveragePct, 100);
+
+    // Coverage text
     doc.setFontSize(8);
     doc.setTextColor(...rgb(C.green));
     doc.setFont("helvetica", "italic");
-    doc.text(`A receita cobre ${coveragePct}% do investimento mensal`, M + CW / 2, Y, { align: "center" });
-    Y += 14;
+    doc.text(`A receita cobre ${coveragePct}% do investimento mensal`, M, Y);
+
+    // Percentage badge on the right
+    doc.setFont("helvetica", "bold");
+    doc.text(`${coveragePct}%`, M + CW - 14, Y, { align: "right" });
+    Y += 8;
+
+    // Progress bar background (gray)
+    const barH = 6;
+    const barW = CW;
+    doc.setFillColor(229, 231, 235); // gray-200
+    doc.roundedRect(M, Y, barW, barH, 3, 3, "F");
+
+    // Progress bar fill (green gradient approximation)
+    const fillW = Math.max((barW * barPct) / 100, 0);
+    if (fillW > 0) {
+      doc.setFillColor(...rgb(coveragePct >= 100 ? C.green : "#4ade80"));
+      doc.roundedRect(M, Y, fillW, barH, 3, 3, "F");
+    }
+    Y += barH + 4;
+
+    // "Supera o investimento" message when >= 100%
+    if (coveragePct >= 100) {
+      doc.setFontSize(7);
+      doc.setTextColor(...rgb(C.green));
+      doc.setFont("helvetica", "bold");
+      doc.text("A receita supera o investimento!", M + CW / 2, Y, { align: "center" });
+      Y += 10;
+    } else {
+      Y += 4;
+    }
   } else {
     Y += 6;
   }

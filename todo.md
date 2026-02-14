@@ -4292,3 +4292,9 @@
 - [x] Add revenue coverage percentage over investment in web (ReceitaExtraSection + GrandTotalRow)
 - [x] Add revenue coverage percentage in PDF revenue section
 - [x] Test full PDF with Locação + Pay + Seguros + 500+ contracts (no overflow)
+
+## Visual Progress Bar for Revenue Coverage
+
+- [x] Add green progress bar next to coverage percentage in ReceitaExtraSection
+- [x] Add green progress bar next to coverage percentage in GrandTotalRow
+- [x] Add green progress bar in PDF revenue section
