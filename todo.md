@@ -4318,3 +4318,13 @@
 ## Inteligência Add-on Description Update
 
 - [x] Update Inteligência add-on description: unlimited BI Google Looker Pro users, mandatory tool for data-driven management
+
+## Add-on Descriptions Improvement
+
+- [x] Update Leads add-on description with more commercial appeal (calculadora card, Home, Layout)
+- [x] Update Assinatura add-on description with more commercial appeal (calculadora card, Home, Layout)
+- [x] Update Pay add-on description with more commercial appeal (calculadora card, Home, Layout)
+- [x] Update Seguros add-on description with more commercial appeal (calculadora card, Home, Layout)
+- [x] Update Cash add-on description with more commercial appeal (calculadora card, Home, Layout)
+- [x] Update Inteligência dedicated page with Google Looker Pro details, dashboards, and metrics
+- [x] Include Google Looker Pro mention in PDF proposal add-ons section

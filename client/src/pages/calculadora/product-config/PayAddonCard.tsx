@@ -26,7 +26,7 @@ export function PayAddonCard() {
         />
       </div>
       <div className="text-xs text-gray-500">
-        {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto e Split digital embutido na plataforma"}
+        {!isAddonAvailable("pay") ? "Requer Kenlo Locação" : "Boleto + Split automático — o inquilino paga e o dinheiro cai direto na conta certa. Zero trabalho manual."}
       </div>
       {/* Boleto & Split toggles + value inputs inside Pay card */}
       {addons.pay && isAddonAvailable("pay") && (

@@ -52,7 +52,7 @@ export function AssinaturaAddonCard() {
           onCheckedChange={(checked) => setAddons({ ...addons, assinatura: checked })}
         />
       </div>
-      <div className="text-xs text-gray-500">Assinatura digital embutida na plataforma</div>
+      <div className="text-xs text-gray-500">Assinatura digital integrada — feche contratos sem papel, sem cartório, sem atraso. Válida juridicamente.</div>
       <div
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{

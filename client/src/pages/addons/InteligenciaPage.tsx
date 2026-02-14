@@ -65,23 +65,23 @@ const pricingData = {
 const highlights = [
   {
     icon: BarChart3,
-    title: "Dashboard Executivo",
-    description: "Visão completa do desempenho da imobiliária em tempo real",
+    title: "Google Looker Pro",
+    description: "A mesma plataforma de BI usada por grandes empresas — agora na sua imobiliária",
   },
   {
     icon: TrendingUp,
-    title: "Análise de Conversão",
-    description: "Métricas de funil por corretor, fonte e região",
+    title: "Usuários Ilimitados",
+    description: "Toda sua equipe com acesso — do corretor ao diretor, sem custo adicional por usuário",
   },
   {
     icon: PieChart,
-    title: "Relatórios Customizados",
-    description: "Crie relatórios personalizados para sua operação",
+    title: "Relatórios Próprios",
+    description: "Crie e personalize seus próprios dashboards e relatórios com total liberdade",
   },
   {
     icon: Lightbulb,
-    title: "Insights Acionáveis",
-    description: "Dados que viram decisões estratégicas",
+    title: "Decisões com Dados",
+    description: "Pare de adivinhar — tome decisões estratégicas baseadas em dados reais da sua operação",
   },
 ];
 
@@ -123,22 +123,22 @@ export default function InteligenciaPage() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-6">
-              BI de KPIs de performance para líderes de mercado. 
-              Dados que viram decisões estratégicas.
+              Powered by <span className="font-semibold text-foreground">Google Looker Pro</span> — usuários ilimitados para toda sua equipe.
+              A ferramenta indispensável para quem quer fazer gestão com dados reais da sua imobiliária.
             </p>
             
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <BarChart3 className="w-4 h-4 mr-1" />
-                Dashboard em tempo real
+                Google Looker Pro
               </Badge>
               <Badge variant="outline" className="text-sm py-1">
                 <TrendingUp className="w-4 h-4 mr-1" />
-                Análise de mercado
+                Usuários ilimitados
               </Badge>
               <Badge variant="outline" className="text-sm py-1">
                 <PieChart className="w-4 h-4 mr-1" />
-                Relatórios customizados
+                Crie seus próprios relatórios
               </Badge>
             </div>
             
@@ -185,7 +185,7 @@ export default function InteligenciaPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Valor único para todos os clientes. Funciona com Kenlo IMOB e/ou Kenlo Locação.
+              Valor único com <span className="font-semibold text-foreground">usuários ilimitados</span>. Funciona com Kenlo IMOB e/ou Kenlo Locação.
             </p>
           </div>
           

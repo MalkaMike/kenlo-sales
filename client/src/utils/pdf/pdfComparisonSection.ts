@@ -172,7 +172,10 @@ export function renderComparison(doc: jsPDF, data: ProposalPrintData, Y: number)
     if (needsNewPage(Y, 60)) Y = newPage(doc, data);
     Y = sectionBar(doc, "Add-ons", Y);
     if (col.leadsPrice !== null) Y = detailRow(doc, "Kenlo Leads", `R$ ${fmtNum(col.leadsPrice)}/mês`, Y);
-    if (col.inteligenciaPrice !== null) Y = detailRow(doc, "Kenlo Inteligência", `R$ ${fmtNum(col.inteligenciaPrice)}/mês`, Y);
+    if (col.inteligenciaPrice !== null) {
+      Y = detailRow(doc, "Kenlo Inteligência", `R$ ${fmtNum(col.inteligenciaPrice)}/mês`, Y);
+      Y = subDetailRow(doc, "Google Looker Pro — usuários ilimitados", Y, { color: C.green });
+    }
     if (col.assinaturaPrice !== null) Y = detailRow(doc, "Kenlo Assinatura", `R$ ${fmtNum(col.assinaturaPrice)}/mês`, Y);
   }
 

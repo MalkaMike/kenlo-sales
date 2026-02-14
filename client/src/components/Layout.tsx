@@ -40,12 +40,12 @@ const products = [
 ];
 
 const addons = [
-  { title: "Leads", href: "/addons/leads", description: "Gestão automatizada de leads" },
+  { title: "Leads", href: "/addons/leads", description: "Captação inteligente de leads" },
   { title: "Inteligência", href: "/addons/inteligencia", description: "BI Google Looker Pro — usuários ilimitados" },
-  { title: "Assinatura", href: "/addons/assinatura", description: "Assinatura digital integrada" },
-  { title: "Pay", href: "/addons/pay", description: "Boleto e Split digital" },
-  { title: "Seguros", href: "/addons/seguros", description: "Seguros embutido no boleto" },
-  { title: "Cash", href: "/addons/cash", description: "Antecipação de recebíveis" },
+  { title: "Assinatura", href: "/addons/assinatura", description: "Contratos sem papel, sem cartório" },
+  { title: "Pay", href: "/addons/pay", description: "Boleto + Split automático" },
+  { title: "Seguros", href: "/addons/seguros", description: "Receita recorrente no boleto" },
+  { title: "Cash", href: "/addons/cash", description: "Antecipe até 24 meses de aluguel" },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

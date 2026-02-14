@@ -23,7 +23,7 @@ export function SegurosAddonCard() {
         />
       </div>
       <div className="text-xs text-gray-500">
-        {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : "Seguros embutido no boleto e ganhe a partir de R$10 por contrato/mês"}
+        {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : "Seguro embutido no boleto — ganhe a partir de R$10/contrato/mês sem nenhum esforço. Receita recorrente garantida."}
       </div>
     </div>
   );

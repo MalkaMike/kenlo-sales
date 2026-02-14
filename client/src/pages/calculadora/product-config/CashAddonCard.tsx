@@ -23,7 +23,7 @@ export function CashAddonCard() {
         />
       </div>
       <div className="text-xs text-gray-500">
-        {!isAddonAvailable("cash") ? "Requer Kenlo Locação" : "Financie seus proprietários até 24 meses"}
+        {!isAddonAvailable("cash") ? "Requer Kenlo Locação" : "Antecipe até 24 meses de aluguel para proprietários — fidelize sua carteira e se diferencie no mercado."}
       </div>
     </div>
   );

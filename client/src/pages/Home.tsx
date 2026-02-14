@@ -59,7 +59,7 @@ const products = [
 const addons = [
   {
     title: "Leads",
-    description: "Gestão automatizada de leads com distribuição inteligente via WhatsApp",
+    description: "Captação e distribuição inteligente de leads — nunca mais perca uma oportunidade",
     icon: Users,
     href: "/addons/leads",
     highlight: "100 leads/mês inclusos"
@@ -73,31 +73,31 @@ const addons = [
   },
   {
     title: "Assinatura",
-    description: "Assinatura digital embutida na plataforma com validade jurídica",
+    description: "Feche contratos sem papel, sem cartório, sem atraso — válida juridicamente",
     icon: FileSignature,
     href: "/addons/assinatura",
-    highlight: "100% digital"
+    highlight: "15 assinaturas/mês inclusas"
   },
   {
     title: "Pay",
-    description: "Boleto e Split digital para cobrança automatizada",
+    description: "Boleto + Split automático — o inquilino paga e o dinheiro cai direto na conta certa",
     icon: CreditCard,
     href: "/addons/pay",
-    highlight: "Split automático"
+    highlight: "Zero trabalho manual"
   },
   {
     title: "Seguros",
-    description: "Seguros embutidos - ganhe receita extra por contrato",
+    description: "Seguro embutido no boleto — receita recorrente garantida sem nenhum esforço",
     icon: Shield,
     href: "/addons/seguros",
-    highlight: "R$10/contrato/mês"
+    highlight: "A partir de R$10/contrato/mês"
   },
   {
     title: "Cash",
-    description: "Antecipação de até 24 meses de aluguel para proprietários",
+    description: "Antecipe até 24 meses de aluguel — fidelize proprietários e se diferencie no mercado",
     icon: Banknote,
     href: "/addons/cash",
-    highlight: "Liquidez imediata"
+    highlight: "Fidelização garantida"
   },
 ];
 
