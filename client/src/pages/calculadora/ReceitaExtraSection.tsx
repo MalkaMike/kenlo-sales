@@ -9,7 +9,7 @@
  */
 
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign, Receipt, Shield } from "lucide-react";
+import { TrendingUp, DollarSign, Receipt, Shield } from "lucide-react";
 import { useCalc } from "./CalculadoraContext";
 import { toNum, formatCurrency, fmtNum, fmtPrice } from "./types";
 import { calculatePostPaidBreakdown, calculateRevenueBreakdown } from "./receita-extra/postPaidCalc";
@@ -184,35 +184,23 @@ export function ReceitaExtraSection() {
 
           {/* ── Section 3: Resultado ── */}
           <div className="mt-4 pt-4 border-t-2 border-gray-200">
-            <div className={`flex justify-between items-center py-4 px-4 rounded-lg ${
-              isProfit ? "bg-green-50 border border-green-200" : "bg-primary/5 border border-primary/20"
-            }`}>
+            <div className="flex justify-between items-center py-4 px-4 rounded-lg bg-green-50 border border-green-200">
               <div className="flex items-center gap-2">
-                {isProfit ? (
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                ) : (
-                  <TrendingDown className="w-5 h-5 text-red-600" />
-                )}
+                <TrendingUp className="w-5 h-5 text-green-600" />
                 <span className="text-base font-bold text-gray-900">
                   {isProfit ? "Ganho Líquido" : "Investimento Líquido"}
                 </span>
               </div>
-              <span className={`text-xl font-bold ${isProfit ? "text-green-600" : "text-red-600"}`}>
+              <span className="text-xl font-bold text-green-600">
                 {isProfit ? "+" : "-"}{formatCurrency(Math.abs(netResult))}/mês
               </span>
             </div>
 
             {/* Killer phrase */}
             <div className="mt-3 text-center">
-              {isProfit ? (
-                <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">
-                  Kenlo é a única plataforma que pode se pagar enquanto você usa.
-                </p>
-              ) : (
-                <p className="text-sm font-medium text-primary bg-primary/10 py-3 px-4 rounded-lg">
-                  Kenlo é a única plataforma que pode se pagar enquanto você usa.
-                </p>
-              )}
+              <p className="text-sm font-medium text-green-700 bg-green-100 py-3 px-4 rounded-lg">
+                Kenlo é a única plataforma que pode se pagar enquanto você usa.
+              </p>
             </div>
 
             {/* Footnote */}

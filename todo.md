@@ -4276,3 +4276,7 @@
 ## Kombo Comparison Title Color Accent
 
 - [x] Add subtle Kenlo red accent to "Sua Seleção vs Kombos" title
+
+## Revenue Color Always Green
+
+- [x] Make revenue/receita extra values always display in green (even when negative), since revenue is always a positive benefit for the client
