@@ -541,7 +541,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             ${row.indent ? "pl-8" : ""}
                             ${(row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
                             ${row.isHeader ? "font-semibold text-gray-700 text-xs"
-                              : (row as any).isGrandTotal ? "font-extrabold text-primary text-sm"
+                              : (row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm"
                               : row.isTotal ? "font-bold text-gray-700 text-xs"
                               : "text-gray-600 text-sm"
                             }
@@ -620,7 +620,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                                   ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                                   : colIndex % 2 === 1 ? "bg-gray-50/50" : ""
-                                } ${row.isTotal ? "font-bold text-gray-700" : "text-gray-700"}`}
+                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm" : row.isTotal ? "font-bold text-gray-700" : "text-gray-700"}`}
                             >
                               {row.isHeader ? null : getCellValue(row.key, buildCellCtx(colIndex, col))}
                             </td>

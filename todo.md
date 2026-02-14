@@ -4251,3 +4251,7 @@
 ## PDF Comparison Section - Single Column Detail View
 
 - [x] Rewrite pdfComparisonSection.ts from multi-column table to clean single-column detail view
+
+## Kombo Comparison Table - Total Mensalidade Color Fix
+
+- [x] Change "Total Mensalidade (est.)" row from red text to default text color in the Kombo comparison table
