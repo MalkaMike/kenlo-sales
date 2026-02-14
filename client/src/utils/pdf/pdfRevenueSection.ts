@@ -11,10 +11,12 @@ import {
 
 export function renderRevenue(doc: jsPDF, data: ProposalPrintData, Y: number): number {
   const { hasRevenue } = getDerivedFlags(data);
-  const hasPostPaid = data.postPaidTotal && data.postPaidTotal > 0;
-  const hasRevenueItems = hasRevenue || hasPostPaid;
 
-  if (!hasRevenueItems) return Y;
+  // Only show this section when there are actual revenue add-ons (Pay/Boleto/Split or Seguros)
+  // Post-paid costs alone (additional users, WhatsApp, etc.) are NOT revenues
+  if (!hasRevenue) return Y;
+
+  const hasPostPaid = data.postPaidTotal && data.postPaidTotal > 0;
 
   if (needsNewPage(Y, 150)) Y = newPage(doc, data);
   Y = sectionTitle(doc, "Potencial de Receita Extra", Y);

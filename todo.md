@@ -4255,3 +4255,7 @@
 ## Kombo Comparison Table - Total Mensalidade Color Fix
 
 - [x] Change "Total Mensalidade (est.)" row from red text to default text color in the Kombo comparison table
+
+## PDF Potencial de Receita Extra - Conditional Visibility Fix
+
+- [x] Fix PDF "Potencial de Receita Extra" section to only show when there are actual revenue add-ons (Pay/Boleto/Split or Seguros), not just post-paid costs
