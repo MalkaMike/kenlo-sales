@@ -360,6 +360,30 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     setHiddenKombos([]);
   }, []);
 
+  const resetAll = useCallback(() => {
+    setHiddenKombos([]);
+    setCustomColumns([]);
+    setColumnOverrides({});
+    customCounterRef.current = 0;
+    setSelectedPlans(prev => {
+      if (prev.length > 0) {
+        setTimeout(() => {
+          props.onPlansSelected?.([]);
+          props.onPlanSelected?.(null);
+        }, 0);
+      }
+      return [];
+    });
+    // Clear all localStorage keys for hidden kombos
+    try {
+      localStorage.removeItem(`kenlo_hidden_kombos_imob`);
+      localStorage.removeItem(`kenlo_hidden_kombos_loc`);
+      localStorage.removeItem(`kenlo_hidden_kombos_both`);
+    } catch {
+      // silently ignore
+    }
+  }, [props.onPlansSelected, props.onPlanSelected]);
+
   // ── Column Computation ──
   const columns: KomboColumnData[] = useMemo(() => {
     const suaSelecaoOverrides = columnOverrides["sua_selecao"];
@@ -472,9 +496,23 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   }, [getColumnKey, columnOverrides, getCustomDefaultOverrides, getDefaultOverrides, columns, props, updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick]);
 
   // ── Render ──
+  const hasCustomizations = hiddenKombos.length > 0 || customColumns.length > 0 || Object.keys(columnOverrides).length > 0 || selectedPlans.length > 0;
+
   return (
     <div className="mb-6">
-      <h3 className="text-base font-semibold text-gray-700 mb-3">Sua Seleção vs <span className="text-[#F82E52]">Kombos</span> — <span className="text-[#F82E52]">até 40% de desconto</span> na contratação (ciclo + combo cumulativos)</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-base font-semibold text-gray-700">Sua Seleção vs <span className="text-[#F82E52]">Kombos</span> — <span className="text-[#F82E52]">até 40% de desconto</span> na contratação (ciclo + combo cumulativos)</h3>
+        {hasCustomizations && (
+          <button
+            onClick={resetAll}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-red-50 rounded-full transition-all border border-gray-200 hover:border-red-200 shrink-0 ml-3"
+            title="Resetar todas as configurações da tabela"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Resetar tudo
+          </button>
+        )}
+      </div>
       <Card>
         <CardContent className="p-4">
 
