@@ -1,11 +1,17 @@
 /**
  * PrePagoPosPagoModal Component
- * 
- * Modal dialog explaining the Pré-Pago and Pós-Pago model at Kenlo.
- * Triggered by clicking on the superscript ¹ next to "Pré-Pago" or "Pós-Pago" labels.
+ *
+ * Visual modal explaining the Pré-Pago and Pós-Pago model at Kenlo.
+ * Redesigned for clarity: side-by-side comparison, icons, and short text.
  */
 
-import { X, Shield, TrendingUp, Handshake } from "lucide-react";
+import {
+  CreditCard,
+  BarChart3,
+  CheckCircle2,
+  ArrowRight,
+  X,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,90 +27,112 @@ interface PrePagoPosPagoModalProps {
 export function PrePagoPosPagoModal({ open, onOpenChange }: PrePagoPosPagoModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-50 to-beige-50">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="text-primary">¹</span> Como funciona o modelo Pré-Pago e Pós-Pago na Kenlo
-          </DialogTitle>
-          <p className="text-sm text-gray-600 mt-2">Transparência, previsibilidade e parceria</p>
-        </DialogHeader>
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 px-6 pt-6 pb-4">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-gray-900">
+              Modelo de Cobrança Kenlo
+            </DialogTitle>
+            <p className="text-sm text-gray-500 mt-1">Sua fatura é composta por dois componentes:</p>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-6 mt-4">
-          {/* Introduction */}
-          <div className="text-gray-700 leading-relaxed">
-            <p>
-              Na Kenlo, acreditamos em relações claras e sustentáveis.
-              Nosso modelo foi desenhado para que sua imobiliária tenha previsibilidade e tranquilidade, sem surpresas ou cobranças inesperadas.
+        <div className="px-6 pb-6 space-y-5">
+          {/* Side-by-side cards */}
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            {/* Pré-Pago card */}
+            <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-primary" />
+                </div>
+                <span className="font-bold text-primary text-sm">PRÉ-PAGO</span>
+              </div>
+              <p className="text-xs text-gray-700 leading-relaxed">
+                Licença fixa dos produtos contratados, com base de uso já incluída.
+              </p>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Valor fixo e previsível</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Usuários e contratos inclusos</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Cobrado no início do ciclo</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Pós-Pago card */}
+            <div className="rounded-xl border-2 border-emerald-300/50 bg-emerald-50/50 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4 text-emerald-600" />
+                </div>
+                <span className="font-bold text-emerald-700 text-sm">PÓS-PAGO</span>
+              </div>
+              <p className="text-xs text-gray-700 leading-relaxed">
+                Uso excedente ao volume incluído, apurado mensalmente.
+              </p>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Paga só o que usar a mais</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Custo unitário regressivo</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-gray-600">Apurado todo mês</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How billing works - visual flow */}
+          <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">Como funciona o ciclo</p>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex-1 text-center">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-1.5">
+                  <span className="text-primary font-bold text-sm">1</span>
+                </div>
+                <p className="text-[11px] text-gray-600 font-medium">Contrata o plano</p>
+                <p className="text-[10px] text-gray-400">Pré-Pago cobrado</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+              <div className="flex-1 text-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-1.5">
+                  <span className="text-emerald-600 font-bold text-sm">2</span>
+                </div>
+                <p className="text-[11px] text-gray-600 font-medium">Usa a plataforma</p>
+                <p className="text-[10px] text-gray-400">Base inclusa no plano</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+              <div className="flex-1 text-center">
+                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-1.5">
+                  <span className="text-amber-600 font-bold text-sm">3</span>
+                </div>
+                <p className="text-[11px] text-gray-600 font-medium">Excedeu a base?</p>
+                <p className="text-[10px] text-gray-400">Pós-Pago apurado</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Key takeaway */}
+          <div className="flex items-center gap-3 rounded-lg bg-primary/5 border border-primary/20 px-4 py-3">
+            <span className="text-xl">💡</span>
+            <p className="text-xs text-gray-700">
+              <strong className="text-primary">Quanto mais você cresce, menor o custo unitário.</strong>{" "}
+              Seu crescimento gera escala, não penalidade.
             </p>
-            <p className="mt-3 font-medium">Ele se baseia em três princípios simples:</p>
-          </div>
-
-          {/* Principle 1: Transparência desde o início */}
-          <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">Transparência desde o início</h3>
-                <div className="text-gray-700 text-sm space-y-2">
-                  <p>Se você estiver no ciclo mensal, receberá dois boletos por mês:</p>
-                  <ul className="list-disc list-inside ml-2 space-y-1">
-                    <li><strong>Pré-Pago</strong> — referente à licença dos produtos contratados, já incluindo uma base de usuários, contratos, leads ou assinaturas.</li>
-                    <li><strong>Pós-Pago</strong> — apurado mensalmente, considera somente o uso que exceder o volume incluído no plano contratado.</li>
-                  </ul>
-                  <p className="mt-3">Nos ciclos semestral, anual ou bianual:</p>
-                  <ul className="list-none ml-2 space-y-1">
-                    <li>→ O Pré-Pago é cobrado no início do período.</li>
-                    <li>→ O Pós-Pago continua sendo apurado mensalmente conforme o uso real.</li>
-                  </ul>
-                  <p className="mt-3 font-medium text-primary">Você sempre sabe o que está pagando — e por quê.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Principle 2: Crescimento com eficiência */}
-          <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">Crescimento com eficiência</h3>
-                <div className="text-gray-700 text-sm space-y-2">
-                  <p>No modelo Pós-Pago, consideramos o uso efetivo da plataforma.</p>
-                  <p>
-                    À medida que sua imobiliária evolui e utiliza mais recursos, o valor por unidade adicional torna-se progressivamente menor.
-                  </p>
-                  <p>
-                    Isso significa que, quanto maior o seu plano e seu volume de uso, mais eficiente se torna o seu custo unitário.
-                  </p>
-                  <p className="mt-3 font-medium text-primary">Seu crescimento não gera penalidade — gera escala.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Principle 3: Uma relação de longo prazo */}
-          <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                <Handshake className="w-5 h-5 text-purple-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">Uma relação de longo prazo</h3>
-                <div className="text-gray-700 text-sm space-y-2">
-                  <p>Acreditamos que tecnologia deve acompanhar o crescimento do seu negócio, não limitá-lo.</p>
-                  <ul className="list-none ml-2 space-y-1">
-                    <li>→ Você paga pelo que utiliza.</li>
-                    <li>→ Seu custo acompanha sua evolução.</li>
-                    <li>→ E o modelo se adapta à sua expansão.</li>
-                  </ul>
-                  <p className="mt-3 font-medium text-primary">Mais do que fornecer software, queremos construir uma parceria sólida e duradoura.</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

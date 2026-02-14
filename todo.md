@@ -4236,3 +4236,7 @@
 ## Calculadora - Natureza de Negócio Spacing Fix
 
 - [x] Fix spacing between fields and lines in Natureza de Negócio section — ensure consistent spacing with no overlaps
+
+## Popup Pré-Pago/Pós-Pago Redesign
+
+- [x] Redesign "Como funciona o modelo Pré-Pago e Pós-Pago na Kenlo" popup — make it more visual with shorter text and better readability
