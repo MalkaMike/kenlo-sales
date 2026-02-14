@@ -400,11 +400,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   // ── Render ──
   return (
     <div className="mb-6">
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
       <Card>
         <CardContent className="p-4">
-          <div className="pb-2 mb-2">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Sua Seleção vs Kombos — até 40% de desconto na contratação (ciclo + combo cumulativos)</h3>
-          </div>
 
           <div className={`w-full transition-all duration-300 overflow-x-auto ${isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
             <table className="w-full text-sm border-collapse" onMouseLeave={() => setHoveredColumn(null)}>

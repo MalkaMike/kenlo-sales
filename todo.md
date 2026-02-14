@@ -4264,3 +4264,7 @@
 
 - [x] Rename "IA SDR" to "Pré-atendimento via IA"
 - [x] Rename "WhatsApp" to "Pré-atendimento via WhatsApp"
+
+## Kombo Comparison Title Position Fix
+
+- [x] Move "Sua Seleção vs Kombos" title outside/above the box (consistent with other section titles)
