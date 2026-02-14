@@ -33,7 +33,7 @@ export function LocCard() {
   const additional = Math.max(0, totalContracts - included);
 
   return (
-    <Card className="bg-green-50/20 border-green-200/40 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md hover:border-green-400">
+    <Card className="bg-green-50/20 border-green-200/40 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md hover:border-green-400 cursor-pointer">
       <CardContent className="pt-3 pb-3 space-y-2">
         <div className="flex items-center gap-1.5 mb-2">
           <Key className="w-3.5 h-3.5 text-green-600" />

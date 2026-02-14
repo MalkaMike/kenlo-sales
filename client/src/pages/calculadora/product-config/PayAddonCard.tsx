@@ -13,7 +13,7 @@ export function PayAddonCard() {
   const { addons, setAddons, metrics, setMetrics, isAddonAvailable } = useCalc();
 
   return (
-    <div className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div className={`p-3 rounded-lg border transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("pay") ? "opacity-50 bg-gray-50" : ""}`}>
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="pay" className="font-semibold text-sm cursor-pointer">Pay</Label>

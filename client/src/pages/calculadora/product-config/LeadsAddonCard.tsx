@@ -44,7 +44,7 @@ export function LeadsAddonCard() {
   }
 
   return (
-    <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
+    <div className={`p-4 sm:p-3 rounded-lg border min-h-[70px] sm:min-h-0 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:shadow-md cursor-pointer ${!isAddonAvailable("leads") ? "opacity-50 bg-gray-50" : ""}`}>
       <div className="flex items-center justify-between mb-2 sm:mb-1">
         <div className="flex items-center gap-2">
           <Label htmlFor="leads" className="font-semibold text-sm cursor-pointer">Leads</Label>

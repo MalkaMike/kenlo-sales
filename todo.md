@@ -4349,3 +4349,12 @@
 ## Product Card Hover Border Color
 
 - [x] Add hover border color change — blue for IMOB, green for Locação
+
+## Cursor Pointer on All Clickable Elements
+
+- [x] Add cursor-pointer to all interactive/clickable elements across the entire website
+- [x] Product cards (ImobCard, LocCard)
+- [x] Add-on cards (Leads, Inteligência, Assinatura, Pay, Seguros, Cash)
+- [x] Kombo comparison table interactive elements
+- [x] Any other clickable cards, toggles, or interactive elements missing cursor-pointer
+- [x] Add global CSS rule for common interactive patterns
