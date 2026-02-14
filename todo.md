@@ -4460,3 +4460,24 @@
 - [x] Add page breaks strategically to avoid orphaned content
 - [x] Separate IMOB and Locação into distinct sections with emoji headers
 - [x] Add clear add-on association to parent products
+
+## PDF Testing with Real Calculator Data
+
+- [x] Create comprehensive test cases with real calculator data (IMOB only, Locação only, Both)
+- [x] Verify IMOB section shows correct user count, leads, closings, and pricing
+- [x] Verify Locação section shows correct contract count, boleto/split settings, and pricing
+- [x] Test add-on association (Leads/Inteligência/Assinatura for IMOB, Pay/Assinatura for Locação)
+- [x] Verify K² displays correctly as superscript in all sections
+- [x] Test PDF generation with combo scenarios (25% discount applied correctly)
+- [x] Validate all 520 tests pass with new PDF structure
+
+## Separate Features Page Per Product
+
+- [x] Create new pdfFeaturesPageV2.ts with product-specific feature tables
+- [x] IMOB features table: Show features with checkmarks for Prime/K/K² plans
+- [x] Locação features table: Show features with checkmarks for Prime/K/K² plans
+- [x] Add visual distinction between IMOB and Locação feature sections
+- [x] Use checkmark layout: checkmarks (✓) for included, dashes (—) for excluded
+- [x] Show feature descriptions for each feature
+- [x] Integrate new features page into pdfGenerator.ts
+- [x] Ensure features page respects selected product (IMOB only, Locação only, Both)

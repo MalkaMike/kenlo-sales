@@ -23,7 +23,7 @@ import {
 } from "./pdf/pdfTypes";
 import { renderCoverPage } from "./pdf/pdfCoverPage";
 import { renderStrategicPageV2 } from "./pdf/pdfStrategicPageV2";
-import { renderFeaturesPage } from "./pdf/pdfFeaturesPage";
+import { renderFeaturesPageV2 } from "./pdf/pdfFeaturesPageV2";
 import { renderRevenuePage } from "./pdf/pdfRevenuePage";
 
 // Re-export ProposalData so routers.ts keeps working
@@ -49,8 +49,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // 2️⃣ Strategic Overview (SEPARATED IMOB & LOCAÇÃO)
     renderStrategicPageV2(doc, data, derived);
 
-    // 3️⃣ Platform Functionalities
-    renderFeaturesPage(doc, data, derived);
+    // 3️⃣ Platform Functionalities (SEPARATED BY PRODUCT)
+    renderFeaturesPageV2(doc, derived);
 
     // 4️⃣ Extra Revenue (conditional)
     renderRevenuePage(doc, data, derived);
