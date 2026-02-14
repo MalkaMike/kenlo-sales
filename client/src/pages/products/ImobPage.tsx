@@ -312,7 +312,7 @@ export default function ImobPage() {
                         return (
                         <tr 
                           key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/20 hover:bg-muted/10 transition-colors"
+                          className="border-b border-border/20 pricing-row"
                         >
                           <td className="p-4 text-sm">
                             <div className="flex items-center gap-2">

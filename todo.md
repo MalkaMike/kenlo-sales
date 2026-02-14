@@ -4377,3 +4377,10 @@
 - [x] Update Pay dedicated page with detailed features, use cases, and pricing breakdown
 - [x] Update Seguros dedicated page with detailed features, use cases, and pricing breakdown
 - [x] Update Cash dedicated page with detailed features, use cases, and pricing breakdown
+
+## Subtle Hover Focus Effect on Pricing Table Rows
+
+- [x] Add subtle hover effect on pricing table rows across all pages
+- [x] Effect should include background highlight, slight scale/lift, and smooth transition
+- [x] Apply consistently to: ImobPage, LocacaoPage, InteligenciaPage, LeadsPage, AssinaturaPage, PayPage, SegurosPage, CashPage, KombosPage
+- [x] Ensure the effect is subtle and professional — not distracting

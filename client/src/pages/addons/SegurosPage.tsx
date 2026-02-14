@@ -286,7 +286,7 @@ export default function SegurosPage() {
                       {section.rows.map((row, rowIndex) => (
                         <tr
                           key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/50 hover:bg-muted/20 transition-colors"
+                          className="border-b border-border/50 pricing-row"
                         >
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">

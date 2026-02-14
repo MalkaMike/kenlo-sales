@@ -463,3 +463,23 @@ html {
 .addon-toggle-pulse {
   animation: addon-toggle-pulse 0.4s ease-out;
 }
+
+/* Pricing Table Row Hover Effect */
+.pricing-row {
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+.pricing-row:hover {
+  background-color: oklch(0.62 0.24 15 / 0.04);
+  transform: translateX(4px);
+  box-shadow: inset 3px 0 0 oklch(0.62 0.24 15 / 0.6);
+}
+
+.pricing-row:hover td {
+  color: var(--foreground);
+}
+
+.pricing-row:hover td:first-child {
+  font-weight: 500;
+}
