@@ -95,8 +95,29 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const prevProductRef = useRef<ProductSelection>(props.product);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // ── Hidden Kombos ──
-  const [hiddenKombos, setHiddenKombos] = useState<KomboId[]>([]);
+  // ── Hidden Kombos (persisted in localStorage) ──
+  const HIDDEN_KOMBOS_KEY = `kenlo_hidden_kombos_${props.product}`;
+  const [hiddenKombos, setHiddenKombos] = useState<KomboId[]>(() => {
+    try {
+      const stored = localStorage.getItem(HIDDEN_KOMBOS_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Sync hiddenKombos to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (hiddenKombos.length > 0) {
+        localStorage.setItem(HIDDEN_KOMBOS_KEY, JSON.stringify(hiddenKombos));
+      } else {
+        localStorage.removeItem(HIDDEN_KOMBOS_KEY);
+      }
+    } catch {
+      // localStorage unavailable, silently ignore
+    }
+  }, [hiddenKombos, HIDDEN_KOMBOS_KEY]);
 
   // ── Perso Columns ──
   const [customColumns, setCustomColumns] = useState<{ id: string; name: string; sourceKombo: KomboId | null }[]>([]);
@@ -133,7 +154,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     if (prevProductRef.current !== props.product) {
       setColumnOverrides({});
       setCustomColumns([]);
-      setHiddenKombos([]);
+      // Load hidden kombos for the new product from localStorage
+      const newKey = `kenlo_hidden_kombos_${props.product}`;
+      try {
+        const stored = localStorage.getItem(newKey);
+        setHiddenKombos(stored ? JSON.parse(stored) : []);
+      } catch {
+        setHiddenKombos([]);
+      }
       customCounterRef.current = 0;
 
       setSelectedPlans(prev => {

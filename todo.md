@@ -4305,3 +4305,7 @@
 - [x] Add '+' button to add new custom plans (copied from current selection) where user can adjust the ciclo
 - [x] All possible kombos shown by default, user can remove one by one
 - [x] "Sua Seleção" column is always visible and cannot be removed
+
+## LocalStorage Persistence
+
+- [x] Persist hidden Kombos column visibility in localStorage across page reloads
