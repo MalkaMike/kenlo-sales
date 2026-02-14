@@ -4228,3 +4228,7 @@
 - [x] Test PDF generation with 3-plan proposal (3 columns from Kombo comparison)
 - [x] Verify all combinations render correctly and are easy to read
 - [x] Fix layout issues: logo/title overlap, ROI spacing, clipped Mensalidades text, footer overlap
+
+## PDF Cover Page Salesperson Info
+
+- [x] Add salesperson name, email, and phone prominently below the date on the PDF cover page

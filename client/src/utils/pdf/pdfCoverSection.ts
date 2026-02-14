@@ -107,17 +107,43 @@ export function renderCover(doc: jsPDF, data: ProposalPrintData): void {
   });
   doc.text(today, cx, infoY, { align: "center" });
 
-  // ── Salesperson footer (above bottom bar) ─────────────────────
-  const footerY = PH - 30;
-  const parts: string[] = [];
-  if (data.salesPersonName) parts.push(data.salesPersonName);
-  if (data.vendorEmail) parts.push(data.vendorEmail);
-  if (data.vendorPhone) parts.push(data.vendorPhone);
-  const sellerLine = parts.join("  \u00b7  ");
-  if (sellerLine) {
-    doc.setFontSize(7);
-    doc.setTextColor(...rgb(C.textMuted));
-    doc.setFont("helvetica", "normal");
-    doc.text(sellerLine, cx, footerY, { align: "center" });
+  // ── Salesperson info (prominent, below date) ───────────────
+  if (data.salesPersonName || data.vendorEmail || data.vendorPhone) {
+    // Thin divider
+    infoY += 24;
+    const sellerDivW = 30;
+    doc.setDrawColor(...rgb(C.textLight));
+    doc.setLineWidth(0.4);
+    doc.line(cx - sellerDivW / 2, infoY, cx + sellerDivW / 2, infoY);
+
+    // Salesperson name
+    infoY += 20;
+    if (data.salesPersonName) {
+      doc.setFontSize(11);
+      doc.setTextColor(...rgb(C.dark));
+      doc.setFont("helvetica", "bold");
+      doc.text(data.salesPersonName, cx, infoY, { align: "center" });
+      infoY += 14;
+    }
+
+    // Role (if available)
+    if (data.vendorRole) {
+      doc.setFontSize(9);
+      doc.setTextColor(...rgb(C.textMuted));
+      doc.setFont("helvetica", "normal");
+      doc.text(data.vendorRole, cx, infoY, { align: "center" });
+      infoY += 14;
+    }
+
+    // Email and phone on one line
+    const contactParts: string[] = [];
+    if (data.vendorEmail) contactParts.push(data.vendorEmail);
+    if (data.vendorPhone) contactParts.push(data.vendorPhone);
+    if (contactParts.length > 0) {
+      doc.setFontSize(9);
+      doc.setTextColor(...rgb(C.textMuted));
+      doc.setFont("helvetica", "normal");
+      doc.text(contactParts.join("  \u00b7  "), cx, infoY, { align: "center" });
+    }
   }
 }
