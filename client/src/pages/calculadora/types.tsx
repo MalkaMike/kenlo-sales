@@ -188,7 +188,7 @@ export const highlightPlanName = (name: string): React.ReactNode => {
   if (parts.length === 2) {
     return (
       <>
-        {parts[0]} - <span className="text-primary font-bold">{parts[1]}</span>
+        {parts[0]} - <span className="text-foreground font-bold">{parts[1]}</span>
       </>
     );
   }

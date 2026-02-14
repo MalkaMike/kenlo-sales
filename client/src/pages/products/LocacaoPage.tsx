@@ -224,7 +224,12 @@ export default function LocacaoPage() {
     }
     
     if (row.type === "price" && row.highlight) {
-      return <span className="font-bold text-secondary">{value}</span>;
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="font-bold text-foreground">{value}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">investimento</span>
+        </span>
+      );
     }
     
     return <span className={row.type === "price" ? "font-medium" : ""}>{value}</span>;

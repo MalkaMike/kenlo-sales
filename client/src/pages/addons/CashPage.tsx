@@ -143,7 +143,12 @@ export default function CashPage() {
     }
     
     if (row.highlight) {
-      return <span className="text-lg font-bold text-secondary">{row.value}</span>;
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="text-lg font-bold text-foreground">{row.value}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">investimento</span>
+        </span>
+      );
     }
     
     return <span className="font-medium">{row.value}</span>;

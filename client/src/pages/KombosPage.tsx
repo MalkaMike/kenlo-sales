@@ -178,7 +178,7 @@ export default function KombosPage() {
                 <p className="text-xs text-muted-foreground text-center mb-2">{kombo.shortDesc}</p>
                 <div className="text-center">
                   {kombo.discount > 0 ? (
-                    <span className="text-lg font-bold text-primary">{kombo.discount}% OFF</span>
+                    <span className="text-lg font-bold text-green-700">{kombo.discount}% OFF</span>
                   ) : (
                     <span className="text-sm font-medium text-muted-foreground">Tabela</span>
                   )}
@@ -227,7 +227,7 @@ export default function KombosPage() {
                         )}
                         <div className="mt-2">
                           {kombo.discount > 0 ? (
-                            <span className="text-lg font-bold text-primary">{kombo.discount}% OFF</span>
+                            <span className="text-lg font-bold text-green-700">{kombo.discount}% OFF</span>
                           ) : (
                             <span className="text-xs text-muted-foreground">Preço tabela</span>
                           )}
@@ -302,11 +302,11 @@ export default function KombosPage() {
               <p className="text-sm text-muted-foreground mb-2">
                 Ideal para quem está começando a transformação digital.
               </p>
-              <div className="text-primary font-bold">10% OFF + VIP + CS</div>
+              <div className="text-green-700 font-bold">10% OFF + VIP + CS</div>
             </div>
             
-            <div className="p-6 rounded-xl bg-card border-2 border-primary/50 relative">
-              <Badge className="absolute -top-2 right-4 bg-primary text-white">POPULAR</Badge>
+            <div className="p-6 rounded-xl bg-card border-2 border-green-500/50 relative">
+              <Badge className="absolute -top-2 right-4 bg-green-600 text-white">POPULAR</Badge>
               <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4">
                 <Star className="w-6 h-6 text-white" />
               </div>
@@ -315,7 +315,7 @@ export default function KombosPage() {
                 Para quem quer maximizar conversão com dados. Inclui BI para decisões estratégicas 
                 e suporte premium para crescimento acelerado.
               </p>
-              <div className="text-primary font-bold">15% OFF + VIP + CS</div>
+              <div className="text-green-700 font-bold">15% OFF + VIP + CS</div>
             </div>
             
             <div className="p-6 rounded-xl bg-card border border-border/50">
@@ -327,7 +327,7 @@ export default function KombosPage() {
                 Administradoras e imobiliárias focadas em locação. Gestão inteligente de contratos 
                 com BI e assinatura digital.
               </p>
-              <div className="text-primary font-bold">10% OFF + VIP + CS</div>
+              <div className="text-green-700 font-bold">10% OFF + VIP + CS</div>
             </div>
             
             <div className="p-6 rounded-xl bg-card border border-border/50">
@@ -352,7 +352,7 @@ export default function KombosPage() {
                 Máxima digitalização e vantagem competitiva. Todos os produtos, todos os add-ons, 
                 suporte premium. Para quem quer liderar o mercado.
               </p>
-              <div className="text-primary font-bold">20% OFF + VIP + CS</div>
+              <div className="text-green-700 font-bold">20% OFF + VIP + CS</div>
             </div>
           </div>
         </div>

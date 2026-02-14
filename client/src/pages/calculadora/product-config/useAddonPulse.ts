@@ -37,7 +37,7 @@ export function useAddonPulse(isActive: boolean) {
 
   // Active state border class
   const activeClass = isActive
-    ? "border-primary/60 bg-primary/[0.03] shadow-sm"
+    ? "border-green-500/60 bg-green-50/50 shadow-sm"
     : "";
 
   return { cardRef, activeClass };

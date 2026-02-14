@@ -145,7 +145,12 @@ export default function SegurosPage() {
     }
     
     if (row.highlight) {
-      return <span className="text-lg font-bold text-secondary">{row.value}</span>;
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="text-lg font-bold text-foreground">{row.value}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">investimento</span>
+        </span>
+      );
     }
     
     return <span className="font-medium">{row.value}</span>;
@@ -321,27 +326,27 @@ export default function SegurosPage() {
 
           {/* Revenue Simulation */}
           <div className="max-w-2xl mx-auto mt-12">
-            <div className="bg-secondary/10 rounded-xl p-6 border border-secondary/20">
+            <div className="bg-secondary/10 rounded-xl p-6 border border-green-200">
               <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-secondary" />
                 Simulação de Receita
               </h4>
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                <div className="flex justify-between items-center py-2 border-b border-green-200">
                   <span className="text-muted-foreground">100 contratos ativos</span>
-                  <span className="font-semibold text-secondary">R$ 1.000/mês</span>
+                  <span className="font-semibold text-green-700">R$ 1.000/mês</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                <div className="flex justify-between items-center py-2 border-b border-green-200">
                   <span className="text-muted-foreground">300 contratos ativos</span>
-                  <span className="font-semibold text-secondary">R$ 3.000/mês</span>
+                  <span className="font-semibold text-green-700">R$ 3.000/mês</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-secondary/20">
+                <div className="flex justify-between items-center py-2 border-b border-green-200">
                   <span className="text-muted-foreground">500 contratos ativos</span>
-                  <span className="font-semibold text-secondary">R$ 5.000/mês</span>
+                  <span className="font-semibold text-green-700">R$ 5.000/mês</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span className="text-muted-foreground">1.000 contratos ativos</span>
-                  <span className="font-bold text-lg text-secondary">R$ 10.000/mês</span>
+                  <span className="font-bold text-lg text-green-700">R$ 10.000/mês</span>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-4">

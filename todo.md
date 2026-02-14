@@ -4399,3 +4399,17 @@
 - [x] Apply to KombosPage comparison table (5-column: 5 Kombos)
 - [x] Ensure sticky header works with the site's fixed navbar (proper top offset)
 - [x] Add subtle shadow/border when header becomes sticky for visual separation
+
+## Change Pricing Colors: Red → Black/Green (Investment, Not Cost)
+
+- [x] Change highlighted price values from red/pink (text-primary/text-secondary) to black (text-foreground) in all pricing tables
+- [x] Add green background accent for investment/price highlight rows to convey positivity
+- [x] Update ImobPage pricing highlights
+- [x] Update LocacaoPage pricing highlights
+- [x] Update InteligenciaPage pricing highlights
+- [x] Update LeadsPage pricing highlights
+- [x] Update AssinaturaPage pricing highlights
+- [x] Update PayPage pricing highlights
+- [x] Update SegurosPage pricing highlights
+- [x] Update CashPage pricing highlights
+- [x] Ensure consistent positive/investment tone across all pages
