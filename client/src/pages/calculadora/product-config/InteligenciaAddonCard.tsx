@@ -20,7 +20,11 @@ export function InteligenciaAddonCard() {
         />
       </div>
       <div className="text-xs text-gray-500">
-        Usuários ilimitados no BI Google Looker Pro. Ferramenta indispensável para quem quer fazer gestão com dados reais da sua imobiliária.
+        <ul className="list-disc list-inside space-y-0.5 mt-0.5">
+          <li>Usuários ilimitados no BI Google Looker Pro</li>
+          <li>Dashboards de vendas, locação e performance</li>
+          <li>Indispensável para gestão com dados reais</li>
+        </ul>
       </div>
     </div>
   );

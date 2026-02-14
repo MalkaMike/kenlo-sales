@@ -4328,3 +4328,12 @@
 - [x] Update Cash add-on description with more commercial appeal (calculadora card, Home, Layout)
 - [x] Update Inteligência dedicated page with Google Looker Pro details, dashboards, and metrics
 - [x] Include Google Looker Pro mention in PDF proposal add-ons section
+
+## Add-on Card Descriptions - Bullet Points Format
+
+- [x] Reformat Leads add-on card description with bullet points
+- [x] Reformat Inteligência add-on card description with bullet points
+- [x] Reformat Assinatura add-on card description with bullet points
+- [x] Reformat Pay add-on card description with bullet points
+- [x] Reformat Seguros add-on card description with bullet points
+- [x] Reformat Cash add-on card description with bullet points

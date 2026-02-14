@@ -62,7 +62,13 @@ export function LeadsAddonCard() {
         />
       </div>
       <div className="text-xs text-gray-500">
-        {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Captação e distribuição inteligente de leads. Nunca mais perca uma oportunidade — atenda em segundos."}
+        {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : (
+          <ul className="list-disc list-inside space-y-0.5 mt-0.5">
+            <li>Captação e distribuição inteligente de leads</li>
+            <li>Atendimento em segundos — nunca perca uma oportunidade</li>
+            <li>Integração com portais e redes sociais</li>
+          </ul>
+        )}
       </div>
       {/* Pré-atendimento via IA & Pré-atendimento via WhatsApp — inside Leads add-on card */}
       <div
