@@ -66,7 +66,7 @@ const addons = [
   },
   {
     title: "Inteligência",
-    description: "BI de KPIs de performance com Google Looker integrado",
+    description: "Usuários ilimitados no BI Google Looker Pro — indispensável para gestão com dados",
     icon: Brain,
     href: "/addons/inteligencia",
     highlight: "Dashboards personalizados"

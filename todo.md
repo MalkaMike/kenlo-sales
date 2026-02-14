@@ -4314,3 +4314,7 @@
 
 - [x] Add "Resetar tudo" button on the sticky header bar of Kombo comparison table
 - [x] Button clears all hidden kombos, custom columns, and localStorage settings
+
+## Inteligência Add-on Description Update
+
+- [x] Update Inteligência add-on description: unlimited BI Google Looker Pro users, mandatory tool for data-driven management

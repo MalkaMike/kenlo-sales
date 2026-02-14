@@ -19,7 +19,9 @@ export function InteligenciaAddonCard() {
           onCheckedChange={(checked) => setAddons({ ...addons, inteligencia: checked })}
         />
       </div>
-      <div className="text-xs text-gray-500">BI de KPIs de performance</div>
+      <div className="text-xs text-gray-500">
+        Usuários ilimitados no BI Google Looker Pro. Ferramenta indispensável para quem quer fazer gestão com dados reais da sua imobiliária.
+      </div>
     </div>
   );
 }

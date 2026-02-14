@@ -41,7 +41,7 @@ const products = [
 
 const addons = [
   { title: "Leads", href: "/addons/leads", description: "Gestão automatizada de leads" },
-  { title: "Inteligência", href: "/addons/inteligencia", description: "BI de KPIs de performance" },
+  { title: "Inteligência", href: "/addons/inteligencia", description: "BI Google Looker Pro — usuários ilimitados" },
   { title: "Assinatura", href: "/addons/assinatura", description: "Assinatura digital integrada" },
   { title: "Pay", href: "/addons/pay", description: "Boleto e Split digital" },
   { title: "Seguros", href: "/addons/seguros", description: "Seguros embutido no boleto" },
