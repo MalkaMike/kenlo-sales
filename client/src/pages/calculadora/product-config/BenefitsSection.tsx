@@ -142,7 +142,7 @@ export function BenefitsSection() {
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-xs bg-gray-50 text-gray-400 border-gray-200">
-                      Disponível no K2
+                      Disponível no K²
                     </Badge>
                   )}
                 </div>

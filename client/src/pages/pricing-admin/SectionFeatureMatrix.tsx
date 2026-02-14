@@ -44,7 +44,7 @@ export function SectionFeatureMatrix({ formData, updateValue, collapsed, onToggl
                         <th className="text-left py-2 px-2 font-semibold">Funcionalidade</th>
                         <th className="text-center py-2 px-2 font-semibold uppercase">Prime</th>
                         <th className="text-center py-2 px-2 font-semibold uppercase">K</th>
-                        <th className="text-center py-2 px-2 font-semibold uppercase">K2</th>
+                        <th className="text-center py-2 px-2 font-semibold uppercase">K²</th>
                       </tr>
                     </thead>
                     <tbody>

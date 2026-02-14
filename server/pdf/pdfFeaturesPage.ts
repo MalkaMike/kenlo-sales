@@ -43,12 +43,12 @@ export function renderFeaturesPage(
     const rightX = M + halfW + colGap;
 
     // LEFT: Imob
-    let lY = h1(doc, `Kenlo Imob — Plano ${(data.imobPlan || "K").toUpperCase()}`, leftX, Y, halfW);
+    let lY = h1(doc, `Kenlo Imob — Plano ${(data.imobPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`, leftX, Y, halfW);
     lY = renderPlanBand(doc, data.imobPlan || "K", leftX, lY, halfW);
     lY = renderFeatureList(doc, imobFeatures, leftX, lY, halfW);
 
     // RIGHT: Locação
-    let rY = h1(doc, `Kenlo Locação — Plano ${(data.locPlan || "K").toUpperCase()}`, rightX, Y, halfW);
+    let rY = h1(doc, `Kenlo Loca\u00e7\u00e3o — Plano ${(data.locPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`, rightX, Y, halfW);
     rY = renderPlanBand(doc, data.locPlan || "K", rightX, rY, halfW);
     rY = renderFeatureList(doc, locFeatures, rightX, rY, halfW);
 
@@ -57,8 +57,8 @@ export function renderFeaturesPage(
     // Single product
     const features = showImob ? imobFeatures : locFeatures;
     const productName = showImob
-      ? `Kenlo Imob — Plano ${(data.imobPlan || "K").toUpperCase()}`
-      : `Kenlo Locação — Plano ${(data.locPlan || "K").toUpperCase()}`;
+      ? `Kenlo Imob — Plano ${(data.imobPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`
+      : `Kenlo Loca\u00e7\u00e3o — Plano ${(data.locPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`;
 
     Y = h1(doc, productName, M, Y);
     const planKey = showImob ? (data.imobPlan || "K") : (data.locPlan || "K");
@@ -72,7 +72,7 @@ export function renderFeaturesPage(
 function renderPlanBand(doc: PDFKit.PDFDocument, plan: string, x: number, y: number, w: number): number {
   doc.rect(x, y - 2, w, 14).fill(C.greenLight);
   doc.fontSize(6.5).fillColor(C.green).font("Helvetica-Bold")
-    .text(`Plano ${plan.toUpperCase()} selecionado`, x + 4, y + 1, { lineBreak: false });
+    .text(`Plano ${plan.toUpperCase().replace(/K2/gi, "K\u00B2")} selecionado`, x + 4, y + 1, { lineBreak: false });
   return y + 16;
 }
 

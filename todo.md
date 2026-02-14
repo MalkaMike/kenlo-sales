@@ -4413,3 +4413,11 @@
 - [x] Update SegurosPage pricing highlights
 - [x] Update CashPage pricing highlights
 - [x] Ensure consistent positive/investment tone across all pages
+
+## K2 → K² Superscript (Ksquare) Across Entire Website
+
+- [x] Create reusable K² display approach (superscript 2 that is readable, not too small)
+- [x] Replace all "K2" text occurrences in frontend pages with K² superscript
+- [x] Replace all "K2" in shared pricing config data
+- [x] Ensure K² renders correctly in pricing tables, badges, calculadora, PDF, and all other contexts
+- [x] Verify consistent rendering across all pages

@@ -115,7 +115,7 @@ export const IMOB_PLANS = {
     features: buildFeatures("imob", "k"),
   },
   k2: {
-    name: "K2",
+    name: "K\u00B2",
     description: pricingValues.basePlans.imob.k2.internalNote || "Acima de 15 usuários",
     annualPrice: pricingValues.basePlans.imob.k2.annualPrice,
     includedUsers: pricingValues.basePlans.imob.k2.includedUnits.quantity,
@@ -170,7 +170,7 @@ export const LOC_PLANS = {
     features: buildFeatures("locacao", "k"),
   },
   k2: {
-    name: "K2",
+    name: "K\u00B2",
     description: pricingValues.basePlans.locacao.k2.internalNote || "Acima de 500 contratos",
     annualPrice: pricingValues.basePlans.locacao.k2.annualPrice,
     includedContracts: pricingValues.basePlans.locacao.k2.includedUnits.quantity,

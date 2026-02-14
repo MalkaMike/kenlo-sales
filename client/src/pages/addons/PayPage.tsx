@@ -11,7 +11,7 @@ import {
 
 // Pricing data based on the official table
 const pricingData = {
-  plans: ["Prime", "K", "K2"],
+  plans: ["Prime", "K", "K\u00B2"],
   sections: [
     {
       title: "Boletos",
@@ -96,7 +96,7 @@ const pricingData = {
   ],
 };
 
-// Tier pricing details for K and K2
+// Tier pricing details for K and K\u00B2
 const tierPricing = {
   boleto: {
     k: [
@@ -313,7 +313,7 @@ export default function PayPage() {
                         }`} />
                         <span className={`font-bold text-lg ${
                           plan === "K" ? "text-primary" : 
-                          plan === "K2" ? "text-secondary" : ""
+                          plan === "K\u00B2" ? "text-secondary" : ""
                         }`}>{plan}</span>
                       </div>
                     </th>
@@ -376,7 +376,7 @@ export default function PayPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Detalhes de Preços por Faixas</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Nos planos K e K2, os preços diminuem conforme o volume de transações aumenta.
+              Nos planos K e K\u00B2, os preços diminuem conforme o volume de transações aumenta.
             </p>
           </div>
           
@@ -413,9 +413,9 @@ export default function PayPage() {
                   </div>
                 </div>
                 
-                {/* K2 */}
+                {/* K\u00B2 */}
                 <div>
-                  <h4 className="font-semibold text-secondary mb-2">Plano K2</h4>
+                  <h4 className="font-semibold text-secondary mb-2">Plano K\u00B2</h4>
                   <div className="space-y-2">
                     {tierPricing.boleto.k2.map((tier, index) => (
                       <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
@@ -460,9 +460,9 @@ export default function PayPage() {
                   </div>
                 </div>
                 
-                {/* K2 */}
+                {/* K\u00B2 */}
                 <div>
-                  <h4 className="font-semibold text-secondary mb-2">Plano K2</h4>
+                  <h4 className="font-semibold text-secondary mb-2">Plano K\u00B2</h4>
                   <div className="space-y-2">
                     {tierPricing.split.k2.map((tier, index) => (
                       <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
@@ -481,10 +481,10 @@ export default function PayPage() {
             <div className="bg-secondary/10 rounded-xl p-6 border border-secondary/20">
               <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-secondary" />
-                Exemplo de Cálculo (Plano K2)
+                Exemplo de Cálculo (Plano K\u00B2)
               </h4>
               <p className="text-muted-foreground mb-4">
-                Uma imobiliária com 600 boletos/mês no plano K2:
+                Uma imobiliária com 600 boletos/mês no plano K\u00B2:
               </p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">

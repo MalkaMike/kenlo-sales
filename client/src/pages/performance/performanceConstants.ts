@@ -34,7 +34,7 @@ export const productNames: Record<string, string> = {
 export const planNames: Record<string, string> = {
   prime: "Prime",
   k: "K",
-  k2: "K2",
+  k2: "K²",
 };
 
 export const frequencyNames: Record<string, string> = {

@@ -11,7 +11,7 @@ import {
 
 // Pricing data based on the official table
 const pricingData = {
-  plans: ["Prime", "K", "K2"],
+  plans: ["Prime", "K", "K\u00B2"],
   sections: [
     {
       title: "Investimento",
@@ -102,7 +102,7 @@ const pricingData = {
       ],
     },
     {
-      title: "Funcionalidades Exclusivas K2",
+      title: "Funcionalidades Exclusivas K\u00B2",
       rows: [
         { feature: "Cadastro filiais", type: "check", values: [false, false, true] },
         { feature: "Gestão imóveis vagos", type: "check", values: [false, false, true] },
@@ -442,7 +442,7 @@ export default function LocacaoPage() {
                     <th className="text-left py-2 px-3 font-semibold">Add-on</th>
                     <th className="text-center py-2 px-3 font-semibold text-secondary">Prime</th>
                     <th className="text-center py-2 px-3 font-semibold text-blue-600">K</th>
-                    <th className="text-center py-2 px-3 font-semibold text-purple-600">K2</th>
+                    <th className="text-center py-2 px-3 font-semibold text-purple-600">K\u00B2</th>
                     <th className="text-center py-2 px-3 font-semibold text-green-600">Economia</th>
                   </tr>
                 </thead>
@@ -474,7 +474,7 @@ export default function LocacaoPage() {
             
             <div className="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
               <p className="text-xs text-blue-900">
-                <strong>Insight:</strong> Planos superiores (K ou K2) reduzem significativamente o custo por unidade. Quanto mais você digitaliza, menor o impacto dos add-ons.
+                <strong>Insight:</strong> Planos superiores (K ou K\u00B2) reduzem significativamente o custo por unidade. Quanto mais você digitaliza, menor o impacto dos add-ons.
               </p>
             </div>
           </div>

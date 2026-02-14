@@ -31,7 +31,7 @@ const products = [
     href: "/produtos/imob",
     badge: "VENDAS",
     color: "text-primary",
-    plans: ["Prime", "K", "K2"],
+    plans: ["Prime", "K", "K\u00B2"],
     features: ["CRM Completo", "Site Responsivo", "App Mobile", "Gestão de Leads"]
   },
   {
@@ -41,7 +41,7 @@ const products = [
     href: "/produtos/locacao",
     badge: "LOCAÇÃO",
     color: "text-secondary",
-    plans: ["Prime", "K", "K2"],
+    plans: ["Prime", "K", "K\u00B2"],
     features: ["Gestão de Contratos", "Boletos Automáticos", "Repasses", "Inadimplência"]
   },
   {

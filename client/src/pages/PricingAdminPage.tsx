@@ -207,7 +207,7 @@ export default function PricingAdminPageV2() {
             </Alert>
             <div className="space-y-2">
               <Label>Motivo da alteração (opcional)</Label>
-              <Textarea value={changeReason} onChange={(e) => setChangeReason(e.target.value)} placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K2, etc." rows={3} />
+              <Textarea value={changeReason} onChange={(e) => setChangeReason(e.target.value)} placeholder="Ex: Ajuste de preços para Q1 2026, correção de erro no plano K², etc." rows={3} />
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Cancelar</Button>

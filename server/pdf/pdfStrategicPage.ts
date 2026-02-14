@@ -34,8 +34,8 @@ export function renderStrategicPage(
 
   // Product parts for display
   const prodParts: string[] = [];
-  if (showImob) prodParts.push(`Kenlo Imob ${(data.imobPlan || "K").toUpperCase()}`);
-  if (showLoc) prodParts.push(`Kenlo Locação ${(data.locPlan || "K").toUpperCase()}`);
+  if (showImob) prodParts.push(`Kenlo Imob ${(data.imobPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`);
+  if (showLoc) prodParts.push(`Kenlo Loca\u00e7\u00e3o ${(data.locPlan || "K").toUpperCase().replace(/K2/gi, "K\u00B2")}`);
 
   // ── COLUMN 1 — PERFIL OPERACIONAL DO CLIENTE ──
   let c1Y = h1(doc, "Perfil Operacional", col1X, Y, col3W);
