@@ -4345,3 +4345,7 @@
 ## Product Card Hover Effect
 
 - [x] Apply same hover effect (scale 1.02x + shadow) to main product cards (Imob/Locação)
+
+## Product Card Hover Border Color
+
+- [x] Add hover border color change — blue for IMOB, green for Locação
