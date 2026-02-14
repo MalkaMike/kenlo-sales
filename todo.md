@@ -4492,3 +4492,16 @@
 - [x] Add auto-dismiss functionality with customizable duration
 - [x] Support for action buttons in notifications (e.g., "Undo", "Retry")
 - [x] Ensure notifications are accessible and follow WCAG guidelines
+
+## Server-Side Error Notifications
+
+- [x] Create global tRPC error handler middleware on the server (errorFormatter.ts)
+- [x] Map tRPC error codes to user-friendly Portuguese messages (12 error codes mapped)
+- [x] Create client-side global error interceptor using tRPC query/mutation cache (errorInterceptor.ts)
+- [x] Display user-friendly toast notifications for API failures (via NotificationContext)
+- [x] Handle network errors (offline, timeout) with specific messages
+- [x] Handle authentication errors (redirect to login + warning notification)
+- [x] Handle validation errors with field-specific messages (BAD_REQUEST, UNPROCESSABLE_CONTENT)
+- [x] Add retry button for recoverable errors (TIMEOUT, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS)
+- [x] Test error scenarios (21 tests in errorFormatter.test.ts)
+- [x] Add deduplication to prevent duplicate error notifications within 3s window

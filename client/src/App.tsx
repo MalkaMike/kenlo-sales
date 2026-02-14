@@ -8,6 +8,7 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toast } from "./components/Toast";
+import { ErrorInterceptorSetup } from "./components/ErrorInterceptorSetup";
 
 // Pages
 import Home from "./pages/Home";
@@ -128,6 +129,7 @@ export default function App() {
       <ThemeProvider defaultTheme="light">
         <NotificationProvider>
           <TooltipProvider>
+            <ErrorInterceptorSetup />
             <Toast />
             <Router />
           </TooltipProvider>
