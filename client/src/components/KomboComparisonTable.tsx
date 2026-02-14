@@ -732,7 +732,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             </span>
                           ) : (row as any).sublabel ? (
                             <div className="flex flex-col items-start">
-                              <span>{row.label}</span>
+                              <span style={{fontSize: '12px'}}>{row.label}</span>
                               <span
                                 className="text-[11px] italic text-gray-500 cursor-pointer hover:text-primary transition-colors"
                                 onClick={() => setShowPrePagoPosPagoModal(true)}
@@ -766,7 +766,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                                   ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                                   : colIndex % 2 === 1 ? "bg-gray-50/50" : ""
-                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm" : row.isTotal ? "font-bold text-gray-700" : "text-gray-700"}`}
+                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm" : row.isTotal ? "font-bold text-gray-700" : "text-gray-700"}`} style={{color: '#141313'}}
                             >
                               {row.isHeader ? null : getCellValue(row.key, buildCellCtx(colIndex, col))}
                             </td>
