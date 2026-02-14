@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, CreditCard, Split, Receipt, DollarSign, ArrowRight, Calculator, Zap, Info, Wallet, RefreshCw, BarChart3 } from "lucide-react";
@@ -168,6 +169,7 @@ const useCases = [
 ];
 
 export default function PayPage() {
+  const { theadRef } = useStickyHeader();
   const renderValue = (value: string | boolean, tooltip?: string) => {
     if (typeof value === "boolean") {
       return value ? (
@@ -297,7 +299,7 @@ export default function PayPage() {
           
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <table className="w-full border-collapse min-w-[600px]">
-              <thead>
+              <thead ref={theadRef} className="pricing-sticky-header">
                 <tr className="border-b border-border">
                   <th className="text-left py-4 px-4 font-medium text-muted-foreground min-w-[200px]">
                     Categoria / Recurso

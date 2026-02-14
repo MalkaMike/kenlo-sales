@@ -4384,3 +4384,18 @@
 - [x] Effect should include background highlight, slight scale/lift, and smooth transition
 - [x] Apply consistently to: ImobPage, LocacaoPage, InteligenciaPage, LeadsPage, AssinaturaPage, PayPage, SegurosPage, CashPage, KombosPage
 - [x] Ensure the effect is subtle and professional — not distracting
+
+## Sticky Header on Pricing Tables
+
+- [x] Add sticky header CSS for pricing table thead elements
+- [x] Apply to ImobPage pricing table (3-column: Prime, K, K2)
+- [x] Apply to LocacaoPage pricing table (3-column: Prime, K, K2)
+- [x] Apply to InteligenciaPage pricing table (single column)
+- [x] Apply to LeadsPage pricing table
+- [x] Apply to AssinaturaPage pricing table
+- [x] Apply to PayPage pricing table
+- [x] Apply to SegurosPage pricing table
+- [x] Apply to CashPage pricing table
+- [x] Apply to KombosPage comparison table (5-column: 5 Kombos)
+- [x] Ensure sticky header works with the site's fixed navbar (proper top offset)
+- [x] Add subtle shadow/border when header becomes sticky for visual separation

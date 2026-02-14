@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Fragment } from "react";
+import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Sparkles, FileText, ArrowRight, Star, Info } from "lucide-react";
@@ -103,6 +104,7 @@ const comparisonData = {
 };
 
 export default function KombosPage() {
+  const { theadRef } = useStickyHeader();
   const renderValue = (value: boolean | string, komboIndex: number) => {
     if (typeof value === "boolean") {
       return value ? (
@@ -199,7 +201,7 @@ export default function KombosPage() {
           
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <table className="w-full border-collapse min-w-[800px]">
-              <thead>
+              <thead ref={theadRef} className="pricing-sticky-header">
                 <tr className="border-b-2 border-border">
                   <th className="text-left py-4 px-4 font-medium text-muted-foreground w-[200px]">
                     Recurso

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Shield, DollarSign, Zap, FileText, TrendingUp, ArrowRight, Calculator, Receipt, Users, Handshake } from "lucide-react";
@@ -129,6 +130,7 @@ const useCases = [
 ];
 
 export default function SegurosPage() {
+  const { theadRef } = useStickyHeader();
   const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
     if (typeof row.value === "boolean") {
       return row.value ? (
@@ -259,7 +261,7 @@ export default function SegurosPage() {
           <div className="max-w-2xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[400px]">
-                <thead>
+                <thead ref={theadRef} className="pricing-sticky-header">
                   <tr className="border-b border-border">
                     <th className="text-left py-4 px-4 font-medium text-muted-foreground">
                       Categoria / Recurso

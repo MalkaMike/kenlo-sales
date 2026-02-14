@@ -483,3 +483,17 @@ html {
 .pricing-row:hover td:first-child {
   font-weight: 500;
 }
+
+/* Sticky Pricing Table Header */
+.pricing-sticky-header {
+  position: sticky;
+  top: 64px; /* h-16 navbar height */
+  z-index: 20;
+  background-color: var(--background);
+  backdrop-filter: blur(12px);
+  transition: box-shadow 0.2s ease;
+}
+
+.pricing-sticky-header.is-stuck {
+  box-shadow: 0 4px 12px -2px oklch(0 0 0 / 0.08), 0 1px 0 0 oklch(0 0 0 / 0.05);
+}

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Home, FileText, CreditCard, RefreshCw, ArrowRight, Calculator, Info } from "lucide-react";
@@ -177,6 +178,8 @@ const highlights = [
 ];
 
 export default function LocacaoPage() {
+  const { theadRef } = useStickyHeader();
+
   type PricingRow = {
     feature: string;
     type: string;
@@ -315,7 +318,7 @@ export default function LocacaoPage() {
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[600px]">
                 {/* Header */}
-                <thead>
+                <thead ref={theadRef} className="pricing-sticky-header">
                   <tr>
                     <th className="text-left p-4 bg-muted/30 rounded-tl-lg w-[40%]">
                       <span className="text-sm font-medium text-muted-foreground">Categoria / Recurso</span>
