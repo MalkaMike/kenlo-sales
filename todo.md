@@ -4438,3 +4438,25 @@
 - [x] Update price value text colors to use #141313
 - [x] Verify consistency across all pages and components
 - [x] Ensure no red/primary/secondary color text remains in pricing tables
+
+## CRITICAL PDF Issues - IMOB/Locação Separation
+
+- [x] PDF mixes IMOB and Locação as single product instead of 2 distinct products
+- [x] Separate PDF into distinct IMOB section and Locação section with own tables/features
+- [x] IMOB section: Show IMOB-specific features (CRM, Site, Omnichannel, Leads, etc)
+- [x] Locação section: Show Locação-specific features (Contract management, Pay, etc)
+- [x] Fix pricing tables to show correct features for each product
+- [x] Ensure PDF reflects actual calculator selections (which product was selected)
+- [x] Add visual separation between IMOB and Locação sections in PDF
+- [x] Verify all add-ons are correctly associated with their parent product
+- [x] Integrated new pdfStrategicPageV2 into main generator
+
+## PDF Design & UX Improvements
+
+- [x] Review PDF layout for clarity and professionalism
+- [x] Ensure font hierarchy and spacing are consistent
+- [x] Add visual indicators for selected vs unselected features
+- [x] Improve color contrast and readability
+- [x] Add page breaks strategically to avoid orphaned content
+- [x] Separate IMOB and Locação into distinct sections with emoji headers
+- [x] Add clear add-on association to parent products

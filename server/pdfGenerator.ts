@@ -22,7 +22,7 @@ import {
   buildDerivedData,
 } from "./pdf/pdfTypes";
 import { renderCoverPage } from "./pdf/pdfCoverPage";
-import { renderStrategicPage } from "./pdf/pdfStrategicPage";
+import { renderStrategicPageV2 } from "./pdf/pdfStrategicPageV2";
 import { renderFeaturesPage } from "./pdf/pdfFeaturesPage";
 import { renderRevenuePage } from "./pdf/pdfRevenuePage";
 
@@ -46,8 +46,8 @@ export async function generateProposalPDF(data: ProposalData): Promise<Buffer> {
     // 1️⃣ Cover
     renderCoverPage(doc, data, derived);
 
-    // 2️⃣ Strategic Overview (3-column grid)
-    renderStrategicPage(doc, data, derived);
+    // 2️⃣ Strategic Overview (SEPARATED IMOB & LOCAÇÃO)
+    renderStrategicPageV2(doc, data, derived);
 
     // 3️⃣ Platform Functionalities
     renderFeaturesPage(doc, data, derived);
