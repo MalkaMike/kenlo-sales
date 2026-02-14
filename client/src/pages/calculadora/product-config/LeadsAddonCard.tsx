@@ -1,5 +1,5 @@
 /**
- * LeadsAddonCard - Leads add-on with IA SDR & WhatsApp sub-options
+ * LeadsAddonCard - Leads add-on with Pré-atendimento via IA & Pré-atendimento via WhatsApp sub-options
  * Includes WhatsApp leads postpaid breakdown with tier pricing
  */
 
@@ -64,7 +64,7 @@ export function LeadsAddonCard() {
       <div className="text-xs text-gray-500">
         {!isAddonAvailable("leads") ? "Requer Kenlo Imob" : "Gestão automatizada de leads"}
       </div>
-      {/* IA SDR & WhatsApp — inside Leads add-on card */}
+      {/* Pré-atendimento via IA & Pré-atendimento via WhatsApp — inside Leads add-on card */}
       <div
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{
@@ -81,13 +81,13 @@ export function LeadsAddonCard() {
                   : 'bg-gray-50 border-gray-200'
               }`}
               title={metrics.wantsWhatsApp
-                ? "IA SDR e WhatsApp são mutuamente exclusivos. Desative WhatsApp para usar IA SDR."
-                : "Use IA SDR de parceiro externo (ex: Lais, Harry). Sem pós-pago — você paga ao fornecedor de IA."
+                ? "Pré-atendimento via IA e via WhatsApp são mutuamente exclusivos. Desative WhatsApp para usar IA."
+                : "Use pré-atendimento via IA de parceiro externo (ex: Lais, Harry). Sem pós-pago — você paga ao fornecedor de IA."
               }
             >
               <Label htmlFor="externalAI" className={`text-xs cursor-pointer ${
                 metrics.wantsWhatsApp ? 'text-gray-400' : 'text-gray-600'
-              }`}>IA SDR</Label>
+              }`}>Pré-atendimento via IA</Label>
               <Switch
                 id="externalAI"
                 checked={metrics.usesExternalAI}
@@ -121,13 +121,13 @@ export function LeadsAddonCard() {
                   : 'bg-gray-50 border-gray-200'
               }`}
               title={metrics.usesExternalAI
-                ? "WhatsApp e IA SDR são mutuamente exclusivos. Desative IA SDR para usar WhatsApp."
+                ? "Pré-atendimento via WhatsApp e via IA são mutuamente exclusivos. Desative IA para usar WhatsApp."
                 : "Leads via WhatsApp com carência de 100/mês. Excedente cobrado no pós-pago (R$1,50 a R$1,10/lead)."
               }
             >
               <Label htmlFor="whatsapp" className={`text-xs cursor-pointer ${
                 metrics.usesExternalAI ? 'text-gray-400' : 'text-gray-600'
-              }`}>WhatsApp</Label>
+              }`}>Pré-atendimento via WhatsApp</Label>
               <Switch
                 id="whatsapp"
                 checked={metrics.wantsWhatsApp}

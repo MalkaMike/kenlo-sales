@@ -4259,3 +4259,8 @@
 ## PDF Potencial de Receita Extra - Conditional Visibility Fix
 
 - [x] Fix PDF "Potencial de Receita Extra" section to only show when there are actual revenue add-ons (Pay/Boleto/Split or Seguros), not just post-paid costs
+
+## Button Label Renames
+
+- [x] Rename "IA SDR" to "Pré-atendimento via IA"
+- [x] Rename "WhatsApp" to "Pré-atendimento via WhatsApp"
