@@ -4341,3 +4341,7 @@
 ## Add-on Card Hover Effect
 
 - [x] Add hover effect on all add-on cards (scale + shadow) for better interactivity
+
+## Product Card Hover Effect
+
+- [x] Apply same hover effect (scale 1.02x + shadow) to main product cards (Imob/Locação)
