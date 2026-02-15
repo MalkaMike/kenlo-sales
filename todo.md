@@ -4537,3 +4537,17 @@
 - [x] Audit Calculator page for all hardcoded pricing values
 - [x] Refactor Calculator to use shared pricing-config.ts and pricing-values.json
 - [x] Verify all tests pass after refactor
+
+## Automated Verification Tests for Remaining Rules
+
+- [x] Write tests for payment frequency multipliers (Mensal ×1.25, Semestral ×1.125, Anual ×1.0, Bienal ×0.875)
+- [x] Write tests for rounding rule (all prices round UP to next integer ending in 7)
+- [x] Write tests for add-on availability restrictions (Leads IMOB-only, Pay/Seguros/Cash LOC-only, Inteligência/Assinatura both)
+- [x] Write tests for Kombo discounts (Start 10%, Pro 15%, Locação Pro 10%, Core Gestão 0%, Elite 20%)
+- [x] Write tests for Kombo implementation costs (all R$1.497, with specific add-on implementations zeroed)
+- [x] Write tests for Kombo composition, detection logic, premium services inclusion
+- [x] Write tests for calculatePrice end-to-end (frequency × rounding)
+- [x] Write tests for tiered pricing (additional users, contracts)
+- [x] Write tests for product base prices and included quantities
+- [x] Write tests for seguros estimated revenue (R$10/contract)
+- [x] Mark corresponding unchecked items in todo.md as done
