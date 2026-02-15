@@ -1,7 +1,7 @@
 # Kenlo Sales — Referência Completa de Produtos e Add-ons
 
 **Documento interno — Fonte única de verdade para o portal de vendas**
-**Versão:** 1.1 | **Data:** 14 de fevereiro de 2026 | **Autor:** Manus AI
+**Versão:** 1.2 | **Data:** 15 de fevereiro de 2026 | **Autor:** Manus AI
 
 ---
 
@@ -543,10 +543,10 @@ Os Kombos são pacotes que combinam produtos core com add-ons, oferecendo descon
 
 | Kombo | Produtos | Add-ons | Desconto | Implantações Zeradas |
 |---|---|---|---|---|
-| **Imob Start** | IMOB | Leads | 10% | Leads |
-| **Imob Pro** | IMOB | Leads + Inteligência | 15% | Leads + Inteligência |
+| **Imob Start** | IMOB | Leads + Assinatura | 10% | Leads |
+| **Imob Pro** | IMOB | Leads + Inteligência + Assinatura | 15% | Leads + Inteligência |
 | **Locação Pro** | Locação | Inteligência + Assinatura | 10% | Inteligência |
-| **Core Gestão** | IMOB + Locação | — | 0% | — |
+| **Core Gestão** | IMOB + Locação | — | 0% | IMOB |
 | **Elite** | IMOB + Locação | Leads + Inteligência + Pay + Assinatura | 20% | Leads + Inteligência + Pay |
 
 ### 10.3 Detalhes por Kombo
@@ -572,7 +572,9 @@ Os Kombos são pacotes que combinam produtos core com add-ons, oferecendo descon
 - **Serviços Premium:** Suporte VIP + CS Dedicado incluídos
 - **Público-alvo:** Administradoras e imobiliárias focadas em locação
 
-> **Nota:** A composição correta do Kombo Locação Pro é **Locação + Inteligência + Assinatura** (com 10% de desconto). A `pricing-values.json` foi atualizada para refletir essa composição.
+> **Nota (v1.1):** A composição correta do Kombo Locação Pro é **Locação + Inteligência + Assinatura** (com 10% de desconto). A `pricing-values.json` foi atualizada para refletir essa composição.
+
+> **Nota (v1.2):** A partir desta versão, a tabela comparativa de Kombos na página `/kombos` é **totalmente dinâmica** — puxa composição, descontos, implantações zeradas e serviços premium diretamente de `pricing-config.ts` e `pricing-values.json`. Alterações futuras nesses arquivos serão refletidas automaticamente na interface.
 
 #### Kombo Core Gestão
 - **Estrutura:** IMOB + Locação (sem add-ons)
@@ -702,4 +704,4 @@ Todas as discrepâncias identificadas na versão 1.0 deste documento foram resol
 
 ---
 
-*Documento gerado automaticamente a partir do código-fonte do portal Kenlo Sales. Última atualização: 14 de fevereiro de 2026.*
+*Documento gerado automaticamente a partir do código-fonte do portal Kenlo Sales. Última atualização: 15 de fevereiro de 2026.*

@@ -4515,3 +4515,8 @@
 - [x] Fix AssinaturaPage: Update biometric validation price from R$7.00 to R$6.00
 - [x] Update reference document: Clarify Seguros revenue model (R$10 ≈ 35% of premium estimate)
 - [x] Update reference document: Mark all discrepancies as resolved
+
+## KombosPage Dynamic Refactor
+
+- [x] Refactor KombosPage comparison table to pull data dynamically from pricing-config.ts / pricing-values.json
+- [x] Update kenlo-products-complete-reference.md to reflect dynamic KombosPage refactor

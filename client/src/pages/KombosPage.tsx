@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,102 +10,214 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { KOMBOS as PRICING_KOMBOS } from "@shared/pricing-config";
+import pricingValues from "@shared/pricing-values.json";
 
-// Kombo definitions with all details
-const kombos = [
+// ============================================================================
+// TYPES
+// ============================================================================
+
+type KomboKey = keyof typeof PRICING_KOMBOS;
+
+interface KomboMeta {
+  id: string;
+  configKey: KomboKey;
+  shortDesc: string;
+  badge: string | null;
+  color: string;
+  tooltip: string;
+  idealFor: string;
+}
+
+// ============================================================================
+// DISPLAY CONFIGURATION (only UI-specific metadata, no pricing data)
+// ============================================================================
+
+const KOMBO_ORDER: KomboMeta[] = [
   {
     id: "imob-start",
-    name: "Imob Start",
+    configKey: "imob-start",
     shortDesc: "Vendas digitais",
-    discount: 10,
     badge: null,
     color: "bg-blue-500",
-    includesPremium: true, // ⚠️ UPDATED: All Kombos now include Premium Services
-    tooltip: "IMOB + Leads + Assinatura + VIP + CS. Ideal para imobiliárias focadas em vendas que querem captar e converter leads.",
+    tooltip: "IMOB + Leads + VIP + CS. Ideal para imobiliárias focadas em vendas que querem captar e converter leads.",
+    idealFor: "Ideal para quem está começando a transformação digital.",
   },
   {
     id: "imob-pro",
-    name: "Imob Pro",
+    configKey: "imob-pro",
     shortDesc: "Máxima performance",
-    discount: 15,
     badge: "POPULAR",
     color: "bg-primary",
-    includesPremium: true,
-    tooltip: "IMOB + Leads + Inteligência + Assinatura + VIP + CS. Para quem quer maximizar conversão com dados.",
+    tooltip: "IMOB + Leads + Inteligência + VIP + CS. Para quem quer maximizar conversão com dados.",
+    idealFor: "Para quem quer maximizar conversão com dados. Inclui BI para decisões estratégicas e suporte premium para crescimento acelerado.",
   },
   {
     id: "locacao-pro",
-    name: "Locação Pro",
+    configKey: "loc-pro",
     shortDesc: "Gestão inteligente",
-    discount: 10,
     badge: null,
     color: "bg-green-500",
-    includesPremium: true,
     tooltip: "LOC + Inteligência + Assinatura + VIP + CS. Para administradoras e imobiliárias focadas em locação.",
+    idealFor: "Administradoras e imobiliárias focadas em locação. Gestão inteligente de contratos com BI e assinatura digital.",
   },
   {
     id: "core-gestao",
-    name: "Core Gestão",
+    configKey: "core-gestao",
     shortDesc: "Vendas + Locação",
-    discount: 0,
     badge: null,
     color: "bg-purple-500",
-    includesPremium: true,
     tooltip: "IMOB + LOC sem add-ons, mas com VIP + CS incluídos. Para quem quer plataforma unificada.",
+    idealFor: "Imobiliárias que atuam em vendas E locação. Plataforma unificada com suporte premium incluído. Adicione add-ons conforme necessidade.",
   },
   {
     id: "elite",
-    name: "Elite",
+    configKey: "elite",
     shortDesc: "Solução completa",
-    discount: 20,
     badge: "MELHOR",
     color: "bg-amber-500",
-    includesPremium: true,
     tooltip: "IMOB + LOC + Todos os add-ons + VIP + CS. Máxima digitalização e vantagem competitiva.",
+    idealFor: "Máxima digitalização e vantagem competitiva. Todos os produtos, todos os add-ons, suporte premium. Para quem quer liderar o mercado.",
   },
 ];
 
-// Feature comparison data
-const comparisonData = {
-  sections: [
+// ============================================================================
+// HELPER: Map internal keys to display names
+// ============================================================================
+
+const DISPLAY_NAMES: Record<string, string> = {
+  imob: "Kenlo IMOB (CRM + Site)",
+  locacao: "Kenlo Locação (ERP)",
+  leads: "Kenlo Leads",
+  inteligencia: "Kenlo Inteligência",
+  assinaturas: "Kenlo Assinatura",
+  pay: "Kenlo Pay",
+  seguros: "Kenlo Seguros",
+  cash: "Kenlo Cash",
+};
+
+const IMPL_DISPLAY_NAMES: Record<string, string> = {
+  leads: "Leads",
+  inteligencia: "Inteligência",
+  assinaturas: "Assinatura",
+  pay: "Pay",
+  imob: "IMOB",
+  locacao: "Locação",
+};
+
+// ============================================================================
+// DYNAMIC DATA BUILDERS
+// ============================================================================
+
+/** Check if a kombo includes a given product or addon */
+function komboIncludes(configKey: KomboKey, item: string): boolean {
+  const kombo = PRICING_KOMBOS[configKey];
+  return kombo.structure.includes(item);
+}
+
+/** Format implementation price */
+function formatImplementation(): string {
+  return `R$ ${pricingValues._legacyFields.implantacaoBase.toLocaleString("pt-BR")}`;
+}
+
+/** Build the free implementations label for a kombo */
+function buildFreeImplLabel(configKey: KomboKey): string {
+  const kombo = PRICING_KOMBOS[configKey];
+  const freeImpls = kombo.freeImplementations as readonly string[];
+  if (!freeImpls || freeImpls.length === 0) {
+    // For core-gestao: no add-on impls, but IMOB impl is zeroed
+    const structure = kombo.structure as readonly string[];
+    const products = structure.filter((s) => s === "imob" || s === "locacao");
+    if (products.length === 2) return "IMOB";
+    return "—";
+  }
+  return freeImpls
+    .map((key) => IMPL_DISPLAY_NAMES[key] || key)
+    .join(" + ");
+}
+
+/** Build comparison data dynamically from pricing config */
+function buildComparisonData() {
+  const allProducts = ["imob", "locacao"];
+  const allAddons = ["leads", "inteligencia", "assinaturas", "pay", "seguros", "cash"];
+
+  const sections = [
     {
       title: "Produtos Core",
-      rows: [
-        { feature: "Kenlo IMOB (CRM + Site)", values: [true, true, false, true, true], tooltip: "" },
-        { feature: "Kenlo Locação (ERP)", values: [false, false, true, true, true], tooltip: "" },
-      ],
+      rows: allProducts.map((product) => ({
+        feature: DISPLAY_NAMES[product],
+        values: KOMBO_ORDER.map((k) => komboIncludes(k.configKey, product)),
+        tooltip: "",
+      })),
     },
     {
       title: "Add-ons Incluídos",
-      rows: [
-        { feature: "Kenlo Leads", values: [true, true, false, false, true], tooltip: "" },
-        { feature: "Kenlo Inteligência", values: [false, true, true, false, true], tooltip: "" },
-        { feature: "Kenlo Assinatura", values: [true, true, true, false, true], tooltip: "" },
-        { feature: "Kenlo Pay", values: [false, false, false, false, true], tooltip: "" },
-        { feature: "Kenlo Seguros", values: [false, false, false, false, true], tooltip: "" },
-        { feature: "Kenlo Cash", values: [false, false, false, false, true], tooltip: "" },
-      ],
+      rows: allAddons.map((addon) => ({
+        feature: DISPLAY_NAMES[addon],
+        values: KOMBO_ORDER.map((k) => komboIncludes(k.configKey, addon)),
+        tooltip: "",
+      })),
     },
     {
       title: "Serviços Premium",
       rows: [
-        { feature: "Suporte VIP", values: [true, true, true, true, true], tooltip: "Atendimento prioritário com SLA reduzido. ⚠️ NOVO: Incluído em TODOS os Kombos" },
-        { feature: "CS Dedicado", values: [true, true, true, true, true], tooltip: "Customer Success exclusivo para sua conta. ⚠️ NOVO: Incluído em TODOS os Kombos" },
+        {
+          feature: "Suporte VIP",
+          values: KOMBO_ORDER.map((k) => PRICING_KOMBOS[k.configKey].premiumServicesIncluded),
+          tooltip: "Atendimento prioritário com SLA reduzido. ⚠️ NOVO: Incluído em TODOS os Kombos",
+        },
+        {
+          feature: "CS Dedicado",
+          values: KOMBO_ORDER.map((k) => PRICING_KOMBOS[k.configKey].premiumServicesIncluded),
+          tooltip: "Customer Success exclusivo para sua conta. ⚠️ NOVO: Incluído em TODOS os Kombos",
+        },
       ],
     },
     {
       title: "Implantação",
       rows: [
-        { feature: "Taxa única", values: ["R$ 1.497", "R$ 1.497", "R$ 1.497", "R$ 1.497", "R$ 1.497"], tooltip: "" },
-        { feature: "Implantações ofertadas", values: ["Leads", "Leads + BI", "Inteligência", "IMOB", "IMOB + Leads + BI"], tooltip: "Implantações que seriam cobradas à parte, mas estão inclusas no Kombo" },
+        {
+          feature: "Taxa única",
+          values: KOMBO_ORDER.map(() => formatImplementation()) as (string | boolean)[],
+          tooltip: "",
+        },
+        {
+          feature: "Implantações ofertadas",
+          values: KOMBO_ORDER.map((k) => buildFreeImplLabel(k.configKey)) as (string | boolean)[],
+          tooltip: "Implantações que seriam cobradas à parte, mas estão inclusas no Kombo",
+        },
       ],
     },
-  ],
-};
+  ];
+
+  return { sections };
+}
+
+// ============================================================================
+// COMPONENT
+// ============================================================================
 
 export default function KombosPage() {
   const { theadRef } = useStickyHeader();
-  const renderValue = (value: boolean | string, komboIndex: number) => {
+
+  // Build comparison data from pricing config (memoized)
+  const comparisonData = useMemo(() => buildComparisonData(), []);
+
+  // Build kombo display data by merging config + meta
+  const kombos = useMemo(
+    () =>
+      KOMBO_ORDER.map((meta) => {
+        const config = PRICING_KOMBOS[meta.configKey];
+        return {
+          ...meta,
+          name: config.name.replace("Kombo ", ""),
+          discount: Math.round(config.monthlyDiscount * 100),
+          includesPremium: config.premiumServicesIncluded,
+        };
+      }),
+    []
+  );
+
+  const renderValue = (value: boolean | string, _komboIndex: number) => {
     if (typeof value === "boolean") {
       return value ? (
         <div className="flex items-center justify-center">
@@ -141,7 +253,8 @@ export default function KombosPage() {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Kombos são pacotes inteligentes que combinam produtos e add-ons com descontos de até 20%. 
+              Kombos são pacotes inteligentes que combinam produtos e add-ons com descontos de até{" "}
+              {Math.max(...kombos.map((k) => k.discount))}%. 
               Compare e escolha o ideal para cada imobiliária.
             </p>
             
@@ -195,7 +308,7 @@ export default function KombosPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Comparativo Completo</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja exatamente o que cada Kombo inclui. Todos têm implantação única de R$ 1.497.
+              Veja exatamente o que cada Kombo inclui. Todos têm implantação única de {formatImplementation()}.
             </p>
           </div>
           
@@ -294,66 +407,55 @@ export default function KombosPage() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">Imob Start</h3>
-              <p className="text-sm text-muted-foreground mb-2">
-                Ideal para quem está começando a transformação digital.
-              </p>
-              <div className="text-green-700 font-bold">10% OFF + VIP + CS</div>
-            </div>
-            
-            <div className="p-6 rounded-xl bg-card border-2 border-green-500/50 relative">
-              <Badge className="absolute -top-2 right-4 bg-green-600 text-white">POPULAR</Badge>
-              <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">Imob Pro</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Para quem quer maximizar conversão com dados. Inclui BI para decisões estratégicas 
-                e suporte premium para crescimento acelerado.
-              </p>
-              <div className="text-green-700 font-bold">15% OFF + VIP + CS</div>
-            </div>
-            
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="w-12 h-12 rounded-lg bg-green-500 flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">Locação Pro</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Administradoras e imobiliárias focadas em locação. Gestão inteligente de contratos 
-                com BI e assinatura digital.
-              </p>
-              <div className="text-green-700 font-bold">10% OFF + VIP + CS</div>
-            </div>
-            
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="w-12 h-12 rounded-lg bg-purple-500 flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">Core Gestão</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Imobiliárias que atuam em vendas E locação. Plataforma unificada com suporte premium 
-                incluído. Adicione add-ons conforme necessidade.
-              </p>
-              <div className="text-muted-foreground font-medium">Preço tabela + VIP + CS</div>
-            </div>
-            
-            <div className="p-6 rounded-xl bg-card border-2 border-amber-500/50 relative md:col-span-2 lg:col-span-1">
-              <Badge className="absolute -top-2 right-4 bg-amber-500 text-white">MELHOR</Badge>
-              <div className="w-12 h-12 rounded-lg bg-amber-500 flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">Elite</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Máxima digitalização e vantagem competitiva. Todos os produtos, todos os add-ons, 
-                suporte premium. Para quem quer liderar o mercado.
-              </p>
-              <div className="text-green-700 font-bold">20% OFF + VIP + CS</div>
-            </div>
+            {kombos.map((kombo) => {
+              const isPopular = kombo.badge === "POPULAR";
+              const isBest = kombo.badge === "MELHOR";
+              const hasBorder = isPopular || isBest;
+              const borderColor = isPopular
+                ? "border-2 border-green-500/50"
+                : isBest
+                ? "border-2 border-amber-500/50"
+                : "border border-border/50";
+              const isLastAndOdd =
+                kombos.indexOf(kombo) === kombos.length - 1 && kombos.length % 3 !== 0;
+
+              return (
+                <div
+                  key={kombo.id}
+                  className={`p-6 rounded-xl bg-card ${borderColor} relative ${
+                    isLastAndOdd ? "md:col-span-2 lg:col-span-1" : ""
+                  }`}
+                >
+                  {kombo.badge && (
+                    <Badge
+                      className={`absolute -top-2 right-4 text-white ${
+                        isPopular ? "bg-green-600" : "bg-amber-500"
+                      }`}
+                    >
+                      {kombo.badge}
+                    </Badge>
+                  )}
+                  <div
+                    className={`w-12 h-12 rounded-lg ${kombo.color} flex items-center justify-center mb-4`}
+                  >
+                    <Star className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{kombo.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{kombo.idealFor}</p>
+                  <div
+                    className={
+                      kombo.discount > 0
+                        ? "text-green-700 font-bold"
+                        : "text-muted-foreground font-medium"
+                    }
+                  >
+                    {kombo.discount > 0
+                      ? `${kombo.discount}% OFF + VIP + CS`
+                      : "Preço tabela + VIP + CS"}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -366,7 +468,7 @@ export default function KombosPage() {
               Pronto para montar a proposta ideal?
             </h2>
             <p className="text-lg mb-8 text-white/90">
-              Use nosso gerador de cotaçãos para simular diferentes Kombos e ver os preços em tempo real
+              Use nosso gerador de cotações para simular diferentes Kombos e ver os preços em tempo real
             </p>
             <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 gap-2" asChild>
               <Link href="/calculadora">
