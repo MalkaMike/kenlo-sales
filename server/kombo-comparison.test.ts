@@ -207,11 +207,11 @@ describe('Kombo Comparison Table - Price Calculations', () => {
       expect(roundToEndIn7(500)).toBe(507);
     });
 
-    it('should handle small prices correctly (Assinatura)', () => {
-      // 37 * 1.25 = 46.25 → ceil = 47 → ends in 7 ✓
+    it('should handle small prices correctly (Assinatura) - no ending-in-7 for < 100', () => {
+      // 37 * 1.25 = 46.25 → ceil = 47 (< 100, no ending-in-7)
       expect(roundToEndIn7(46.25)).toBe(47);
-      // 37 * 0.875 = 32.375 → ceil = 33 → ends in 3 → 37
-      expect(roundToEndIn7(32.375)).toBe(37);
+      // 37 * 0.875 = 32.375 → ceil = 33 (< 100, no ending-in-7)
+      expect(roundToEndIn7(32.375)).toBe(33);
     });
   });
 
@@ -250,11 +250,11 @@ describe('Kombo Comparison Table - Price Calculations', () => {
       expect(monthlyPrice).toBe(47);
     });
 
-    it('should calculate Assinatura biennial correctly', () => {
+    it('should calculate Assinatura biennial correctly (< 100, no ending-in-7)', () => {
       const annualPrice = 37;
       const biennialPrice = calcPrice(annualPrice, 'biennial');
-      // 37 * 0.875 = 32.375 → roundToSeven = 37
-      expect(biennialPrice).toBe(37);
+      // 37 * 0.875 = 32.375 → ceil = 33 (< 100, just Math.ceil)
+      expect(biennialPrice).toBe(33);
     });
 
     it('should calculate Imob Prime biennial correctly', () => {
@@ -328,6 +328,13 @@ describe('Kombo Comparison Table - Price Calculations', () => {
       const finalPrice = applyDiscount(cyclePrice, 0.20); // 1057 * 0.80 = 845.6 → round=846
       expect(cyclePrice).toBe(1057);
       expect(finalPrice).toBe(846);
+    });
+
+    it('Assinatura + Bienal + Imob Pro (15%) — with < 100 rounding', () => {
+      const cyclePrice = calcPrice(37, 'biennial'); // 37 * 0.875 = 32.375 → ceil = 33
+      const finalPrice = applyDiscount(cyclePrice, 0.15); // 33 * 0.85 = 28.05 → 28
+      expect(cyclePrice).toBe(33);
+      expect(finalPrice).toBe(28);
     });
   });
 });

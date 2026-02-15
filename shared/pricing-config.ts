@@ -82,12 +82,13 @@ export const FREQUENCY_INSTALLMENTS: Record<PaymentFrequency, number> = {
 // ============================================================================
 
 /**
- * Round price UP to next integer ending in 7
- * Applies to: All products/add-ons, all frequencies
+ * Round UP to next integer ending in 7 for prices >= 100.
+ * For prices < 100, just round UP to the next integer (Math.ceil).
  * Does NOT apply to: Post-paid charges
  */
 export function roundToSeven(price: number): number {
   const rounded = Math.ceil(price);
+  if (rounded < 100) return rounded;
   const lastDigit = rounded % 10;
   
   if (lastDigit === 7) return rounded;

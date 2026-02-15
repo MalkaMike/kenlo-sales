@@ -125,9 +125,11 @@ describe('Pricing Configuration', () => {
       expect(roundToSeven(507)).toBe(507);
     });
 
-    it('should handle small prices correctly', () => {
+    it('should handle small prices correctly (< 100 uses Math.ceil, not ending-in-7)', () => {
       expect(roundToSeven(37)).toBe(37);
-      expect(roundToSeven(40)).toBe(47);
+      expect(roundToSeven(40)).toBe(40); // < 100, just Math.ceil
+      expect(roundToSeven(46.25)).toBe(47); // ceil(46.25) = 47
+      expect(roundToSeven(32.375)).toBe(33); // ceil(32.375) = 33
     });
   });
 

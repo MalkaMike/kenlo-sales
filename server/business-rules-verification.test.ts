@@ -101,14 +101,22 @@ describe("Business Rule: Payment Frequency Multipliers", () => {
 // ============================================================================
 
 describe("Business Rule: Round UP to Next Integer Ending in 7", () => {
-  it("already ending in 7 stays the same", () => {
-    expect(roundToSeven(7)).toBe(7);
-    expect(roundToSeven(17)).toBe(17);
-    expect(roundToSeven(37)).toBe(37);
-    expect(roundToSeven(97)).toBe(97);
+  it("already ending in 7 stays the same (>= 100)", () => {
     expect(roundToSeven(247)).toBe(247);
     expect(roundToSeven(497)).toBe(497);
     expect(roundToSeven(1197)).toBe(1197);
+  });
+
+  it("for prices < 100, just rounds UP to next integer (no ending-in-7 rule)", () => {
+    expect(roundToSeven(7)).toBe(7);
+    expect(roundToSeven(17)).toBe(17);
+    expect(roundToSeven(37)).toBe(37);
+    expect(roundToSeven(40)).toBe(40); // NOT 47
+    expect(roundToSeven(46.25)).toBe(47); // ceil(46.25) = 47
+    expect(roundToSeven(32.375)).toBe(33); // ceil(32.375) = 33, NOT 37
+    expect(roundToSeven(97)).toBe(97);
+    expect(roundToSeven(99)).toBe(99); // NOT 107
+    expect(roundToSeven(99.5)).toBe(107); // ceil(99.5) = 100, then >= 100 so ending-in-7 → 107
   });
 
   it("rounds UP to next 7, never down", () => {
@@ -136,11 +144,18 @@ describe("Business Rule: Round UP to Next Integer Ending in 7", () => {
     expect(roundToSeven(490.01)).toBe(497);
   });
 
-  it("result always ends in digit 7", () => {
-    for (let i = 1; i <= 2000; i++) {
+  it("result always ends in digit 7 for prices >= 100", () => {
+    for (let i = 100; i <= 2000; i++) {
       const result = roundToSeven(i);
       expect(result % 10).toBe(7);
       expect(result).toBeGreaterThanOrEqual(i);
+    }
+  });
+
+  it("result equals Math.ceil for prices < 100", () => {
+    for (let i = 1; i < 100; i++) {
+      const result = roundToSeven(i);
+      expect(result).toBe(i); // integers < 100 stay as-is
     }
   });
 
@@ -471,20 +486,30 @@ describe("Business Rule: calculatePrice End-to-End", () => {
     expect(biennial).toBe(roundToSeven(1197 * 0.875)); // 1047.375 → 1047 → 1047 ends in 7!
   });
 
-  it("add-on prices also follow frequency + rounding", () => {
+  it("add-on prices >= 100 follow frequency + ending-in-7 rounding", () => {
     const leadsAnnual = ADDONS.leads.annualPrice; // 497
     const intAnnual = ADDONS.inteligencia.annualPrice; // 297
-    const assAnnual = ADDONS.assinaturas.annualPrice; // 37
 
-    // Monthly prices
+    // Monthly prices (>= 100, so ending-in-7 applies)
     expect(calculatePrice(leadsAnnual, "monthly") % 10).toBe(7);
     expect(calculatePrice(intAnnual, "monthly") % 10).toBe(7);
-    expect(calculatePrice(assAnnual, "monthly") % 10).toBe(7);
 
-    // Biennial prices
+    // Biennial prices (>= 100, so ending-in-7 applies)
     expect(calculatePrice(leadsAnnual, "biennial") % 10).toBe(7);
     expect(calculatePrice(intAnnual, "biennial") % 10).toBe(7);
-    expect(calculatePrice(assAnnual, "biennial") % 10).toBe(7);
+  });
+
+  it("add-on prices < 100 use simple Math.ceil rounding (no ending-in-7)", () => {
+    const assAnnual = ADDONS.assinaturas.annualPrice; // 37
+
+    // Monthly: 37 * 1.25 = 46.25 → ceil = 47
+    expect(calculatePrice(assAnnual, "monthly")).toBe(47);
+    // Biennial: 37 * 0.875 = 32.375 → ceil = 33
+    expect(calculatePrice(assAnnual, "biennial")).toBe(33);
+    // Annual: 37 * 1.0 = 37
+    expect(calculatePrice(assAnnual, "annual")).toBe(37);
+    // Semiannual: 37 * 1.125 = 41.625 → ceil = 42
+    expect(calculatePrice(assAnnual, "semiannual")).toBe(42);
   });
 });
 
