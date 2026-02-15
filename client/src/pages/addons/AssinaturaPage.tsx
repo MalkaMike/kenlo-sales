@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,88 +9,106 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ADDONS } from "@shared/pricing-config";
 
-// Pricing data based on the official table
-const pricingData = {
-  sections: [
-    {
-      title: "Investimento",
-      rows: [
-        {
-          feature: "Licença mensal (plano anual)",
-          value: "R$ 37/mês",
-          highlight: true,
-          tooltip: undefined,
-        },
-        {
-          feature: "Implantação (única)",
-          value: "Sem custo",
-          tooltip: "Implantação gratuita para todos os clientes",
-        },
-        {
-          feature: "Assinaturas inclusas/mês",
-          value: "15 assinaturas",
-          tooltip: "Carência mensal de 15 assinaturas digitais incluídas",
-        },
-        {
-          feature: "Produtos atendidos",
-          value: "IMOB e LOC",
-          tooltip: "Funciona com Kenlo IMOB e/ou Kenlo Locação",
-        },
-      ],
-    },
-    {
-      title: "Assinaturas Adicionais (pós-pago)",
-      rows: [
-        {
-          feature: "1 a 20 assinaturas",
-          value: "R$ 1,80/assinatura",
-          tooltip: undefined,
-        },
-        {
-          feature: "21 a 40 assinaturas",
-          value: "R$ 1,70/assinatura",
-          tooltip: undefined,
-        },
-        {
-          feature: "Acima de 41 assinaturas",
-          value: "R$ 1,50/assinatura",
-          tooltip: undefined,
-        },
-      ],
-    },
-    {
-      title: "Funcionalidades Incluídas",
-      rows: [
-        {
-          feature: "Assinatura digital com validade jurídica",
-          value: true,
-          tooltip: "Certificado digital reconhecido — substitui cartório",
-        },
-        {
-          feature: "Envio por e-mail e WhatsApp",
-          value: true,
-          tooltip: "Cliente recebe o contrato e assina pelo celular",
-        },
-        {
-          feature: "Validação biométrica facial",
-          value: "R$ 6,00/validação",
-          tooltip: "Validação de identidade por reconhecimento facial — opcional",
-        },
-        {
-          feature: "Histórico e auditoria",
-          value: true,
-          tooltip: "Registro completo de todas as assinaturas com trilha de auditoria",
-        },
-        {
-          feature: "Templates de contrato",
-          value: true,
-          tooltip: "Modelos pré-configurados para contratos de venda e locação",
-        },
-      ],
-    },
-  ],
-};
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+const assin = ADDONS.assinaturas;
+
+function formatCurrency(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
+}
+
+function buildPricingData() {
+  const sections = [];
+
+  // --- Investimento ---
+  sections.push({
+    title: "Investimento",
+    rows: [
+      {
+        feature: "Licença mensal (plano anual)",
+        value: `${formatCurrency(assin.annualPrice)}/mês`,
+        highlight: true,
+        tooltip: undefined as string | undefined,
+      },
+      {
+        feature: "Implantação (única)",
+        value: assin.implementation === 0 ? "Sem custo" : formatCurrency(assin.implementation),
+        tooltip: assin.implementation === 0 ? "Implantação gratuita para todos os clientes" : undefined,
+      },
+      {
+        feature: "Assinaturas inclusas/mês",
+        value: `${assin.includedSignatures} assinaturas`,
+        tooltip: `Carência mensal de ${assin.includedSignatures} assinaturas digitais incluídas`,
+      },
+      {
+        feature: "Produtos atendidos",
+        value: assin.availableFor.map((p) => p.toUpperCase()).join(" e "),
+        tooltip: `Funciona com Kenlo ${assin.availableFor.map((p) => p.toUpperCase()).join(" e/ou Kenlo ")}`,
+      },
+    ],
+  });
+
+  // --- Assinaturas Adicionais (pós-pago) ---
+  const additionalRows = assin.additionalSignaturesTiers.map(
+    (tier: { from: number; to: number; price: number }) => {
+      const rangeLabel =
+        tier.to === Infinity
+          ? `Acima de ${tier.from} assinaturas`
+          : `${tier.from} a ${tier.to} assinaturas`;
+      return {
+        feature: rangeLabel,
+        value: `${formatCurrency(tier.price)}/assinatura`,
+        tooltip: undefined as string | undefined,
+      };
+    }
+  );
+  sections.push({
+    title: "Assinaturas Adicionais (pós-pago)",
+    rows: additionalRows,
+  });
+
+  // --- Funcionalidades Incluídas ---
+  sections.push({
+    title: "Funcionalidades Incluídas",
+    rows: [
+      {
+        feature: "Assinatura digital com validade jurídica",
+        value: true as string | boolean,
+        tooltip: "Certificado digital reconhecido — substitui cartório",
+      },
+      {
+        feature: "Envio por e-mail e WhatsApp",
+        value: true as string | boolean,
+        tooltip: "Cliente recebe o contrato e assina pelo celular",
+      },
+      {
+        feature: "Validação biométrica facial",
+        value: `${formatCurrency(assin.biometricValidation)}/validação` as string | boolean,
+        tooltip: "Validação de identidade por reconhecimento facial — opcional",
+      },
+      {
+        feature: "Histórico e auditoria",
+        value: true as string | boolean,
+        tooltip: "Registro completo de todas as assinaturas com trilha de auditoria",
+      },
+      {
+        feature: "Templates de contrato",
+        value: true as string | boolean,
+        tooltip: "Modelos pré-configurados para contratos de venda e locação",
+      },
+    ],
+  });
+
+  return sections;
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -128,7 +147,7 @@ const useCases = [
   {
     icon: ScanFace,
     title: "Validação Biométrica",
-    description: "Para contratos de alto valor, adicione validação biométrica facial por R$ 6,00/validação. Segurança extra com reconhecimento de identidade.",
+    description: `Para contratos de alto valor, adicione validação biométrica facial por ${formatCurrency(assin.biometricValidation)}/validação. Segurança extra com reconhecimento de identidade.`,
   },
   {
     icon: Lock,
@@ -137,8 +156,18 @@ const useCases = [
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
+function formatCurrency2(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
+}
+
 export default function AssinaturaPage() {
   const { theadRef } = useStickyHeader();
+  const pricingData = useMemo(() => buildPricingData(), []);
+
   const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
     if (typeof row.value === "boolean") {
       return row.value ? (
@@ -151,7 +180,7 @@ export default function AssinaturaPage() {
         <span className="text-muted-foreground">—</span>
       );
     }
-    
+
     if (row.highlight) {
       return (
         <span className="inline-flex items-center gap-1.5">
@@ -160,7 +189,7 @@ export default function AssinaturaPage() {
         </span>
       );
     }
-    
+
     return <span className="font-medium">{row.value}</span>;
   };
 
@@ -169,22 +198,22 @@ export default function AssinaturaPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              ADD-ON • IMOB + LOCAÇÃO
+              ADD-ON • {assin.availableFor.map((p) => p.toUpperCase()).join(" + ")}
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Kenlo Assinatura
+              {assin.name}
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
               Assinatura digital embutida na plataforma.
               Feche contratos em <span className="font-semibold text-foreground">5 minutos, sem cartório</span> — com validade jurídica completa.
             </p>
-            
+
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <FileSignature className="w-4 h-4 mr-1" />
@@ -199,7 +228,7 @@ export default function AssinaturaPage() {
                 100% mobile
               </Badge>
             </div>
-            
+
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
@@ -243,10 +272,10 @@ export default function AssinaturaPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja como o Kenlo Assinatura elimina burocracia e acelera o fechamento de contratos
+              Veja como o {assin.name} elimina burocracia e acelera o fechamento de contratos
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
               <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
@@ -267,10 +296,10 @@ export default function AssinaturaPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              O add-on mais acessível da Kenlo. <span className="font-semibold text-foreground">Implantação gratuita</span> e 15 assinaturas inclusas por mês.
+              O add-on mais acessível da Kenlo. <span className="font-semibold text-foreground">Implantação gratuita</span> e {assin.includedSignatures} assinaturas inclusas por mês.
             </p>
           </div>
-          
+
           <div className="max-w-2xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[400px]">
@@ -282,15 +311,15 @@ export default function AssinaturaPage() {
                     <th className="text-center py-4 px-4 min-w-[200px]">
                       <div className="flex flex-col items-center">
                         <FileSignature className="w-8 h-8 text-primary mb-2" />
-                        <span className="font-bold text-lg">Assinatura</span>
+                        <span className="font-bold text-lg">{assin.name}</span>
                       </div>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pricingData.sections.map((section, sectionIndex) => (
-                    <>
-                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                  {pricingData.map((section, sectionIndex) => (
+                    <React.Fragment key={`section-${sectionIndex}`}>
+                      <tr className="bg-muted/30">
                         <td
                           colSpan={2}
                           className="py-3 px-4 font-semibold text-foreground"
@@ -325,17 +354,10 @@ export default function AssinaturaPage() {
                           </td>
                         </tr>
                       ))}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
-            </div>
-            
-            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Exemplo de cálculo:</strong> Se a imobiliária tiver 50 assinaturas adicionais/mês, 
-                paga 20 × R$ 1,80 + 20 × R$ 1,70 + 10 × R$ 1,50 = <strong>R$ 85/mês</strong> em assinaturas adicionais.
-              </p>
             </div>
           </div>
         </div>
@@ -350,8 +372,8 @@ export default function AssinaturaPage() {
               Economize com Kombos
             </h2>
             <p className="text-muted-foreground mb-6">
-              Kenlo Assinatura está incluído em todos os Kombos!
-              O Kombo Imob Start inclui IMOB + Leads + Assinatura com 10% OFF!
+              {assin.name} está presente em quase todos os Kombos Kenlo.
+              Combine com outros produtos e ganhe descontos progressivos!
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/kombos">

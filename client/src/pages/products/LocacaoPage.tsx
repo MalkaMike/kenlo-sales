@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,151 +9,269 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  LOC_PLANS,
+  LOC_IMPLEMENTATION,
+  LOC_ADDITIONAL_CONTRACTS,
+  PAY_BOLETOS,
+  PAY_SPLITS,
+  PREMIUM_SERVICES,
+  type PlanTier,
+} from "@shared/pricing-config";
+import pricingValues from "@shared/pricing-values.json";
 
-// Pricing data based on the official table
-const pricingData = {
-  plans: ["Prime", "K", "K\u00B2"],
-  sections: [
-    {
-      title: "Investimento",
-      rows: [
-        {
-          feature: "Licença mensal (plano anual)",
-          type: "price",
-          values: ["R$ 247/mês", "R$ 497/mês", "R$ 1.197/mês"],
-          highlight: true,
-        },
-        {
-          feature: "Implantação",
-          type: "price",
-          values: ["R$ 1.497", "R$ 1.497", "R$ 1.497"],
-        },
-        {
-          feature: "Contratos inclusos",
-          type: "text",
-          values: ["100", "150", "500"],
-        },
-      ],
-    },
-    {
-      title: "Kenlo Pay Incluído",
-      rows: [
-        {
-          feature: "Boletos incluídos",
-          type: "text",
-          values: ["2", "5", "15"],
-        },
-        {
-          feature: "Split incluídos",
-          type: "text",
-          values: ["2", "5", "15"],
-        },
-      ],
-    },
-    {
-      title: "Serviços Premium",
-      rows: [
-        {
-          feature: "Suporte VIP",
-          type: "mixed",
-          values: ["Opcional", "Incluído", "Incluído"],
-        },
-        {
-          feature: "Customer Success dedicado",
-          type: "mixed",
-          values: ["Opcional", "Opcional", "Incluído"],
-        },
-      ],
-    },
-    {
-      title: "Funcionalidades Básicas (todos os planos)",
-      rows: [
-        { feature: "Aditivo contratual", type: "check", values: [true, true, true] },
-        { feature: "Assinatura digital", type: "check", values: [true, true, true] },
-        { feature: "Cálculo caução / IR", type: "check", values: [true, true, true] },
-        { feature: "Central notificações", type: "check", values: [true, true, true] },
-        { feature: "Checklist pendências", type: "check", values: [true, true, true] },
-        { feature: "Conciliação bancária", type: "check", values: [true, true, true] },
-        { feature: "Controle inadimplência", type: "check", values: [true, true, true] },
-        { feature: "Dashboard completo", type: "check", values: [true, true, true] },
-        { feature: "Extrato DIMOB", type: "check", values: [true, true, true] },
-        { feature: "Gestão documentos", type: "check", values: [true, true, true] },
-        { feature: "Gestão imóveis próprios", type: "check", values: [true, true, true] },
-        { feature: "Gestão repasses", type: "check", values: [true, true, true] },
-        { feature: "Integração bancária", type: "check", values: [true, true, true] },
-        { feature: "Integração Imob/CRM", type: "check", values: [true, true, true] },
-        { feature: "Nota fiscal integrada", type: "check", values: [true, true, true] },
-        { feature: "Notificações contratos", type: "check", values: [true, true, true] },
-        { feature: "Régua de cobranças", type: "check", values: [true, true, true] },
-        { feature: "Relatórios gestão", type: "check", values: [true, true, true] },
-        { feature: "Repasse agrupado", type: "check", values: [true, true, true] },
-      ],
-    },
-    {
-      title: "Funcionalidades Avançadas",
-      rows: [
-        { feature: "Anexo comprovantes", type: "check", values: [false, true, true] },
-        { feature: "Área locatários", type: "check", values: [false, true, true] },
-        { feature: "Área proprietários", type: "check", values: [false, true, true] },
-        { feature: "CRM cobranças", type: "check", values: [false, true, true] },
-        { feature: "Gestão tickets", type: "check", values: [false, true, true] },
-        { feature: "Gestão carteira prop.", type: "check", values: [false, true, true] },
-        { feature: "Gestão vistorias", type: "check", values: [false, true, true] },
-        { feature: "Remessa despesas", type: "check", values: [false, true, true] },
-      ],
-    },
-    {
-      title: "Funcionalidades Exclusivas K\u00B2",
-      rows: [
-        { feature: "Cadastro filiais", type: "check", values: [false, false, true] },
-        { feature: "Gestão imóveis vagos", type: "check", values: [false, false, true] },
-        { feature: "Módulo vendas", type: "check", values: [false, false, true] },
-      ],
-    },
-    {
-      title: "Kenlo Seguros (comissão)",
-      rows: [
-        {
-          feature: "Comissão sobre prêmio",
-          type: "text",
-          values: ["35%", "40%", "45%"],
-        },
-      ],
-    },
-    {
-      title: "Custos Pós-Pago",
-      rows: [
-        {
-          feature: "Kenlo Pay - Boleto",
-          type: "complex",
-          values: [
-            "R$ 4,00/boleto",
-            "1-250: R$ 4,00\n251+: R$ 3,50",
-            "1-250: R$ 4,00\n251-500: R$ 3,50\n501+: R$ 3,00",
-          ],
-        },
-        {
-          feature: "Kenlo Pay - Split",
-          type: "complex",
-          values: [
-            "R$ 4,00/split",
-            "1-250: R$ 4,00\n251+: R$ 3,50",
-            "1-250: R$ 4,00\n251-500: R$ 3,50\n501+: R$ 3,00",
-          ],
-        },
-        {
-          feature: "Contratos adicionais",
-          type: "complex",
-          values: [
-            "R$ 3,00/contrato",
-            "1-250: R$ 3,00\n251+: R$ 2,50",
-            "1-250: R$ 3,00\n251-500: R$ 2,50\n501+: R$ 2,00",
-          ],
-        },
-      ],
-    },
-  ],
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+type PricingRow = {
+  feature: string;
+  type: string;
+  values: (string | boolean)[];
+  highlight?: boolean;
+  tooltip?: string;
 };
+
+type PricingSection = {
+  title: string;
+  rows: PricingRow[];
+};
+
+const PLAN_KEYS: PlanTier[] = ["prime", "k", "k2"];
+const PLAN_NAMES = PLAN_KEYS.map((k) => LOC_PLANS[k].name);
+
+function formatCurrency(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR")}`;
+}
+
+function formatTierLabel(tier: { from: number; to: number; price: number }): string {
+  if (tier.to === Infinity) return `${tier.from}+: ${formatCurrency(tier.price)}`;
+  return `${tier.from}-${tier.to}: ${formatCurrency(tier.price)}`;
+}
+
+function formatTierCompact(tiers: readonly { from: number; to: number; price: number }[]): string {
+  if (tiers.length === 1) {
+    return `${formatCurrency(tiers[0].price)}/un`;
+  }
+  return tiers
+    .map((t) => {
+      const range = t.to === Infinity ? `${t.from}+` : `${t.from}-${t.to}`;
+      return `${range}: ${formatCurrency(t.price)}`;
+    })
+    .join("\n");
+}
+
+function buildPricingData(): { plans: string[]; sections: PricingSection[] } {
+  const sections: PricingSection[] = [];
+
+  // --- Investimento ---
+  sections.push({
+    title: "Investimento",
+    rows: [
+      {
+        feature: "Licença mensal (plano anual)",
+        type: "price",
+        values: PLAN_KEYS.map((k) => `${formatCurrency(LOC_PLANS[k].annualPrice)}/mês`),
+        highlight: true,
+      },
+      {
+        feature: "Implantação",
+        type: "price",
+        values: PLAN_KEYS.map(() => formatCurrency(LOC_IMPLEMENTATION)),
+      },
+      {
+        feature: "Contratos inclusos",
+        type: "text",
+        values: PLAN_KEYS.map((k) => String(LOC_PLANS[k].includedContracts)),
+      },
+    ],
+  });
+
+  // --- Serviços Premium ---
+  sections.push({
+    title: "Serviços Premium",
+    rows: [
+      {
+        feature: PREMIUM_SERVICES.vipSupport.name,
+        type: "mixed",
+        values: PLAN_KEYS.map((k) =>
+          PREMIUM_SERVICES.vipSupport.includedIn[k] ? "Incluído" : "Opcional"
+        ),
+      },
+      {
+        feature: PREMIUM_SERVICES.csDedicado.name,
+        type: "mixed",
+        values: PLAN_KEYS.map((k) =>
+          PREMIUM_SERVICES.csDedicado.includedIn[k] ? "Incluído" : "Opcional"
+        ),
+      },
+    ],
+  });
+
+  // --- Funcionalidades Básicas ---
+  const basicFeatures = [
+    "Aditivo contratual", "Assinatura digital", "Cálculo caução / IR",
+    "Central notificações", "Checklist pendências", "Conciliação bancária",
+    "Controle inadimplência", "Dashboard completo", "Extrato DIMOB",
+    "Gestão documentos", "Gestão imóveis próprios", "Gestão repasses",
+    "Integração bancária", "Integração Imob/CRM", "Nota fiscal integrada",
+    "Notificações contratos", "Régua de cobranças", "Relatórios gestão",
+    "Repasse agrupado",
+  ];
+  sections.push({
+    title: "Funcionalidades Básicas (todos os planos)",
+    rows: basicFeatures.map((f) => ({
+      feature: f,
+      type: "check",
+      values: [true, true, true] as boolean[],
+    })),
+  });
+
+  // --- Funcionalidades Avançadas ---
+  const advancedFeatures = [
+    "Anexo comprovantes", "Área locatários", "Área proprietários",
+    "CRM cobranças", "Gestão tickets", "Gestão carteira prop.",
+    "Gestão vistorias", "Remessa despesas",
+  ];
+  sections.push({
+    title: "Funcionalidades Avançadas",
+    rows: advancedFeatures.map((f) => ({
+      feature: f,
+      type: "check",
+      values: [false, true, true] as boolean[],
+    })),
+  });
+
+  // --- Funcionalidades Exclusivas K² ---
+  const k2Features = [
+    "Cadastro filiais", "Gestão imóveis vagos", "Módulo vendas",
+  ];
+  sections.push({
+    title: "Funcionalidades Exclusivas K\u00B2",
+    rows: k2Features.map((f) => ({
+      feature: f,
+      type: "check",
+      values: [false, false, true] as boolean[],
+    })),
+  });
+
+  // --- Kenlo Seguros (comissão) ---
+  sections.push({
+    title: "Kenlo Seguros (comissão)",
+    rows: [
+      {
+        feature: "Comissão sobre prêmio",
+        type: "text",
+        values: PLAN_KEYS.map((k) => {
+          const rate = pricingValues.variableCosts.segurosCommission.tiers[k][0].rate;
+          return `${Math.round(rate * 100)}%`;
+        }),
+      },
+    ],
+  });
+
+  // --- Custos Pós-Pago ---
+  sections.push({
+    title: "Custos Pós-Pago",
+    rows: [
+      {
+        feature: "Kenlo Pay - Boleto",
+        type: "complex",
+        values: PLAN_KEYS.map((k) => formatTierCompact(PAY_BOLETOS[k])),
+      },
+      {
+        feature: "Kenlo Pay - Split",
+        type: "complex",
+        values: PLAN_KEYS.map((k) => formatTierCompact(PAY_SPLITS[k])),
+      },
+      {
+        feature: "Contratos adicionais",
+        type: "complex",
+        values: PLAN_KEYS.map((k) => formatTierCompact(LOC_ADDITIONAL_CONTRACTS[k])),
+      },
+    ],
+  });
+
+  return { plans: PLAN_NAMES, sections };
+}
+
+// --- Add-on comparison table data ---
+function buildAddonComparisonRows() {
+  const rows: {
+    name: string;
+    values: string[];
+    savings: string;
+  }[] = [];
+
+  // Contracts
+  const contractPrimePrice = LOC_ADDITIONAL_CONTRACTS.prime[0].price;
+  const contractK2LastTier = LOC_ADDITIONAL_CONTRACTS.k2[LOC_ADDITIONAL_CONTRACTS.k2.length - 1];
+  const contractSavings = Math.round(
+    ((contractPrimePrice - contractK2LastTier.price) / contractPrimePrice) * 100
+  );
+  rows.push({
+    name: "Contratos Adicionais",
+    values: PLAN_KEYS.map((k) => {
+      const tiers = LOC_ADDITIONAL_CONTRACTS[k];
+      if (tiers.length === 1) return `${formatCurrency(tiers[0].price)}/un`;
+      return tiers
+        .map((t: { from: number; to: number; price: number }) => {
+          const range = t.to === Infinity ? `${t.from}+` : `${t.from}-${t.to}`;
+          return `${formatCurrency(t.price)} (${range})`;
+        })
+        .join("\n");
+    }),
+    savings: `${contractSavings}%`,
+  });
+
+  // Boletos
+  const boletoPrimePrice = PAY_BOLETOS.prime[0].price;
+  const boletoK2LastTier = PAY_BOLETOS.k2[PAY_BOLETOS.k2.length - 1];
+  const boletoSavings = Math.round(
+    ((boletoPrimePrice - boletoK2LastTier.price) / boletoPrimePrice) * 100
+  );
+  rows.push({
+    name: "Boletos (Pay)",
+    values: PLAN_KEYS.map((k) => {
+      const tiers = PAY_BOLETOS[k];
+      if (tiers.length === 1) return `${formatCurrency(tiers[0].price)}/un`;
+      return tiers
+        .map((t: { from: number; to: number; price: number }) => {
+          const range = t.to === Infinity ? `${t.from}+` : `${t.from}-${t.to}`;
+          return `${formatCurrency(t.price)} (${range})`;
+        })
+        .join("\n");
+    }),
+    savings: `${boletoSavings}%`,
+  });
+
+  // Splits
+  const splitPrimePrice = PAY_SPLITS.prime[0].price;
+  const splitK2LastTier = PAY_SPLITS.k2[PAY_SPLITS.k2.length - 1];
+  const splitSavings = Math.round(
+    ((splitPrimePrice - splitK2LastTier.price) / splitPrimePrice) * 100
+  );
+  rows.push({
+    name: "Split (Pay)",
+    values: PLAN_KEYS.map((k) => {
+      const tiers = PAY_SPLITS[k];
+      if (tiers.length === 1) return `${formatCurrency(tiers[0].price)}/un`;
+      return tiers
+        .map((t: { from: number; to: number; price: number }) => {
+          const range = t.to === Infinity ? `${t.from}+` : `${t.from}-${t.to}`;
+          return `${formatCurrency(t.price)} (${range})`;
+        })
+        .join("\n");
+    }),
+    savings: `${splitSavings}%`,
+  });
+
+  return rows;
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -177,20 +296,18 @@ const highlights = [
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
 export default function LocacaoPage() {
   const { theadRef } = useStickyHeader();
-
-  type PricingRow = {
-    feature: string;
-    type: string;
-    values: (string | boolean)[];
-    highlight?: boolean;
-    tooltip?: string;
-  };
+  const pricingData = useMemo(() => buildPricingData(), []);
+  const addonRows = useMemo(() => buildAddonComparisonRows(), []);
 
   const renderValue = (row: PricingRow, planIndex: number) => {
     const value = row.values[planIndex];
-    
+
     if (row.type === "check") {
       return value ? (
         <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 mx-auto">
@@ -202,37 +319,46 @@ export default function LocacaoPage() {
         </div>
       );
     }
-    
+
     if (row.type === "mixed") {
       if (value === "Incluído") {
         return <span className="text-secondary font-medium">Incluído</span>;
       }
-      return <span className="text-muted-foreground text-sm">Opcional: pagar à parte</span>;
+      return (
+        <span className="text-muted-foreground text-sm">Opcional: pagar à parte</span>
+      );
     }
-    
+
     if (row.type === "complex") {
       const lines = (value as string).split("\n");
       return (
         <div className="text-xs space-y-0.5">
           {lines.map((line, i) => (
-            <div key={i} className={i === 0 ? "font-medium" : "text-muted-foreground"}>
+            <div
+              key={i}
+              className={i === 0 ? "font-medium" : "text-muted-foreground"}
+            >
               {line}
             </div>
           ))}
         </div>
       );
     }
-    
+
     if (row.type === "price" && row.highlight) {
       return (
         <span className="inline-flex items-center gap-1.5">
           <span className="font-bold text-foreground">{value}</span>
-          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">investimento</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">
+            investimento
+          </span>
         </span>
       );
     }
-    
-    return <span className={row.type === "price" ? "font-medium" : ""}>{value}</span>;
+
+    return (
+      <span className={row.type === "price" ? "font-medium" : ""}>{value}</span>
+    );
   };
 
   return (
@@ -240,22 +366,22 @@ export default function LocacaoPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-secondary/10 text-secondary hover:bg-secondary/20">
               ERP PARA LOCAÇÃO
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Kenlo Locação
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
-              ERP completo para gestão de contratos de locação. 
-              Cobrança, repasse e DIMOB automatizados.
+              ERP completo para gestão de contratos de locação. Cobrança,
+              repasse e DIMOB automatizados.
             </p>
-            
+
             <div className="flex flex-wrap gap-4 mb-8">
               <div className="flex items-center gap-2 text-sm">
                 <Home className="w-4 h-4 text-secondary" />
@@ -270,10 +396,13 @@ export default function LocacaoPage() {
                 <span>DIMOB automático</span>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
               <Link href="/calculadora">
-                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
+                <Button
+                  size="lg"
+                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2"
+                >
                   <Calculator className="w-5 h-5" />
                   Monte seu Plano
                 </Button>
@@ -300,7 +429,9 @@ export default function LocacaoPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
                 </div>
               </div>
             ))}
@@ -312,12 +443,15 @@ export default function LocacaoPage() {
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Planos e Preços</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Planos e Preços
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Escolha o plano ideal para o volume de contratos da sua administradora. Todos os valores são para pagamento anual.
+              Escolha o plano ideal para o volume de contratos da sua
+              administradora. Todos os valores são para pagamento anual.
             </p>
           </div>
-          
+
           {/* Pricing Table */}
           <div className="max-w-5xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
@@ -326,18 +460,29 @@ export default function LocacaoPage() {
                 <thead ref={theadRef} className="pricing-sticky-header">
                   <tr>
                     <th className="text-left p-4 bg-muted/30 rounded-tl-lg w-[40%]">
-                      <span className="text-sm font-medium text-muted-foreground">Categoria / Recurso</span>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Categoria / Recurso
+                      </span>
                     </th>
                     {pricingData.plans.map((plan, index) => (
-                      <th 
-                        key={plan} 
-                        className={`p-4 text-center bg-muted/30 ${index === pricingData.plans.length - 1 ? 'rounded-tr-lg' : ''}`}
+                      <th
+                        key={plan}
+                        className={`p-4 text-center bg-muted/30 ${
+                          index === pricingData.plans.length - 1
+                            ? "rounded-tr-lg"
+                            : ""
+                        }`}
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <span className={`kenlo-badge ${
-                            plan === "Prime" ? "kenlo-badge-prime" : 
-                            plan === "K" ? "kenlo-badge-k" : "kenlo-badge-k2"
-                          }`}>
+                          <span
+                            className={`kenlo-badge ${
+                              plan === "Prime"
+                                ? "kenlo-badge-prime"
+                                : plan === "K"
+                                ? "kenlo-badge-k"
+                                : "kenlo-badge-k2"
+                            }`}
+                          >
                             {plan}
                           </span>
                           {plan === "K" && (
@@ -350,72 +495,96 @@ export default function LocacaoPage() {
                     ))}
                   </tr>
                 </thead>
-                
+
                 <tbody>
                   {pricingData.sections.map((section, sectionIndex) => (
-                    <>
+                    <React.Fragment key={`section-${sectionIndex}`}>
                       {/* Section Header */}
-                      <tr key={`section-${sectionIndex}`}>
-                        <td 
-                          colSpan={4} 
+                      <tr>
+                        <td
+                          colSpan={4}
                           className="p-3 bg-secondary/5 font-semibold text-secondary border-t border-border/40"
                         >
                           {section.title}
                         </td>
                       </tr>
-                      
+
                       {/* Section Rows */}
                       {section.rows.map((row, rowIndex) => {
                         const typedRow = row as PricingRow;
                         return (
-                        <tr 
-                          key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/20 pricing-row"
-                        >
-                          <td className="p-4 text-sm pricing-table-text">
-                            <div className="flex items-center gap-2">
-                              {typedRow.feature}
-                              {typedRow.tooltip && (
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Info className="w-4 h-4 text-muted-foreground" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="text-xs max-w-[200px]">{typedRow.tooltip}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                          </td>
-                          {pricingData.plans.map((_, planIndex) => (
-                            <td 
-                              key={planIndex} 
-                              className="p-4 text-center text-sm pricing-table-text"
-                            >
-                              {renderValue(typedRow, planIndex)}
+                          <tr
+                            key={`row-${sectionIndex}-${rowIndex}`}
+                            className="border-b border-border/20 pricing-row"
+                          >
+                            <td className="p-4 text-sm pricing-table-text">
+                              <div className="flex items-center gap-2">
+                                {typedRow.feature}
+                                {typedRow.tooltip && (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Info className="w-4 h-4 text-muted-foreground" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs max-w-[200px]">
+                                        {typedRow.tooltip}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
                             </td>
-                          ))}
-                        </tr>
-                      );})}
-                    </>
+                            {pricingData.plans.map((_, planIndex) => (
+                              <td
+                                key={planIndex}
+                                className="p-4 text-center text-sm pricing-table-text"
+                              >
+                                {renderValue(typedRow, planIndex)}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
-            
+
             {/* Example calculation */}
             <div className="mt-6 p-4 bg-muted/30 rounded-lg">
               <p className="text-sm text-muted-foreground">
-                <strong>Exemplo de cálculo (Plano K):</strong> Se a administradora tiver 300 contratos adicionais, 
-                paga 200 × R$ 3,00 + 100 × R$ 2,50 = <strong>R$ 850/mês</strong> em contratos adicionais.
+                <strong>Exemplo de cálculo (Plano K):</strong> Se a
+                administradora tiver 300 contratos adicionais, paga{" "}
+                {LOC_ADDITIONAL_CONTRACTS.k.length > 1
+                  ? `${LOC_ADDITIONAL_CONTRACTS.k[0].to} × ${formatCurrency(
+                      LOC_ADDITIONAL_CONTRACTS.k[0].price
+                    )} + ${300 - LOC_ADDITIONAL_CONTRACTS.k[0].to} × ${formatCurrency(
+                      LOC_ADDITIONAL_CONTRACTS.k[1].price
+                    )}`
+                  : `300 × ${formatCurrency(LOC_ADDITIONAL_CONTRACTS.k[0].price)}`}
+                {" = "}
+                <strong>
+                  {formatCurrency(
+                    Math.min(300, LOC_ADDITIONAL_CONTRACTS.k[0].to) *
+                      LOC_ADDITIONAL_CONTRACTS.k[0].price +
+                      Math.max(0, 300 - LOC_ADDITIONAL_CONTRACTS.k[0].to) *
+                        (LOC_ADDITIONAL_CONTRACTS.k[1]?.price ?? 0)
+                  )}
+                  /mês
+                </strong>{" "}
+                em contratos adicionais.
               </p>
             </div>
           </div>
-          
+
           {/* CTA */}
           <div className="text-center mt-12">
             <Link href="/calculadora">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
+              <Button
+                size="lg"
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2"
+              >
                 <Calculator className="w-5 h-5" />
                 Simular Cotação
               </Button>
@@ -428,53 +597,78 @@ export default function LocacaoPage() {
       <section className="py-12">
         <div className="container">
           <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Comparação de Planos - Add-ons LOC</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              Comparação de Planos - Add-ons LOC
+            </h2>
             <p className="text-sm text-muted-foreground">
-              Veja como cada plano impacta o custo dos add-ons específicos do Kenlo Locação
+              Veja como cada plano impacta o custo dos add-ons específicos do
+              Kenlo Locação
             </p>
           </div>
-          
+
           <div className="max-w-4xl mx-auto">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-sm">
                 <thead>
                   <tr className="border-b-2 border-border">
-                    <th className="text-left py-2 px-3 font-semibold">Add-on</th>
-                    <th className="text-center py-2 px-3 font-semibold text-secondary">Prime</th>
-                    <th className="text-center py-2 px-3 font-semibold text-blue-600">K</th>
-                    <th className="text-center py-2 px-3 font-semibold text-purple-600">K\u00B2</th>
-                    <th className="text-center py-2 px-3 font-semibold text-green-600">Economia</th>
+                    <th className="text-left py-2 px-3 font-semibold">
+                      Add-on
+                    </th>
+                    <th className="text-center py-2 px-3 font-semibold text-secondary">
+                      Prime
+                    </th>
+                    <th className="text-center py-2 px-3 font-semibold text-blue-600">
+                      K
+                    </th>
+                    <th className="text-center py-2 px-3 font-semibold text-purple-600">
+                      K²
+                    </th>
+                    <th className="text-center py-2 px-3 font-semibold text-green-600">
+                      Economia
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-border/40">
-                    <td className="py-2 px-3 font-medium">Contratos Adicionais</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 3,00/un</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 3,00 (1-250)<br/>R$ 2,50 (251+)</td>
-                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 3,00 (1-250)<br/>R$ 2,50 (251-500)<br/>R$ 2,00 (501+)</td>
-                    <td className="py-2 px-3 text-center text-green-600 font-semibold">33%</td>
-                  </tr>
-                  <tr className="border-b border-border/40">
-                    <td className="py-2 px-3 font-medium">Boletos (Pay)</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 4,00/un</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 4,00 (1-250)<br/>R$ 3,50 (251+)</td>
-                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 4,00 (1-250)<br/>R$ 3,50 (251-500)<br/>R$ 3,00 (501+)</td>
-                    <td className="py-2 px-3 text-center text-green-600 font-semibold">25%</td>
-                  </tr>
-                  <tr className="border-b border-border/40">
-                    <td className="py-2 px-3 font-medium">Split (Pay)</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 4,00/un</td>
-                    <td className="py-2 px-3 text-center text-xs">R$ 4,00 (1-250)<br/>R$ 3,50 (251+)</td>
-                    <td className="py-2 px-3 text-center text-xs font-semibold">R$ 4,00 (1-250)<br/>R$ 3,50 (251-500)<br/>R$ 3,00 (501+)</td>
-                    <td className="py-2 px-3 text-center text-green-600 font-semibold">25%</td>
-                  </tr>
+                  {addonRows.map((row, idx) => (
+                    <tr key={idx} className="border-b border-border/40">
+                      <td className="py-2 px-3 font-medium pricing-table-text">
+                        {row.name}
+                      </td>
+                      {row.values.map((val, vi) => (
+                        <td
+                          key={vi}
+                          className={`py-2 px-3 text-center text-xs pricing-table-text ${
+                            vi === 2 ? "font-semibold" : ""
+                          }`}
+                        >
+                          {val.split("\n").map((line, li) => (
+                            <React.Fragment key={li}>
+                              {li > 0 && <br />}
+                              {line}
+                            </React.Fragment>
+                          ))}
+                        </td>
+                      ))}
+                      <td
+                        className={`py-2 px-3 text-center font-semibold ${
+                          row.savings === "—"
+                            ? "text-gray-400"
+                            : "text-green-600"
+                        }`}
+                      >
+                        {row.savings}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-            
+
             <div className="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
               <p className="text-xs text-blue-900">
-                <strong>Insight:</strong> Planos superiores (K ou K\u00B2) reduzem significativamente o custo por unidade. Quanto mais você digitaliza, menor o impacto dos add-ons.
+                <strong>Insight:</strong> Planos superiores (K ou K²) reduzem
+                significativamente o custo por unidade. Quanto mais você
+                digitaliza, menor o impacto dos add-ons.
               </p>
             </div>
           </div>
@@ -489,7 +683,7 @@ export default function LocacaoPage() {
               Potencialize com Add-ons
             </h2>
             <p className="text-muted-foreground mb-6">
-              Adicione Inteligência, Assinatura e Cash para maximizar receita. 
+              Adicione Inteligência, Assinatura e Cash para maximizar receita.
               Combine em um Kombo e ganhe até 20% de desconto!
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -521,17 +715,21 @@ export default function LocacaoPage() {
         <div className="container">
           <div className="relative rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-secondary to-secondary/80 opacity-90" />
-            
+
             <div className="relative px-8 py-12 md:px-16 md:py-16 text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
                 Economize com Kombos
               </h2>
               <p className="text-white/80 max-w-2xl mx-auto mb-6">
-                Combine Kenlo Locação com add-ons e ganhe até 20% de desconto. 
-                O Kombo Elite inclui todos os produtos e serviços premium!
+                Combine Kenlo Locação com add-ons e ganhe até 20% de desconto. O
+                Kombo Elite inclui todos os produtos e serviços premium!
               </p>
               <Link href="/kombos">
-                <Button size="lg" variant="secondary" className="gap-2 bg-white text-secondary hover:bg-white/90">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="gap-2 bg-white text-secondary hover:bg-white/90"
+                >
                   Explorar Kombos
                   <ArrowRight className="w-5 h-5" />
                 </Button>

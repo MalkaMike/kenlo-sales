@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,28 +9,65 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SEGUROS_COMMISSION } from "@shared/pricing-config";
+import pricingValues from "@shared/pricing-values.json";
 
-// Pricing data based on the official table
-const pricingData = {
-  sections: [
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+const seguros = pricingValues.addons.seguros;
+
+// Commission percentages per plan (already divided by 100 in pricing-config)
+const commissionPct = {
+  prime: `${(pricingValues.variableCosts.segurosCommission.tiers.prime[0].rate * 100).toFixed(0)}%`,
+  k: `${(pricingValues.variableCosts.segurosCommission.tiers.k[0].rate * 100).toFixed(0)}%`,
+  k2: `${(pricingValues.variableCosts.segurosCommission.tiers.k2[0].rate * 100).toFixed(0)}%`,
+};
+
+// Approximate revenue per contract (based on ~35% commission on average premium ≈ R$10)
+const approxRevenuePerContract = 10;
+
+function buildPricingData() {
+  return [
     {
       title: "Investimento",
       rows: [
         {
           feature: "Licença mensal",
-          value: "Sem custo",
+          value: seguros.annualPrice === 0 ? "Sem custo" : `R$ ${seguros.annualPrice}`,
           highlight: true,
           tooltip: "Não há mensalidade para ativar o Kenlo Seguros",
         },
         {
           feature: "Implantação (única)",
-          value: "Sem custo",
+          value: seguros.implementation === 0 ? "Sem custo" : `R$ ${seguros.implementation}`,
           tooltip: "Implantação gratuita para todos os clientes",
         },
         {
           feature: "Produtos atendidos",
-          value: "LOCAÇÃO",
+          value: seguros.availability.map((p: string) => p.toUpperCase()).join(" e "),
           tooltip: "Funciona exclusivamente com Kenlo Locação",
+        },
+      ],
+    },
+    {
+      title: "Comissão por Plano",
+      rows: [
+        {
+          feature: "Comissão Prime",
+          value: commissionPct.prime,
+          tooltip: "Percentual de comissão sobre o prêmio do seguro vendido no plano Prime",
+        },
+        {
+          feature: "Comissão K",
+          value: commissionPct.k,
+          tooltip: "Percentual de comissão sobre o prêmio do seguro vendido no plano K",
+        },
+        {
+          feature: "Comissão K²",
+          value: commissionPct.k2,
+          tooltip: "Percentual de comissão sobre o prêmio do seguro vendido no plano K²",
         },
       ],
     },
@@ -37,10 +75,10 @@ const pricingData = {
       title: "Receita para a Imobiliária",
       rows: [
         {
-          feature: "Receita por contrato/mês",
-          value: "R$ 10,00",
+          feature: "Receita estimada por contrato/mês",
+          value: `A partir de R$ ${approxRevenuePerContract}`,
           highlight: false,
-          tooltip: "Receita fixa por contrato ativo com seguro",
+          tooltip: "Estimativa baseada na comissão de 35% sobre o prêmio médio do seguro",
         },
         {
           feature: "Custo para a imobiliária",
@@ -55,33 +93,37 @@ const pricingData = {
       rows: [
         {
           feature: "Seguro embutido no boleto",
-          value: true,
+          value: true as string | boolean,
           tooltip: "O valor do seguro é adicionado automaticamente ao boleto do inquilino",
         },
         {
           feature: "Ativação automática com contrato",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Seguro ativado automaticamente quando o contrato de locação é criado",
         },
         {
           feature: "Cobertura completa",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Cobertura contra incêndio, danos elétricos, vendaval e mais",
         },
         {
           feature: "Gestão centralizada no painel",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Acompanhe todos os seguros ativos em um único painel",
         },
         {
           feature: "Relatórios de receita",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Visualize a receita gerada por seguros mês a mês",
         },
       ],
     },
-  ],
-};
+  ];
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -92,7 +134,7 @@ const highlights = [
   {
     icon: DollarSign,
     title: "Receita Passiva",
-    description: "Ganhe R$ 10 por contrato/mês sem nenhum custo ou trabalho adicional",
+    description: `Ganhe a partir de R$ ${approxRevenuePerContract} por contrato/mês sem nenhum custo ou trabalho adicional`,
   },
   {
     icon: Zap,
@@ -110,7 +152,7 @@ const useCases = [
   {
     icon: Receipt,
     title: "Receita sem Esforço",
-    description: "O seguro é cobrado automaticamente no boleto do inquilino. Você não precisa fazer nada — a receita de R$ 10/contrato/mês cai na sua conta sem trabalho adicional.",
+    description: `O seguro é cobrado automaticamente no boleto do inquilino. Você não precisa fazer nada — a receita de ~R$ ${approxRevenuePerContract}/contrato/mês cai na sua conta sem trabalho adicional.`,
   },
   {
     icon: Users,
@@ -125,12 +167,18 @@ const useCases = [
   {
     icon: TrendingUp,
     title: "Escala Linear",
-    description: "Quanto mais contratos, mais receita. Com 500 contratos ativos, são R$ 5.000/mês de receita passiva. Com 1.000, R$ 10.000/mês. Sem teto.",
+    description: `Quanto mais contratos, mais receita. Com 500 contratos ativos, são ~R$ ${500 * approxRevenuePerContract}/mês de receita passiva. Com 1.000, ~R$ ${(1000 * approxRevenuePerContract).toLocaleString("pt-BR")}/mês. Sem teto.`,
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
 export default function SegurosPage() {
   const { theadRef } = useStickyHeader();
+  const pricingData = useMemo(() => buildPricingData(), []);
+
   const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
     if (typeof row.value === "boolean") {
       return row.value ? (
@@ -143,7 +191,7 @@ export default function SegurosPage() {
         <span className="text-muted-foreground">—</span>
       );
     }
-    
+
     if (row.highlight) {
       return (
         <span className="inline-flex items-center gap-1.5">
@@ -152,7 +200,7 @@ export default function SegurosPage() {
         </span>
       );
     }
-    
+
     return <span className="font-medium">{row.value}</span>;
   };
 
@@ -161,22 +209,22 @@ export default function SegurosPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-secondary/10 text-secondary hover:bg-secondary/20">
               ADD-ON • LOCAÇÃO
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Kenlo Seguros
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
               Seguros embutido no boleto do inquilino.
-              Ganhe <span className="font-semibold text-foreground">R$ 10 por contrato/mês</span> sem esforço — receita passiva garantida.
+              Ganhe <span className="font-semibold text-foreground">a partir de R$ {approxRevenuePerContract} por contrato/mês</span> sem esforço — receita passiva garantida.
             </p>
-            
+
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <Shield className="w-4 h-4 mr-1" />
@@ -184,14 +232,14 @@ export default function SegurosPage() {
               </Badge>
               <Badge variant="outline" className="text-sm py-1">
                 <DollarSign className="w-4 h-4 mr-1" />
-                R$ 10/contrato/mês
+                Comissão {commissionPct.prime} a {commissionPct.k2}
               </Badge>
               <Badge variant="outline" className="text-sm py-1">
                 <Zap className="w-4 h-4 mr-1" />
                 Ativação automática
               </Badge>
             </div>
-            
+
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
@@ -238,7 +286,7 @@ export default function SegurosPage() {
               Veja como o Kenlo Seguros gera receita passiva e protege sua carteira
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
               <div key={index} className="p-6 rounded-xl border border-border hover:border-secondary/30 hover:shadow-md transition-all">
@@ -259,10 +307,10 @@ export default function SegurosPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              <span className="font-semibold text-foreground">Sem custo para a imobiliária.</span> O seguro é cobrado do inquilino e você ganha R$ 10/contrato/mês.
+              <span className="font-semibold text-foreground">Sem custo para a imobiliária.</span> O seguro é cobrado do inquilino e você ganha comissão sobre o prêmio.
             </p>
           </div>
-          
+
           <div className="max-w-2xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[400px]">
@@ -280,9 +328,9 @@ export default function SegurosPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {pricingData.sections.map((section, sectionIndex) => (
-                    <>
-                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                  {pricingData.map((section, sectionIndex) => (
+                    <React.Fragment key={`section-${sectionIndex}`}>
+                      <tr className="bg-muted/30">
                         <td
                           colSpan={2}
                           className="py-3 px-4 font-semibold text-foreground"
@@ -317,7 +365,7 @@ export default function SegurosPage() {
                           </td>
                         </tr>
                       ))}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
@@ -332,25 +380,21 @@ export default function SegurosPage() {
                 Simulação de Receita
               </h4>
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center py-2 border-b border-green-200">
-                  <span className="text-muted-foreground">100 contratos ativos</span>
-                  <span className="font-semibold text-green-700">R$ 1.000/mês</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-green-200">
-                  <span className="text-muted-foreground">300 contratos ativos</span>
-                  <span className="font-semibold text-green-700">R$ 3.000/mês</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-green-200">
-                  <span className="text-muted-foreground">500 contratos ativos</span>
-                  <span className="font-semibold text-green-700">R$ 5.000/mês</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-muted-foreground">1.000 contratos ativos</span>
-                  <span className="font-bold text-lg text-green-700">R$ 10.000/mês</span>
-                </div>
+                {[100, 300, 500, 1000].map((contracts, i) => (
+                  <div
+                    key={contracts}
+                    className={`flex justify-between items-center py-2 ${i < 3 ? "border-b border-green-200" : ""}`}
+                  >
+                    <span className="text-muted-foreground">{contracts.toLocaleString("pt-BR")} contratos ativos</span>
+                    <span className={`font-semibold text-green-700 ${contracts === 1000 ? "text-lg font-bold" : ""}`}>
+                      ~R$ {(contracts * approxRevenuePerContract).toLocaleString("pt-BR")}/mês
+                    </span>
+                  </div>
+                ))}
               </div>
               <p className="text-xs text-muted-foreground mt-4">
-                Receita anual com 500 contratos: <strong>R$ 60.000</strong> — sem custo, sem esforço.
+                Receita anual estimada com 500 contratos: <strong>~R$ {(500 * approxRevenuePerContract * 12).toLocaleString("pt-BR")}</strong> — sem custo, sem esforço.
+                Valores aproximados baseados em comissão de {commissionPct.prime} sobre prêmio médio.
               </p>
             </div>
           </div>
@@ -366,7 +410,7 @@ export default function SegurosPage() {
               Gere receita passiva com seguros
             </h2>
             <p className="text-muted-foreground mb-6">
-              Adicione Kenlo Seguros e ganhe R$ 10 por contrato/mês.
+              Adicione Kenlo Seguros e ganhe a partir de R$ {approxRevenuePerContract} por contrato/mês.
               Combine com outros add-ons nos Kombos e economize ainda mais.
             </p>
             <div className="flex gap-4 justify-center">

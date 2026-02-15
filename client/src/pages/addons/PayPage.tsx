@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,26 +9,42 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LOC_PLANS, PAY_BOLETOS, PAY_SPLITS } from "@shared/pricing-config";
 
-// Pricing data based on the official table
-const pricingData = {
-  plans: ["Prime", "K", "K\u00B2"],
-  sections: [
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+type PlanKey = "prime" | "k" | "k2";
+const planKeys: PlanKey[] = ["prime", "k", "k2"];
+const planLabels: Record<PlanKey, string> = { prime: "Prime", k: "K", k2: "K\u00B2" };
+
+function formatCurrency(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
+}
+
+function tierLabel(tiers: readonly { from: number; to: number; price: number }[]): string {
+  if (tiers.length === 1) return `${formatCurrency(tiers[0].price)} fixo`;
+  return "Por faixas";
+}
+
+function buildPricingData() {
+  return [
     {
       title: "Boletos",
       rows: [
         {
           feature: "Boletos inclusos/mês",
-          prime: "2",
-          k: "5",
-          k2: "10",
+          prime: String(LOC_PLANS.prime.includedBoletos),
+          k: String(LOC_PLANS.k.includedBoletos),
+          k2: String(LOC_PLANS.k2.includedBoletos),
           tooltip: "Boletos inclusos na mensalidade do plano Locação",
         },
         {
           feature: "Preço por boleto adicional",
-          prime: "R$ 4,00 fixo",
-          k: "Por faixas",
-          k2: "Por faixas",
+          prime: tierLabel(PAY_BOLETOS.prime),
+          k: tierLabel(PAY_BOLETOS.k),
+          k2: tierLabel(PAY_BOLETOS.k2),
           tooltip: "Custo por boleto emitido além dos inclusos",
         },
       ],
@@ -37,16 +54,16 @@ const pricingData = {
       rows: [
         {
           feature: "Splits inclusos/mês",
-          prime: "2",
-          k: "5",
-          k2: "10",
+          prime: String(LOC_PLANS.prime.includedSplits),
+          k: String(LOC_PLANS.k.includedSplits),
+          k2: String(LOC_PLANS.k2.includedSplits),
           tooltip: "Splits inclusos na mensalidade do plano Locação",
         },
         {
           feature: "Preço por split adicional",
-          prime: "R$ 4,00 fixo",
-          k: "Por faixas",
-          k2: "Por faixas",
+          prime: tierLabel(PAY_SPLITS.prime),
+          k: tierLabel(PAY_SPLITS.k),
+          k2: tierLabel(PAY_SPLITS.k2),
           tooltip: "Custo por split realizado além dos inclusos",
         },
       ],
@@ -54,73 +71,49 @@ const pricingData = {
     {
       title: "Funcionalidades",
       rows: [
-        {
-          feature: "Boleto com baixa automática",
-          prime: true,
-          k: true,
-          k2: true,
-        },
-        {
-          feature: "Split automático para proprietário",
-          prime: true,
-          k: true,
-          k2: true,
-        },
-        {
-          feature: "PIX integrado",
-          prime: true,
-          k: true,
-          k2: true,
-        },
+        { feature: "Boleto com baixa automática", prime: true, k: true, k2: true },
+        { feature: "Split automático para proprietário", prime: true, k: true, k2: true },
+        { feature: "PIX integrado", prime: true, k: true, k2: true },
         {
           feature: "Cobrança de taxa do inquilino",
-          prime: true,
-          k: true,
-          k2: true,
+          prime: true, k: true, k2: true,
           tooltip: "Cobre R$ 5,00 do inquilino e gere receita de R$ 1,00 a R$ 2,00 por boleto",
         },
-        {
-          feature: "Relatórios financeiros",
-          prime: true,
-          k: true,
-          k2: true,
-        },
-        {
-          feature: "Conciliação automática",
-          prime: true,
-          k: true,
-          k2: true,
-        },
+        { feature: "Relatórios financeiros", prime: true, k: true, k2: true },
+        { feature: "Conciliação automática", prime: true, k: true, k2: true },
       ],
     },
-  ],
-};
+  ];
+}
 
-// Tier pricing details for K and K\u00B2
-const tierPricing = {
-  boleto: {
-    k: [
-      { range: "1º ao 250º", price: "R$ 4,00" },
-      { range: "A partir do 251º", price: "R$ 3,50" },
-    ],
-    k2: [
-      { range: "1º ao 250º", price: "R$ 4,00" },
-      { range: "251º ao 500º", price: "R$ 3,50" },
-      { range: "A partir do 501º", price: "R$ 3,00" },
-    ],
-  },
-  split: {
-    k: [
-      { range: "1º ao 250º", price: "R$ 4,00" },
-      { range: "A partir do 251º", price: "R$ 3,50" },
-    ],
-    k2: [
-      { range: "1º ao 250º", price: "R$ 4,00" },
-      { range: "251º ao 500º", price: "R$ 3,50" },
-      { range: "A partir do 501º", price: "R$ 3,00" },
-    ],
-  },
-};
+function buildTierPricing() {
+  const formatTiers = (tiers: readonly { from: number; to: number; price: number }[]) =>
+    tiers.map((t) => ({
+      range: t.to === Infinity
+        ? `A partir do ${t.from}º`
+        : t.from === 1
+          ? `1º ao ${t.to}º`
+          : `${t.from}º ao ${t.to}º`,
+      price: formatCurrency(t.price),
+    }));
+
+  return {
+    boleto: {
+      prime: formatTiers(PAY_BOLETOS.prime),
+      k: formatTiers(PAY_BOLETOS.k),
+      k2: formatTiers(PAY_BOLETOS.k2),
+    },
+    split: {
+      prime: formatTiers(PAY_SPLITS.prime),
+      k: formatTiers(PAY_SPLITS.k),
+      k2: formatTiers(PAY_SPLITS.k2),
+    },
+  };
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -168,9 +161,16 @@ const useCases = [
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
 export default function PayPage() {
   const { theadRef } = useStickyHeader();
-  const renderValue = (value: string | boolean, tooltip?: string) => {
+  const pricingData = useMemo(() => buildPricingData(), []);
+  const tierPricing = useMemo(() => buildTierPricing(), []);
+
+  const renderValue = (value: string | boolean) => {
     if (typeof value === "boolean") {
       return value ? (
         <div className="flex items-center justify-center">
@@ -186,7 +186,7 @@ export default function PayPage() {
         </div>
       );
     }
-    
+
     return <span className="font-medium text-sm">{value}</span>;
   };
 
@@ -195,22 +195,22 @@ export default function PayPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-secondary/10 text-secondary hover:bg-secondary/20">
               ADD-ON • EXCLUSIVO LOCAÇÃO
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Kenlo Pay
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
               Boleto e Split digital embutido na plataforma.
               Inquilino paga, <span className="font-semibold text-foreground">dinheiro cai na conta certa</span> — zero trabalho manual, conciliação automática.
             </p>
-            
+
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <Receipt className="w-4 h-4 mr-1" />
@@ -225,7 +225,7 @@ export default function PayPage() {
                 PIX integrado
               </Badge>
             </div>
-            
+
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
@@ -272,7 +272,7 @@ export default function PayPage() {
               Veja como o Kenlo Pay transforma a gestão financeira da sua carteira de locação
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
               <div key={index} className="p-6 rounded-xl border border-border hover:border-secondary/30 hover:shadow-md transition-all">
@@ -296,7 +296,7 @@ export default function PayPage() {
               O Kenlo Pay é incluído no Kenlo Locação. Os preços variam conforme o plano contratado.
             </p>
           </div>
-          
+
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <table className="w-full border-collapse min-w-[600px]">
               <thead ref={theadRef} className="pricing-sticky-header">
@@ -304,26 +304,26 @@ export default function PayPage() {
                   <th className="text-left py-4 px-4 font-medium text-muted-foreground min-w-[200px]">
                     Categoria / Recurso
                   </th>
-                  {pricingData.plans.map((plan) => (
-                    <th key={plan} className="text-center py-4 px-4 min-w-[150px]">
+                  {planKeys.map((key) => (
+                    <th key={key} className="text-center py-4 px-4 min-w-[150px]">
                       <div className="flex flex-col items-center">
                         <CreditCard className={`w-8 h-8 mb-2 ${
-                          plan === "Prime" ? "text-muted-foreground" :
-                          plan === "K" ? "text-primary" : "text-secondary"
+                          key === "prime" ? "text-muted-foreground" :
+                          key === "k" ? "text-primary" : "text-secondary"
                         }`} />
                         <span className={`font-bold text-lg ${
-                          plan === "K" ? "text-primary" : 
-                          plan === "K\u00B2" ? "text-secondary" : ""
-                        }`}>{plan}</span>
+                          key === "k" ? "text-primary" :
+                          key === "k2" ? "text-secondary" : ""
+                        }`}>{planLabels[key]}</span>
                       </div>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {pricingData.sections.map((section, sectionIndex) => (
-                  <>
-                    <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                {pricingData.map((section, sectionIndex) => (
+                  <React.Fragment key={`section-${sectionIndex}`}>
+                    <tr className="bg-muted/30">
                       <td
                         colSpan={4}
                         className="py-3 px-4 font-semibold text-foreground"
@@ -339,7 +339,7 @@ export default function PayPage() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
                             <span>{row.feature}</span>
-                            {row.tooltip && (
+                            {"tooltip" in row && row.tooltip && (
                               <Tooltip>
                                 <TooltipTrigger>
                                   <Info className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help" />
@@ -362,7 +362,7 @@ export default function PayPage() {
                         </td>
                       </tr>
                     ))}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -376,10 +376,10 @@ export default function PayPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Detalhes de Preços por Faixas</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Nos planos K e K\u00B2, os preços diminuem conforme o volume de transações aumenta.
+              Nos planos K e K², os preços diminuem conforme o volume de transações aumenta.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Boleto Pricing */}
             <div className="bg-background rounded-xl border border-border p-6">
@@ -389,45 +389,35 @@ export default function PayPage() {
                 </div>
                 <h3 className="text-xl font-bold">Boletos Adicionais</h3>
               </div>
-              
+
               <div className="space-y-6">
-                {/* Prime */}
-                <div>
-                  <h4 className="font-semibold text-muted-foreground mb-2">Prime</h4>
-                  <div className="bg-muted/30 rounded-lg p-3">
-                    <span className="font-medium">R$ 4,00 por boleto</span>
-                    <span className="text-sm text-muted-foreground ml-2">(preço fixo)</span>
+                {planKeys.map((key) => (
+                  <div key={key}>
+                    <h4 className={`font-semibold mb-2 ${
+                      key === "prime" ? "text-muted-foreground" :
+                      key === "k" ? "text-primary" : "text-secondary"
+                    }`}>{key === "prime" ? "Prime" : `Plano ${planLabels[key]}`}</h4>
+                    <div className="space-y-2">
+                      {tierPricing.boleto[key].map((tier, index) => (
+                        <div key={index} className={`flex justify-between items-center bg-muted/30 rounded-lg p-3`}>
+                          <span className="text-sm">{tier.range} boleto</span>
+                          <span className={`font-medium ${
+                            key === "prime" ? "" :
+                            key === "k" ? "text-primary" : "text-secondary"
+                          }`}>
+                            {tier.price}
+                            {tierPricing.boleto[key].length === 1 && (
+                              <span className="text-sm text-muted-foreground ml-2">(preço fixo)</span>
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                
-                {/* K */}
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Plano K</h4>
-                  <div className="space-y-2">
-                    {tierPricing.boleto.k.map((tier, index) => (
-                      <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
-                        <span className="text-sm">{tier.range} boleto</span>
-                        <span className="font-medium text-primary">{tier.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* K\u00B2 */}
-                <div>
-                  <h4 className="font-semibold text-secondary mb-2">Plano K\u00B2</h4>
-                  <div className="space-y-2">
-                    {tierPricing.boleto.k2.map((tier, index) => (
-                      <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
-                        <span className="text-sm">{tier.range} boleto</span>
-                        <span className="font-medium text-secondary">{tier.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            
+
             {/* Split Pricing */}
             <div className="bg-background rounded-xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -436,81 +426,89 @@ export default function PayPage() {
                 </div>
                 <h3 className="text-xl font-bold">Splits Adicionais</h3>
               </div>
-              
+
               <div className="space-y-6">
-                {/* Prime */}
-                <div>
-                  <h4 className="font-semibold text-muted-foreground mb-2">Prime</h4>
-                  <div className="bg-muted/30 rounded-lg p-3">
-                    <span className="font-medium">R$ 4,00 por split</span>
-                    <span className="text-sm text-muted-foreground ml-2">(preço fixo)</span>
+                {planKeys.map((key) => (
+                  <div key={key}>
+                    <h4 className={`font-semibold mb-2 ${
+                      key === "prime" ? "text-muted-foreground" :
+                      key === "k" ? "text-primary" : "text-secondary"
+                    }`}>{key === "prime" ? "Prime" : `Plano ${planLabels[key]}`}</h4>
+                    <div className="space-y-2">
+                      {tierPricing.split[key].map((tier, index) => (
+                        <div key={index} className={`flex justify-between items-center bg-muted/30 rounded-lg p-3`}>
+                          <span className="text-sm">{tier.range} split</span>
+                          <span className={`font-medium ${
+                            key === "prime" ? "" :
+                            key === "k" ? "text-primary" : "text-secondary"
+                          }`}>
+                            {tier.price}
+                            {tierPricing.split[key].length === 1 && (
+                              <span className="text-sm text-muted-foreground ml-2">(preço fixo)</span>
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                
-                {/* K */}
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Plano K</h4>
-                  <div className="space-y-2">
-                    {tierPricing.split.k.map((tier, index) => (
-                      <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
-                        <span className="text-sm">{tier.range} split</span>
-                        <span className="font-medium text-primary">{tier.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* K\u00B2 */}
-                <div>
-                  <h4 className="font-semibold text-secondary mb-2">Plano K\u00B2</h4>
-                  <div className="space-y-2">
-                    {tierPricing.split.k2.map((tier, index) => (
-                      <div key={index} className="flex justify-between items-center bg-muted/30 rounded-lg p-3">
-                        <span className="text-sm">{tier.range} split</span>
-                        <span className="font-medium text-secondary">{tier.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
-          
+
           {/* Example Calculation */}
           <div className="max-w-2xl mx-auto mt-12">
             <div className="bg-secondary/10 rounded-xl p-6 border border-secondary/20">
               <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-secondary" />
-                Exemplo de Cálculo (Plano K\u00B2)
+                Exemplo de Cálculo (Plano K²)
               </h4>
               <p className="text-muted-foreground mb-4">
-                Uma imobiliária com 600 boletos/mês no plano K\u00B2:
+                Uma imobiliária com 600 boletos/mês no plano K²:
               </p>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>10 boletos inclusos</span>
-                  <span className="font-medium text-secondary">R$ 0,00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>250 boletos × R$ 4,00</span>
-                  <span>R$ 1.000,00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>250 boletos × R$ 3,50</span>
-                  <span>R$ 875,00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>90 boletos × R$ 3,00</span>
-                  <span>R$ 270,00</span>
-                </div>
-                <div className="flex justify-between pt-2 border-t border-secondary/30 font-bold">
-                  <span>Total (590 boletos adicionais)</span>
-                  <span className="text-secondary">R$ 2.145,00</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span>Custo médio por boleto</span>
-                  <span>R$ 3,64</span>
-                </div>
+                {(() => {
+                  const included = LOC_PLANS.k2.includedBoletos;
+                  const additional = 600 - included;
+                  const tiers = PAY_BOLETOS.k2;
+                  let remaining = additional;
+                  let total = 0;
+                  const lines: { label: string; amount: number }[] = [];
+
+                  if (included > 0) {
+                    lines.push({ label: `${included} boletos inclusos`, amount: 0 });
+                  }
+
+                  for (const tier of tiers) {
+                    if (remaining <= 0) break;
+                    const tierSize = tier.to === Infinity ? remaining : Math.min(remaining, tier.to - tier.from + 1);
+                    const cost = tierSize * tier.price;
+                    total += cost;
+                    lines.push({ label: `${tierSize} boletos × ${formatCurrency(tier.price)}`, amount: cost });
+                    remaining -= tierSize;
+                  }
+
+                  return (
+                    <>
+                      {lines.map((line, i) => (
+                        <div key={i} className="flex justify-between">
+                          <span>{line.label}</span>
+                          <span className={line.amount === 0 ? "font-medium text-secondary" : ""}>
+                            {formatCurrency(line.amount)}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between pt-2 border-t border-secondary/30 font-bold">
+                        <span>Total ({additional} boletos adicionais)</span>
+                        <span className="text-secondary">{formatCurrency(total)}</span>
+                      </div>
+                      <div className="flex justify-between text-muted-foreground">
+                        <span>Custo médio por boleto</span>
+                        <span>{formatCurrency(Math.round((total / additional) * 100) / 100)}</span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>

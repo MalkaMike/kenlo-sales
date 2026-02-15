@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,26 +9,38 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ADDONS } from "@shared/pricing-config";
 
-// Pricing data based on the official table
-const pricingData = {
-  sections: [
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+const intel = ADDONS.inteligencia;
+
+function formatCurrency(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR")}`;
+}
+
+function buildPricingData() {
+  return [
     {
       title: "Investimento",
       rows: [
         {
           feature: "Licença mensal (plano anual)",
-          value: "R$ 297/mês",
+          value: `${formatCurrency(intel.annualPrice)}/mês`,
           highlight: true,
+          tooltip: undefined as string | undefined,
         },
         {
           feature: "Implantação/Treinamento (única)",
-          value: "R$ 497",
+          value: formatCurrency(intel.implementation),
+          tooltip: undefined as string | undefined,
         },
         {
           feature: "Produtos atendidos",
-          value: "IMOB e LOC",
-          tooltip: "Funciona com Kenlo IMOB e/ou Kenlo Locação",
+          value: intel.availableFor.map((p) => p.toUpperCase()).join(" e "),
+          tooltip: `Funciona com Kenlo ${intel.availableFor.map((p) => p.toUpperCase()).join(" e/ou Kenlo ")}`,
         },
       ],
     },
@@ -36,32 +49,37 @@ const pricingData = {
       rows: [
         {
           feature: "Relatórios básicos de performance",
-          value: true,
+          value: true as string | boolean,
+          tooltip: undefined as string | undefined,
         },
         {
           feature: "Preço por m² (IMOB)",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Análise de preço por metro quadrado para vendas",
         },
         {
           feature: "Relatórios por safra (IMOB)",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Análise de performance por período de captação",
         },
         {
           feature: "Comparação com o mercado (IMOB)",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Benchmark com dados do mercado imobiliário",
         },
         {
           feature: "Explorer",
-          value: true,
+          value: true as string | boolean,
           tooltip: "Ferramenta de exploração de dados avançada",
         },
       ],
     },
-  ],
-};
+  ];
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -86,8 +104,14 @@ const highlights = [
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
 export default function InteligenciaPage() {
   const { theadRef } = useStickyHeader();
+  const pricingData = useMemo(() => buildPricingData(), []);
+
   const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
     if (typeof row.value === "boolean") {
       return row.value ? (
@@ -100,7 +124,7 @@ export default function InteligenciaPage() {
         <span className="text-muted-foreground">—</span>
       );
     }
-    
+
     if (row.highlight) {
       return (
         <span className="inline-flex items-center gap-1.5">
@@ -109,7 +133,7 @@ export default function InteligenciaPage() {
         </span>
       );
     }
-    
+
     return <span className="font-medium">{row.value}</span>;
   };
 
@@ -118,22 +142,22 @@ export default function InteligenciaPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              ADD-ON • IMOB + LOCAÇÃO
+              ADD-ON • {intel.availableFor.map((p) => p.toUpperCase()).join(" + ")}
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Kenlo Inteligência
+              {intel.name}
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
               Powered by <span className="font-semibold text-foreground">Google Looker Pro</span> — usuários ilimitados para toda sua equipe.
               A ferramenta indispensável para quem quer fazer gestão com dados reais da sua imobiliária.
             </p>
-            
+
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <BarChart3 className="w-4 h-4 mr-1" />
@@ -148,7 +172,7 @@ export default function InteligenciaPage() {
                 Crie seus próprios relatórios
               </Badge>
             </div>
-            
+
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
@@ -192,10 +216,10 @@ export default function InteligenciaPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Valor único com <span className="font-semibold text-foreground">usuários ilimitados</span>. Funciona com Kenlo IMOB e/ou Kenlo Locação.
+              Valor único com <span className="font-semibold text-foreground">usuários ilimitados</span>. Funciona com Kenlo {intel.availableFor.map((p) => p.toUpperCase()).join(" e/ou Kenlo ")}.
             </p>
           </div>
-          
+
           <div className="max-w-2xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[400px]">
@@ -207,15 +231,15 @@ export default function InteligenciaPage() {
                     <th className="text-center py-4 px-4 min-w-[200px]">
                       <div className="flex flex-col items-center">
                         <Brain className="w-8 h-8 text-primary mb-2" />
-                        <span className="font-bold text-lg">Inteligência</span>
+                        <span className="font-bold text-lg">{intel.name}</span>
                       </div>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pricingData.sections.map((section, sectionIndex) => (
-                    <>
-                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                  {pricingData.map((section, sectionIndex) => (
+                    <React.Fragment key={`section-${sectionIndex}`}>
+                      <tr className="bg-muted/30">
                         <td
                           colSpan={2}
                           className="py-3 px-4 font-semibold text-foreground"
@@ -250,7 +274,7 @@ export default function InteligenciaPage() {
                           </td>
                         </tr>
                       ))}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
@@ -268,7 +292,7 @@ export default function InteligenciaPage() {
               Economize com Kombos
             </h2>
             <p className="text-muted-foreground mb-6">
-              Combine Kenlo Inteligência com outros produtos e ganhe até 20% de desconto.
+              Combine {intel.name} com outros produtos e ganhe até 20% de desconto.
               O Kombo Imob Pro inclui Inteligência + Leads + Assinatura!
             </p>
             <div className="flex gap-4 justify-center">

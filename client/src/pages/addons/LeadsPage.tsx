@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,108 +9,145 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ADDONS } from "@shared/pricing-config";
 
-// Pricing data based on the official table
-const pricingData = {
-  sections: [
-    {
-      title: "Investimento",
-      rows: [
-        {
-          feature: "Licença mensal (plano anual)",
-          value: "R$ 497/mês",
-          highlight: true,
-          tooltip: undefined,
-        },
-        {
-          feature: "Implantação/Treinamento (única)",
-          value: "R$ 497",
-          tooltip: undefined,
-        },
-        {
-          feature: "Produtos atendidos",
-          value: "IMOB",
-          tooltip: "Funciona exclusivamente com Kenlo IMOB",
-        },
-      ],
-    },
-    {
-      title: "Opções de Atendimento",
-      rows: [
-        {
-          feature: "Sem WhatsApp",
-          value: "Leads distribuídos ilimitados",
-          tooltip: "Distribuição automática de leads sem limite de quantidade",
-        },
-        {
-          feature: "Com WhatsApp",
-          value: "100 leads/mês via WhatsApp",
-          tooltip: "Pré-atendimento automatizado via WhatsApp incluído na carência",
-        },
-      ],
-    },
-    {
-      title: "Leads Adicionais via WhatsApp (pós-pago)",
-      rows: [
-        {
-          feature: "1 a 200 leads",
-          value: "R$ 1,50/lead",
-          tooltip: undefined,
-        },
-        {
-          feature: "201 a 350 leads",
-          value: "R$ 1,30/lead",
-          tooltip: undefined,
-        },
-        {
-          feature: "351 a 1.000 leads",
-          value: "R$ 1,10/lead",
-          tooltip: undefined,
-        },
-        {
-          feature: "Acima de 1.000 leads",
-          value: "R$ 0,90/lead",
-          tooltip: undefined,
-        },
-      ],
-    },
-    {
-      title: "Funcionalidades Incluídas",
-      rows: [
-        {
-          feature: "Distribuição automática de leads",
-          value: true,
-          tooltip: "Leads distribuídos por região, especialidade ou rodízio",
-        },
-        {
-          feature: "Redistribuição por tempo de resposta",
-          value: true,
-          tooltip: "Lead não atendido em 5 min é redistribuído automaticamente",
-        },
-        {
-          feature: "Integração com portais imobiliários",
-          value: true,
-          tooltip: "Captação automática de leads dos principais portais",
-        },
-        {
-          feature: "Integração com redes sociais",
-          value: true,
-          tooltip: "Leads vindos de Facebook, Instagram e Google Ads",
-        },
-        {
-          feature: "Qualificação por score",
-          value: true,
-          tooltip: "Score baseado em comportamento e interesse do lead",
-        },
-        {
-          feature: "Integração com IA externa",
-          value: true,
-          tooltip: "Parceiro homologado (Ex: Lais, Harry). Não requer WhatsApp.",
-        },
-      ],
-    },
-  ],
-};
+// ============================================================================
+// DYNAMIC PRICING DATA BUILDER
+// ============================================================================
+
+const leads = ADDONS.leads;
+
+function formatCurrency(value: number): string {
+  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
+}
+
+function buildPricingData() {
+  const sections = [];
+
+  // --- Investimento ---
+  sections.push({
+    title: "Investimento",
+    rows: [
+      {
+        feature: "Licença mensal (plano anual)",
+        value: `${formatCurrency(leads.annualPrice)}/mês`,
+        highlight: true,
+        tooltip: undefined as string | undefined,
+      },
+      {
+        feature: "Implantação/Treinamento (única)",
+        value: formatCurrency(leads.implementation),
+        tooltip: undefined as string | undefined,
+      },
+      {
+        feature: "Produtos atendidos",
+        value: leads.availableFor.map((p) => p.toUpperCase()).join(" + "),
+        tooltip: `Funciona exclusivamente com Kenlo ${leads.availableFor.map((p) => p.toUpperCase()).join(" e ")}`,
+      },
+    ],
+  });
+
+  // --- Opções de Atendimento ---
+  sections.push({
+    title: "Opções de Atendimento",
+    rows: [
+      {
+        feature: "Sem WhatsApp",
+        value: "Leads distribuídos ilimitados",
+        tooltip: "Distribuição automática de leads sem limite de quantidade",
+      },
+      {
+        feature: "Com WhatsApp",
+        value: `${leads.includedWhatsAppLeads} leads/mês via WhatsApp`,
+        tooltip: "Pré-atendimento automatizado via WhatsApp incluído na carência",
+      },
+    ],
+  });
+
+  // --- Leads Adicionais via WhatsApp (pós-pago) ---
+  const additionalRows = leads.additionalLeadsTiers.map(
+    (tier: { from: number; to: number; price: number }) => {
+      const rangeLabel =
+        tier.to === Infinity
+          ? `Acima de ${(tier.from - 1).toLocaleString("pt-BR")} leads`
+          : `${tier.from} a ${tier.to.toLocaleString("pt-BR")} leads`;
+      return {
+        feature: rangeLabel,
+        value: `${formatCurrency(tier.price)}/lead`,
+        tooltip: undefined as string | undefined,
+      };
+    }
+  );
+  sections.push({
+    title: "Leads Adicionais via WhatsApp (pós-pago)",
+    rows: additionalRows,
+  });
+
+  // --- Funcionalidades Incluídas ---
+  sections.push({
+    title: "Funcionalidades Incluídas",
+    rows: [
+      {
+        feature: "Distribuição automática de leads",
+        value: true as string | boolean,
+        tooltip: "Leads distribuídos por região, especialidade ou rodízio",
+      },
+      {
+        feature: "Redistribuição por tempo de resposta",
+        value: true as string | boolean,
+        tooltip: "Lead não atendido em 5 min é redistribuído automaticamente",
+      },
+      {
+        feature: "Integração com portais imobiliários",
+        value: true as string | boolean,
+        tooltip: "Captação automática de leads dos principais portais",
+      },
+      {
+        feature: "Integração com redes sociais",
+        value: true as string | boolean,
+        tooltip: "Leads vindos de Facebook, Instagram e Google Ads",
+      },
+      {
+        feature: "Qualificação por score",
+        value: true as string | boolean,
+        tooltip: "Score baseado em comportamento e interesse do lead",
+      },
+      {
+        feature: "Integração com IA externa",
+        value: true as string | boolean,
+        tooltip: "Parceiro homologado (Ex: Lais, Harry). Não requer WhatsApp.",
+      },
+    ],
+  });
+
+  return sections;
+}
+
+function buildExampleCalculation(): string {
+  const tiers = leads.additionalLeadsTiers;
+  if (tiers.length < 3) return "";
+
+  // Build an example with 500 leads
+  const total = 500;
+  let remaining = total;
+  let cost = 0;
+  const parts: string[] = [];
+
+  for (const tier of tiers) {
+    if (remaining <= 0) break;
+    const tierSize =
+      tier.to === Infinity ? remaining : Math.min(remaining, tier.to - tier.from + 1);
+    cost += tierSize * tier.price;
+    parts.push(`${tierSize} × ${formatCurrency(tier.price)}`);
+    remaining -= tierSize;
+  }
+
+  return `Se a imobiliária tiver ${total} leads adicionais/mês via WhatsApp, paga ${parts.join(" + ")} = R$ ${cost.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mês em leads adicionais.`;
+}
+
+// ============================================================================
+// STATIC DATA
+// ============================================================================
 
 const highlights = [
   {
@@ -130,7 +168,7 @@ const highlights = [
   {
     icon: MessageSquare,
     title: "WhatsApp Integrado",
-    description: "Pré-atendimento automatizado via WhatsApp com 100 leads/mês incluídos",
+    description: `Pré-atendimento automatizado via WhatsApp com ${leads.includedWhatsAppLeads} leads/mês incluídos`,
   },
 ];
 
@@ -157,8 +195,15 @@ const useCases = [
   },
 ];
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
 export default function LeadsPage() {
   const { theadRef } = useStickyHeader();
+  const pricingData = useMemo(() => buildPricingData(), []);
+  const exampleCalc = useMemo(() => buildExampleCalculation(), []);
+
   const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
     if (typeof row.value === "boolean") {
       return row.value ? (
@@ -171,7 +216,7 @@ export default function LeadsPage() {
         <span className="text-muted-foreground">—</span>
       );
     }
-    
+
     if (row.highlight) {
       return (
         <span className="inline-flex items-center gap-1.5">
@@ -180,7 +225,7 @@ export default function LeadsPage() {
         </span>
       );
     }
-    
+
     return <span className="font-medium">{row.value}</span>;
   };
 
@@ -189,22 +234,22 @@ export default function LeadsPage() {
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-        
+
         <div className="container relative">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              ADD-ON • IMOB
+              ADD-ON • {leads.availableFor.map((p) => p.toUpperCase()).join(" + ")}
             </Badge>
-            
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Kenlo Leads
+              {leads.name}
             </h1>
-            
+
             <p className="text-xl text-muted-foreground mb-6">
               Gestão automatizada de leads com distribuição inteligente.
               Atenda em segundos, nunca perca uma oportunidade — <span className="font-semibold text-foreground">zero leads perdidos, máxima conversão</span>.
             </p>
-            
+
             <div className="flex flex-wrap gap-3 mb-8">
               <Badge variant="outline" className="text-sm py-1">
                 <Zap className="w-4 h-4 mr-1" />
@@ -219,7 +264,7 @@ export default function LeadsPage() {
                 Integração com IA
               </Badge>
             </div>
-            
+
             <div className="flex gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
@@ -263,10 +308,10 @@ export default function LeadsPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja como o Kenlo Leads transforma a captação e conversão da sua imobiliária
+              Veja como o {leads.name} transforma a captação e conversão da sua imobiliária
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
               <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
@@ -290,7 +335,7 @@ export default function LeadsPage() {
               Modelo transparente com preços por faixas. <span className="font-semibold text-foreground">Quanto mais leads, menor o custo por unidade.</span>
             </p>
           </div>
-          
+
           <div className="max-w-2xl mx-auto">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <table className="w-full border-collapse min-w-[400px]">
@@ -302,15 +347,15 @@ export default function LeadsPage() {
                     <th className="text-center py-4 px-4 min-w-[200px]">
                       <div className="flex flex-col items-center">
                         <Users className="w-8 h-8 text-primary mb-2" />
-                        <span className="font-bold text-lg">Leads</span>
+                        <span className="font-bold text-lg">{leads.name}</span>
                       </div>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pricingData.sections.map((section, sectionIndex) => (
-                    <>
-                      <tr key={`section-${sectionIndex}`} className="bg-muted/30">
+                  {pricingData.map((section, sectionIndex) => (
+                    <React.Fragment key={`section-${sectionIndex}`}>
+                      <tr className="bg-muted/30">
                         <td
                           colSpan={2}
                           className="py-3 px-4 font-semibold text-foreground"
@@ -345,18 +390,19 @@ export default function LeadsPage() {
                           </td>
                         </tr>
                       ))}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
-            
-            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Exemplo de cálculo:</strong> Se a imobiliária tiver 500 leads adicionais/mês via WhatsApp, 
-                paga 200 × R$ 2,00 + 150 × R$ 1,80 + 150 × R$ 1,50 = <strong>R$ 895/mês</strong> em leads adicionais.
-              </p>
-            </div>
+
+            {exampleCalc && (
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Exemplo de cálculo:</strong> {exampleCalc}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -370,7 +416,7 @@ export default function LeadsPage() {
               Economize com Kombos
             </h2>
             <p className="text-muted-foreground mb-6">
-              Combine Kenlo Leads com outros produtos e ganhe até 20% de desconto.
+              Combine {leads.name} com outros produtos e ganhe até 20% de desconto.
               O Kombo Imob Start inclui IMOB + Leads + Assinatura com 10% OFF!
             </p>
             <div className="flex gap-4 justify-center">

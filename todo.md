@@ -4520,3 +4520,14 @@
 
 - [x] Refactor KombosPage comparison table to pull data dynamically from pricing-config.ts / pricing-values.json
 - [x] Update kenlo-products-complete-reference.md to reflect dynamic KombosPage refactor
+
+## Dynamic Pricing Refactor — Product & Add-on Pages
+
+- [x] Refactor ImobPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor LocacaoPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor LeadsPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor InteligenciaPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor AssinaturaPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor PayPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor SegurosPage to pull pricing/features from pricing-values.json and pricing-config.ts
+- [x] Refactor CashPage to pull pricing/features from pricing-values.json and pricing-config.ts
