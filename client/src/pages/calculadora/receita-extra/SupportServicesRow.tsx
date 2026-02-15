@@ -46,7 +46,7 @@ export function SupportServicesRow() {
           -{formatCurrency(totalSupportCost)}/mês
         </span>
         <span className="text-xs text-gray-500 italic">
-          VIP R$97 | CS R$297
+          VIP R${Pricing.getVipSupportPrice()} | CS R${Pricing.getCSDedicadoPrice()}
         </span>
       </div>
     </div>

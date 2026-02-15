@@ -254,6 +254,12 @@ export const SEGUROS_COMMISSION = {
   k2: pricingValues.variableCosts.segurosCommission.tiers.k2[0].rate / 100,
 } as const;
 
+/**
+ * Estimated revenue per contract/month from Seguros (~35% of average premium)
+ */
+export const SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT: number =
+  pricingValues.variableCosts.segurosCommission.estimatedRevenuePerContract;
+
 // ============================================================================
 // ADD-ONS (from BLOCO C)
 // ============================================================================

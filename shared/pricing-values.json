@@ -572,6 +572,8 @@
           }
         ]
       },
+      "estimatedRevenuePerContract": 10,
+      "_noteEstimated": "Estimativa de receita por contrato/mês (~35% de um prêmio médio de ~R$28)",
       "_note": "Comissão sobre valor do seguro vendido"
     }
   },

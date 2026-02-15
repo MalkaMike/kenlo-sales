@@ -19,6 +19,7 @@ import {
   calculateAdditionalUsersCost,
   toNum,
 } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 type KomboDefinition = (typeof KOMBOS)[keyof typeof KOMBOS] | null;
 
@@ -141,7 +142,7 @@ export function usePricing({
 
   const calculateImobPlanCost = useCallback((plan: PlanTier, users: number): number => {
     const baseCost = PLAN_ANNUAL_PRICES[plan];
-    const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
+    const included = Pricing.getIncludedQuantity("imob", plan);
     const additional = Math.max(0, users - included);
     let additionalCost = 0;
     if (additional > 0) {
@@ -152,28 +153,18 @@ export function usePricing({
 
   const calculateLocPlanCost = useCallback((plan: PlanTier, contracts: number): number => {
     const baseCost = PLAN_ANNUAL_PRICES[plan];
-    const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
+    const included = Pricing.getIncludedQuantity("loc", plan);
     const additional = Math.max(0, contracts - included);
     let additionalCost = 0;
     if (additional > 0) {
-      if (plan === 'prime') additionalCost = additional * 3;
-      else if (plan === 'k') {
-        const tier1 = Math.min(additional, 250);
-        const tier2 = Math.max(0, additional - 250);
-        additionalCost = (tier1 * 3) + (tier2 * 2.5);
-      } else {
-        const tier1 = Math.min(additional, 250);
-        const tier2 = Math.min(Math.max(0, additional - 250), 250);
-        const tier3 = Math.max(0, additional - 500);
-        additionalCost = (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
-      }
+      additionalCost = Pricing.calculateAdditionalContractsCost(plan, additional);
     }
     return baseCost + additionalCost;
   }, []);
 
   const calculateTotalImplementation = useCallback((withKombo: boolean = false) => {
     if (withKombo && komboInfo) {
-      return 1497;
+      return Pricing.getImplementationCost("imob");
     }
     const items = getLineItems();
     return items.reduce((sum, item) => sum + (item.implantation || 0), 0);
@@ -208,7 +199,7 @@ export function usePricing({
 
     if ((product === 'imob' || product === 'both') && prepayAdditionalUsers) {
       const plan = imobPlan;
-      const included = plan === 'prime' ? 2 : plan === 'k' ? 5 : 10;
+      const included = Pricing.getIncludedQuantity("imob", plan);
       const additional = Math.max(0, toNum(metrics.imobUsers) - included);
       if (additional > 0) {
         const monthlyCost = calculateAdditionalUsersCost(plan, additional);
@@ -218,21 +209,10 @@ export function usePricing({
 
     if ((product === 'loc' || product === 'both') && prepayAdditionalContracts) {
       const plan = locPlan;
-      const included = plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
+      const included = Pricing.getIncludedQuantity("loc", plan);
       const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
       if (additional > 0) {
-        let monthlyCost = 0;
-        if (plan === 'prime') monthlyCost = additional * 3;
-        else if (plan === 'k') {
-          const tier1 = Math.min(additional, 250);
-          const tier2 = Math.max(0, additional - 250);
-          monthlyCost = (tier1 * 3) + (tier2 * 2.5);
-        } else {
-          const tier1 = Math.min(additional, 250);
-          const tier2 = Math.min(Math.max(0, additional - 250), 250);
-          const tier3 = Math.max(0, additional - 500);
-          monthlyCost = (tier1 * 3) + (tier2 * 2.5) + (tier3 * 2);
-        }
+        const monthlyCost = Pricing.calculateAdditionalContractsCost(plan, additional);
         contractsPrepayment = monthlyCost * months;
       }
     }

@@ -10,25 +10,14 @@ import { Check, TrendingUp } from "lucide-react";
 import { useCalc } from "../CalculadoraContext";
 import { type PlanTier, toNum, parseIntegerInput, fmtNum, fmtPrice } from "../types";
 import { TierBreakdown } from "./TierBreakdown";
-
-const IMOB_ADDITIONAL_USERS: Record<PlanTier, Array<{ from: number; to: number; price: number }>> = {
-  prime: [{ from: 1, to: Infinity, price: 57 }],
-  k: [
-    { from: 1, to: 5, price: 47 },
-    { from: 6, to: Infinity, price: 37 },
-  ],
-  k2: [
-    { from: 1, to: 10, price: 37 },
-    { from: 11, to: 100, price: 27 },
-    { from: 101, to: Infinity, price: 17 },
-  ],
-};
+import * as Pricing from "@/utils/pricing";
+import { IMOB_ADDITIONAL_USERS } from "@shared/pricing-config";
 
 export function ImobCard() {
   const { product, metrics, setMetrics, imobPlan, setImobPlan } = useCalc();
   if (product !== "imob" && product !== "both") return null;
 
-  const included = imobPlan === 'prime' ? 2 : imobPlan === 'k' ? 7 : 15;
+  const included = Pricing.getIncludedQuantity("imob", imobPlan);
   const totalUsers = toNum(metrics.imobUsers);
   const additional = Math.max(0, totalUsers - included);
 

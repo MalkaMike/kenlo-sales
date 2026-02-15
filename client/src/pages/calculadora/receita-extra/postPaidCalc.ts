@@ -82,7 +82,7 @@ export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBr
 
   // WhatsApp Leads - uses shared tier helper
   if (addons.leads && metrics.wantsWhatsApp) {
-    const included = 100; // getIncludedWhatsAppLeads
+    const included = Pricing.getIncludedWhatsAppLeads();
     const extra = Math.max(0, toNum(metrics.leadsPerMonth) - included);
     if (extra > 0) {
       whatsApp = calcWhatsAppTierCost(extra);
@@ -91,7 +91,7 @@ export function calculatePostPaidBreakdown(input: PostPaidCalcInput): PostPaidBr
 
   // Assinaturas Digitais - uses shared tier helper
   if (addons.assinatura) {
-    const included = 15; // getIncludedSignatures
+    const included = Pricing.getIncludedSignatures();
     let totalSig = 0;
     if (product === "imob") totalSig = toNum(metrics.closingsPerMonth);
     else if (product === "loc") totalSig = toNum(metrics.newContractsPerMonth);
@@ -173,7 +173,7 @@ export function calculateRevenueBreakdown(input: PostPaidCalcInput): RevenueBrea
     }
   }
   if (addons.seguros && (product === "loc" || product === "both")) {
-    segurosRevenue = toNum(metrics.contractsUnderManagement) * 10;
+    segurosRevenue = toNum(metrics.contractsUnderManagement) * Pricing.getSegurosEstimatedRevenuePerContract();
   }
 
   return {

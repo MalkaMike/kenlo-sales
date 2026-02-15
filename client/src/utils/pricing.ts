@@ -17,6 +17,7 @@ import {
   PAY_BOLETOS,
   PAY_SPLITS,
   SEGUROS_COMMISSION,
+  SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT,
   ADDONS,
   PREMIUM_SERVICES,
   KOMBOS,
@@ -195,6 +196,62 @@ export function getSegurosCommission(tier: CalculatorPlanTier): number {
 }
 
 /**
+ * Get estimated revenue per contract/month from Seguros
+ */
+export function getSegurosEstimatedRevenuePerContract(): number {
+  return SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT;
+}
+
+/**
+ * Get tier pricing array for additional users (IMOB)
+ */
+export function getAdditionalUsersTiers(tier: CalculatorPlanTier) {
+  return IMOB_ADDITIONAL_USERS[tier];
+}
+
+/**
+ * Get tier pricing array for additional contracts (LOC)
+ */
+export function getAdditionalContractsTiers(tier: CalculatorPlanTier) {
+  return LOC_ADDITIONAL_CONTRACTS[tier];
+}
+
+/**
+ * Get tier pricing array for boletos (Pay)
+ */
+export function getBoletosTiers(tier: CalculatorPlanTier) {
+  return PAY_BOLETOS[tier];
+}
+
+/**
+ * Get tier pricing array for splits (Pay)
+ */
+export function getSplitsTiers(tier: CalculatorPlanTier) {
+  return PAY_SPLITS[tier];
+}
+
+/**
+ * Get tier pricing array for additional signatures (Assinaturas)
+ */
+export function getAdditionalSignaturesTiers() {
+  return ADDONS.assinaturas.additionalSignaturesTiers;
+}
+
+/**
+ * Get tier pricing array for additional WhatsApp leads
+ */
+export function getAdditionalWhatsAppLeadsTiers() {
+  return ADDONS.leads.additionalLeadsTiers;
+}
+
+/**
+ * Get biometric validation price
+ */
+export function getBiometricValidationPrice(): number {
+  return ADDONS.assinaturas.biometricValidation;
+}
+
+/**
  * Calculate cost of additional signatures (Assinaturas)
  */
 export function calculateAdditionalSignaturesCost(additionalSignatures: number): number {
@@ -227,6 +284,41 @@ export function getIncludedWhatsAppLeads(): number {
  */
 export function calculateAdditionalWhatsAppLeadsCost(additionalLeads: number): number {
   return calculateTieredPrice(additionalLeads, ADDONS.leads.additionalLeadsTiers);
+}
+
+/**
+ * Get base price for additional users (first tier) for a plan
+ */
+export function getAdditionalUserBasePrice(tier: CalculatorPlanTier): number {
+  return IMOB_ADDITIONAL_USERS[tier][0].price;
+}
+
+/**
+ * Get base price for additional contracts (first tier)
+ */
+export function getAdditionalContractBasePrice(): number {
+  return LOC_ADDITIONAL_CONTRACTS.prime[0].price;
+}
+
+/**
+ * Get base price for boletos (first tier)
+ */
+export function getBoletoBasePrice(): number {
+  return PAY_BOLETOS.prime[0].price;
+}
+
+/**
+ * Get base price for signatures (first tier)
+ */
+export function getSignatureBasePrice(): number {
+  return ADDONS.assinaturas.additionalSignaturesTiers[0].price;
+}
+
+/**
+ * Get base price for WhatsApp leads (first tier)
+ */
+export function getWhatsAppBasePrice(): number {
+  return ADDONS.leads.additionalLeadsTiers[0].price;
 }
 
 // ============================================================================
@@ -397,5 +489,5 @@ export const IMPLEMENTATION_COSTS = {
   inteligencia: ADDONS.inteligencia.implementation,
   assinatura: ADDONS.assinaturas.implementation,
   cash: 0,
-  combo: 1497, // Fixed for all Kombos
+  combo: IMOB_IMPLEMENTATION, // Kombo implementation = single product implementation
 };

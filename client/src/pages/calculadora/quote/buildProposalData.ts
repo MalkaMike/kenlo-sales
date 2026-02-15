@@ -209,7 +209,7 @@ export function buildProposalData(input: ProposalDataInput): Record<string, any>
       (metrics.imobDedicatedCS || metrics.locDedicatedCS),
     vipPrice:
       !hasPremiumIncluded && (metrics.imobVipSupport || metrics.locVipSupport)
-        ? 97
+        ? Pricing.getVipSupportPrice()
         : 0,
     csPrice:
       !hasPremiumIncluded &&

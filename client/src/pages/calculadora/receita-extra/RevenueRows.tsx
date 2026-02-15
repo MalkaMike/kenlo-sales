@@ -4,6 +4,7 @@
 
 import { useCalc } from "../CalculadoraContext";
 import { toNum, formatCurrency, fmtNum, fmtPrice } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 export function BoletosSplitRevenueRow() {
   const { product, addons, metrics } = useCalc();
@@ -53,13 +54,14 @@ export function SegurosRevenueRow() {
     return null;
   }
 
-  const revenue = toNum(metrics.contractsUnderManagement) * 10;
+  const revenuePerContract = Pricing.getSegurosEstimatedRevenuePerContract();
+  const revenue = toNum(metrics.contractsUnderManagement) * revenuePerContract;
 
   return (
     <div className="flex justify-between items-start py-4 border-b border-gray-200">
       <div className="flex flex-col">
         <span className="text-sm font-medium text-slate-900">Seguros</span>
-        <span className="text-xs text-gray-500 italic">R$10 por contrato/mês</span>
+        <span className="text-xs text-gray-500 italic">R${revenuePerContract} por contrato/mês</span>
       </div>
       <div className="flex flex-col items-end">
         <span className="text-sm font-semibold text-green-600">

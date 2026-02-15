@@ -11,6 +11,7 @@ import {
   type BusinessNatureState,
   toNum,
 } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 interface UseAutoEffectsParams {
   product: ProductSelection;
@@ -48,8 +49,10 @@ export function useAutoEffects({
     if (product === "imob" || product === "both") {
       const users = toNum(metrics.imobUsers);
       let recommended: PlanTier = 'prime';
-      if (users >= 16) recommended = 'k2';
-      else if (users >= 5) recommended = 'k';
+      const k2Threshold = Pricing.getIncludedQuantity("imob", "k2") + 1;
+      const kThreshold = Pricing.getIncludedQuantity("imob", "k");
+      if (users >= k2Threshold) recommended = 'k2';
+      else if (users >= kThreshold) recommended = 'k';
       else recommended = 'prime';
       setRecommendedImobPlan(recommended);
       setImobPlan(recommended);
@@ -57,8 +60,10 @@ export function useAutoEffects({
     if (product === "loc" || product === "both") {
       const contracts = toNum(metrics.contractsUnderManagement);
       let recommended: PlanTier = 'prime';
-      if (contracts >= 500) recommended = 'k2';
-      else if (contracts >= 200) recommended = 'k';
+      const k2Threshold = Pricing.getIncludedQuantity("loc", "k2");
+      const kThreshold = Pricing.getIncludedQuantity("loc", "k") + 50;
+      if (contracts >= k2Threshold) recommended = 'k2';
+      else if (contracts >= kThreshold) recommended = 'k';
       else recommended = 'prime';
       setRecommendedLocPlan(recommended);
       setLocPlan(recommended);

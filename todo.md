@@ -4531,3 +4531,9 @@
 - [x] Refactor PayPage to pull pricing/features from pricing-values.json and pricing-config.ts
 - [x] Refactor SegurosPage to pull pricing/features from pricing-values.json and pricing-config.ts
 - [x] Refactor CashPage to pull pricing/features from pricing-values.json and pricing-config.ts
+
+## Calculator Page Dynamic Pricing Refactor
+
+- [x] Audit Calculator page for all hardcoded pricing values
+- [x] Refactor Calculator to use shared pricing-config.ts and pricing-values.json
+- [x] Verify all tests pass after refactor

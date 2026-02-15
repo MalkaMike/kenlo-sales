@@ -10,25 +10,14 @@ import { Check, Key } from "lucide-react";
 import { useCalc } from "../CalculadoraContext";
 import { type PlanTier, toNum, parseIntegerInput } from "../types";
 import { TierBreakdown } from "./TierBreakdown";
-
-const LOC_ADDITIONAL_CONTRACTS: Record<PlanTier, Array<{ from: number; to: number; price: number }>> = {
-  prime: [{ from: 1, to: Infinity, price: 3 }],
-  k: [
-    { from: 1, to: 250, price: 3 },
-    { from: 251, to: Infinity, price: 2.5 },
-  ],
-  k2: [
-    { from: 1, to: 250, price: 3 },
-    { from: 251, to: 500, price: 2.5 },
-    { from: 501, to: Infinity, price: 2 },
-  ],
-};
+import * as Pricing from "@/utils/pricing";
+import { LOC_ADDITIONAL_CONTRACTS } from "@shared/pricing-config";
 
 export function LocCard() {
   const { product, metrics, setMetrics, locPlan, setLocPlan } = useCalc();
   if (product !== "loc" && product !== "both") return null;
 
-  const included = locPlan === 'prime' ? 100 : locPlan === 'k' ? 150 : 500;
+  const included = Pricing.getIncludedQuantity("loc", locPlan);
   const totalContracts = toNum(metrics.contractsUnderManagement);
   const additional = Math.max(0, totalContracts - included);
 

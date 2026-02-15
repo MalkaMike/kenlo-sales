@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
 import { useCalc } from "../CalculadoraContext";
 import { type PlanTier } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 export function BenefitsSection() {
   const { product, imobPlan, locPlan, metrics, setMetrics } = useCalc();
@@ -56,7 +57,7 @@ export function BenefitsSection() {
                   ) : isPrimeOnly ? (
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                        Opcional (R$97/mês)
+                        Opcional (R${Pricing.getVipSupportPrice()}/mês)
                       </Badge>
                       <Switch
                         checked={metrics.imobVipSupport}
@@ -98,7 +99,7 @@ export function BenefitsSection() {
                   ) : isPrimeOnly ? (
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                        Opcional (R$297/mês)
+                        Opcional (R${Pricing.getCSDedicadoPrice()}/mês)
                       </Badge>
                       <Switch
                         checked={metrics.imobDedicatedCS}

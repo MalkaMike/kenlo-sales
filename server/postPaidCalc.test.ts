@@ -120,8 +120,8 @@ describe("postPaidCalc - calculatePostPaidBreakdown", () => {
           metrics: makeMetrics({ imobUsers: 8 }),
         })
       );
-      // 8 - 5 included (k plan) = 3 additional at R$47/user = R$141
-      expect(result.additionalUsers).toBe(141);
+      // 8 - 7 included (k plan) = 1 additional at R$47/user = R$47
+      expect(result.additionalUsers).toBe(47);
     });
   });
 
@@ -182,8 +182,8 @@ describe("postPaidCalc - calculatePostPaidBreakdown", () => {
           metrics: makeMetrics({ leadsPerMonth: 200, wantsWhatsApp: true }),
         })
       );
-      // 200 - 100 included = 100 additional at R$2/msg = R$200
-      expect(result.whatsApp).toBe(200);
+      // 200 - 100 included = 100 additional at R$1.50/msg = R$150
+      expect(result.whatsApp).toBe(150);
     });
 
     it("should return 0 when leads addon is off", () => {

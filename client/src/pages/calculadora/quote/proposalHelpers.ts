@@ -88,7 +88,7 @@ export function calculateRevenue(
 
   const revenueFromInsurance =
     addons.seguros && (product === "loc" || product === "both")
-      ? toNum(metrics.contractsUnderManagement) * 10
+      ? toNum(metrics.contractsUnderManagement) * Pricing.getSegurosEstimatedRevenuePerContract()
       : 0;
 
   return { revenueFromBoletos, revenueFromInsurance };

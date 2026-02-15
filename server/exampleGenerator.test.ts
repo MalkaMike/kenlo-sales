@@ -32,8 +32,8 @@ describe("postPaidBuilder - Tier Calculation Helpers", () => {
   describe("getIncludedUsers", () => {
     it("should return correct included users per plan", () => {
       expect(getIncludedUsers("prime")).toBe(2);
-      expect(getIncludedUsers("k")).toBe(5);
-      expect(getIncludedUsers("k2")).toBe(10);
+      expect(getIncludedUsers("k")).toBe(7);
+      expect(getIncludedUsers("k2")).toBe(15);
     });
   });
 
@@ -46,10 +46,10 @@ describe("postPaidBuilder - Tier Calculation Helpers", () => {
   });
 
   describe("getIncludedBoletosSplits", () => {
-    it("should return correct included boletos/splits per plan", () => {
-      expect(getIncludedBoletosSplits("prime")).toBe(2);
-      expect(getIncludedBoletosSplits("k")).toBe(5);
-      expect(getIncludedBoletosSplits("k2")).toBe(15);
+    it("should return correct included boletos/splits per plan (all post-paid now)", () => {
+      expect(getIncludedBoletosSplits("prime")).toBe(0);
+      expect(getIncludedBoletosSplits("k")).toBe(0);
+      expect(getIncludedBoletosSplits("k2")).toBe(0);
     });
   });
 
@@ -122,15 +122,15 @@ describe("postPaidBuilder - Tier Calculation Helpers", () => {
       expect(calcWhatsAppTierCost(-10)).toBe(0);
     });
 
-    it("should calculate 4 tiers (R$2.00 + R$1.80 + R$1.50 + R$1.20)", () => {
-      // First 200 at R$2.00
-      expect(calcWhatsAppTierCost(200)).toBe(400);
-      // Next 150 at R$1.80
-      expect(calcWhatsAppTierCost(350)).toBeCloseTo(400 + 270, 2);
-      // Next 650 at R$1.50
-      expect(calcWhatsAppTierCost(1000)).toBeCloseTo(400 + 270 + 975, 2);
-      // Rest at R$1.20
-      expect(calcWhatsAppTierCost(1100)).toBeCloseTo(400 + 270 + 975 + 120, 2);
+    it("should calculate 4 tiers (R$1.50 + R$1.30 + R$1.10 + R$0.90)", () => {
+      // First 200 at R$1.50
+      expect(calcWhatsAppTierCost(200)).toBe(300);
+      // Next 150 at R$1.30
+      expect(calcWhatsAppTierCost(350)).toBeCloseTo(300 + 195, 2);
+      // Next 650 at R$1.10
+      expect(calcWhatsAppTierCost(1000)).toBeCloseTo(300 + 195 + 715, 2);
+      // Rest at R$0.90
+      expect(calcWhatsAppTierCost(1100)).toBeCloseTo(300 + 195 + 715 + 90, 2);
     });
   });
 });
@@ -171,13 +171,16 @@ describe("exampleConfigGenerator - Random Helpers", () => {
 
 describe("exampleConfigGenerator - Plan Recommendation", () => {
   describe("planForImobUsers", () => {
-    it("should recommend prime for 1-4 users", () => {
+    it("should recommend prime for users below k threshold (1-6)", () => {
       expect(planForImobUsers(1)).toBe("prime");
-      expect(planForImobUsers(4)).toBe("prime");
+      expect(planForImobUsers(2)).toBe("prime");
+      expect(planForImobUsers(3)).toBe("prime");
+      expect(planForImobUsers(6)).toBe("prime");
     });
 
-    it("should recommend k for 5-15 users", () => {
-      expect(planForImobUsers(5)).toBe("k");
+    it("should recommend k for users at or above k included (7-15)", () => {
+      expect(planForImobUsers(7)).toBe("k");
+      expect(planForImobUsers(10)).toBe("k");
       expect(planForImobUsers(15)).toBe("k");
     });
 
@@ -264,8 +267,8 @@ describe("exampleConfigGenerator - buildExamplePostPaid", () => {
       imobConfig, "prime", "prime",
       2, 50, 5, 5, 200, true, false, false,
     );
-    // 200 leads - 100 included = 100 additional at R$2/msg = R$200
-    expect(result.total).toBeCloseTo(200, 2);
+    // 200 leads - 100 included = 100 additional at R$1.50/msg = R$150
+    expect(result.total).toBeCloseTo(150, 2);
     expect(result.sharedAddons).toBeDefined();
     expect(result.sharedAddons!.items.some(i => i.label.includes("WhatsApp"))).toBe(true);
   });
@@ -277,8 +280,8 @@ describe("exampleConfigGenerator - buildExamplePostPaid", () => {
       2, 150, 5, 5, 50, false, true, true,
     );
     // Contracts: 150 - 100 = 50 additional at R$3 = R$150
-    // Boletos: 150 - 2 (prime included) = 148 additional at R$4 = R$592
-    // Splits: 150 - 2 (prime included) = 148 additional at R$4 = R$592
+    // Boletos: 150 - 0 (all post-paid) = 150 at R$4 = R$600
+    // Splits: 150 - 0 (all post-paid) = 150 at R$4 = R$600
     expect(result.locAddons).toBeDefined();
     expect(result.locAddons!.items.length).toBeGreaterThanOrEqual(2);
     expect(result.total).toBeGreaterThan(0);

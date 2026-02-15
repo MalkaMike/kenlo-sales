@@ -14,6 +14,7 @@ import {
   roundToEndIn7,
   calculateAdditionalUsersCost,
 } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 import {
   calcContractsTierCost,
@@ -64,15 +65,19 @@ export type KomboConfig = typeof KOMBO_CONFIGS[0];
 // ─── Plan Recommendation Helpers ─────────────────────────────────────────────
 
 export function planForImobUsers(users: number): PlanTier {
-  if (users <= 4) return "prime";
-  if (users <= 15) return "k";
-  return "k2";
+  const k2Threshold = Pricing.getIncludedQuantity("imob", "k2") + 1;
+  const kThreshold = Pricing.getIncludedQuantity("imob", "k");
+  if (users >= k2Threshold) return "k2";
+  if (users >= kThreshold) return "k";
+  return "prime";
 }
 
 export function planForLocContracts(contracts: number): PlanTier {
-  if (contracts <= 199) return "prime";
-  if (contracts <= 499) return "k";
-  return "k2";
+  const k2Threshold = Pricing.getIncludedQuantity("loc", "k2");
+  const kThreshold = Pricing.getIncludedQuantity("loc", "k") + 50;
+  if (contracts >= k2Threshold) return "k2";
+  if (contracts >= kThreshold) return "k";
+  return "prime";
 }
 
 // ─── Post-Paid Breakdown Builder (for examples) ─────────────────────────────
@@ -134,7 +139,7 @@ export function buildExamplePostPaid(
       bd.total += userCost;
       addToGroup(bd, "imobAddons", "IMOB", {
         label: "Usuários Adicionais", included, additional, total: userCost,
-        perUnit: iplan === "prime" ? 57 : iplan === "k" ? 47 : 37, unitLabel: "usuário",
+        perUnit: Pricing.getAdditionalUserBasePrice(iplan), unitLabel: "usuário",
       });
     }
   }
@@ -148,7 +153,7 @@ export function buildExamplePostPaid(
       bd.total += cost;
       addToGroup(bd, "locAddons", "LOCAÇÃO", {
         label: "Contratos Adicionais", included, additional, total: cost,
-        perUnit: 3, unitLabel: "contrato",
+        perUnit: Pricing.getAdditionalContractBasePrice(), unitLabel: "contrato",
       });
     }
 
@@ -161,7 +166,7 @@ export function buildExamplePostPaid(
         bd.total += cost;
         addToGroup(bd, "locAddons", "LOCAÇÃO", {
           label: "Custo Boletos (Pay)", included: inclBoletos, additional: addBoletos,
-          total: cost, perUnit: 4, unitLabel: "boleto",
+          total: cost, perUnit: Pricing.getBoletoBasePrice(), unitLabel: "boleto",
         });
       }
     }
@@ -175,7 +180,7 @@ export function buildExamplePostPaid(
         bd.total += cost;
         addToGroup(bd, "locAddons", "LOCAÇÃO", {
           label: "Custo Split (Pay)", included: inclSplits, additional: addSplits,
-          total: cost, perUnit: 4, unitLabel: "split",
+          total: cost, perUnit: Pricing.getBoletoBasePrice(), unitLabel: "split",
         });
       }
     }
@@ -183,7 +188,7 @@ export function buildExamplePostPaid(
 
   // Shared: Digital Signatures
   if (config.addons.includes("assinatura")) {
-    const included = 15;
+    const included = Pricing.getIncludedSignatures();
     let totalSigs = 0;
     if (config.product === "imob" || config.product === "both") totalSigs += closings;
     if (config.product === "loc" || config.product === "both") totalSigs += newContracts;
@@ -193,21 +198,21 @@ export function buildExamplePostPaid(
       bd.total += cost;
       addToGroup(bd, "sharedAddons", "Add-ons Compartilhados (IMOB + LOC)", {
         label: "Assinaturas Digitais (compartilhado)", included, additional,
-        total: cost, perUnit: 1.8, unitLabel: "assinatura",
+        total: cost, perUnit: Pricing.getSignatureBasePrice(), unitLabel: "assinatura",
       });
     }
   }
 
   // WhatsApp Messages
   if (config.addons.includes("leads") && wantsWA) {
-    const included = 100;
+    const included = Pricing.getIncludedWhatsAppLeads();
     const additional = Math.max(0, leadsMonth - included);
     if (additional > 0) {
       const cost = calcWhatsAppTierCost(additional);
       bd.total += cost;
       addToGroup(bd, "sharedAddons", "Add-ons Compartilhados (IMOB + LOC)", {
         label: "Mensagens WhatsApp", included, additional,
-        total: cost, perUnit: 2, unitLabel: "msg",
+        total: cost, perUnit: Pricing.getWhatsAppBasePrice(), unitLabel: "msg",
       });
     }
   }
@@ -263,9 +268,9 @@ export function buildExampleProposalData(): ExampleProposalResult {
   }
 
   const totalAnnual = totalMonthly * 12;
-  const implantationFee = config.komboId ? 1497 : (
-    (config.product === "imob" || config.product === "both" ? 1497 : 0) +
-    (config.product === "loc" || config.product === "both" ? 1497 : 0)
+  const implantationFee = config.komboId ? Pricing.getImplementationCost("imob") : (
+    (config.product === "imob" || config.product === "both" ? Pricing.getImplementationCost("imob") : 0) +
+    (config.product === "loc" || config.product === "both" ? Pricing.getImplementationCost("loc") : 0)
   );
   const firstYearTotal = totalAnnual + implantationFee;
 
@@ -299,7 +304,7 @@ export function buildExampleProposalData(): ExampleProposalResult {
   const revenueFromBoletos = (chargesBoleto || chargesSplit) && (config.product === "loc" || config.product === "both")
     ? contracts * (boletoAmt + splitAmt) : 0;
   const revenueFromInsurance = config.addons.includes("seguros") && (config.product === "loc" || config.product === "both")
-    ? contracts * 10 : 0;
+    ? contracts * Pricing.getSegurosEstimatedRevenuePerContract() : 0;
   const netGain = revenueFromBoletos + revenueFromInsurance - totalMonthly - postPaidTotal;
 
   const installments = pick([1, 2, 3]);

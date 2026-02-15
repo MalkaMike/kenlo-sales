@@ -3,8 +3,7 @@
  * Pure utility functions for calculating post-paid costs and building
  * the post-paid breakdown section for PDF generation.
  *
- * Tier calculation helpers are the single source of truth — imported by
- * receita-extra/postPaidCalc.ts and hooks/exampleConfigGenerator.ts.
+ * All pricing data comes from the centralized pricing config via @/utils/pricing.
  */
 
 import {
@@ -17,6 +16,7 @@ import type {
   AddonsState,
   MetricsState,
 } from "../types";
+import * as Pricing from "@/utils/pricing";
 
 // ─── Shared Input Type ─────────────────────────────────────────────────────
 
@@ -31,68 +31,41 @@ export interface PostPaidInput {
 }
 
 // ─── Tier Calculation Helpers ──────────────────────────────────────────────
+// All delegate to the centralized calculateTieredPrice via Pricing.*
 
 export function calcContractsTierCost(locPlan: PlanTier, additional: number): number {
   if (additional <= 0) return 0;
-  if (locPlan === "prime") {
-    return additional * 3;
-  } else if (locPlan === "k") {
-    const t1 = Math.min(additional, 250);
-    const t2 = Math.max(0, additional - 250);
-    return t1 * 3 + t2 * 2.5;
-  } else {
-    const t1 = Math.min(additional, 250);
-    const t2 = Math.min(Math.max(0, additional - 250), 250);
-    const t3 = Math.max(0, additional - 500);
-    return t1 * 3 + t2 * 2.5 + t3 * 2;
-  }
+  return Pricing.calculateAdditionalContractsCost(locPlan, additional);
 }
 
 export function calcBoletoSplitTierCost(locPlan: PlanTier, additional: number): number {
   if (additional <= 0) return 0;
-  if (locPlan === "prime") {
-    return additional * 4;
-  } else if (locPlan === "k") {
-    const t1 = Math.min(additional, 250);
-    const t2 = Math.max(0, additional - 250);
-    return t1 * 4 + t2 * 3.5;
-  } else {
-    const t1 = Math.min(additional, 250);
-    const t2 = Math.min(Math.max(0, additional - 250), 250);
-    const t3 = Math.max(0, additional - 500);
-    return t1 * 4 + t2 * 3.5 + t3 * 3;
-  }
+  return Pricing.calculateBoletosCost(locPlan, additional);
 }
 
 export function calcSignaturesTierCost(additional: number): number {
   if (additional <= 0) return 0;
-  const t1 = Math.min(additional, 20);
-  const t2 = Math.min(Math.max(0, additional - 20), 20);
-  const t3 = Math.max(0, additional - 40);
-  return t1 * 1.8 + t2 * 1.7 + t3 * 1.5;
+  return Pricing.calculateAdditionalSignaturesCost(additional);
 }
 
 export function calcWhatsAppTierCost(additional: number): number {
   if (additional <= 0) return 0;
-  const t1 = Math.min(additional, 200);
-  const t2 = Math.min(Math.max(0, additional - 200), 150);
-  const t3 = Math.min(Math.max(0, additional - 350), 650);
-  const t4 = Math.max(0, additional - 1000);
-  return t1 * 2.0 + t2 * 1.8 + t3 * 1.5 + t4 * 1.2;
+  return Pricing.calculateAdditionalWhatsAppLeadsCost(additional);
 }
 
 // ─── Included Quantities ───────────────────────────────────────────────────
 
 export function getIncludedUsers(plan: PlanTier): number {
-  return plan === "prime" ? 2 : plan === "k" ? 5 : 10;
+  return Pricing.getIncludedQuantity("imob", plan);
 }
 
 export function getIncludedContracts(plan: PlanTier): number {
-  return plan === "prime" ? 100 : plan === "k" ? 150 : 500;
+  return Pricing.getIncludedQuantity("loc", plan);
 }
 
-export function getIncludedBoletosSplits(plan: PlanTier): number {
-  return plan === "prime" ? 2 : plan === "k" ? 5 : 15;
+export function getIncludedBoletosSplits(_plan: PlanTier): number {
+  // Pay boletos/splits are fully post-paid (no included quantity)
+  return 0;
 }
 
 // ─── Post-Paid Total Calculation (delegates to postPaidCalc) ──────────────
@@ -157,6 +130,13 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
 
   const bd: BreakdownResult = { total: postPaidTotal };
 
+  // Get tier arrays for display (first tier price as representative)
+  const userTiers = Pricing.getAdditionalUsersTiers(imobPlan);
+  const contractTiers = Pricing.getAdditionalContractsTiers(locPlan);
+  const boletoTiers = Pricing.getBoletosTiers(locPlan);
+  const sigTiers = Pricing.getAdditionalSignaturesTiers();
+  const waTiers = Pricing.getAdditionalWhatsAppLeadsTiers();
+
   // IMOB: Additional Users
   if ((product === "imob" || product === "both") && !prepayAdditionalUsers) {
     const included = getIncludedUsers(imobPlan);
@@ -168,7 +148,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
         included,
         additional,
         total: userCost,
-        perUnit: imobPlan === "prime" ? 57 : imobPlan === "k" ? 47 : 37,
+        perUnit: userTiers[0]?.price ?? 0,
         unitLabel: "usuário",
       });
     }
@@ -185,7 +165,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
         included,
         additional,
         total: cost,
-        perUnit: 3,
+        perUnit: contractTiers[0]?.price ?? 0,
         unitLabel: "contrato",
       });
     }
@@ -193,16 +173,15 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
 
   // LOC: Boleto costs
   if (addons.pay && metrics.chargesBoletoToTenant && (product === "loc" || product === "both")) {
-    const included = getIncludedBoletosSplits(locPlan);
-    const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-    if (additional > 0) {
-      const cost = calcBoletoSplitTierCost(locPlan, additional);
+    const totalBoletos = toNum(metrics.contractsUnderManagement);
+    if (totalBoletos > 0) {
+      const cost = calcBoletoSplitTierCost(locPlan, totalBoletos);
       addToGroup(bd, "locAddons", "LOCAÇÃO", {
         label: "Custo Boletos (Pay)",
-        included,
-        additional,
+        included: 0,
+        additional: totalBoletos,
         total: cost,
-        perUnit: 4,
+        perUnit: boletoTiers[0]?.price ?? 0,
         unitLabel: "boleto",
       });
     }
@@ -210,16 +189,15 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
 
   // LOC: Split costs
   if (addons.pay && metrics.chargesSplitToOwner && (product === "loc" || product === "both")) {
-    const included = getIncludedBoletosSplits(locPlan);
-    const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-    if (additional > 0) {
-      const cost = calcBoletoSplitTierCost(locPlan, additional);
+    const totalSplits = toNum(metrics.contractsUnderManagement);
+    if (totalSplits > 0) {
+      const cost = calcBoletoSplitTierCost(locPlan, totalSplits);
       addToGroup(bd, "locAddons", "LOCAÇÃO", {
         label: "Custo Split (Pay)",
-        included,
-        additional,
+        included: 0,
+        additional: totalSplits,
         total: cost,
-        perUnit: 4,
+        perUnit: boletoTiers[0]?.price ?? 0,
         unitLabel: "split",
       });
     }
@@ -227,7 +205,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
 
   // Shared: Digital Signatures
   if (addons.assinatura) {
-    const included = 15;
+    const included = Pricing.getIncludedSignatures();
     let totalSigs = 0;
     if (product === "imob" || product === "both")
       totalSigs += toNum(metrics.closingsPerMonth);
@@ -241,7 +219,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
         included,
         additional,
         total: cost,
-        perUnit: 1.8,
+        perUnit: sigTiers[0]?.price ?? 0,
         unitLabel: "assinatura",
       });
     }
@@ -249,7 +227,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
 
   // Shared: WhatsApp Messages
   if (addons.leads && metrics.wantsWhatsApp) {
-    const included = 100;
+    const included = Pricing.getIncludedWhatsAppLeads();
     const additional = Math.max(0, toNum(metrics.leadsPerMonth) - included);
     if (additional > 0) {
       const cost = calcWhatsAppTierCost(additional);
@@ -258,7 +236,7 @@ export function buildPostPaidBreakdown(input: PostPaidInput, postPaidTotal: numb
         included,
         additional,
         total: cost,
-        perUnit: 2,
+        perUnit: waTiers[0]?.price ?? 0,
         unitLabel: "msg",
       });
     }

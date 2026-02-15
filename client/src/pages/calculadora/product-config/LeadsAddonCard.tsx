@@ -10,27 +10,28 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useCalc } from "../CalculadoraContext";
 import { toNum, fmtNum, fmtPrice } from "../types";
 import { useAddonPulse } from "./useAddonPulse";
+import * as Pricing from "@/utils/pricing";
+import { ADDONS } from "@shared/pricing-config";
 
 export function LeadsAddonCard() {
   const { addons, setAddons, metrics, setMetrics, isAddonAvailable } = useCalc();
   const { cardRef, activeClass } = useAddonPulse(addons.leads);
 
-  const waTiers = [
-    { from: 1, to: 200, price: 2.0 },
-    { from: 201, to: 350, price: 1.8 },
-    { from: 351, to: 1000, price: 1.5 },
-    { from: 1001, to: Infinity, price: 1.2 },
-  ];
-
-  const included = 100;
+  const waTiers = ADDONS.leads.additionalLeadsTiers;
+  const included = Pricing.getIncludedWhatsAppLeads();
   const totalLeads = toNum(metrics.leadsPerMonth);
   const additional = Math.max(0, totalLeads - included);
   const totalCost = (() => {
-    const t1 = Math.min(additional, 200);
-    const t2 = Math.min(Math.max(0, additional - 200), 150);
-    const t3 = Math.min(Math.max(0, additional - 350), 650);
-    const t4 = Math.max(0, additional - 1000);
-    return t1 * 2.0 + t2 * 1.8 + t3 * 1.5 + t4 * 1.2;
+    let cost = 0;
+    let remaining = additional;
+    for (const tier of waTiers) {
+      if (remaining <= 0) break;
+      const tierSize = tier.to === Infinity ? remaining : (tier.to - tier.from + 1);
+      const qty = Math.min(remaining, tierSize);
+      cost += qty * tier.price;
+      remaining -= qty;
+    }
+    return cost;
   })();
   const avgPrice = additional > 0 ? totalCost / additional : 0;
   const breakdownLines: string[] = [];
