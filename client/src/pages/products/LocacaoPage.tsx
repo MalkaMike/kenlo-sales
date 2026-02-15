@@ -30,7 +30,7 @@ const pricingData = {
         {
           feature: "Contratos inclusos",
           type: "text",
-          values: ["100", "200", "500"],
+          values: ["100", "150", "500"],
         },
       ],
     },

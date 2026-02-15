@@ -4505,3 +4505,13 @@
 - [x] Add retry button for recoverable errors (TIMEOUT, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS)
 - [x] Test error scenarios (21 tests in errorFormatter.test.ts)
 - [x] Add deduplication to prevent duplicate error notifications within 3s window
+
+## Discrepancy Fixes (pricing-values.json vs Portal Pages)
+
+- [x] Fix LeadsPage: Update WhatsApp additional leads pricing to match pricing-values.json (R$1.50/1.30/1.10/0.90)
+- [x] Fix pricing-values.json: Update Locação Pro kombo composition to locacao + inteligencia + assinatura
+- [x] Fix ImobPage: Update K² included users from 14 to 15
+- [x] Fix LocacaoPage: Update K contracts included from 200 to 150
+- [x] Fix AssinaturaPage: Update biometric validation price from R$7.00 to R$6.00
+- [x] Update reference document: Clarify Seguros revenue model (R$10 ≈ 35% of premium estimate)
+- [x] Update reference document: Mark all discrepancies as resolved

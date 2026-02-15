@@ -73,7 +73,7 @@ const pricingData = {
         },
         {
           feature: "Validação biométrica facial",
-          value: "R$ 7,00/validação",
+          value: "R$ 6,00/validação",
           tooltip: "Validação de identidade por reconhecimento facial — opcional",
         },
         {
@@ -128,7 +128,7 @@ const useCases = [
   {
     icon: ScanFace,
     title: "Validação Biométrica",
-    description: "Para contratos de alto valor, adicione validação biométrica facial por R$ 7,00/validação. Segurança extra com reconhecimento de identidade.",
+    description: "Para contratos de alto valor, adicione validação biométrica facial por R$ 6,00/validação. Segurança extra com reconhecimento de identidade.",
   },
   {
     icon: Lock,

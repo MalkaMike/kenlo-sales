@@ -31,7 +31,7 @@ const pricingData = {
         {
           feature: "Usuários inclusos",
           type: "text",
-          values: ["2", "7", "14"],
+          values: ["2", "7", "15"],
         },
       ],
     },

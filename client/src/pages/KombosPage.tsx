@@ -97,7 +97,7 @@ const comparisonData = {
       title: "Implantação",
       rows: [
         { feature: "Taxa única", values: ["R$ 1.497", "R$ 1.497", "R$ 1.497", "R$ 1.497", "R$ 1.497"], tooltip: "" },
-        { feature: "Implantações ofertadas", values: ["Leads", "Leads + BI", "BI", "IMOB", "IMOB + Leads + BI"], tooltip: "Implantações que seriam cobradas à parte, mas estão inclusas no Kombo" },
+        { feature: "Implantações ofertadas", values: ["Leads", "Leads + BI", "Inteligência", "IMOB", "IMOB + Leads + BI"], tooltip: "Implantações que seriam cobradas à parte, mas estão inclusas no Kombo" },
       ],
     },
   ],

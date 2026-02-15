@@ -262,13 +262,14 @@
         "locacao"
       ],
       "addonsIncluded": [
-        "pay"
+        "inteligencia",
+        "assinaturas"
       ],
       "discount": 10,
       "discountOrder": 2,
       "freeImplementations": 1,
       "zeroedImplementationsList": [
-        "pay"
+        "inteligencia"
       ],
       "premiumServicesIncluded": [
         "vipSupport",

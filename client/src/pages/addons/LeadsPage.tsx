@@ -53,22 +53,22 @@ const pricingData = {
       rows: [
         {
           feature: "1 a 200 leads",
-          value: "R$ 2,00/lead",
-          tooltip: undefined,
-        },
-        {
-          feature: "201 a 350 leads",
-          value: "R$ 1,80/lead",
-          tooltip: undefined,
-        },
-        {
-          feature: "351 a 1.000 leads",
           value: "R$ 1,50/lead",
           tooltip: undefined,
         },
         {
+          feature: "201 a 350 leads",
+          value: "R$ 1,30/lead",
+          tooltip: undefined,
+        },
+        {
+          feature: "351 a 1.000 leads",
+          value: "R$ 1,10/lead",
+          tooltip: undefined,
+        },
+        {
           feature: "Acima de 1.000 leads",
-          value: "R$ 1,20/lead",
+          value: "R$ 0,90/lead",
           tooltip: undefined,
         },
       ],
