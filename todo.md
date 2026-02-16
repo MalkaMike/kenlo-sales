@@ -4624,3 +4624,16 @@
 - [x] Seguros add-on sales playbook content (Markdown)
 - [x] Cash add-on sales playbook content (Markdown)
 - [ ] Build frontend pages with sales enablement content (in progress - paused for user review tomorrow)
+
+## Comunidade Kenlo Availability Restriction (Feb 2026)
+
+- [x] Update product reference document (section 2.4 IMOB feature matrix) - Comunidade Kenlo only for K and K²
+- [x] Remove Comunidade Kenlo from Locação feature matrix (IMOB-only)
+- [x] Update pricing-values.json if needed (no changes required)
+- [x] Update IMOB sales playbook
+- [x] Leads sales playbook (no Comunidade mentions found)
+- [ ] Update Kombo sales playbooks (all mention Comunidade)
+- [x] Update frontend IMOB page (no Comunidade mentions found)
+- [x] Update any other frontend components mentioning Comunidade (none found)
+- [x] Run tests and fix failures (all 616 tests passing)
+- [ ] Save checkpoint
