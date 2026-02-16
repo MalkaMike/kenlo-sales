@@ -57,6 +57,7 @@ interface Playbook {
   sellingQuestions: SellingQuestion[];
   keyObjections: { objection: string; response: string }[];
   demoTip: string;
+  prepaidTip: string;
   crossSell: string[];
 }
 
@@ -86,6 +87,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Site não traz resultado", response: "Porque não é qualquer site. O site Kenlo foi otimizado por Neil Patel. A melhor ficha de imóvel do mercado." },
     ],
     demoTip: "Comece pelo DADO, não pela feature. Mostre o problema (dependência de portais) antes da solução.",
+    prepaidTip: "Pré-pago de usuários: R$ 34/mês (fixo). Exemplo: 20 extras no K = R$ 680/mês vs R$ 840 pós-pago. Economia de R$ 1.920/ano.",
     crossSell: ["Leads", "Inteligência", "Assinatura"],
   },
   {
@@ -113,6 +115,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Muito caro", response: "Investimento de R$ 247/mês gera R$ 1.500+ em valor (Seguros + Pay + economia de tempo)." },
     ],
     demoTip: "Foque em RECEITA, não em gestão. Mostre Seguros (receita passiva), Pay (economia), Cash (fidelização).",
+    prepaidTip: "Pré-pago de contratos: R$ 2,20/mês (fixo). Exemplo: 500 extras no K = R$ 1.100/mês vs R$ 1.450 pós-pago. Economia de R$ 4.200/ano.",
     crossSell: ["Pay", "Seguros", "Cash", "Inteligência"],
   },
 ];
@@ -140,6 +143,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos gestão de leads", response: "Mas tem transparência de origem e custo por canal? AI SDR qualificando antes do corretor?" },
     ],
     demoTip: "Mostre a transparência: de onde vem, quanto custa, qual converte. Depois mostre a redistribuição automática.",
+    prepaidTip: "Combine com pré-pago de usuários (R$ 34/mês) para reduzir o TCO total da operação de vendas.",
     crossSell: ["IMOB", "Inteligência"],
   },
   {
@@ -164,6 +168,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos relatórios", response: "Mas tem parceria Google? Relatório SAFRA? Comparação vs mercado? Usuários ilimitados?" },
     ],
     demoTip: "Mostre os 2 relatórios exclusivos: SAFRA (funil) e Performance vs Mercado (reality check). Cliente fica impressionado.",
+    prepaidTip: "Inteligência + pré-pago de usuários/contratos = máxima economia. Mostre o TCO total com desconto de Kombo.",
     crossSell: ["IMOB", "Locação", "Leads"],
   },
   {
@@ -187,6 +192,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já usamos DocuSign", response: "DocuSign não é integrado ao CRM. Kenlo Assinatura é embutida — sem copiar/colar dados." },
     ],
     demoTip: "Mostre a velocidade: 5 minutos para assinar um contrato completo. Biometria facial para alto valor.",
+    prepaidTip: "Assinatura R$ 37/mês com 15 inclusas. Combine com pré-pago de contratos (R$ 2,20) para máxima economia em locação.",
     crossSell: ["IMOB", "Locação"],
   },
   {
@@ -211,6 +217,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos sistema de cobrança", response: "Mas tem split automático? Conciliação automática? Integrado ao ERP? Economiza 15-20h/mês?" },
     ],
     demoTip: "Foque no SPLIT: inquilino paga, dinheiro cai automaticamente na conta do proprietário, comissão na da imobiliária.",
+    prepaidTip: "Pay + pré-pago de contratos (R$ 2,20/contrato) = operação de locação com custo mínimo e receita máxima.",
     crossSell: ["Locação", "Seguros", "Cash"],
   },
   {
@@ -235,6 +242,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos parceria com seguradora", response: "Mas é embutido no boleto? Automático? 35-45% de comissão? R$ 0 de implantação?" },
     ],
     demoTip: "Calcule na hora: 100 contratos × R$ 100/ano = R$ 10.000+/ano de receita passiva. Sem fazer nada.",
+    prepaidTip: "Seguros gera receita passiva. Combine com pré-pago de contratos (R$ 2,20) para maximizar margem por contrato.",
     crossSell: ["Locação", "Pay", "Cash"],
   },
   {
@@ -259,6 +267,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Proprietário não vai querer", response: "Proprietário que precisa de liquidez adora. Reforma, investimento, emergência — Cash resolve." },
     ],
     demoTip: "Cenário: proprietário quer reformar o imóvel. Ofereça antecipação de 12 meses. Ele fica, você ganha comissão.",
+    prepaidTip: "Cash + pré-pago de contratos (R$ 2,20) = fidelização + economia. Ofereça no plano bienal para máximo desconto.",
     crossSell: ["Locação", "Pay", "Seguros"],
   },
 ];
@@ -267,19 +276,21 @@ const komboPlaybooks = [
   {
     id: "imob-start",
     name: "Imob Start",
-    products: "IMOB + Leads",
+    products: "IMOB + Leads + Assinatura",
     discount: "10%",
     idealFor: "Imobiliárias focadas em vendas que querem captar leads",
-    keyMessage: "Entrada no digital com captação de leads. FREE implantação Leads.",
+    keyMessage: "Entrada no digital com captação de leads. FREE impl. Leads. VIP/CS não incluído (pago à parte).",
+    prepaidTip: "Pré-pago usuários R$ 34/mês + 10% Kombo = máxima economia na entrada.",
     color: "bg-blue-500",
   },
   {
     id: "imob-pro",
     name: "Imob Pro",
-    products: "IMOB + Leads + Inteligência",
+    products: "IMOB + Leads + Inteligência + Assinatura",
     discount: "15%",
     idealFor: "Quem quer maximizar conversão com dados (Google partnership)",
-    keyMessage: "Vendas data-driven. Parceria Google. SAFRA + Performance vs Mercado.",
+    keyMessage: "Vendas data-driven. Parceria Google. SAFRA + Performance vs Mercado. VIP + CS incluídos.",
+    prepaidTip: "15% OFF + pré-pago usuários R$ 34/mês = economia combinada significativa.",
     color: "bg-primary",
   },
   {
@@ -288,7 +299,8 @@ const komboPlaybooks = [
     products: "LOC + Inteligência + Assinatura",
     discount: "10%",
     idealFor: "Administradoras focadas em locação inteligente",
-    keyMessage: "Gestão inteligente com BI + assinatura digital. Dados para decisões.",
+    keyMessage: "Gestão inteligente com BI + assinatura digital. VIP + CS incluídos.",
+    prepaidTip: "Pré-pago contratos R$ 2,20/mês + 10% Kombo = custo mínimo por contrato.",
     color: "bg-green-500",
   },
   {
@@ -297,7 +309,8 @@ const komboPlaybooks = [
     products: "IMOB + LOC",
     discount: "0%",
     idealFor: "Imobiliárias que fazem vendas E locação",
-    keyMessage: "Plataforma unificada. Economize R$ 1.497 em implantação vs comprar separado.",
+    keyMessage: "Plataforma unificada. Economize R$ 1.497 em impl. VIP + CS incluídos.",
+    prepaidTip: "Pré-pago usuários R$ 34 + contratos R$ 2,20 = economia dupla.",
     color: "bg-purple-500",
   },
   {
@@ -306,7 +319,8 @@ const komboPlaybooks = [
     products: "IMOB + LOC + Todos Add-ons",
     discount: "20%",
     idealFor: "Quem quer liderar o mercado com digitalização total",
-    keyMessage: "Tudo incluído. Economize R$ 5.087 no primeiro ano. VIP + CS Dedicado.",
+    keyMessage: "Tudo incluído. 20% OFF + VIP + CS. Economize R$ 5.087 no primeiro ano.",
+    prepaidTip: "20% Kombo + pré-pago usuários R$ 34 + contratos R$ 2,20 = economia máxima absoluta.",
     color: "bg-amber-500",
   },
 ];
@@ -397,6 +411,16 @@ function PlaybookCard({ playbook }: { playbook: Playbook }) {
               Dica de Demo
             </h4>
             <p className="text-xs text-blue-700">{playbook.demoTip}</p>
+          </div>
+
+          {/* Prepaid Tip */}
+          <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+            <h4 className="text-sm font-bold text-green-800 mb-1 flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Pré-Pago: Argumento de Economia
+            </h4>
+            <p className="text-xs text-green-700">{playbook.prepaidTip}</p>
+            <p className="text-xs text-green-600 mt-1 italic">Parcelas: Semestral (2x) | Anual (3x) | Bienal (6x)</p>
           </div>
 
           {/* Cross-sell */}
@@ -599,6 +623,9 @@ export default function PlaybookPage() {
                         <p className="text-sm text-muted-foreground mb-3">{kombo.idealFor}</p>
                         <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                           <p className="text-sm font-medium text-primary">💡 {kombo.keyMessage}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-green-50 border border-green-200 mt-2">
+                          <p className="text-sm font-medium text-green-700">💰 {kombo.prepaidTip}</p>
                         </div>
                       </div>
                     </div>

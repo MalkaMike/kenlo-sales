@@ -4663,3 +4663,20 @@
 - [x] Update Kombos page with data-driven subtitle (VIP+CS, R$ 5.087 savings)
 - [x] Create Sales Playbook page (/playbook) with all 13 playbooks organized by category
 - [x] Add Playbook navigation link to header (desktop + mobile)
+
+## Playbook Review & Prepaid Pricing Updates
+- [x] Review Playbook page content for accuracy of selling points (fixed Imob Start VIP/CS bug)
+- [x] Update IMOB playbook with prepaid user pricing (R$ 34/user, annual/biennial examples)
+- [x] Update Locação playbook with prepaid contract pricing (R$ 2.20/contract, annual/biennial examples)
+- [x] Update Leads playbook with prepaid pricing context
+- [x] Update Inteligência playbook with prepaid pricing context
+- [x] Update Assinaturas playbook with prepaid pricing context
+- [x] Update Pay playbook with prepaid pricing context
+- [x] Update Seguros playbook with prepaid pricing context
+- [x] Update Cash playbook with prepaid pricing context
+- [x] Update Imob Start Kombo playbook with prepaid pricing
+- [x] Update Imob Pro Kombo playbook with prepaid pricing
+- [x] Update Locação Pro Kombo playbook with prepaid pricing
+- [x] Update Core Gestão Kombo playbook with prepaid pricing
+- [x] Update Elite Kombo playbook with prepaid pricing
+- [x] Update PlaybookPage.tsx frontend with revised playbook content (prepaid tips, Imob Start VIP/CS fix, Kombo products corrected)

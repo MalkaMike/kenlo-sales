@@ -230,10 +230,7 @@
       "zeroedImplementationsList": [
         "leads"
       ],
-      "premiumServicesIncluded": [
-        "vipSupport",
-        "csDedicado"
-      ]
+      "premiumServicesIncluded": []
     },
     "imob_pro": {
       "name": "Kombo Imob Pro",

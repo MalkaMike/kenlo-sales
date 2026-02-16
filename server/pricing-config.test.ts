@@ -106,9 +106,8 @@ describe('Pricing Configuration', () => {
       expect(KOMBOS.elite.implementation).toBe(1497);
     });
 
-    it('should include Premium Services in ALL 5 Kombos', () => {
-      // ⚠️ NEW: All Kombos now include Premium Services
-      expect(KOMBOS['imob-start'].premiumServicesIncluded).toBe(true);
+    it('should include Premium Services in Imob Pro, Locação Pro, Core Gestão, Elite (NOT Imob Start)', () => {
+      expect(KOMBOS['imob-start'].premiumServicesIncluded).toBe(false);
       expect(KOMBOS['imob-pro'].premiumServicesIncluded).toBe(true);
       expect(KOMBOS['loc-pro'].premiumServicesIncluded).toBe(true);
       expect(KOMBOS['core-gestao'].premiumServicesIncluded).toBe(true);
@@ -274,19 +273,23 @@ describe('Pricing Configuration', () => {
       expect(shouldIncludePremiumService('csDedicado', 'k', null, 'none')).toBe(false);
     });
 
-    it('should include both services for ALL Kombos', () => {
-      const kombos: Array<'imob-start' | 'imob-pro' | 'loc-pro' | 'core-gestao' | 'elite'> = [
-        'imob-start',
+    it('should include both services for Imob Pro, Locação Pro, Core Gestão, Elite Kombos', () => {
+      const kombosWithPremium: Array<'imob-pro' | 'loc-pro' | 'core-gestao' | 'elite'> = [
         'imob-pro',
         'loc-pro',
         'core-gestao',
         'elite',
       ];
 
-      kombos.forEach((kombo) => {
+      kombosWithPremium.forEach((kombo) => {
         expect(shouldIncludePremiumService('vipSupport', 'prime', null, kombo)).toBe(true);
         expect(shouldIncludePremiumService('csDedicado', 'prime', null, kombo)).toBe(true);
       });
+    });
+
+    it('should NOT include premium services for Imob Start Kombo', () => {
+      expect(shouldIncludePremiumService('vipSupport', 'prime', null, 'imob-start')).toBe(false);
+      expect(shouldIncludePremiumService('csDedicado', 'prime', null, 'imob-start')).toBe(false);
     });
 
     it('should apply cross-product benefit rule', () => {

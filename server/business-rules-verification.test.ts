@@ -382,13 +382,19 @@ describe("Business Rule: Kombo Detection", () => {
 // ============================================================================
 
 describe("Business Rule: Premium Services Inclusion", () => {
-  it("all Kombos include Premium Services (VIP + CS)", () => {
-    const komboKeys: KomboType[] = ["imob-start", "imob-pro", "loc-pro", "core-gestao", "elite"];
-    for (const kombo of komboKeys) {
+  it("Imob Pro, Locação Pro, Core Gestão, Elite include Premium Services (VIP + CS)", () => {
+    const kombosWithPremium: KomboType[] = ["imob-pro", "loc-pro", "core-gestao", "elite"];
+    for (const kombo of kombosWithPremium) {
       expect(KOMBOS[kombo].premiumServicesIncluded).toBe(true);
       expect(shouldIncludePremiumService("vipSupport", "prime", null, kombo)).toBe(true);
       expect(shouldIncludePremiumService("csDedicado", "prime", null, kombo)).toBe(true);
     }
+  });
+
+  it("Imob Start does NOT include Premium Services (VIP + CS)", () => {
+    expect(KOMBOS["imob-start"].premiumServicesIncluded).toBe(false);
+    expect(shouldIncludePremiumService("vipSupport", "prime", null, "imob-start")).toBe(false);
+    expect(shouldIncludePremiumService("csDedicado", "prime", null, "imob-start")).toBe(false);
   });
 
   it("VIP Support is included in K and K2 plans (without Kombo)", () => {
