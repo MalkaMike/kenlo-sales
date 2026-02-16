@@ -4572,3 +4572,19 @@
 - [x] Update postPaidCalc.test.ts expectations (K: 200-175=25 additional, K²: 500-400=100 additional)
 - [x] Update exampleConfigGenerator.ts planForLocContracts logic (K threshold: 176, K² threshold: 400)
 - [x] All 616 tests passing
+
+## Kenlo Product Complete Reference - Finalization & Coherence Verification (Feb 2026)
+
+- [x] Rebuild IMOB + Site Bundle feature matrix (2.4) with smart grouping and availability hierarchy
+- [x] Rebuild Locação feature matrix (3.4) with same format as IMOB
+- [x] Correct Locação contract quantities across all files (K: 150→175, K²: 500→400)
+- [x] Update all tests to reflect new contract quantities (616 tests passing)
+- [x] Clarify implementation costs: Assinaturas, Pay, Seguros, Cash all R$ 0 (always free)
+- [x] Distinguish business models: usage-based (Assinaturas, Pay) vs revenue-generating (Seguros, Cash - Rent+)
+- [x] Update training model: K² gets "2 online OU 1 presencial" (client pays travel only)
+- [x] Fix Elite Kombo definition: only pre-paid add-ons (Leads + Inteligência + Assinaturas)
+- [x] Verify coherence across all 67 frontend pages - no hardcoded values found
+- [x] Kenlo Product Complete Reference v2.1.0 is now the definitive source of truth
+- [x] All pricing logic pulls from shared/pricing-values.json (source of truth)
+- [x] Feature matrices updated with correct business model distinctions
+- [x] Implementation Costs Summary updated with business model notes
