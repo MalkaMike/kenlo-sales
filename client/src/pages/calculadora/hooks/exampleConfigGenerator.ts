@@ -73,8 +73,8 @@ export function planForImobUsers(users: number): PlanTier {
 }
 
 export function planForLocContracts(contracts: number): PlanTier {
-  const k2Threshold = Pricing.getIncludedQuantity("loc", "k2");
-  const kThreshold = Pricing.getIncludedQuantity("loc", "k") + 50;
+  const k2Threshold = Pricing.getIncludedQuantity("loc", "k2");     // 400
+  const kThreshold = Pricing.getIncludedQuantity("loc", "k") + 1;   // 175 + 1 = 176
   if (contracts >= k2Threshold) return "k2";
   if (contracts >= kThreshold) return "k";
   return "prime";

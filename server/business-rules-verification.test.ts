@@ -540,14 +540,14 @@ describe("Business Rule: LOC Plan Base Prices and Included Contracts", () => {
     expect(LOC_PLANS.prime.includedContracts).toBe(100);
   });
 
-  it("K: R$ 497/month, 150 contracts included", () => {
+  it("K: R$ 497/month, 175 contracts included", () => {
     expect(LOC_PLANS.k.annualPrice).toBe(497);
-    expect(LOC_PLANS.k.includedContracts).toBe(150);
+    expect(LOC_PLANS.k.includedContracts).toBe(175);
   });
 
-  it("K²: R$ 1.197/month, 500 contracts included", () => {
+  it("K²: R$ 1.197/month, 400 contracts included", () => {
     expect(LOC_PLANS.k2.annualPrice).toBe(1197);
-    expect(LOC_PLANS.k2.includedContracts).toBe(500);
+    expect(LOC_PLANS.k2.includedContracts).toBe(400);
   });
 });
 

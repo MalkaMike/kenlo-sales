@@ -149,7 +149,7 @@ describe("postPaidCalc - calculatePostPaidBreakdown", () => {
       expect(result.additionalContracts).toBe(0);
     });
 
-    it("should use K plan included quantity (150)", () => {
+    it("should use K plan included quantity (175)", () => {
       const result = calculatePostPaidBreakdown(
         makeInput({
           product: "loc",
@@ -157,11 +157,11 @@ describe("postPaidCalc - calculatePostPaidBreakdown", () => {
           metrics: makeMetrics({ contractsUnderManagement: 200 }),
         })
       );
-      // 200 - 150 included = 50 additional at R$3 = R$150
-      expect(result.additionalContracts).toBe(150);
+      // 200 - 175 included = 25 additional at R$3 = R$75
+      expect(result.additionalContracts).toBe(75);
     });
 
-    it("should use K2 plan included quantity (500)", () => {
+    it("should use K2 plan included quantity (400)", () => {
       const result = calculatePostPaidBreakdown(
         makeInput({
           product: "loc",
@@ -169,8 +169,8 @@ describe("postPaidCalc - calculatePostPaidBreakdown", () => {
           metrics: makeMetrics({ contractsUnderManagement: 500 }),
         })
       );
-      // 500 - 500 included = 0 additional
-      expect(result.additionalContracts).toBe(0);
+      // 500 - 400 included = 100 additional at R$3 = R$300
+      expect(result.additionalContracts).toBe(300);
     });
   });
 

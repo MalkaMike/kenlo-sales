@@ -51,8 +51,8 @@ describe('Pricing Configuration', () => {
 
     it('should have correct included contracts', () => {
       expect(LOC_PLANS.prime.includedContracts).toBe(100);
-      expect(LOC_PLANS.k.includedContracts).toBe(150);
-      expect(LOC_PLANS.k2.includedContracts).toBe(500);
+      expect(LOC_PLANS.k.includedContracts).toBe(175);
+      expect(LOC_PLANS.k2.includedContracts).toBe(400);
     });
   });
 

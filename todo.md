@@ -4559,3 +4559,16 @@
 - [x] Update kombo-comparison tests to reflect the corrected rule (61 tests)
 - [x] Update pricing-config tests to reflect the corrected rule (33 tests)
 - [x] All 616 tests passing
+
+## Locação Contract Quantities Update (K: 150→175, K²: 500→400)
+
+- [x] Update pricing-values.json (source of truth): K from 150→175, K² from 500→400
+- [x] Update product reference document section 3.1 with correct values and targets
+- [x] Update PDF generation logic (pdfContractSection.ts) hardcoded values
+- [x] Update pricing-config.test.ts expectations
+- [x] Update business-rules-verification.test.ts expectations and test names
+- [x] Update exampleGenerator.test.ts expectations and plan recommendation thresholds
+- [x] Update v9-pricing.test.ts thresholds and expectations
+- [x] Update postPaidCalc.test.ts expectations (K: 200-175=25 additional, K²: 500-400=100 additional)
+- [x] Update exampleConfigGenerator.ts planForLocContracts logic (K threshold: 176, K² threshold: 400)
+- [x] All 616 tests passing

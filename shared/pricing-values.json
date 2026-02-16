@@ -84,7 +84,7 @@
         "annualPrice": 497,
         "includedUnits": {
           "type": "contracts",
-          "quantity": 150
+          "quantity": 175
         },
         "internalNote": "Este é o preço base usado no cálculo do Mensal, Anual e Kombos."
       },
@@ -92,7 +92,7 @@
         "annualPrice": 1197,
         "includedUnits": {
           "type": "contracts",
-          "quantity": 500
+          "quantity": 400
         },
         "internalNote": "Este é o preço base usado no cálculo do Mensal, Anual e Kombos."
       }

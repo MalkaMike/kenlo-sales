@@ -45,8 +45,8 @@ describe('V9 - Plan Thresholds', () => {
   };
 
   const getLocPlan = (contracts: number): string => {
-    if (contracts >= 500) return 'k2';
-    if (contracts >= 200) return 'k';
+    if (contracts >= 400) return 'k2';
+    if (contracts >= 176) return 'k';
     return 'prime';
   };
 
@@ -69,20 +69,20 @@ describe('V9 - Plan Thresholds', () => {
     expect(getImobPlan(100)).toBe('k2');
   });
 
-  it('LOC: Prime for 1-199 contracts', () => {
+  it('LOC: Prime for 1-175 contracts', () => {
     expect(getLocPlan(1)).toBe('prime');
     expect(getLocPlan(100)).toBe('prime');
-    expect(getLocPlan(199)).toBe('prime');
+    expect(getLocPlan(175)).toBe('prime');
   });
 
-  it('LOC: K for 200-499 contracts', () => {
-    expect(getLocPlan(200)).toBe('k');
+  it('LOC: K for 176-399 contracts', () => {
+    expect(getLocPlan(176)).toBe('k');
     expect(getLocPlan(300)).toBe('k');
-    expect(getLocPlan(499)).toBe('k');
+    expect(getLocPlan(399)).toBe('k');
   });
 
-  it('LOC: K2 for 500+ contracts', () => {
-    expect(getLocPlan(500)).toBe('k2');
+  it('LOC: K2 for 400+ contracts', () => {
+    expect(getLocPlan(400)).toBe('k2');
     expect(getLocPlan(1000)).toBe('k2');
   });
 });
@@ -97,7 +97,7 @@ describe('V9 - Included Resources', () => {
   };
 
   const getLocIncludedContracts = (plan: string): number => {
-    return plan === 'prime' ? 100 : plan === 'k' ? 150 : 500;
+    return plan === 'prime' ? 100 : plan === 'k' ? 175 : 400;
   };
 
   const getIncludedBoletos = (plan: string): number => {
@@ -114,10 +114,10 @@ describe('V9 - Included Resources', () => {
     expect(getImobIncludedUsers('k2')).toBe(10);
   });
 
-  it('LOC included contracts: Prime=100, K=150, K2=500', () => {
+  it('LOC included contracts: Prime=100, K=175, K2=400', () => {
     expect(getLocIncludedContracts('prime')).toBe(100);
-    expect(getLocIncludedContracts('k')).toBe(150);
-    expect(getLocIncludedContracts('k2')).toBe(500);
+    expect(getLocIncludedContracts('k')).toBe(175);
+    expect(getLocIncludedContracts('k2')).toBe(400);
   });
 
   it('Boleto included: Prime=2, K=5, K2=15', () => {

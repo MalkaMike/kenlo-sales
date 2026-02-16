@@ -200,7 +200,7 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
     scopeItems.push(`${imobUsers} usuários inclusos`);
   }
   if (showLoc) {
-    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 150 : 500;
+    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 175 : 400;
     scopeItems.push(`${locContracts} contratos inclusos`);
   }
   if (selAddons.includes("leads")) scopeItems.push("WhatsApp integrado");

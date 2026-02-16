@@ -40,8 +40,8 @@ describe("postPaidBuilder - Tier Calculation Helpers", () => {
   describe("getIncludedContracts", () => {
     it("should return correct included contracts per plan", () => {
       expect(getIncludedContracts("prime")).toBe(100);
-      expect(getIncludedContracts("k")).toBe(150);
-      expect(getIncludedContracts("k2")).toBe(500);
+      expect(getIncludedContracts("k")).toBe(175);
+      expect(getIncludedContracts("k2")).toBe(400);
     });
   });
 
@@ -191,18 +191,18 @@ describe("exampleConfigGenerator - Plan Recommendation", () => {
   });
 
   describe("planForLocContracts", () => {
-    it("should recommend prime for 1-199 contracts", () => {
+    it("should recommend prime for 1-175 contracts", () => {
       expect(planForLocContracts(1)).toBe("prime");
-      expect(planForLocContracts(199)).toBe("prime");
+      expect(planForLocContracts(175)).toBe("prime");
     });
 
-    it("should recommend k for 200-499 contracts", () => {
-      expect(planForLocContracts(200)).toBe("k");
-      expect(planForLocContracts(499)).toBe("k");
+    it("should recommend k for 176-399 contracts", () => {
+      expect(planForLocContracts(176)).toBe("k");
+      expect(planForLocContracts(399)).toBe("k");
     });
 
-    it("should recommend k2 for 500+ contracts", () => {
-      expect(planForLocContracts(500)).toBe("k2");
+    it("should recommend k2 for 400+ contracts", () => {
+      expect(planForLocContracts(400)).toBe("k2");
       expect(planForLocContracts(800)).toBe("k2");
     });
   });
