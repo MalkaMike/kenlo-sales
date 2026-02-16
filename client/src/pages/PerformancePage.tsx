@@ -41,7 +41,7 @@ import {
   calculateTrendData,
 } from "./performance/performanceCalculators";
 import type { QuoteRecord } from "./performance/performanceCalculators";
-import { MetricsCards } from "./performance/MetricsCards";
+import { MetricsCards } from "./performance/DashboardMetricsCards";
 import { MrrTrendChart, BreakdownCharts } from "./performance/PerformanceCharts";
 import { VendorRankingTable } from "./performance/VendorRankingTable";
 import { FrequencyAddonCharts } from "./performance/FrequencyAddonCharts";

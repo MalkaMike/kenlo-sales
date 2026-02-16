@@ -4702,3 +4702,14 @@
 - [x] Ensure all pages link to calculator and related products (all have CTA buttons)
 - [x] Ensure user's key selling points are prominently displayed on each page
 - [x] Fix gaps: Added missing Link imports, fixed JSX syntax errors, added selling questions to Assinatura/Cash
+
+## LOC Feature Matrix Expansion
+- [x] Expand LOC page feature matrix to match IMOB format (42+ features, 10 categories, check/cross per plan)
+- [x] Include all LOC features from product reference document
+- [x] Ensure consistent design with IMOB page feature matrix
+
+## Bug Fix - Blank Page (MetricsCards proxy block)
+- [x] Diagnose blank page caused by proxy blocking MetricsCards.tsx filename
+- [x] Rename MetricsCards.tsx to DashboardMetricsCards.tsx to bypass proxy filter
+- [x] Update all imports in PerformancePage.tsx and performance/index.ts
+- [x] Verify TypeScript compiles cleanly and all 659 tests pass
