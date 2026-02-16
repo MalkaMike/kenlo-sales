@@ -4843,3 +4843,4 @@
 - [x] Remover botão "Gerar 3 Exemplos"
 - [x] Remover banner azul de aviso ("Selecione um plano na tabela acima...")
 - [x] Centralizar botão "Exportar Cotação (PDF)" como ponto final claro da calculadora
+- [x] Atualizar texto auxiliar para "Configuração concluída. Exporte o PDF da proposta."

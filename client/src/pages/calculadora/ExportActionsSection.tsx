@@ -61,7 +61,7 @@ export function ExportActionsSection() {
   return (
     <div className="flex flex-col items-center gap-4 mt-10 mb-24">
       <p className="text-sm text-muted-foreground text-center max-w-md">
-        Tudo pronto? Gere a cotação personalizada em PDF para enviar ao cliente.
+        Configuração concluída. Exporte o PDF da proposta.
       </p>
       <Button
         className="min-h-[56px] min-w-[280px] text-base font-semibold shadow-lg"
