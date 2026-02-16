@@ -135,8 +135,8 @@ export const quotes = mysqlTable("quotes", {
   /** Client and vendor information */
   clientName: varchar("clientName", { length: 255 }),
   vendorName: varchar("vendorName", { length: 255 }),
-  /** Salesperson ID for ownership tracking */
-  salespersonId: int("salespersonId"),
+  /** User ID for ownership tracking (references users.id) */
+  userId: int("userId"),
   agencyName: varchar("agencyName", { length: 255 }),
   cellPhone: varchar("cellPhone", { length: 50 }),
   landlinePhone: varchar("landlinePhone", { length: 50 }),

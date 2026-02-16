@@ -32,7 +32,7 @@ export interface QuoteRecord {
   frequency: string;
   addons?: string | null;
   totals?: string | null;
-  salespersonId?: number | null;
+  userId?: number | null;
 }
 
 export interface DashboardMetrics {
@@ -67,7 +67,7 @@ export interface VendorRankingItem {
   mrrWithPostPaid: number;
   implantationValue: number;
   ticketMedio: number;
-  salespersonId: number | null;
+  userId: number | null;
 }
 
 export interface FrequencyBreakdownItem {
@@ -207,7 +207,7 @@ export function calculateVendorRanking(quotes: QuoteRecord[] | undefined): Vendo
     mrrWithoutPostPaid: number;
     mrrWithPostPaid: number;
     implantationValue: number;
-    salespersonId: number | null;
+    userId: number | null;
   }>();
 
   quotes.forEach((quote) => {
@@ -223,7 +223,7 @@ export function calculateVendorRanking(quotes: QuoteRecord[] | undefined): Vendo
         mrrWithoutPostPaid: 0,
         mrrWithPostPaid: 0,
         implantationValue: 0,
-        salespersonId: quote.salespersonId ?? null,
+        userId: quote.userId ?? null,
       });
     }
     const data = map.get(vendorName)!;

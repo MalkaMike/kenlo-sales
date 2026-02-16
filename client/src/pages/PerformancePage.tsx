@@ -148,7 +148,7 @@ export default function PerformancePage() {
   const toggleSelectAll = () => {
     if (!filteredQuotes || !salesperson) return;
     const deletable = filteredQuotes.filter(
-      (q) => salesperson.isMaster || q.salespersonId === salesperson.id
+      (q) => salesperson.isMaster || q.userId === salesperson.id
     );
     if (selectedQuotes.size === deletable.length && deletable.length > 0) {
       setSelectedQuotes(new Set());

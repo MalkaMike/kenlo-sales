@@ -4751,3 +4751,17 @@
 - [x] Push database migration (pnpm db:push) — migration 0009: DROP TABLE `salespeople`
 - [x] Verify TypeScript compiles cleanly (0 errors)
 - [x] Verify all 670 tests pass (22 test files)
+
+## Replace salespersonId with userId foreign key in quotes table
+- [x] Update drizzle/schema.ts: rename salespersonId to userId
+- [x] Update server/quotes.ts: all functions now use userId (softDelete, performance, getByUser)
+- [x] Update server/routers/quotesRouter.ts: save, performance endpoints use userId
+- [x] Update client/src/components/QuoteInfoDialog.tsx: QuoteInfo interface uses userId
+- [x] Update client/src/pages/performance/performanceCalculators.ts: QuoteRecord, VendorRankingItem use userId
+- [x] Update client/src/pages/performance/QuotesTable.tsx: ownership checks use userId
+- [x] Update client/src/pages/PerformancePage.tsx: ownership checks use userId
+- [x] Update client/src/pages/calculadora/quote/buildProposalData.ts: uses userId
+- [x] Update server/proposalPipeline.test.ts: test data uses userId
+- [x] Push database migration (0010: ALTER TABLE quotes RENAME COLUMN salespersonId TO userId)
+- [x] Verify TypeScript compiles cleanly (0 errors)
+- [x] Verify all 670 tests pass (22 test files)

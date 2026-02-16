@@ -1,0 +1,1 @@
+ALTER TABLE `quotes` RENAME COLUMN `salespersonId` TO `userId`;

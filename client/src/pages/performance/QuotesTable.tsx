@@ -86,7 +86,7 @@ export function QuotesTable({
   };
 
   const allDeletable = quotes?.filter(
-    (q) => salesperson.isMaster || q.salespersonId === salesperson.id
+    (q) => salesperson.isMaster || q.userId === salesperson.id
   ) ?? [];
 
   const allSelected = allDeletable.length > 0 && selectedQuotes.size === allDeletable.length;
@@ -151,7 +151,7 @@ export function QuotesTable({
                   {quotes.slice(0, 50).map((quote) => {
                     const totals = parseJSON(quote.totals);
                     const canDelete =
-                      salesperson.isMaster || quote.salespersonId === salesperson.id;
+                      salesperson.isMaster || quote.userId === salesperson.id;
 
                     return (
                       <TableRow

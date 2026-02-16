@@ -23,7 +23,7 @@ export const quotesRouter = router({
       shareableUrl: z.string().optional(),
       clientName: z.string().optional(),
       vendorName: z.string().optional(),
-      salespersonId: z.number().optional(),
+      userId: z.number().optional(),
       agencyName: z.string().optional(),
       cellPhone: z.string().optional(),
       landlinePhone: z.string().optional(),
@@ -53,7 +53,7 @@ export const quotesRouter = router({
         shareableUrl: input.shareableUrl,
         clientName: input.clientName,
         vendorName: input.vendorName,
-        salespersonId: input.salespersonId,
+        userId: input.userId,
         agencyName: input.agencyName,
         cellPhone: input.cellPhone,
         landlinePhone: input.landlinePhone,
@@ -93,7 +93,7 @@ export const quotesRouter = router({
         return { success: false, error: "Não autorizado" };
       }
       // Authenticated users via OAuth are treated as master (full access)
-      const result = await softDeleteQuote(input.id, -1, true);
+      const result = await softDeleteQuote(input.id, oauthUser.id, true);
       return result;
     }),
 
@@ -106,19 +106,19 @@ export const quotesRouter = router({
         return { success: false, deletedCount: 0, errors: ["Não autorizado"] };
       }
       // Authenticated users via OAuth are treated as master (full access)
-      const result = await softDeleteQuotesBatch(input.ids, -1, true);
+      const result = await softDeleteQuotesBatch(input.ids, oauthUser.id, true);
       return result;
     }),
 
   performance: publicProcedure
     .input(z.object({
-      salespersonId: z.number().optional(),
+      userId: z.number().optional(),
       dateFrom: z.string().optional(),
       dateTo: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
       const filters = input ? {
-        salespersonId: input.salespersonId,
+        userId: input.userId,
         dateFrom: input.dateFrom ? new Date(input.dateFrom) : undefined,
         dateTo: input.dateTo ? new Date(input.dateTo) : undefined,
       } : undefined;

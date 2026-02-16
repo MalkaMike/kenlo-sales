@@ -270,7 +270,7 @@ export function buildQuoteSaveData(
         : undefined,
     clientName: businessNature.ownerName,
     vendorName: quoteInfo.vendorName,
-    salespersonId: quoteInfo.salespersonId,
+    userId: quoteInfo.userId,
     agencyName: businessNature.companyName,
     cellPhone: businessNature.cellphone,
     landlinePhone: businessNature.landline,

@@ -46,7 +46,7 @@ const baseQuoteInfo = {
   vendorEmail: "joao@kenlo.com",
   vendorPhone: "(11) 99999-0000",
   vendorRole: "Consultor",
-  salespersonId: "sp-1",
+  userId: 1,
   installments: 1,
   validityDays: 30,
 };

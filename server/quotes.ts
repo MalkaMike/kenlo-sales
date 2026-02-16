@@ -47,14 +47,14 @@ export async function getQuoteById(id: number): Promise<Quote | null> {
 
 export async function softDeleteQuote(
   id: number,
-  salespersonId: number,
+  userId: number,
   isMaster: boolean
 ): Promise<{ success: boolean; error?: string }> {
   const db = await requireDb();
 
   const quote = await getQuoteById(id);
   if (!quote) return { success: false, error: "Cotação não encontrada" };
-  if (!isMaster && quote.salespersonId !== salespersonId) {
+  if (!isMaster && quote.userId !== userId) {
     return { success: false, error: "Você só pode apagar suas próprias cotações" };
   }
 
@@ -64,7 +64,7 @@ export async function softDeleteQuote(
 
 export async function softDeleteQuotesBatch(
   ids: number[],
-  salespersonId: number,
+  userId: number,
   isMaster: boolean
 ): Promise<{ success: boolean; deletedCount: number; errors: string[] }> {
   if (ids.length === 0) return { success: true, deletedCount: 0, errors: [] };
@@ -89,7 +89,7 @@ export async function softDeleteQuotesBatch(
       errors.push(`Cotação #${id} não encontrada`);
       continue;
     }
-    if (!isMaster && quote.salespersonId !== salespersonId) {
+    if (!isMaster && quote.userId !== userId) {
       errors.push(`Cotação #${id}: Você só pode apagar suas próprias cotações`);
       continue;
     }
@@ -167,7 +167,7 @@ export interface PlanMetrics {
 
 export interface VendorMetrics {
   vendorName: string;
-  salespersonId: number | null;
+  userId: number | null;
   totalQuotes: number;
   mrrWithoutPostPaid: number;
   mrrWithPostPaid: number;
@@ -229,13 +229,13 @@ function accumulateMetrics<T extends { count: number; mrrWithoutPostPaid: number
 }
 
 export async function getPerformanceMetrics(
-  filters?: { salespersonId?: number; dateFrom?: Date; dateTo?: Date }
+  filters?: { userId?: number; dateFrom?: Date; dateTo?: Date }
 ): Promise<PerformanceMetrics> {
   const db = await requireDb();
 
   // Build WHERE conditions
   const conditions = [isNull(quotes.deletedAt)];
-  if (filters?.salespersonId) conditions.push(eq(quotes.salespersonId, filters.salespersonId));
+  if (filters?.userId) conditions.push(eq(quotes.userId, filters.userId));
   if (filters?.dateFrom) conditions.push(gte(quotes.createdAt, filters.dateFrom));
   if (filters?.dateTo) conditions.push(lte(quotes.createdAt, filters.dateTo));
 
@@ -299,7 +299,7 @@ export async function getPerformanceMetrics(
     if (!vendorMap.has(vendorName)) {
       vendorMap.set(vendorName, {
         vendorName,
-        salespersonId: quote.salespersonId,
+        userId: quote.userId,
         totalQuotes: 0,
         mrrWithoutPostPaid: 0,
         mrrWithPostPaid: 0,
@@ -363,7 +363,7 @@ export async function getPerformanceMetrics(
 // ============================================
 
 export async function getQuotesByUser(params: {
-  salespersonId?: number;
+  userId?: number;
   userName?: string;
   limit?: number;
 }): Promise<Quote[]> {
@@ -371,7 +371,7 @@ export async function getQuotesByUser(params: {
 
   const conditions = [isNull(quotes.deletedAt)];
   const userConditions = [];
-  if (params.salespersonId) userConditions.push(eq(quotes.salespersonId, params.salespersonId));
+  if (params.userId) userConditions.push(eq(quotes.userId, params.userId));
   if (params.userName) userConditions.push(eq(quotes.vendorName, params.userName));
   if (userConditions.length > 0) conditions.push(or(...userConditions)!);
 
