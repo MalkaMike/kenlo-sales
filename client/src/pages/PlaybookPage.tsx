@@ -2,6 +2,8 @@ import { Link } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { trpc } from "@/lib/trpc";
+import { useNotification } from "@/hooks/useNotification";
 import {
   Building2,
   Home,
@@ -28,6 +30,8 @@ import {
   Award,
   DollarSign,
   Clock,
+  Download,
+  Loader2,
 } from "lucide-react";
 
 // ============================================================================
@@ -442,6 +446,31 @@ function PlaybookCard({ playbook }: { playbook: Playbook }) {
 
 export default function PlaybookPage() {
   const [activeTab, setActiveTab] = useState<"products" | "addons" | "kombos">("products");
+  const { success: notifySuccess, error: notifyError } = useNotification();
+  const generatePDF = trpc.playbook.generatePDF.useMutation({
+    onSuccess: (data) => {
+      // Convert base64 to blob and download
+      const byteCharacters = atob(data.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      notifySuccess("PDF gerado!", "O download do Sales Playbook começou.");
+    },
+    onError: (error) => {
+      notifyError("Erro", error.message || "Não foi possível gerar o PDF.");
+    },
+  });
 
   return (
     <div className="flex flex-col">
@@ -462,9 +491,25 @@ export default function PlaybookPage() {
               Dados, perguntas-chave, objeções e dicas de demo para cada produto e Kombo.
               Tudo que sua equipe precisa para vender com confiança.
             </p>
-            <p className="text-sm text-muted-foreground italic max-w-2xl mx-auto mb-8">
+            <p className="text-sm text-muted-foreground italic max-w-2xl mx-auto mb-6">
               "80% dos clientes não conhecem esses números. É aí que você impressiona. Não vendemos vento — vendemos dados."
             </p>
+
+            {/* Download PDF Button */}
+            <div className="mb-8">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 gap-2"
+                onClick={() => generatePDF.mutate()}
+                disabled={generatePDF.isPending}
+              >
+                {generatePDF.isPending ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Gerando PDF...</>
+                ) : (
+                  <><Download className="w-5 h-5" /> Baixar Playbook Completo (PDF)</>
+                )}
+              </Button>
+            </div>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">

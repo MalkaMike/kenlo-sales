@@ -4680,3 +4680,10 @@
 - [x] Update Core Gestão Kombo playbook with prepaid pricing
 - [x] Update Elite Kombo playbook with prepaid pricing
 - [x] Update PlaybookPage.tsx frontend with revised playbook content (prepaid tips, Imob Start VIP/CS fix, Kombo products corrected)
+
+## Playbook PDF Export & Calculadora Prepaid Testing
+- [x] Test calculadora prepaid toggle for R$ 34/user display (verified in code + 21 new tests)
+- [x] Test calculadora prepaid toggle for R$ 2.20/contract display (verified in code + 21 new tests)
+- [x] Fix any prepaid display issues found (all correct, floating point handled with toBeCloseTo)
+- [x] Build PDF export functionality for playbooks on the Playbook page (server-side PDFKit, tRPC endpoint)
+- [x] Add download button to Playbook page for offline use (base64 → blob → download)
