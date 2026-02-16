@@ -4,8 +4,7 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { Calculator, ChevronUp, FileText, Settings } from "lucide-react";
-import { toast } from "sonner";
+import { Calculator, ChevronUp, Settings } from "lucide-react";
 import { useCalc } from "./CalculadoraContext";
 import { formatCurrency, frequencyLabels, frequencyBadges, frequencyInstallments } from "./types";
 
@@ -18,12 +17,6 @@ export function StickyBar() {
     activeKombo,
     komboInfo,
     showStickyBar,
-    canExportPDF,
-    selectedPlans,
-    businessNature,
-    isBusinessNatureComplete,
-    setShowValidationErrors,
-    setShowQuoteInfoDialog,
     calculateMonthlyRecurring,
   } = useCalc();
 
@@ -111,57 +104,13 @@ export function StickyBar() {
               <Button
                 size="sm"
                 variant="outline"
-                className="text-xs gap-1.5 hidden sm:flex"
+                className="text-xs gap-1.5"
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
                 <ChevronUp className="w-3.5 h-3.5" />
                 Topo
-              </Button>
-              <Button
-                size="sm"
-                className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
-                onClick={() => {
-                  if (!canExportPDF) {
-                    toast.error(
-                      "Faça login como vendedor autorizado para exportar cotações."
-                    );
-                    return;
-                  }
-                  const hasCompanyErrors =
-                    !businessNature.companyName.trim() ||
-                    !businessNature.ownerName.trim() ||
-                    !businessNature.email.trim() ||
-                    !businessNature.cellphone.trim();
-                  if (!isBusinessNatureComplete() || hasCompanyErrors) {
-                    setShowValidationErrors(true);
-                    toast.error(
-                      "Preencha todos os campos obrigatórios marcados com * antes de exportar."
-                    );
-                    const businessNatureSection = document.getElementById(
-                      "business-nature-section"
-                    );
-                    if (businessNatureSection) {
-                      businessNatureSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }
-                    return;
-                  }
-                  if (selectedPlans.length === 0) {
-                    toast.error(
-                      "Selecione pelo menos 1 coluna na tabela antes de exportar."
-                    );
-                    return;
-                  }
-                  setShowValidationErrors(false);
-                  setShowQuoteInfoDialog(true);
-                }}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                Exportar PDF
               </Button>
             </div>
           </div>

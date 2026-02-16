@@ -4844,3 +4844,8 @@
 - [x] Remover banner azul de aviso ("Selecione um plano na tabela acima...")
 - [x] Centralizar botão "Exportar Cotação (PDF)" como ponto final claro da calculadora
 - [x] Atualizar texto auxiliar para "Configuração concluída. Exporte o PDF da proposta."
+
+## Remover botão "Exportar PDF" da sticky bar inferior
+- [x] Remover botão "Exportar PDF" da sticky bar inferior da calculadora
+- [x] Testar fluxo completo com dados reais e verificar PDF gerado (validação funciona, sticky bar correta, export requer login)
+- [x] Preparar para publicação (checkpoint salvo)
