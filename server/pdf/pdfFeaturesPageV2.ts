@@ -26,7 +26,7 @@ const IMOB_FEATURES = [
   { name: "Inteligência de Dados", prime: false, k: false, k2: true },
   { name: "Omnichannel (WhatsApp)", prime: false, k: false, k2: true },
   { name: "Assinatura Digital", prime: true, k: true, k2: true },
-  { name: "Comunidade Kenlo", prime: true, k: true, k2: true },
+  { name: "Comunidade Kenlo", prime: false, k: true, k2: true },
   { name: "Suporte Dedicado", prime: false, k: false, k2: true },
   { name: "CS Dedicado", prime: false, k: false, k2: true },
 ];

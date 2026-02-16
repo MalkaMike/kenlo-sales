@@ -4863,3 +4863,12 @@
 - [x] Atualizar PayPage.tsx linhas 80, 137, 155, 607 para usar valores dinâmicos
 - [x] Manter lógica: "Cobre R$ 5,00 (exemplo) e lucre R$ X-Y (calculado)" - agora mostra R$ 1,00-R$ 2,00 baseado em config
 - [x] Rodar testes para verificar (0 erros TypeScript)
+
+## URGENTE: Corrigir disponibilidade da Comunidade Kenlo (apenas K e K², NÃO Prime)
+- [x] Atualizar kenlo-referencia-completa-produtos-updated.md (3 correções)
+- [x] Auditar e corrigir todas as matrizes de funcionalidades no código (IMOB e LOC)
+- [x] Corrigir páginas de produtos (ImobPage.tsx: prime: false, k: true, k2: true)
+- [x] Corrigir pdfFeaturesPageV2.ts (prime: false, k: true, k2: true)
+- [x] Verificar LocacaoPage.tsx (não menciona Comunidade Kenlo, OK)
+- [x] Buscar todas as ocorrências de "Comunidade Kenlo" no codebase e corrigir
+- [x] Rodar testes e salvar checkpoint (682 testes passaram)

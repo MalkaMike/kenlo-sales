@@ -238,7 +238,7 @@ function buildPricingData(): { plans: string[]; sections: PricingSection[] } {
       {
         feature: "Comunidade Kenlo",
         tooltip:
-          "Rede de co-corretagem entre imobiliárias Kenlo. Algoritmo exclusivo conecta agências com compradores ↔ agências com vendedores.",
+          "Rede de co-corretagem entre imobiliárias Kenlo. Algoritmo exclusivo conecta agências com compradores ↔ agências com vendedores. Disponível apenas em K e K².",
         type: "check",
         values: [false, true, true],
       },
