@@ -4765,3 +4765,11 @@
 - [x] Push database migration (0010: ALTER TABLE quotes RENAME COLUMN salespersonId TO userId)
 - [x] Verify TypeScript compiles cleanly (0 errors)
 - [x] Verify all 670 tests pass (22 test files)
+
+## Merge ProtectedRoute into AuthGuard
+- [x] Audit all imports/usages of ProtectedRoute — already a no-op, not imported anywhere
+- [x] AuthGuard already contains all auth logic (domain check, redirect to /login or /acesso-negado)
+- [x] App.tsx already uses AuthGuard only — no ProtectedRoute wrappers to remove
+- [x] Deleted ProtectedRoute.tsx
+- [x] Verify TypeScript compiles cleanly (0 errors)
+- [x] Verify all 670 tests pass (22 test files)
