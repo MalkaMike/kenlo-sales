@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LogOut } from "lucide-react";
 
@@ -26,30 +25,18 @@ interface QuoteInfoDialogProps {
 }
 
 export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency = "annual" }: QuoteInfoDialogProps) {
-  const { salesperson } = useSalesperson();
   const { user: oauthUser, logout } = useAuth();
   
   const [installments, setInstallments] = useState<number>(1);
   const [validityDays, setValidityDays] = useState<number>(3);
 
-  // Determine the current user info (salesperson takes priority over OAuth user)
-  const currentUser = salesperson 
-    ? {
-        name: salesperson.name,
-        email: salesperson.email,
-        phone: salesperson.phone,
-        role: "Executivo(a) de Vendas",
-        id: salesperson.id,
-        source: "salesperson" as const,
-      }
-    : oauthUser
+  // Determine the current user info from OAuth
+  const currentUser = oauthUser
     ? {
         name: oauthUser.name || oauthUser.email?.split("@")[0] || "Usuário Kenlo",
         email: oauthUser.email || "",
         phone: "",
         role: "Colaborador Kenlo",
-        id: undefined,
-        source: "oauth" as const,
       }
     : null;
 
@@ -108,7 +95,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
       vendorEmail: currentUser?.email || "",
       vendorPhone: currentUser?.phone || "",
       vendorRole: currentUser?.role || "Colaborador Kenlo",
-      salespersonId: currentUser?.source === "salesperson" ? currentUser.id : undefined,
+      salespersonId: undefined,
       installments: installments,
       validityDays: validityDays,
     });

@@ -8,7 +8,6 @@
  */
 
 import { useState, useCallback, useRef } from "react";
-import { useSalesperson } from "@/hooks/useSalesperson";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import type { KomboColumnData } from "@/components/KomboComparisonTable";
@@ -39,9 +38,17 @@ import { useKomboRecommendation } from "./hooks/useKomboRecommendation";
 
 export function useCalculadora() {
   // ─── Authentication ─────────────────────────────────────────────────────────
-  const { salesperson, isAuthenticated: isSalespersonAuth } = useSalesperson();
   const { user: oauthUser } = useAuth();
-  const canExportPDF = isSalespersonAuth || isAuthorizedEmail(oauthUser?.email);
+  const canExportPDF = isAuthorizedEmail(oauthUser?.email);
+
+  // Derive salesperson-compatible object from OAuth user for backward compatibility
+  const salesperson = oauthUser ? {
+    id: -1,
+    name: oauthUser.name || oauthUser.email || "Usuário",
+    email: oauthUser.email || "",
+    phone: "",
+    isMaster: true,
+  } : null;
 
   // ─── Business Nature State ──────────────────────────────────────────────────
   const [businessNature, setBusinessNature] = useState<BusinessNatureState>(DEFAULT_BUSINESS_NATURE);

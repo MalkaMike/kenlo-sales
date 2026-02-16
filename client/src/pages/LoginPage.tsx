@@ -1,70 +1,36 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, LogIn, AlertCircle, Chrome } from "lucide-react";
-import { useSalesperson } from "@/hooks/useSalesperson";
+import { Loader2, Mail } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 
 /** Allowed email domains for access */
 const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
 
-function isAllowedDomain(email: string | null | undefined): boolean {
-  if (!email) return false;
-  const domain = email.toLowerCase().split("@")[1];
-  return ALLOWED_DOMAINS.includes(domain);
-}
-
 export default function LoginPage() {
   const [, setLocation] = useLocation();
-  const { login, isLoading: isCheckingSalesperson, isAuthenticated: isSalespersonAuth } = useSalesperson();
   const { user: oauthUser, loading: isCheckingOAuth } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check if user is authenticated via OAuth with allowed domain
-  const isOAuthAuthenticated = oauthUser && isAllowedDomain(oauthUser.email);
-  const isAuthenticated = isSalespersonAuth || isOAuthAuthenticated;
-  const isCheckingAuth = isCheckingSalesperson || isCheckingOAuth;
+  const isAuthenticated = !!oauthUser;
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated && !isCheckingAuth) {
-      setLocation("/calculadora");
+    if (isAuthenticated && !isCheckingOAuth) {
+      setLocation("/");
     }
-  }, [isAuthenticated, isCheckingAuth, setLocation]);
+  }, [isAuthenticated, isCheckingOAuth, setLocation]);
 
-  if (isAuthenticated && !isCheckingAuth) {
+  if (isAuthenticated && !isCheckingOAuth) {
     return null;
   }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-
-    const result = await login(email, password);
-    
-    if (result.success) {
-      setLocation("/calculadora");
-    } else {
-      setError(result.error || "Erro ao fazer login");
-    }
-    
-    setIsSubmitting(false);
-  };
 
   const handleGoogleLogin = () => {
     window.location.href = getLoginUrl();
   };
 
-  if (isCheckingAuth) {
+  if (isCheckingOAuth) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         {/* Header */}
@@ -77,14 +43,6 @@ export default function LoginPage() {
                 className="h-7 w-auto"
               />
             </Link>
-            <nav className="flex items-center gap-6">
-              <Link href="/kombos" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Kombos
-              </Link>
-              <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Início
-              </Link>
-            </nav>
           </div>
         </header>
         
@@ -107,14 +65,6 @@ export default function LoginPage() {
               className="h-7 w-auto"
             />
           </Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/kombos" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Kombos
-            </Link>
-            <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Início
-            </Link>
-          </nav>
         </div>
       </header>
 
@@ -131,91 +81,40 @@ export default function LoginPage() {
             </div>
             <CardTitle className="text-2xl">Portal de Vendas</CardTitle>
             <CardDescription>
-              Faça login para acessar a calculadora de cotações
+              Faça login com sua conta Google corporativa
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Google Login Button */}
             <Button 
               type="button"
-              variant="outline"
-              className="w-full h-12 text-base"
+              className="w-full h-12 text-base bg-primary hover:bg-primary/90 gap-2"
               onClick={handleGoogleLogin}
             >
-              <Chrome className="w-5 h-5 mr-2" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#fff"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#fff"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/>
+              </svg>
               Entrar com Google
             </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+            {/* Domain restriction info */}
+            <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 justify-center mb-2">
+                <Mail className="w-4 h-4" />
+                <span className="font-medium">Domínios permitidos:</span>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  ou continue com email
-                </span>
-              </div>
+              {ALLOWED_DOMAINS.map((domain) => (
+                <p key={domain} className="text-center">@{domain}</p>
+              ))}
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu.email@kenlo.com.br"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full bg-primary hover:bg-primary/90"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Entrando...
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Entrar
-                  </>
-                )}
-              </Button>
-            </form>
-
             <p className="text-xs text-muted-foreground text-center">
-              Acesso restrito a colaboradores Kenlo.
+              Acesso restrito a colaboradores Kenlo, I-Value e Laik.
               <br />
-              Use seu email @kenlo.com.br ou @i-value.com.br
+              Use sua conta Google corporativa para entrar.
             </p>
           </CardContent>
         </Card>

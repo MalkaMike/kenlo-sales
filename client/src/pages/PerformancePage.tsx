@@ -5,7 +5,7 @@
  * Sub-modules:
  *   performance/performanceConstants.ts   — formatters, display-name maps, chart colors
  *   performance/performanceCalculators.ts — 7 pure metric calculators
- *   performance/MetricsCards.tsx          — 6 KPI cards
+ *   performance/DashboardMetricsCards.tsx — 6 KPI cards
  *   performance/PerformanceCharts.tsx     — MRR trend, Kombo pie, Plan bar
  *   performance/VendorRankingTable.tsx    — Salesperson ranking table
  *   performance/FrequencyAddonCharts.tsx  — Frequency & add-on popularity
@@ -13,11 +13,9 @@
  *   performance/PerformanceFilters.tsx    — View mode, quick period, filter panel
  */
 
-import { useState, useEffect } from "react";
-import Layout from "@/components/Layout";
+import { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
-import { useSalesperson } from "@/hooks/useSalesperson";
-import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart3, LogOut, Loader2 } from "lucide-react";
@@ -62,15 +60,19 @@ const parseJSON = (str: string | null) => {
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export default function PerformancePage() {
-  const [, navigate] = useLocation();
-  const { salesperson, isLoading: authLoading, logout } = useSalesperson();
+  const { user, loading: authLoading, logout } = useAuth();
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!authLoading && !salesperson) {
-      navigate("/login?redirect=/performance");
-    }
-  }, [authLoading, salesperson, navigate]);
+  // Derive a salesperson-compatible object from the OAuth user
+  // All OAuth users with allowed domains are treated as "master" (full access)
+  const salesperson = useMemo(() => {
+    if (!user) return null;
+    return {
+      id: -1,
+      name: user.name || user.email || "Usuário",
+      email: user.email || "",
+      isMaster: true, // All authenticated users get full dashboard access
+    };
+  }, [user]);
 
   const utils = trpc.useUtils();
   const { data: quotes, isLoading, refetch: refetchQuotes } = trpc.quotes.list.useQuery({ limit: 1000 });
@@ -193,7 +195,6 @@ export default function PerformancePage() {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
   };
 
   // ── Filter logic ────────────────────────────────────────────────────────
@@ -285,11 +286,9 @@ export default function PerformancePage() {
   // ── Loading / auth guard ────────────────────────────────────────────────
   if (authLoading) {
     return (
-      <Layout>
-        <div className="container py-8 flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </Layout>
+      <div className="container py-8 flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
     );
   }
 
@@ -297,94 +296,87 @@ export default function PerformancePage() {
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
-    <Layout>
-      <div className="container py-8">
-        {/* Header */}
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <BarChart3 className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-bold">Performance</h1>
-            </div>
-            <p className="text-muted-foreground">
-              Dashboard executivo - Acompanhe a performance de vendas do time
-            </p>
+    <div className="container py-8">
+      {/* Header */}
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <BarChart3 className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold">Performance</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Logado como</p>
-              <p className="font-medium">{salesperson.name}</p>
-              {salesperson.isMaster && (
-                <Badge variant="secondary" className="mt-1">
-                  Master
-                </Badge>
-              )}
-            </div>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Sair
-            </Button>
-          </div>
+          <p className="text-muted-foreground">
+            Dashboard executivo - Acompanhe a performance de vendas do time
+          </p>
         </div>
-
-        <PerformanceFilters
-          salesperson={salesperson}
-          vendorNames={vendorNames}
-          viewMode={viewMode}
-          onViewModeChange={handleViewModeChange}
-          quickPeriod={quickPeriod}
-          onQuickPeriodChange={applyQuickPeriod}
-          filterVendor={filterVendor}
-          onFilterVendorChange={setFilterVendor}
-          filterKombo={filterKombo}
-          onFilterKomboChange={setFilterKombo}
-          filterDateFrom={filterDateFrom}
-          onFilterDateFromChange={setFilterDateFrom}
-          filterDateTo={filterDateTo}
-          onFilterDateToChange={setFilterDateTo}
-          showFilters={showFilters}
-          onToggleFilters={() => setShowFilters(!showFilters)}
-          hasActiveFilters={hasActiveFilters}
-          activeFilterCount={activeFilterCount}
-          onClearFilters={clearFilters}
-          onExportExcel={exportToExcel}
-        />
-
-        <MetricsCards metrics={metrics} />
-
-        <MrrTrendChart trendData={trendData} />
-
-        <BreakdownCharts
-          komboBreakdown={komboBreakdown}
-          planBreakdown={planBreakdown}
-        />
-
-        <VendorRankingTable vendorRanking={vendorRanking} />
-
-        <FrequencyAddonCharts
-          frequencyBreakdown={frequencyBreakdown}
-          addonPopularity={addonPopularity}
-        />
-
-        <QuotesTable
-          quotes={filteredQuotes}
-          isLoading={isLoading}
-          salesperson={salesperson}
-          selectedQuotes={selectedQuotes}
-          onToggleSelection={toggleQuoteSelection}
-          onToggleSelectAll={toggleSelectAll}
-          onDeleteClick={handleDeleteClick}
-          deleteDialogOpen={deleteDialogOpen}
-          onDeleteDialogChange={setDeleteDialogOpen}
-          onDeleteConfirm={handleDeleteConfirm}
-          isDeleting={deleteMutation.isPending}
-          onBatchDeleteClick={() => setBatchDeleteDialogOpen(true)}
-          batchDeleteDialogOpen={batchDeleteDialogOpen}
-          onBatchDeleteDialogChange={setBatchDeleteDialogOpen}
-          onBatchDeleteConfirm={handleBatchDeleteConfirm}
-          isBatchDeleting={deleteBatchMutation.isPending}
-        />
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-sm text-muted-foreground">Logado como</p>
+            <p className="font-medium">{salesperson.name}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleLogout}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
+        </div>
       </div>
-    </Layout>
+
+      <PerformanceFilters
+        salesperson={salesperson}
+        vendorNames={vendorNames}
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+        quickPeriod={quickPeriod}
+        onQuickPeriodChange={applyQuickPeriod}
+        filterVendor={filterVendor}
+        onFilterVendorChange={setFilterVendor}
+        filterKombo={filterKombo}
+        onFilterKomboChange={setFilterKombo}
+        filterDateFrom={filterDateFrom}
+        onFilterDateFromChange={setFilterDateFrom}
+        filterDateTo={filterDateTo}
+        onFilterDateToChange={setFilterDateTo}
+        showFilters={showFilters}
+        onToggleFilters={() => setShowFilters(!showFilters)}
+        hasActiveFilters={hasActiveFilters}
+        activeFilterCount={activeFilterCount}
+        onClearFilters={clearFilters}
+        onExportExcel={exportToExcel}
+      />
+
+      <MetricsCards metrics={metrics} />
+
+      <MrrTrendChart trendData={trendData} />
+
+      <BreakdownCharts
+        komboBreakdown={komboBreakdown}
+        planBreakdown={planBreakdown}
+      />
+
+      <VendorRankingTable vendorRanking={vendorRanking} />
+
+      <FrequencyAddonCharts
+        frequencyBreakdown={frequencyBreakdown}
+        addonPopularity={addonPopularity}
+      />
+
+      <QuotesTable
+        quotes={filteredQuotes}
+        isLoading={isLoading}
+        salesperson={salesperson}
+        selectedQuotes={selectedQuotes}
+        onToggleSelection={toggleQuoteSelection}
+        onToggleSelectAll={toggleSelectAll}
+        onDeleteClick={handleDeleteClick}
+        deleteDialogOpen={deleteDialogOpen}
+        onDeleteDialogChange={setDeleteDialogOpen}
+        onDeleteConfirm={handleDeleteConfirm}
+        isDeleting={deleteMutation.isPending}
+        onBatchDeleteClick={() => setBatchDeleteDialogOpen(true)}
+        batchDeleteDialogOpen={batchDeleteDialogOpen}
+        onBatchDeleteDialogChange={setBatchDeleteDialogOpen}
+        onBatchDeleteConfirm={handleBatchDeleteConfirm}
+        isBatchDeleting={deleteBatchMutation.isPending}
+      />
+    </div>
   );
 }

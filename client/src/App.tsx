@@ -6,7 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AuthGuard from "./components/AuthGuard";
 import { Toast } from "./components/Toast";
 import { ErrorInterceptorSetup } from "./components/ErrorInterceptorSetup";
 
@@ -31,96 +31,53 @@ import ProfilePage from "./pages/ProfilePage";
 import PricingAdminPage from "./pages/PricingAdminPage";
 import PlaybookPage from "./pages/PlaybookPage";
 
-// Protected Calculadora wrapper
-function ProtectedCalculadora() {
-  return (
-    <ProtectedRoute>
-      <CalculadoraPage />
-    </ProtectedRoute>
-  );
-}
-
-// Protected Historico wrapper
-function ProtectedHistorico() {
-  return (
-    <ProtectedRoute>
-      <HistoricoPage />
-    </ProtectedRoute>
-  );
-}
-
-// Protected Performance wrapper
-function ProtectedPerformance() {
-  return (
-    <ProtectedRoute>
-      <PerformancePage />
-    </ProtectedRoute>
-  );
-}
-
-// Protected Profile wrapper
-function ProtectedProfile() {
-  return (
-    <ProtectedRoute>
-      <ProfilePage />
-    </ProtectedRoute>
-  );
-}
-
-// Protected Pricing Admin wrapper
-function ProtectedPricingAdmin() {
-  return (
-    <ProtectedRoute>
-      <PricingAdminPage />
-    </ProtectedRoute>
-  );
-}
-
 function Router() {
   return (
     <Switch>
-      {/* Login page - no layout */}
+      {/* Login page - no layout, no auth guard */}
       <Route path="/login" component={LoginPage} />
       
-      {/* Access denied page - no layout */}
+      {/* Access denied page - no layout, no auth guard */}
       <Route path="/acesso-negado" component={AcessoNegado} />
       
-      {/* All other pages with layout */}
+      {/* All other pages require authentication + Layout */}
       <Route>
-        <Layout>
-          <Switch>
-            <Route path="/" component={Home} />
-            {/* Products */}
-            <Route path="/produtos/imob" component={ImobPage} />
-            <Route path="/produtos/locacao" component={LocacaoPage} />
-            <Route path="/produtos/site" component={SitePage} />
-            {/* Add-ons */}
-            <Route path="/addons/leads" component={LeadsPage} />
-            <Route path="/addons/inteligencia" component={InteligenciaPage} />
-            <Route path="/addons/assinatura" component={AssinaturaPage} />
-            <Route path="/addons/pay" component={PayPage} />
-            <Route path="/addons/seguros" component={SegurosPage} />
-            <Route path="/addons/cash" component={CashPage} />
-            {/* Kombos */}
-            <Route path="/kombos" component={KombosPage} />
-            {/* Sales Playbook */}
-            <Route path="/playbook" component={PlaybookPage} />
-            {/* Calculator / Cotação - PROTECTED */}
-            <Route path="/calculadora" component={ProtectedCalculadora} />
-            <Route path="/cotacao" component={ProtectedCalculadora} />
-            {/* Histórico - PROTECTED */}
-            <Route path="/historico" component={ProtectedHistorico} />
-            {/* Performance - PROTECTED */}
-            <Route path="/performance" component={ProtectedPerformance} />
-            {/* Profile - PROTECTED */}
-            <Route path="/perfil" component={ProtectedProfile} />
-            {/* Pricing Admin - PROTECTED */}
-            <Route path="/admin/pricing" component={ProtectedPricingAdmin} />
-            {/* Fallback */}
-            <Route path="/404" component={NotFound} />
-            <Route component={NotFound} />
-          </Switch>
-        </Layout>
+        <AuthGuard>
+          <Layout>
+            <Switch>
+              <Route path="/" component={Home} />
+              {/* Products */}
+              <Route path="/produtos/imob" component={ImobPage} />
+              <Route path="/produtos/locacao" component={LocacaoPage} />
+              <Route path="/produtos/site" component={SitePage} />
+              {/* Add-ons */}
+              <Route path="/addons/leads" component={LeadsPage} />
+              <Route path="/addons/inteligencia" component={InteligenciaPage} />
+              <Route path="/addons/assinatura" component={AssinaturaPage} />
+              <Route path="/addons/pay" component={PayPage} />
+              <Route path="/addons/seguros" component={SegurosPage} />
+              <Route path="/addons/cash" component={CashPage} />
+              {/* Kombos */}
+              <Route path="/kombos" component={KombosPage} />
+              {/* Sales Playbook */}
+              <Route path="/playbook" component={PlaybookPage} />
+              {/* Calculator / Cotação */}
+              <Route path="/calculadora" component={CalculadoraPage} />
+              <Route path="/cotacao" component={CalculadoraPage} />
+              {/* Histórico */}
+              <Route path="/historico" component={HistoricoPage} />
+              {/* Performance */}
+              <Route path="/performance" component={PerformancePage} />
+              {/* Profile */}
+              <Route path="/perfil" component={ProfilePage} />
+              {/* Pricing Admin */}
+              <Route path="/admin/pricing" component={PricingAdminPage} />
+              {/* Fallback */}
+              <Route path="/404" component={NotFound} />
+              <Route component={NotFound} />
+            </Switch>
+          </Layout>
+        </AuthGuard>
       </Route>
     </Switch>
   );

@@ -4713,3 +4713,21 @@
 - [x] Rename MetricsCards.tsx to DashboardMetricsCards.tsx to bypass proxy filter
 - [x] Update all imports in PerformancePage.tsx and performance/index.ts
 - [x] Verify TypeScript compiles cleanly and all 659 tests pass
+
+## Clean URLs for all routes
+- [x] Audit all routes in App.tsx for clean, meaningful URL slugs
+- [x] Ensure routes like /calculadora, /produtos/imob, /kombos, /playbook etc. are clean
+- [x] All routes already had clean URLs — no changes needed
+
+## Email Domain Restriction + Google-Only Login
+- [x] Restrict login to Google OAuth only (no other auth methods)
+- [x] Allow only @kenlo.com.br, @i-value.com.br, @laik.com.br email domains
+- [x] Block unauthorized domains with clear error message (AcessoNegado page)
+- [x] Write tests for domain restriction logic (11 tests, all passing)
+- [x] Remove salesperson email/password login from LoginPage
+- [x] Create AuthGuard component wrapping all routes except /login and /acesso-negado
+- [x] Update PerformancePage to use OAuth user instead of salesperson login
+- [x] Update useCalculadora to use OAuth user instead of salesperson login
+- [x] Update QuoteInfoDialog to use OAuth user instead of salesperson login
+- [x] Server-side domain validation in oauth.ts callback
+- [x] Client-side domain validation in AuthGuard.tsx
