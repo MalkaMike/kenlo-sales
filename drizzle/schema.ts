@@ -159,23 +159,3 @@ export const quotes = mysqlTable("quotes", {
 
 export type Quote = typeof quotes.$inferSelect;
 export type InsertQuote = typeof quotes.$inferInsert;
-
-/**
- * Salespeople table - stores authorized salespeople who can access the calculator
- */
-export const salespeople = mysqlTable("salespeople", {
-  id: int("id").autoincrement().primaryKey(),
-  /** Full name of the salesperson */
-  name: varchar("name", { length: 255 }).notNull(),
-  /** Email address (used as login) */
-  email: varchar("email", { length: 320 }).notNull().unique(),
-  /** Phone number in Brazilian format (+55 XX XXXXX-XXXX) */
-  phone: varchar("phone", { length: 20 }).notNull(),
-  /** Whether the salesperson is active */
-  isActive: int("isActive").default(1).notNull(), // 1 = active, 0 = inactive
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type Salesperson = typeof salespeople.$inferSelect;
-export type InsertSalesperson = typeof salespeople.$inferInsert;

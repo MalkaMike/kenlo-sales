@@ -4742,3 +4742,12 @@
 - [x] Remove getSalespersonByEmail, getSalespersonById, getAllSalespeople from server/db.ts
 - [x] Verify TypeScript compiles cleanly (0 errors)
 - [x] Verify all 670 tests pass (22 test files)
+
+## Drop salespeople database table
+- [x] Remove salespeople table definition from drizzle/schema.ts
+- [x] Remove Salesperson and InsertSalesperson type exports from schema
+- [x] Checked drizzle/relations.ts — no salespeople references found
+- [x] Verified no remaining imports of salespeople from any code files
+- [x] Push database migration (pnpm db:push) — migration 0009: DROP TABLE `salespeople`
+- [x] Verify TypeScript compiles cleanly (0 errors)
+- [x] Verify all 670 tests pass (22 test files)
