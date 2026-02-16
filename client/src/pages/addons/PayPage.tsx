@@ -9,11 +9,29 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LOC_PLANS, PAY_BOLETOS, PAY_SPLITS } from "@shared/pricing-config";
+import { LOC_PLANS, PAY_BOLETOS, PAY_SPLITS, getBoletosPriceRange, getSplitsPriceRange, calculatePayProfitRange } from "@shared/pricing-config";
 
 // ============================================================================
 // DYNAMIC PRICING DATA BUILDER
 // ============================================================================
+
+// Calculate dynamic pricing text
+const SUGGESTED_TENANT_FEE = 5.00; // Example charge amount imobiliária might use
+const boletoRange = getBoletosPriceRange();
+const splitRange = getSplitsPriceRange();
+const boletoProfitRange = calculatePayProfitRange(SUGGESTED_TENANT_FEE, 'boleto');
+const splitProfitRange = calculatePayProfitRange(SUGGESTED_TENANT_FEE, 'split');
+
+// Format price ranges for display
+const formatPriceRange = (range: { min: number; max: number }) => {
+  if (range.min === range.max) return `R$ ${range.min.toFixed(2).replace('.', ',')}`;
+  return `R$ ${range.min.toFixed(2).replace('.', ',')} a R$ ${range.max.toFixed(2).replace('.', ',')}`;
+};
+
+const KENLO_BOLETO_FEE_TEXT = formatPriceRange(boletoRange);
+const KENLO_SPLIT_FEE_TEXT = formatPriceRange(splitRange);
+const BOLETO_PROFIT_TEXT = formatPriceRange(boletoProfitRange);
+const SPLIT_PROFIT_TEXT = formatPriceRange(splitProfitRange);
 
 type PlanKey = "prime" | "k" | "k2";
 const planKeys: PlanKey[] = ["prime", "k", "k2"];
@@ -77,7 +95,7 @@ function buildPricingData() {
         {
           feature: "Cobrança de taxa do inquilino",
           prime: true, k: true, k2: true,
-          tooltip: "Cobre R$ 5,00 do inquilino e gere receita de R$ 1,00 a R$ 2,00 por boleto",
+          tooltip: `Cobre R$ ${SUGGESTED_TENANT_FEE.toFixed(2).replace('.', ',')} do inquilino e gere receita de ${BOLETO_PROFIT_TEXT} por boleto`,
         },
         { feature: "Relatórios financeiros", prime: true, k: true, k2: true },
         { feature: "Conciliação automática", prime: true, k: true, k2: true },
@@ -134,7 +152,7 @@ const highlights = [
   {
     icon: DollarSign,
     title: "Receita Extra",
-    description: "Cobre taxa do inquilino e gere receita de R$ 1,00 a R$ 2,00 por boleto",
+    description: `Cobre taxa do inquilino e gere receita de ${BOLETO_PROFIT_TEXT} por boleto`,
   },
 ];
 
@@ -152,7 +170,7 @@ const useCases = [
   {
     icon: DollarSign,
     title: "Geração de Receita",
-    description: "Cobre R$ 5,00 do inquilino por boleto e gere receita de R$ 1,00 a R$ 2,00 por transação. Com 500 boletos/mês, são até R$ 1.000/mês de receita extra!",
+    description: `Cobre R$ ${SUGGESTED_TENANT_FEE.toFixed(2).replace('.', ',')} do inquilino por boleto e gere receita de ${BOLETO_PROFIT_TEXT} por transação. Com 500 boletos/mês, são até R$ ${(500 * boletoProfitRange.max).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mês de receita extra!`,
   },
   {
     icon: BarChart3,
@@ -604,8 +622,7 @@ export default function PayPage() {
               Transforme Cobrança em Receita
             </h2>
             <p className="text-muted-foreground mb-6">
-              Cobre R$ 5,00 do inquilino por boleto e gere receita de R$ 1,00 a R$ 2,00 por transação.
-              Com 500 boletos/mês, são até R$ 1.000/mês de receita extra!
+              {`Cobre R$ ${SUGGESTED_TENANT_FEE.toFixed(2).replace('.', ',')} do inquilino por boleto e gere receita de ${BOLETO_PROFIT_TEXT} por transação. Com 500 boletos/mês, são até R$ ${(500 * boletoProfitRange.max).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mês de receita extra!`}
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/produtos/locacao">

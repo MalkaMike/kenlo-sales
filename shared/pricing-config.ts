@@ -668,3 +668,66 @@ export function getAllFeatures(product: "imob" | "locacao") {
 
   return allFeatures;
 }
+
+// ============================================================================
+// PAY PRICING HELPERS
+// ============================================================================
+
+/**
+ * Get the price range for boletos across all plans
+ * Returns { min, max } representing the lowest and highest prices
+ */
+export function getBoletosPriceRange(): { min: number; max: number } {
+  const allPrices: number[] = [];
+  
+  // Collect all prices from all plans
+  Object.values(PAY_BOLETOS).forEach((tiers) => {
+    tiers.forEach((tier) => {
+      allPrices.push(tier.price);
+    });
+  });
+  
+  return {
+    min: Math.min(...allPrices),
+    max: Math.max(...allPrices),
+  };
+}
+
+/**
+ * Get the price range for splits across all plans
+ * Returns { min, max } representing the lowest and highest prices
+ */
+export function getSplitsPriceRange(): { min: number; max: number } {
+  const allPrices: number[] = [];
+  
+  // Collect all prices from all plans
+  Object.values(PAY_SPLITS).forEach((tiers) => {
+    tiers.forEach((tier) => {
+      allPrices.push(tier.price);
+    });
+  });
+  
+  return {
+    min: Math.min(...allPrices),
+    max: Math.max(...allPrices),
+  };
+}
+
+/**
+ * Calculate estimated profit range for imobiliária
+ * Given a suggested charge amount (e.g., R$ 5,00), calculate profit after paying Kenlo
+ * @param suggestedCharge - Amount imobiliária charges to tenant/owner (e.g., 5.00)
+ * @param type - 'boleto' or 'split'
+ * @returns { min, max } profit range
+ */
+export function calculatePayProfitRange(
+  suggestedCharge: number,
+  type: 'boleto' | 'split'
+): { min: number; max: number } {
+  const priceRange = type === 'boleto' ? getBoletosPriceRange() : getSplitsPriceRange();
+  
+  return {
+    min: Math.max(0, suggestedCharge - priceRange.max), // Profit when paying highest Kenlo fee
+    max: Math.max(0, suggestedCharge - priceRange.min), // Profit when paying lowest Kenlo fee
+  };
+}

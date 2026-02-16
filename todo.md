@@ -4849,3 +4849,17 @@
 - [x] Remover botão "Exportar PDF" da sticky bar inferior da calculadora
 - [x] Testar fluxo completo com dados reais e verificar PDF gerado (validação funciona, sticky bar correta, export requer login)
 - [x] Preparar para publicação (checkpoint salvo)
+
+## Testar PDF com login e verificar preços corrigidos
+- [ ] Fazer login na calculadora
+- [ ] Preencher dados completos e gerar PDF
+- [ ] Verificar se preços de Assinaturas aparecem corretos no PDF (volume-based tiers)
+- [ ] Verificar se preços de Leads aparecem corretos no PDF (R$1,50 a R$0,90)
+
+## Dinamizar preços do Kenlo Pay
+- [x] Identificar valores hardcoded na PayPage.tsx (R$ 5,00 inquilino, R$ 1,00-R$ 2,00 boleto)
+- [x] Valores já existem no pricing-values.json (boletos/splits R$ 3,00-R$ 4,00)
+- [x] Adicionar helper functions em pricing-config.ts: getBoletosPriceRange(), getSplitsPriceRange(), calculatePayProfitRange()
+- [x] Atualizar PayPage.tsx linhas 80, 137, 155, 607 para usar valores dinâmicos
+- [x] Manter lógica: "Cobre R$ 5,00 (exemplo) e lucre R$ X-Y (calculado)" - agora mostra R$ 1,00-R$ 2,00 baseado em config
+- [x] Rodar testes para verificar (0 erros TypeScript)
