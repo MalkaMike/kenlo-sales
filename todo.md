@@ -4623,7 +4623,7 @@
 - [x] Pay add-on sales playbook content (Markdown)
 - [x] Seguros add-on sales playbook content (Markdown)
 - [x] Cash add-on sales playbook content (Markdown)
-- [ ] Build frontend pages with sales enablement content (in progress - paused for user review tomorrow)
+- [x] Build frontend pages with sales enablement content
 
 ## Comunidade Kenlo Availability Restriction (Feb 2026)
 
@@ -4632,8 +4632,34 @@
 - [x] Update pricing-values.json if needed (no changes required)
 - [x] Update IMOB sales playbook
 - [x] Leads sales playbook (no Comunidade mentions found)
-- [ ] Update Kombo sales playbooks (all mention Comunidade)
+- [x] Update Kombo sales playbooks (all mention Comunidade) - Kombo playbooks created with correct Comunidade restrictions
 - [x] Update frontend IMOB page (no Comunidade mentions found)
 - [x] Update any other frontend components mentioning Comunidade (none found)
 - [x] Run tests and fix failures (all 616 tests passing)
-- [ ] Save checkpoint
+- [x] Save checkpoint (version c3b72a67)
+
+## Payment Installments and Prepaid Pricing Updates
+
+- [x] Add payment installment rules: Semestral (2x), Anual (3x), Bienal (6x)
+- [x] Add prepaid user pricing: R$ 34/user/month (flat, all plans/volumes)
+- [x] Add prepaid contract pricing: R$ 2.20/contract/month (flat, all plans/volumes)
+- [x] Add prepaid period rule: Anual = 12 months prepaid, Bienal = 24 months prepaid
+- [x] Update product reference document with new rules
+- [x] Update pricing configuration in codebase
+- [x] Update calculadora to reflect new payment/prepaid rules
+- [ ] Update playbooks with new pricing information
+
+## Frontend Pages - Data-Driven Playbook Content
+
+- [x] Update Home page with killer data-driven stats and selling points
+- [x] Update IMOB product page with playbook content (conversion data, lead origin table, selling questions)
+- [x] Update Locação product page with playbook content (revenue focus, ROI calculator, key questions)
+- [x] Update Leads add-on page with playbook content (RIGHT PERSON, transparency, AI SDR)
+- [x] Update Inteligência add-on page with playbook content (Google partnership, SAFRA, reality check)
+- [x] Update Assinatura add-on page with playbook content (Cerisign, R$ 0 impl, 15 signatures)
+- [x] Update Pay add-on page with playbook content (90% already charge, 15-20h saved, split)
+- [x] Update Seguros add-on page with playbook content (35-45% commission, Tokyo Marine, passive income)
+- [x] Update Cash add-on page with playbook content (24 months, no capital, exclusive)
+- [x] Update Kombos page with data-driven subtitle (VIP+CS, R$ 5.087 savings)
+- [x] Create Sales Playbook page (/playbook) with all 13 playbooks organized by category
+- [x] Add Playbook navigation link to header (desktop + mobile)

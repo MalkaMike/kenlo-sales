@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Building2, Users, Globe, Smartphone, BarChart3, ArrowRight, Calculator, Info } from "lucide-react";
+import { Check, X, Building2, Users, Globe, Smartphone, BarChart3, ArrowRight, Calculator, Info, Target, TrendingUp, AlertTriangle, MessageSquare, Lightbulb } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -211,8 +211,8 @@ const highlights = [
   },
   {
     icon: Globe,
-    title: "Site Incluso",
-    description: "Website profissional otimizado para Google",
+    title: "Site Otimizado por Neil Patel",
+    description: "A melhor ficha de imóvel do mercado, SEO de classe mundial",
   },
   {
     icon: Smartphone,
@@ -223,6 +223,29 @@ const highlights = [
     icon: BarChart3,
     title: "+50 Portais",
     description: "Publicação automática em todos os portais",
+  },
+];
+
+const sellingQuestions = [
+  {
+    icon: Target,
+    question: "Você sabe quantos dos seus fechamentos vem do seu site?",
+    insight: "Média Kenlo: 23% dos fechamentos vem do site próprio. Campeões: 60%.",
+  },
+  {
+    icon: AlertTriangle,
+    question: "Qual é a sua taxa de conversão?",
+    insight: "Média Kenlo: 4,5% em vendas. Campeões: 9%. Portais: apenas 1,8%.",
+  },
+  {
+    icon: TrendingUp,
+    question: "Você sabe quanto dos seus leads vem de portais vs originação própria?",
+    insight: "60-70% dos leads vem de portais, mas geram apenas 30% dos fechamentos.",
+  },
+  {
+    icon: MessageSquare,
+    question: "Você já pensou em ganhar com co-corretagem?",
+    insight: "Comunidade Kenlo: 10% dos fechamentos via parcerias. Melhor 50% de algo que 100% de nada.",
   },
 ];
 
@@ -307,9 +330,12 @@ export default function ImobPage() {
               Kenlo Imob
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               CRM completo para imobiliárias com Site e App incluídos. Todos os
               seus leads em um só lugar.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "O site próprio converte <strong className="text-primary">4,5x mais</strong> que portais nacionais. É por isso que investimos em Neil Patel e na melhor ficha de imóvel do mercado."
             </p>
 
             <div className="flex flex-wrap gap-4 mb-8">
@@ -600,6 +626,62 @@ export default function ImobPage() {
                 significativamente o custo por unidade. Quanto mais você
                 digitaliza, menor o impacto dos add-ons.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sales Intelligence - Questions to Ask */}
+      <section className="py-20 bg-gradient-to-b from-background to-card/30">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">
+                <Lightbulb className="w-4 h-4" />
+                Perguntas que Vendem
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Dados que impressionam o cliente
+              </h2>
+              <p className="text-muted-foreground">
+                80% dos clientes não conhecem esses números. Use-os para mostrar o valor real do Kenlo Imob.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {sellingQuestions.map((item, index) => (
+                <div key={index} className="p-6 rounded-2xl border-2 border-border hover:border-primary/30 transition-all">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-xl bg-primary/10 text-primary flex-shrink-0">
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold mb-2 text-foreground">"{item.question}"</h3>
+                      <p className="text-sm text-muted-foreground">{item.insight}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Key Conversion Stats */}
+            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center p-4 rounded-xl bg-blue-50">
+                <div className="text-3xl font-black text-blue-700">8,7%</div>
+                <div className="text-xs text-blue-600 mt-1">Conv. Site (Vendas)</div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-red-50">
+                <div className="text-3xl font-black text-red-700">1,8%</div>
+                <div className="text-xs text-red-600 mt-1">Conv. Portais (Vendas)</div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-green-50">
+                <div className="text-3xl font-black text-green-700">60%</div>
+                <div className="text-xs text-green-600 mt-1">Fechamentos Campeão (Site)</div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-purple-50">
+                <div className="text-3xl font-black text-purple-700">10%</div>
+                <div className="text-xs text-purple-600 mt-1">Fechamentos Comunidade</div>
+              </div>
             </div>
           </div>
         </div>

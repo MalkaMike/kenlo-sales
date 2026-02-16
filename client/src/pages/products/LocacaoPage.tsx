@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Home, FileText, CreditCard, RefreshCw, ArrowRight, Calculator, Info } from "lucide-react";
+import { Check, X, Home, FileText, CreditCard, RefreshCw, ArrowRight, Calculator, Info, Shield, Banknote, DollarSign, Clock, TrendingUp, Lightbulb } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -296,6 +296,64 @@ const highlights = [
   },
 ];
 
+const revenueOpportunities = [
+  {
+    icon: Shield,
+    title: "Kenlo Seguros",
+    stat: "35-45%",
+    description: "Comissão por contrato/mês",
+    detail: "Tokyo Marine embutido no boleto. R$ 50-150/contrato/ano. Receita passiva sem esforço.",
+    color: "text-green-600",
+    bgColor: "bg-green-50",
+  },
+  {
+    icon: CreditCard,
+    title: "Kenlo Pay",
+    stat: "90%",
+    description: "das imobiliárias já cobram taxa",
+    detail: "Boleto + Split automático. 15-20h/mês economizadas. A imobiliária ganha, não gasta.",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+  },
+  {
+    icon: Banknote,
+    title: "Kenlo Cash",
+    stat: "24 meses",
+    description: "de antecipação de aluguel",
+    detail: "Fidelize proprietários oferecendo antecipação. Sem capital próprio, ganhe comissão.",
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+  },
+  {
+    icon: DollarSign,
+    title: "ROI Comprovado",
+    stat: "R$ 1.500+",
+    description: "valor gerado/mês",
+    detail: "Seguros + Pay + economia de tempo. Investimento de R$ 247/mês gera R$ 1.500+ em valor.",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+  },
+];
+
+const sellingQuestions = [
+  {
+    question: "Quanto tempo sua equipe gasta com cobrança manual?",
+    insight: "Com Kenlo Pay, economize 15-20 horas/mês em trabalho manual de cobrança.",
+  },
+  {
+    question: "Você já cobra taxa de boleto dos inquilinos?",
+    insight: "90% das imobiliárias já cobram. Com Kenlo Pay, automatize e ganhe com isso.",
+  },
+  {
+    question: "Quanto a imobiliária ganha com seguro por contrato?",
+    insight: "Com Kenlo Seguros: 35-45% de comissão. 100 contratos = R$ 10.000+/ano.",
+  },
+  {
+    question: "Como você fideliza proprietários hoje?",
+    insight: "Kenlo Cash: ofereça antecipação de até 24 meses. Nenhum concorrente tem isso.",
+  },
+];
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -377,9 +435,12 @@ export default function LocacaoPage() {
               Kenlo Locação
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               ERP completo para gestão de contratos de locação. Cobrança,
               repasse e DIMOB automatizados.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Locação não é só gestão — é <strong className="text-secondary">geração de receita</strong>. Seguros, Pay e Cash transformam cada contrato em uma fonte de lucro."
             </p>
 
             <div className="flex flex-wrap gap-4 mb-8">
@@ -670,6 +731,95 @@ export default function LocacaoPage() {
                 significativamente o custo por unidade. Quanto mais você
                 digitaliza, menor o impacto dos add-ons.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Revenue Opportunities */}
+      <section className="py-20 bg-gradient-to-b from-background to-card/30">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-semibold mb-4">
+                <TrendingUp className="w-4 h-4" />
+                Gere Receita com Cada Contrato
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Locação que dá lucro
+              </h2>
+              <p className="text-muted-foreground">
+                Cada contrato é uma oportunidade de receita. Veja como o ecossistema Kenlo transforma gestão em lucro.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              {revenueOpportunities.map((item, index) => (
+                <div key={index} className={`p-6 rounded-2xl ${item.bgColor} border`}>
+                  <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-xl bg-white/80 ${item.color} flex-shrink-0`}>
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className={`text-3xl font-black ${item.color}`}>{item.stat}</span>
+                        <span className="text-sm font-medium text-gray-700">{item.description}</span>
+                      </div>
+                      <h3 className="text-lg font-bold mb-1">{item.title}</h3>
+                      <p className="text-sm text-gray-600">{item.detail}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ROI Calculator Teaser */}
+            <div className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white text-center">
+              <h3 className="text-xl font-bold mb-2">Exemplo: 100 contratos de locação</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                <div>
+                  <div className="text-2xl font-black">R$ 10.000+</div>
+                  <div className="text-xs text-green-200">Seguros/ano</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black">15-20h</div>
+                  <div className="text-xs text-green-200">Economizadas/mês</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black">R$ 750+</div>
+                  <div className="text-xs text-green-200">Economia mão-de-obra</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black">10-15h</div>
+                  <div className="text-xs text-green-200">Economizadas DIMOB</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Selling Questions */}
+      <section className="py-20">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">
+                <Lightbulb className="w-4 h-4" />
+                Perguntas que Vendem
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Faça o cliente pensar
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {sellingQuestions.map((item, index) => (
+                <div key={index} className="p-6 rounded-2xl border-2 border-border hover:border-secondary/30 transition-all">
+                  <h3 className="text-lg font-bold mb-2 text-foreground">"{item.question}"</h3>
+                  <p className="text-sm text-muted-foreground">{item.insight}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

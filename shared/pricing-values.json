@@ -20,7 +20,7 @@
       "multiplier": 1.125,
       "applyOrder": 1,
       "displayLabel": "10% OFF vs mensal",
-      "maxInstallments": 1,
+      "maxInstallments": 2,
       "discountVsMonthly": 10
     },
     "annual": {
@@ -316,6 +316,24 @@
         "vipSupport",
         "csDedicado"
       ]
+    }
+  },
+  "prepaidPricing": {
+    "_description": "BLOCO F-PRE — Preços Pré-Pagos para Usuários e Contratos Adicionais (Anual/Bienal only)",
+    "_rule": "Disponível apenas para frequências Anual e Bienal. Preço fixo independente de plano ou volume.",
+    "additionalUsers": {
+      "product": "imob",
+      "unit": "usuário",
+      "pricePerMonth": 34,
+      "availableFrequencies": ["annual", "biennial"],
+      "_note": "R$ 34/usuário/mês, preço fixo para qualquer plano e qualquer volume. Anual = 12 meses, Bienal = 24 meses."
+    },
+    "additionalContracts": {
+      "product": "locacao",
+      "unit": "contrato",
+      "pricePerMonth": 2.20,
+      "availableFrequencies": ["annual", "biennial"],
+      "_note": "R$ 2,20/contrato/mês, preço fixo para qualquer plano e qualquer volume. Anual = 12 meses, Bienal = 24 meses."
     }
   },
   "variableCosts": {

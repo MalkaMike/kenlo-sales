@@ -220,9 +220,12 @@ export default function SegurosPage() {
               Kenlo Seguros
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Seguros embutido no boleto do inquilino.
               Ganhe <span className="font-semibold text-foreground">a partir de R$ {approxRevenuePerContract} por contrato/mês</span> sem esforço — receita passiva garantida.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Seguros é o <strong className="text-secondary">segredo do sucesso</strong> da locação. Tokyo Marine embutido no boleto com 35-45% de comissão. R$ 0 de implantação. 100 contratos = R$ 10.000+/ano."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">

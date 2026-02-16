@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, FileText, Package, Layers, User, LogOut, Settings } from "lucide-react";
+import { Menu, FileText, Package, Layers, User, LogOut, Settings, BookOpen } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -149,6 +149,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
+              {/* Sales Playbook */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/playbook"
+                    className={cn(
+                      "nav-link-hover group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/playbook" && "bg-accent text-primary"
+                    )}
+                  >
+                    <BookOpen className="w-4 h-4 mr-1" />
+                    Playbook
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
               {/* Cotação */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -212,6 +228,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
                 >
                   Kombos
+                </Link>
+                <Link
+                  href="/playbook"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
+                >
+                  Playbook
                 </Link>
                 <Link
                   href="/calculadora"

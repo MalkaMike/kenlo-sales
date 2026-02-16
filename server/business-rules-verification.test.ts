@@ -82,7 +82,7 @@ describe("Business Rule: Payment Frequency Multipliers", () => {
 
   it("max installments are correct", () => {
     expect(FREQUENCY_INSTALLMENTS.monthly).toBe(1);
-    expect(FREQUENCY_INSTALLMENTS.semiannual).toBe(1);
+    expect(FREQUENCY_INSTALLMENTS.semiannual).toBe(2);
     expect(FREQUENCY_INSTALLMENTS.annual).toBe(3);
     expect(FREQUENCY_INSTALLMENTS.biennial).toBe(6);
   });
@@ -642,5 +642,89 @@ describe("Business Rule: Add-on Prices", () => {
 describe("Business Rule: Seguros Estimated Revenue", () => {
   it("estimated revenue per contract is R$ 10", () => {
     expect(SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT).toBe(10);
+  });
+});
+
+// ============================================================================
+// 14. PREPAID PRICING
+// ============================================================================
+
+import {
+  PREPAID_PRICING,
+  getPrepaidMonths,
+  isPrepaidAvailable,
+  calculatePrepaidUsers,
+  calculatePrepaidContracts,
+} from "@shared/pricing-config";
+
+describe("Business Rule: Prepaid Pricing", () => {
+  it("additional users flat rate is R$ 34/user/month", () => {
+    expect(PREPAID_PRICING.additionalUsers.pricePerMonth).toBe(34);
+  });
+
+  it("additional contracts flat rate is R$ 2.20/contract/month", () => {
+    expect(PREPAID_PRICING.additionalContracts.pricePerMonth).toBe(2.20);
+  });
+
+  it("prepaid users is for IMOB product", () => {
+    expect(PREPAID_PRICING.additionalUsers.product).toBe("imob");
+  });
+
+  it("prepaid contracts is for Locação product", () => {
+    expect(PREPAID_PRICING.additionalContracts.product).toBe("locacao");
+  });
+
+  it("prepaid is only available for annual and biennial frequencies", () => {
+    expect(isPrepaidAvailable("monthly")).toBe(false);
+    expect(isPrepaidAvailable("semiannual")).toBe(false);
+    expect(isPrepaidAvailable("annual")).toBe(true);
+    expect(isPrepaidAvailable("biennial")).toBe(true);
+  });
+
+  it("annual prepaid period is 12 months", () => {
+    expect(getPrepaidMonths("annual")).toBe(12);
+  });
+
+  it("biennial prepaid period is 24 months", () => {
+    expect(getPrepaidMonths("biennial")).toBe(24);
+  });
+
+  it("monthly and semiannual have 0 prepaid months", () => {
+    expect(getPrepaidMonths("monthly")).toBe(0);
+    expect(getPrepaidMonths("semiannual")).toBe(0);
+  });
+
+  it("calculate prepaid users: 5 users × annual = 5 × 34 × 12 = R$ 2.040", () => {
+    expect(calculatePrepaidUsers(5, "annual")).toBe(5 * 34 * 12);
+    expect(calculatePrepaidUsers(5, "annual")).toBe(2040);
+  });
+
+  it("calculate prepaid users: 10 users × biennial = 10 × 34 × 24 = R$ 8.160", () => {
+    expect(calculatePrepaidUsers(10, "biennial")).toBe(10 * 34 * 24);
+    expect(calculatePrepaidUsers(10, "biennial")).toBe(8160);
+  });
+
+  it("calculate prepaid contracts: 100 contracts × annual = 100 × 2.20 × 12 = R$ 2.640", () => {
+    expect(calculatePrepaidContracts(100, "annual")).toBe(100 * 2.20 * 12);
+    expect(calculatePrepaidContracts(100, "annual")).toBeCloseTo(2640, 2);
+  });
+
+  it("calculate prepaid contracts: 500 contracts × biennial = 500 × 2.20 × 24 = R$ 26.400", () => {
+    expect(calculatePrepaidContracts(500, "biennial")).toBe(500 * 2.20 * 24);
+    expect(calculatePrepaidContracts(500, "biennial")).toBeCloseTo(26400, 2);
+  });
+
+  it("prepaid returns 0 for monthly and semiannual frequencies", () => {
+    expect(calculatePrepaidUsers(10, "monthly")).toBe(0);
+    expect(calculatePrepaidUsers(10, "semiannual")).toBe(0);
+    expect(calculatePrepaidContracts(100, "monthly")).toBe(0);
+    expect(calculatePrepaidContracts(100, "semiannual")).toBe(0);
+  });
+
+  it("available frequencies match annual and biennial", () => {
+    expect(PREPAID_PRICING.additionalUsers.availableFrequencies).toContain("annual");
+    expect(PREPAID_PRICING.additionalUsers.availableFrequencies).toContain("biennial");
+    expect(PREPAID_PRICING.additionalUsers.availableFrequencies).not.toContain("monthly");
+    expect(PREPAID_PRICING.additionalUsers.availableFrequencies).not.toContain("semiannual");
   });
 });

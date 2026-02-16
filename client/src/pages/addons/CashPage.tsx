@@ -187,9 +187,12 @@ export default function CashPage() {
               Kenlo Cash
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Antecipe até 24 meses de aluguel para seus proprietários.
               <span className="font-semibold text-foreground"> Fidelize clientes, ganhe comissão</span> — e a Kenlo assume o risco.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Nenhum concorrente oferece antecipação de aluguel. <strong className="text-secondary">Vantagem competitiva absoluta</strong> para fidelizar proprietários. Sem capital próprio, sem risco, ganhe comissão."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">

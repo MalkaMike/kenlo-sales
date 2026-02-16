@@ -242,7 +242,9 @@ export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode
   const isPrepaid = ctx.column.prePaidUsersActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/usuário</span>
+      <span className="text-[8px] text-gray-400 italic">
+        {isPrepaid ? "R$ 34,00/usuário/mês (fixo)" : `R$ ${pp.perUnit.toFixed(2)}/usuário`}
+      </span>
       {isPrepaid ? (
         <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
       ) : (
@@ -279,7 +281,9 @@ export function renderPostPaidContractsCell(ctx: CellRenderContext): React.React
   const isPrepaidC = ctx.column.prePaidContractsActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/contrato</span>
+      <span className="text-[8px] text-gray-400 italic">
+        {isPrepaidC ? "R$ 2,20/contrato/mês (fixo)" : `R$ ${pp.perUnit.toFixed(2)}/contrato`}
+      </span>
       {isPrepaidC ? (
         <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
       ) : (

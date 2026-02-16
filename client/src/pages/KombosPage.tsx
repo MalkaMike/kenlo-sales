@@ -252,10 +252,13 @@ export default function KombosPage() {
               <span className="kenlo-gradient-text">menor o custo</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-3xl mx-auto">
               Kombos são pacotes inteligentes que combinam produtos e add-ons com descontos de até{" "}
               {Math.max(...kombos.map((k) => k.discount))}%. 
               Compare e escolha o ideal para cada imobiliária.
+            </p>
+            <p className="text-sm text-muted-foreground mb-8 max-w-2xl mx-auto italic">
+              "Todos os Kombos incluem <strong className="text-primary">VIP + CS Dedicado</strong>. O Elite economiza até R$ 5.087 no primeiro ano. Quanto mais digitaliza, menor o custo por unidade."
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

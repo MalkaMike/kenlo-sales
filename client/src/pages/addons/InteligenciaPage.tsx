@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Brain, BarChart3, TrendingUp, PieChart, ArrowRight, Calculator, Lightbulb } from "lucide-react";
+import { Check, Brain, BarChart3, TrendingUp, PieChart, ArrowRight, Calculator, Lightbulb, Target, Award, Eye, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -153,9 +153,12 @@ export default function InteligenciaPage() {
               {intel.name}
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Powered by <span className="font-semibold text-foreground">Google Looker Pro</span> — usuários ilimitados para toda sua equipe.
               A ferramenta indispensável para quem quer fazer gestão com dados reais da sua imobiliária.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Kenlo é <strong className="text-primary">1 de 12 empresas</strong> selecionadas pelo Google como parceira estratégica em real estate. É aqui que você mais brilha na demo."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
@@ -278,6 +281,98 @@ export default function InteligenciaPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Key Reports Section */}
+      <section className="py-20">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold mb-4">
+                <Award className="w-4 h-4" />
+                Relatórios Exclusivos
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                2 relatórios que mudam o jogo
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* SAFRA Report */}
+              <div className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-blue-600 text-white">
+                    <Target className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-blue-900">Relatório SAFRA</h3>
+                </div>
+                <p className="text-sm text-blue-800 mb-4">
+                  Mostra o funil completo: quantos leads entraram, quantos viraram visitas, quantos viraram propostas, quantos fecharam.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-blue-700">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>Identifica onde está o gargalo da operação</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-blue-700">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>Compara performance por corretor</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-blue-700">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>Responde: "Preciso de mais leads ou melhor conversão?"</span>
+                  </div>
+                </div>
+                <div className="mt-4 p-3 bg-blue-200/50 rounded-lg">
+                  <p className="text-xs text-blue-900 font-medium">
+                    <AlertTriangle className="w-3 h-3 inline mr-1" />
+                    Caso real: cliente descobriu que sua melhor campanha era completamente diferente do que pensava. Mudou a estratégia e aumentou fechamentos em 40%.
+                  </p>
+                </div>
+              </div>
+
+              {/* Performance vs Market Report */}
+              <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-purple-600 text-white">
+                    <Eye className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-purple-900">Performance vs Mercado</h3>
+                </div>
+                <p className="text-sm text-purple-800 mb-4">
+                  Compara a imobiliária com a média da Comunidade Kenlo. O "reality check" que todo gestor precisa.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-purple-700">
+                    <Check className="w-4 h-4 text-purple-600" />
+                    <span>Taxa de conversão vs média (4,5% vendas / 7,5% locação)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-purple-700">
+                    <Check className="w-4 h-4 text-purple-600" />
+                    <span>Tempo de fechamento vs benchmark</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-purple-700">
+                    <Check className="w-4 h-4 text-purple-600" />
+                    <span>Distribuição de leads por origem vs mercado</span>
+                  </div>
+                </div>
+                <div className="mt-4 p-3 bg-purple-200/50 rounded-lg">
+                  <p className="text-xs text-purple-900 font-medium">
+                    <Lightbulb className="w-3 h-3 inline mr-1" />
+                    Pergunta-chave: "Você sabe se está acima ou abaixo da média do mercado?" — 80% não sabem.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Google Partnership Badge */}
+            <div className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center">
+              <div className="text-lg font-bold mb-2">Parceria Estratégica Google</div>
+              <div className="text-4xl font-black mb-2">1 de 12 empresas</div>
+              <p className="text-sm text-white/80">selecionadas pelo Google como parceira em real estate no Brasil. Google Looker Studio Pro integrado.</p>
             </div>
           </div>
         </div>

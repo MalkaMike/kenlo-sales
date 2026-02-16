@@ -18,6 +18,9 @@ import {
   roundToEndIn7,
   calculateAdditionalUsersCost,
   toNum,
+  PREPAID_USER_PRICE_PER_MONTH,
+  PREPAID_CONTRACT_PRICE_PER_MONTH,
+  getPrepaidMonths,
 } from "../types";
 import * as Pricing from "@/utils/pricing";
 
@@ -190,37 +193,44 @@ export function usePricing({
     return subtotal;
   }, [getLineItems]);
 
-  const calculatePrepaymentAmount = useCallback((): { users: number; contracts: number; total: number } => {
-    const months = frequency === 'annual' ? 12 : frequency === 'biennial' ? 24 : 0;
-    if (months === 0) return { users: 0, contracts: 0, total: 0 };
+  const calculatePrepaymentAmount = useCallback((): { users: number; contracts: number; total: number; userCount: number; contractCount: number; months: number; userPricePerMonth: number; contractPricePerMonth: number } => {
+    const months = getPrepaidMonths(frequency);
+    if (months === 0) return { users: 0, contracts: 0, total: 0, userCount: 0, contractCount: 0, months: 0, userPricePerMonth: PREPAID_USER_PRICE_PER_MONTH, contractPricePerMonth: PREPAID_CONTRACT_PRICE_PER_MONTH };
 
     let usersPrepayment = 0;
     let contractsPrepayment = 0;
+    let userCount = 0;
+    let contractCount = 0;
 
     if ((product === 'imob' || product === 'both') && prepayAdditionalUsers) {
-      const plan = imobPlan;
-      const included = Pricing.getIncludedQuantity("imob", plan);
+      const included = Pricing.getIncludedQuantity("imob", imobPlan);
       const additional = Math.max(0, toNum(metrics.imobUsers) - included);
       if (additional > 0) {
-        const monthlyCost = calculateAdditionalUsersCost(plan, additional);
-        usersPrepayment = monthlyCost * months;
+        userCount = additional;
+        // Use flat prepaid rate: R$ 34/user/month regardless of plan or volume
+        usersPrepayment = additional * PREPAID_USER_PRICE_PER_MONTH * months;
       }
     }
 
     if ((product === 'loc' || product === 'both') && prepayAdditionalContracts) {
-      const plan = locPlan;
-      const included = Pricing.getIncludedQuantity("loc", plan);
+      const included = Pricing.getIncludedQuantity("loc", locPlan);
       const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
       if (additional > 0) {
-        const monthlyCost = Pricing.calculateAdditionalContractsCost(plan, additional);
-        contractsPrepayment = monthlyCost * months;
+        contractCount = additional;
+        // Use flat prepaid rate: R$ 2.20/contract/month regardless of plan or volume
+        contractsPrepayment = additional * PREPAID_CONTRACT_PRICE_PER_MONTH * months;
       }
     }
 
     return {
       users: usersPrepayment,
       contracts: contractsPrepayment,
-      total: usersPrepayment + contractsPrepayment
+      total: usersPrepayment + contractsPrepayment,
+      userCount,
+      contractCount,
+      months,
+      userPricePerMonth: PREPAID_USER_PRICE_PER_MONTH,
+      contractPricePerMonth: PREPAID_CONTRACT_PRICE_PER_MONTH,
     };
   }, [frequency, product, prepayAdditionalUsers, prepayAdditionalContracts, imobPlan, locPlan, metrics.imobUsers, metrics.contractsUnderManagement]);
 

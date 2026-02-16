@@ -20,7 +20,11 @@ import {
   Target,
   Rocket,
   Globe,
-  Eye
+  Eye,
+  BarChart3,
+  AlertTriangle,
+  Trophy,
+  Clock
 } from "lucide-react";
 
 const products = [
@@ -118,6 +122,50 @@ const benefits = [
   "Migração de dados sem complicação"
 ];
 
+const leadOriginData = [
+  { origin: "Originação Própria Offline", salesLeads: "4%", salesClosings: "19%", salesConv: "16,4%", rentalLeads: "3%", rentalClosings: "18%", rentalConv: "35,3%", highlight: false },
+  { origin: "Originação Própria - Site", salesLeads: "10%", salesClosings: "23%", salesConv: "8,7%", rentalLeads: "11%", rentalClosings: "23%", rentalConv: "13%", highlight: true },
+  { origin: "Originação Própria - Placa", salesLeads: "6%", salesClosings: "10%", salesConv: "6,8%", rentalLeads: "5%", rentalClosings: "11%", rentalConv: "14,3%", highlight: true },
+  { origin: "Originação Própria - Ads", salesLeads: "9%", salesClosings: "11%", salesConv: "4,4%", rentalLeads: "11%", rentalClosings: "11%", rentalConv: "6,3%", highlight: false },
+  { origin: "Portais Regionais", salesLeads: "11%", salesClosings: "9%", salesConv: "3,2%", rentalLeads: "4%", rentalClosings: "8%", rentalConv: "12,2%", highlight: false },
+  { origin: "Portais Nacionais", salesLeads: "60%", salesClosings: "28%", salesConv: "1,8%", rentalLeads: "67%", rentalClosings: "28%", rentalConv: "2,5%", highlight: false },
+];
+
+const keyInsights = [
+  {
+    icon: AlertTriangle,
+    stat: "60-70%",
+    label: "dos leads vem de portais",
+    detail: "Mas geram apenas 30% dos fechamentos",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+  },
+  {
+    icon: Trophy,
+    stat: "60-70%",
+    label: "dos fechamentos vem de originação própria",
+    detail: "Site, placa, offline e indicação de corretor",
+    color: "text-green-600",
+    bgColor: "bg-green-50",
+  },
+  {
+    icon: BarChart3,
+    stat: "8,7%",
+    label: "conversão do site (vendas)",
+    detail: "vs 1,8% dos portais nacionais",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+  },
+  {
+    icon: Target,
+    stat: "4,5x",
+    label: "mais conversão que portais",
+    detail: "Site próprio converte 4,5x mais que portais nacionais",
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+  },
+];
+
 export default function Home() {
 
   return (
@@ -154,9 +202,14 @@ export default function Home() {
             </h1>
             
             {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground mb-6 max-w-3xl mx-auto leading-relaxed">
               Plataforma integrada para <strong className="text-foreground">vendas e locação</strong> com <strong className="text-foreground">Site personalizável</strong>. 
               Tudo em um só lugar. Configure, simule e feche negócios mais rápido.
+            </p>
+
+            {/* Data-driven tagline */}
+            <p className="text-base text-muted-foreground mb-12 max-w-2xl mx-auto italic">
+              "80% dos clientes não conhecem esses números. É aí que você impressiona." — Não vendemos software, compartilhamos dados que fazem a diferença.
             </p>
             
             {/* CTAs */}
@@ -329,7 +382,236 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Benefits Section - NEW */}
+      {/* KEY INSIGHTS - Data that Sells */}
+      <section className="py-24">
+        <div className="container">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">
+              <BarChart3 className="w-4 h-4" />
+              Dados que Convencem
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              A verdade sobre{" "}
+              <span className="kenlo-gradient-text">originação de leads</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Dados reais da Comunidade Kenlo com 8.500+ imobiliárias. Estes números mudam a forma como você vende.
+            </p>
+          </div>
+
+          {/* Key Insight Cards */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-16">
+            {keyInsights.map((insight, index) => (
+              <div key={index} className={`p-6 rounded-2xl ${insight.bgColor} border border-${insight.color.replace('text-', '')}/20`}>
+                <insight.icon className={`w-8 h-8 ${insight.color} mb-3`} />
+                <div className={`text-4xl font-black ${insight.color} mb-1`}>{insight.stat}</div>
+                <div className="text-sm font-semibold text-gray-900 mb-1">{insight.label}</div>
+                <div className="text-xs text-gray-600">{insight.detail}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Lead Origin Performance Table */}
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold text-center mb-6">Performance por Origem de Lead</h3>
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+              <table className="w-full border-collapse text-sm min-w-[700px]">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Origem</th>
+                    <th className="text-center py-3 px-2 font-semibold text-blue-700">Leads Vendas</th>
+                    <th className="text-center py-3 px-2 font-semibold text-blue-700">Fechamentos Vendas</th>
+                    <th className="text-center py-3 px-2 font-semibold text-blue-900 bg-blue-50">Conv% Vendas</th>
+                    <th className="text-center py-3 px-2 font-semibold text-purple-700">Leads Locação</th>
+                    <th className="text-center py-3 px-2 font-semibold text-purple-700">Fechamentos Locação</th>
+                    <th className="text-center py-3 px-2 font-semibold text-purple-900 bg-purple-50">Conv% Locação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leadOriginData.map((row, index) => (
+                    <tr key={index} className={`border-b border-gray-200 ${row.highlight ? 'bg-green-50/50 font-medium' : ''}`}>
+                      <td className="py-3 px-4 font-medium text-gray-900">{row.origin}</td>
+                      <td className="py-3 px-2 text-center">{row.salesLeads}</td>
+                      <td className="py-3 px-2 text-center">{row.salesClosings}</td>
+                      <td className={`py-3 px-2 text-center font-bold ${row.highlight ? 'text-green-700 bg-green-100/50' : 'bg-blue-50/30'}`}>{row.salesConv}</td>
+                      <td className="py-3 px-2 text-center">{row.rentalLeads}</td>
+                      <td className="py-3 px-2 text-center">{row.rentalClosings}</td>
+                      <td className={`py-3 px-2 text-center font-bold ${row.highlight ? 'text-green-700 bg-green-100/50' : 'bg-purple-50/30'}`}>{row.rentalConv}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-900">
+                <strong>Insight Crítico:</strong> 60-70% dos leads vem de portais nacionais, mas geram apenas <strong>30% dos fechamentos</strong>. 
+                Os 60-70% dos fechamentos reais vem da <strong>originação própria</strong> (site, placa, offline, indicação). 
+                Por isso a Kenlo investe em Site otimizado por <strong>Neil Patel</strong>, a melhor ficha de imóvel do mercado, e integração com <strong>Quieres</strong> (placa inteligente).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Conversion Performance */}
+      <section className="py-20 bg-gradient-to-b from-background to-card/30">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Performance de{" "}
+                <span className="kenlo-gradient-text">Conversão</span>
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Números reais da Comunidade Kenlo — sua equipe sabe onde está?
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Sales Performance */}
+              <div className="p-8 rounded-2xl bg-blue-50 border border-blue-200">
+                <h3 className="text-lg font-bold text-blue-900 mb-6 flex items-center gap-2">
+                  <Building2 className="w-5 h-5" />
+                  Vendas
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <span className="text-sm text-blue-700">Média Comunidade</span>
+                    <span className="text-4xl font-black text-blue-900">4,5%</span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-3">
+                    <div className="bg-blue-600 h-3 rounded-full" style={{ width: '45%' }} />
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <span className="text-sm text-blue-700">Campeões</span>
+                    <span className="text-4xl font-black text-blue-900">9%</span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-3">
+                    <div className="bg-green-500 h-3 rounded-full" style={{ width: '90%' }} />
+                  </div>
+                  <div className="mt-4 flex items-center gap-2 text-sm text-blue-700">
+                    <Clock className="w-4 h-4" />
+                    Tempo médio de fechamento: <strong>295 dias</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rental Performance */}
+              <div className="p-8 rounded-2xl bg-purple-50 border border-purple-200">
+                <h3 className="text-lg font-bold text-purple-900 mb-6 flex items-center gap-2">
+                  <HomeIcon className="w-5 h-5" />
+                  Locação
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <span className="text-sm text-purple-700">Média Comunidade</span>
+                    <span className="text-4xl font-black text-purple-900">7,5%</span>
+                  </div>
+                  <div className="w-full bg-purple-200 rounded-full h-3">
+                    <div className="bg-purple-600 h-3 rounded-full" style={{ width: '75%' }} />
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <span className="text-sm text-purple-700">Campeões</span>
+                    <span className="text-4xl font-black text-purple-900">10%</span>
+                  </div>
+                  <div className="w-full bg-purple-200 rounded-full h-3">
+                    <div className="bg-green-500 h-3 rounded-full" style={{ width: '100%' }} />
+                  </div>
+                  <div className="mt-4 flex items-center gap-2 text-sm text-purple-700">
+                    <Clock className="w-4 h-4" />
+                    Tempo médio de fechamento: <strong>160 dias</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-lg font-semibold text-muted-foreground">
+                "Qual é a sua taxa de conversão?" — <span className="text-primary">Essa é a primeira pergunta que você deve fazer.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Strategic Partnerships */}
+      <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Parcerias{" "}
+              <span className="kenlo-gradient-text">Estratégicas</span>
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Kenlo não trabalha sozinha. Parcerias exclusivas que nenhum concorrente oferece.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-blue-600 mb-2">Google</div>
+              <div className="text-sm font-semibold text-blue-800 mb-2">1 de 12 empresas selecionadas</div>
+              <p className="text-sm text-muted-foreground">Parceiro estratégico em real estate. Google Studio Pro integrado ao BI Kenlo Inteligência.</p>
+            </div>
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-orange-600 mb-2">Neil Patel</div>
+              <div className="text-sm font-semibold text-orange-800 mb-2">SEO de classe mundial</div>
+              <p className="text-sm text-muted-foreground">Sites Kenlo otimizados pelo maior especialista em SEO do mundo. Taxas promocionais exclusivas.</p>
+            </div>
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-red-600 mb-2">Tokyo Marine</div>
+              <div className="text-sm font-semibold text-red-800 mb-2">Seguros embutidos</div>
+              <p className="text-sm text-muted-foreground">Seguro no boleto com 35-45% de comissão para a imobiliária. Receita passiva garantida.</p>
+            </div>
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-green-600 mb-2">Cerisign</div>
+              <div className="text-sm font-semibold text-green-800 mb-2">Assinatura digital</div>
+              <p className="text-sm text-muted-foreground">Uma das maiores empresas de assinatura digital do mundo. Contratos assinados dentro da plataforma.</p>
+            </div>
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-violet-600 mb-2">Quieres</div>
+              <div className="text-sm font-semibold text-violet-800 mb-2">Placa inteligente</div>
+              <p className="text-sm text-muted-foreground">Placa com QR code que rastreia leads. A mídia que mais converte no mercado imobiliário não é digital.</p>
+            </div>
+            <div className="p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
+              <div className="text-3xl font-black text-pink-600 mb-2">Cupola</div>
+              <div className="text-sm font-semibold text-pink-800 mb-2">Treinamento especializado</div>
+              <p className="text-sm text-muted-foreground">Método testado e aprovado para gestão de locação. Três frentes, uma jornada estratégica.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Reliability */}
+      <section className="py-16 bg-card/30">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-4">Confiabilidade Comprovada</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center p-4">
+                <div className="text-4xl font-black text-green-600 mb-1">99,98%</div>
+                <div className="text-sm text-muted-foreground">Uptime CRM</div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-4xl font-black text-green-600 mb-1">100%</div>
+                <div className="text-sm text-muted-foreground">Uptime Site</div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-4xl font-black text-blue-600 mb-1">5 min</div>
+                <div className="text-sm text-muted-foreground">Primeira resposta</div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-4xl font-black text-blue-600 mb-1">4h</div>
+                <div className="text-sm text-muted-foreground">Tempo de resolução</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
       <section className="py-24">
         <div className="container">
           <div className="max-w-5xl mx-auto">
@@ -394,34 +676,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Placeholder - NEW */}
+      {/* Success Stories */}
       <section className="py-24 bg-card/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Quem usa{" "}
-              <span className="kenlo-gradient-text">Kenlo</span>{" "}
-              recomenda
+              Histórias de{" "}
+              <span className="kenlo-gradient-text">Sucesso</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Depoimentos de imobiliárias que transformaram seus resultados
+              Resultados reais de imobiliárias que usam Kenlo
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <Card className="p-12 text-center border-2 border-dashed border-muted-foreground/30">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-                  <Star className="w-10 h-10 text-muted-foreground" />
-                </div>
-                <h3 className="text-2xl font-bold text-muted-foreground">
-                  Depoimentos em breve
-                </h3>
-                <p className="text-muted-foreground max-w-md">
-                  Estamos coletando depoimentos em vídeo de nossos clientes. 
-                  Em breve você verá aqui histórias reais de sucesso.
-                </p>
-              </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="p-8 border-2 hover:border-primary/30 transition-all">
+              <div className="text-5xl font-black text-primary mb-3">60%</div>
+              <h3 className="text-lg font-bold mb-2">Fechamentos via Site</h3>
+              <p className="text-sm text-muted-foreground">
+                Imobiliária campeã investe em Meta/Google e atinge 60% dos fechamentos pelo site próprio. A Kenlo deu a ferramenta, o cliente colocou a gasolina.
+              </p>
+            </Card>
+            <Card className="p-8 border-2 hover:border-primary/30 transition-all">
+              <div className="text-5xl font-black text-green-600 mb-3">10%</div>
+              <h3 className="text-lg font-bold mb-2">Fechamentos via Comunidade</h3>
+              <p className="text-sm text-muted-foreground">
+                Clientes dos planos K e K² geram 10% dos seus fechamentos através de parcerias na Comunidade Kenlo. Melhor ganhar 50% de algo que 100% de nada.
+              </p>
+            </Card>
+            <Card className="p-8 border-2 hover:border-primary/30 transition-all">
+              <div className="text-5xl font-black text-blue-600 mb-3">40%</div>
+              <h3 className="text-lg font-bold mb-2">Aumento com Inteligência</h3>
+              <p className="text-sm text-muted-foreground">
+                Cliente descobriu com o relatório Safra que sua melhor campanha era completamente diferente do que pensava. Mudou a estratégia e aumentou fechamentos em 40%.
+              </p>
             </Card>
           </div>
         </div>
@@ -435,7 +723,7 @@ export default function Home() {
               <FileText className="w-12 h-12" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Gerador de Cotaçãos Inteligente
+              Gerador de Cotações Inteligente
             </h2>
             <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
               Configure produtos e add-ons, veja o investimento em tempo real com detecção automática 

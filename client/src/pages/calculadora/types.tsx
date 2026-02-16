@@ -229,9 +229,27 @@ export const frequencyBadges: Record<PaymentFrequency, string> = {
 
 export const frequencyInstallments: Record<PaymentFrequency, string> = {
   monthly: "",
-  semestral: "",
+  semestral: "até 2x",
   annual: "até 3x",
   biennial: "até 6x",
+};
+
+/** Prepaid pricing constants (flat rate, any plan, any volume) */
+export const PREPAID_USER_PRICE_PER_MONTH = 34;
+export const PREPAID_CONTRACT_PRICE_PER_MONTH = 2.20;
+
+/** Get prepaid period in months based on frequency */
+export const getPrepaidMonths = (freq: PaymentFrequency): number => {
+  switch (freq) {
+    case 'annual': return 12;
+    case 'biennial': return 24;
+    default: return 0;
+  }
+};
+
+/** Check if prepaid option is available for a given frequency */
+export const isPrepaidAvailable = (freq: PaymentFrequency): boolean => {
+  return freq === 'annual' || freq === 'biennial';
 };
 
 // ─── Default States ─────────────────────────────────────────────────────────

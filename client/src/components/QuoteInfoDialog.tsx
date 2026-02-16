@@ -55,7 +55,12 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
 
   // Get installment options based on payment frequency
   const getInstallmentOptions = () => {
-    if (paymentFrequency === "annual") {
+    if (paymentFrequency === "semestral") {
+      return [
+        { value: 1, label: "À vista" },
+        { value: 2, label: "2x" },
+      ];
+    } else if (paymentFrequency === "annual") {
       return [
         { value: 1, label: "À vista" },
         { value: 2, label: "2x" },
@@ -71,7 +76,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
         { value: 6, label: "6x" },
       ];
     }
-    // Monthly and Semestral don't have installment options
+    // Monthly doesn't have installment options
     return [];
   };
 

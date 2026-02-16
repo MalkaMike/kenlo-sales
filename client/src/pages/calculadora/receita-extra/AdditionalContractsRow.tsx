@@ -3,18 +3,19 @@
  */
 
 import { useCalc } from "../CalculadoraContext";
-import { toNum, formatCurrency, fmtNum } from "../types";
+import { toNum, formatCurrency, fmtNum, PREPAID_CONTRACT_PRICE_PER_MONTH, isPrepaidAvailable } from "../types";
 import * as Pricing from "@/utils/pricing";
 
 export function AdditionalContractsRow() {
-  const { product, locPlan, metrics, prepayAdditionalContracts } = useCalc();
+  const { product, locPlan, metrics, prepayAdditionalContracts, frequency } = useCalc();
 
   if (product !== "loc" && product !== "both") return null;
 
   const included = Pricing.getIncludedQuantity("loc", locPlan);
   const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
-  const totalCost = additional > 0 ? Pricing.calculateAdditionalContractsCost(locPlan, additional) : 0;
-  const pricePerUnit = additional > 0 ? totalCost / additional : 0;
+  const postPaidCost = additional > 0 ? Pricing.calculateAdditionalContractsCost(locPlan, additional) : 0;
+  const postPaidPricePerUnit = additional > 0 ? postPaidCost / additional : 0;
+  const canPrepay = isPrepaidAvailable(frequency);
 
   return (
     <div className="flex justify-between items-start py-3 border-b border-gray-200">
@@ -35,14 +36,19 @@ export function AdditionalContractsRow() {
           }
         >
           {additional > 0
-            ? prepayAdditionalContracts
+            ? prepayAdditionalContracts && canPrepay
               ? "Pré-pago"
-              : `-${formatCurrency(totalCost)}/mês`
+              : `-${formatCurrency(postPaidCost)}/mês`
             : "Incluído no plano"}
         </span>
+        {additional > 0 && prepayAdditionalContracts && canPrepay && (
+          <span className="text-xs text-green-600 italic">
+            R$ {PREPAID_CONTRACT_PRICE_PER_MONTH.toFixed(2).replace('.', ',')}/contrato/mês (fixo)
+          </span>
+        )}
         {additional > 0 && !prepayAdditionalContracts && (
           <span className="text-xs text-gray-500 italic">
-            {formatCurrency(pricePerUnit, 2)}/contrato
+            {formatCurrency(postPaidPricePerUnit, 2)}/contrato
           </span>
         )}
       </div>

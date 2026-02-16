@@ -29,6 +29,7 @@ import LoginPage from "./pages/LoginPage";
 import AcessoNegado from "./pages/AcessoNegado";
 import ProfilePage from "./pages/ProfilePage";
 import PricingAdminPage from "./pages/PricingAdminPage";
+import PlaybookPage from "./pages/PlaybookPage";
 
 // Protected Calculadora wrapper
 function ProtectedCalculadora() {
@@ -102,6 +103,8 @@ function Router() {
             <Route path="/addons/cash" component={CashPage} />
             {/* Kombos */}
             <Route path="/kombos" component={KombosPage} />
+            {/* Sales Playbook */}
+            <Route path="/playbook" component={PlaybookPage} />
             {/* Calculator / Cotação - PROTECTED */}
             <Route path="/calculadora" component={ProtectedCalculadora} />
             <Route path="/cotacao" component={ProtectedCalculadora} />

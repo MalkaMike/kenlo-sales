@@ -245,9 +245,12 @@ export default function LeadsPage() {
               {leads.name}
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Gestão automatizada de leads com distribuição inteligente.
               Atenda em segundos, nunca perca uma oportunidade — <span className="font-semibold text-foreground">zero leads perdidos, máxima conversão</span>.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Não é só quantidade — é <strong className="text-primary">a pessoa certa</strong>. Transparência total: veja de onde vem cada lead, quanto custa, e qual converte. AI SDR qualifica antes de chegar ao corretor."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">

@@ -209,9 +209,12 @@ export default function AssinaturaPage() {
               {assin.name}
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Assinatura digital embutida na plataforma.
               Feche contratos em <span className="font-semibold text-foreground">5 minutos, sem cartório</span> — com validade jurídica completa.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Parceria <strong className="text-primary">Cerisign</strong> — líder em certificação digital no Brasil. R$ 0 de implantação, 15 assinaturas incluídas/mês. Elimine cartório e burocracia."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">

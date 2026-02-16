@@ -262,6 +262,64 @@ export const SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT: number =
   pricingValues.variableCosts.segurosCommission.estimatedRevenuePerContract;
 
 // ============================================================================
+// PREPAID PRICING (from BLOCO F-PRE)
+// ============================================================================
+
+/**
+ * Prepaid pricing for additional users and contracts
+ * Available only for annual and biennial frequencies
+ * Flat rate regardless of plan tier or volume
+ */
+export const PREPAID_PRICING = {
+  additionalUsers: {
+    product: pricingValues.prepaidPricing.additionalUsers.product as "imob",
+    pricePerMonth: pricingValues.prepaidPricing.additionalUsers.pricePerMonth,
+    availableFrequencies: pricingValues.prepaidPricing.additionalUsers.availableFrequencies as PaymentFrequency[],
+  },
+  additionalContracts: {
+    product: pricingValues.prepaidPricing.additionalContracts.product as "locacao",
+    pricePerMonth: pricingValues.prepaidPricing.additionalContracts.pricePerMonth,
+    availableFrequencies: pricingValues.prepaidPricing.additionalContracts.availableFrequencies as PaymentFrequency[],
+  },
+} as const;
+
+/**
+ * Get the prepaid period in months based on frequency
+ */
+export function getPrepaidMonths(frequency: PaymentFrequency): number {
+  switch (frequency) {
+    case "annual": return 12;
+    case "biennial": return 24;
+    default: return 0; // Not available for monthly/semiannual
+  }
+}
+
+/**
+ * Check if prepaid option is available for a given frequency
+ */
+export function isPrepaidAvailable(frequency: PaymentFrequency): boolean {
+  return frequency === "annual" || frequency === "biennial";
+}
+
+/**
+ * Calculate prepaid total for additional users
+ */
+export function calculatePrepaidUsers(quantity: number, frequency: PaymentFrequency): number {
+  if (!isPrepaidAvailable(frequency)) return 0;
+  const months = getPrepaidMonths(frequency);
+  return quantity * PREPAID_PRICING.additionalUsers.pricePerMonth * months;
+}
+
+/**
+ * Calculate prepaid total for additional contracts
+ */
+export function calculatePrepaidContracts(quantity: number, frequency: PaymentFrequency): number {
+  if (!isPrepaidAvailable(frequency)) return 0;
+  const months = getPrepaidMonths(frequency);
+  return quantity * PREPAID_PRICING.additionalContracts.pricePerMonth * months;
+}
+
+// ============================================================================
 // ADD-ONS (from BLOCO C)
 // ============================================================================
 

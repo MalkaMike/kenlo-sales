@@ -206,9 +206,12 @@ export default function PayPage() {
               Kenlo Pay
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4">
               Boleto e Split digital embutido na plataforma.
               Inquilino paga, <span className="font-semibold text-foreground">dinheiro cai na conta certa</span> — zero trabalho manual, conciliação automática.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 italic">
+              "Kenlo Pay é a <strong className="text-secondary">ferramenta mais poderosa</strong> da locação. 90% das imobiliárias já cobram taxa de boleto. Com Pay, a imobiliária ganha dinheiro, não gasta. Economize 15-20h/mês."
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
