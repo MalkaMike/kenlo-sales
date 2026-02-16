@@ -28,7 +28,7 @@ export interface PostPaidBreakdown {
 }
 
 export interface ProposalData {
-  salesPersonName: string;
+  vendorName: string;
   vendorEmail?: string;
   vendorPhone?: string;
   vendorRole?: string;

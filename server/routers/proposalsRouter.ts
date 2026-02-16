@@ -19,7 +19,7 @@ function isAllowedDomain(email: string | null | undefined): boolean {
 export const proposalsRouter = router({
   create: protectedProcedure
     .input(z.object({
-      salesPersonName: z.string(),
+      vendorName: z.string(),
       clientName: z.string(),
       agencyName: z.string().optional(),
       productType: z.string(),
@@ -61,7 +61,7 @@ export const proposalsRouter = router({
   
   generatePDF: publicProcedure
     .input(z.object({
-      salesPersonName: z.string(),
+      vendorName: z.string(),
       vendorEmail: z.string().optional(),
       vendorPhone: z.string().optional(),
       vendorRole: z.string().optional(),

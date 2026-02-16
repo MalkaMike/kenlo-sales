@@ -7,7 +7,7 @@ import { KENLO_LOGO_RED_BASE64 } from "../kenloLogoBase64";
 
 // ── Data Interface ──────────────────────────────────────────────
 export interface ProposalPrintData {
-  salesPersonName: string;
+  vendorName: string;
   vendorEmail?: string;
   vendorPhone?: string;
   vendorRole?: string;
@@ -171,7 +171,7 @@ export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
 
   // Left side: vendor info
   const parts: string[] = [];
-  if (data.salesPersonName) parts.push(data.salesPersonName);
+  if (data.vendorName) parts.push(data.vendorName);
   if (data.vendorEmail) parts.push(data.vendorEmail);
   if (data.vendorPhone) parts.push(data.vendorPhone);
   const sellerLine = parts.join("  \u00b7  ");

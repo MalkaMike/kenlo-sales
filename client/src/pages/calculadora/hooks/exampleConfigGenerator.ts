@@ -311,7 +311,7 @@ export function buildExampleProposalData(): ExampleProposalResult {
 
   return {
     proposalData: {
-      salesPersonName: "Vendedor Exemplo",
+      vendorName: "Vendedor Exemplo",
       vendorEmail: "vendedor@kenlo.com.br",
       vendorPhone: "(11) 99999-0000",
       vendorRole: "Executivo(a) de Vendas",

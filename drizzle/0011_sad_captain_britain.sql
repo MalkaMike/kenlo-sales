@@ -1,0 +1,1 @@
+ALTER TABLE `proposals` RENAME COLUMN `salesPersonName` TO `vendorName`;

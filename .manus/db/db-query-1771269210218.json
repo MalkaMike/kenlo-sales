@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, name, email, role FROM users LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, name, email, role FROM users LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Updated Name Test",
+      "email": "mickael@laik.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "150005",
+      "name": "Bruno Silva",
+      "email": "bruno.silva@i-value.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "570001",
+      "name": "Munyr Gasperin",
+      "email": "munyr.gasperin@i-value.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "570059",
+      "name": "Jaqueline Granelli",
+      "email": "jaqueline.granelli@i-value.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "660003",
+      "name": "Ivan Codo",
+      "email": "ivan.codo@i-value.com.br",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\trole\n1\tUpdated Name Test\tmickael@laik.com.br\tadmin\n150005\tBruno Silva\tbruno.silva@i-value.com.br\tadmin\n570001\tMunyr Gasperin\tmunyr.gasperin@i-value.com.br\tadmin\n570059\tJaqueline Granelli\tjaqueline.granelli@i-value.com.br\tadmin\n660003\tIvan Codo\tivan.codo@i-value.com.br\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 359
+}

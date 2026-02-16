@@ -4797,3 +4797,27 @@
 - [x] Only remaining "salesPersonName" is a legitimate data field in schema/PDF (not auth-related)
 - [x] Zero salesperson auth references remain in codebase
 - [x] All 670 tests pass, 0 TypeScript errors
+
+## Promote owner user to admin
+- [x] Promoted all existing users to admin role via SQL UPDATE
+
+## Rename salesPersonName to vendorName
+- [x] Update drizzle/schema.ts: rename salesPersonName column to vendorName in proposals table
+- [x] Update server/routers/proposalsRouter.ts: use vendorName in all procedures
+- [x] Update server/pdf/pdfTypes.ts: rename salesPersonName to vendorName
+- [x] Update client/src/utils/pdf/pdfHelpers.ts: rename salesPersonName to vendorName in ProposalPrintData
+- [x] Update client/src/utils/pdf/pdfCoverSection.ts: use vendorName
+- [x] Update client/src/pages/calculadora/quote/buildProposalData.ts: use vendorName
+- [x] Update all test files referencing salesPersonName (3 files)
+- [x] Push database migration 0011: ALTER TABLE proposals RENAME COLUMN salesPersonName TO vendorName
+
+## Build admin user management page
+- [x] Created server/routers/adminUsersRouter.ts with list and updateRole procedures (adminProcedure)
+- [x] Self-demotion prevention: admin cannot remove their own admin role
+- [x] Created client/src/pages/AdminUsersPage.tsx with user table, role badges, promote/demote buttons
+- [x] Added confirmation dialog before role changes
+- [x] Stats cards: total users, admins, regular users
+- [x] Added route /admin/users in App.tsx, protected by AuthGuard ADMIN_ROUTES
+- [x] Added nav links in Layout.tsx footer and user dropdown menu
+- [x] Written 12 tests in server/adminUsers.test.ts (self-demotion, role validation, route protection)
+- [x] All 682 tests pass (23 test files), 0 TypeScript errors

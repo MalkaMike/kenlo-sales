@@ -299,7 +299,7 @@ describe("exampleConfigGenerator - buildExampleProposalData", () => {
     expect(result).toHaveProperty("komboId");
 
     const pd = result.proposalData;
-    expect(pd.salesPersonName).toBe("Vendedor Exemplo");
+    expect(pd.vendorName).toBe("Vendedor Exemplo");
     expect(pd.vendorEmail).toBe("vendedor@kenlo.com.br");
     expect(typeof pd.clientName).toBe("string");
     expect(typeof pd.agencyName).toBe("string");

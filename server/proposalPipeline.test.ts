@@ -259,7 +259,7 @@ describe("buildProposalData E2E", () => {
     const data = buildProposalData(makeInput());
 
     // Vendor info
-    expect(data.salesPersonName).toBe("João Silva");
+    expect(data.vendorName).toBe("João Silva");
     expect(data.vendorEmail).toBe("joao@kenlo.com");
 
     // Client info

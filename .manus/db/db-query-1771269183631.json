@@ -1,0 +1,124 @@
+{
+  "query": "SELECT id, name, email, role FROM users LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, name, email, role FROM users LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Updated Name Test",
+      "email": "mickael@laik.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "150005",
+      "name": "Bruno Silva",
+      "email": "bruno.silva@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "570001",
+      "name": "Munyr Gasperin",
+      "email": "munyr.gasperin@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "570059",
+      "name": "Jaqueline Granelli",
+      "email": "jaqueline.granelli@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "660003",
+      "name": "Ivan Codo",
+      "email": "ivan.codo@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "720001",
+      "name": "Larissa Favi",
+      "email": "larissa.favi@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "750001",
+      "name": "Tatiane Guelfi",
+      "email": "tatiane.guelfi@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "870017",
+      "name": "Marina Yokoo",
+      "email": "marina.yokoo@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "900001",
+      "name": "Cassia Barbosa",
+      "email": "cassia.barbosa@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "1230004",
+      "name": "Nicolas Andrade",
+      "email": "nicolas.andrade@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "1440010",
+      "name": "Emerson Moraes",
+      "email": "emerson.moraes@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "1620003",
+      "name": "Emerson",
+      "email": "emerson@kenlo.com.br",
+      "role": "user"
+    },
+    {
+      "id": "2070031",
+      "name": "roberta.azevedo",
+      "email": "roberta.azevedo@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "2070042",
+      "name": "roberta.azevedo",
+      "email": "roberta.azevedo@kenlo.com.br",
+      "role": "user"
+    },
+    {
+      "id": "4290001",
+      "name": "Ariana Meireles",
+      "email": "ariana.meireles@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "4890030",
+      "name": "Mickael Malka",
+      "email": "mickael.malka@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "7200001",
+      "name": "Guilherme Santos",
+      "email": "guilherme.santos@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "7230009",
+      "name": "Fernando Forenza",
+      "email": "fernando.forenza@i-value.com.br",
+      "role": "user"
+    },
+    {
+      "id": "7410013",
+      "name": "Ana Rissato",
+      "email": "ana.rissato@i-value.com.br",
+      "role": "user"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\trole\n1\tUpdated Name Test\tmickael@laik.com.br\tadmin\n150005\tBruno Silva\tbruno.silva@i-value.com.br\tuser\n570001\tMunyr Gasperin\tmunyr.gasperin@i-value.com.br\tuser\n570059\tJaqueline Granelli\tjaqueline.granelli@i-value.com.br\tuser\n660003\tIvan Codo\tivan.codo@i-value.com.br\tuser\n720001\tLarissa Favi\tlarissa.favi@i-value.com.br\tuser\n750001\tTatiane Guelfi\ttatiane.guelfi@i-value.com.br\tuser\n870017\tMarina Yokoo\tmarina.yokoo@i-value.com.br\tuser\n900001\tCassia Barbosa\tcassia.barbosa@i-value.com.br\tuser\n1230004\tNicolas Andrade\tnicolas.andrade@i-value.com.br\tuser\n1440010\tEmerson Moraes\temerson.moraes@i-value.com.br\tuser\n1620003\tEmerson\temerson@kenlo.com.br\tuser\n2070031\troberta.azevedo\troberta.azevedo@i-value.com.br\tuser\n2070042\troberta.azevedo\troberta.azevedo@kenlo.com.br\tuser\n4290001\tAriana Meireles\tariana.meireles@i-value.com.br\tuser\n4890030\tMickael Malka\tmickael.malka@i-value.com.br\tuser\n7200001\tGuilherme Santos\tguilherme.santos@i-value.com.br\tuser\n7230009\tFernando Forenza\tfernando.forenza@i-value.com.br\tuser\n7410013\tAna Rissato\tana.rissato@i-value.com.br\tuser\n",
+  "stderr": "",
+  "execution_time_ms": 397
+}

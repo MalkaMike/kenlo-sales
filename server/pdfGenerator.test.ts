@@ -10,7 +10,7 @@ import { generateProposalPDF } from './pdfGenerator';
  */
 
 const baseData = {
-  salesPersonName: 'Vendedor Teste',
+  vendorName: 'Vendedor Teste',
   vendorEmail: 'vendedor@kenlo.com.br',
   vendorPhone: '(11) 99999-0000',
   clientName: 'João Silva',
@@ -370,7 +370,7 @@ describe('PDF Generator', () => {
 
 describe('IMOB-Only Scenario (No Receita Extra)', () => {
   const imobOnlyData = {
-    salesPersonName: 'Vendedor Teste',
+    vendorName: 'Vendedor Teste',
     vendorEmail: 'vendedor@kenlo.com.br',
     vendorPhone: '(11) 99999-0000',
     clientName: 'Maria IMOB',
@@ -493,7 +493,7 @@ describe('IMOB-Only Scenario (No Receita Extra)', () => {
 
 describe('Installment Breakdown in PDF', () => {
   const baseInstallmentData = {
-    salesPersonName: 'Vendedor Teste',
+    vendorName: 'Vendedor Teste',
     vendorEmail: 'vendedor@kenlo.com.br',
     clientName: 'João Parcelas',
     agencyName: 'Imobiliária Parcelas',
@@ -599,7 +599,7 @@ describe('Installment Breakdown in PDF', () => {
 
 describe('Page 4 — Extra Revenue (Receita Extra)', () => {
   const locBaseData = {
-    salesPersonName: 'Vendedor Receita',
+    vendorName: 'Vendedor Receita',
     vendorEmail: 'vendedor@kenlo.com.br',
     vendorPhone: '(11) 99999-0000',
     clientName: 'Carlos Revenue',

@@ -122,7 +122,7 @@ export function buildProposalData(input: ProposalDataInput): Record<string, any>
 
   return {
     // Vendor info
-    salesPersonName: quoteInfo.vendorName,
+    vendorName: quoteInfo.vendorName,
     vendorEmail: quoteInfo.vendorEmail,
     vendorPhone: quoteInfo.vendorPhone,
     vendorRole: quoteInfo.vendorRole,

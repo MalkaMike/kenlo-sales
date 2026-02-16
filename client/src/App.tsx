@@ -29,6 +29,7 @@ import LoginPage from "./pages/LoginPage";
 import AcessoNegado from "./pages/AcessoNegado";
 import ProfilePage from "./pages/ProfilePage";
 import PricingAdminPage from "./pages/PricingAdminPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import PlaybookPage from "./pages/PlaybookPage";
 
 function Router() {
@@ -72,6 +73,7 @@ function Router() {
               <Route path="/perfil" component={ProfilePage} />
               {/* Pricing Admin */}
               <Route path="/admin/pricing" component={PricingAdminPage} />
+              <Route path="/admin/users" component={AdminUsersPage} />
               {/* Fallback */}
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />

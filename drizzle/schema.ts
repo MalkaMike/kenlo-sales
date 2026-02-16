@@ -36,7 +36,7 @@ export const proposals = mysqlTable("proposals", {
   /** ID do usuário (vendedor) que criou a proposta */
   userId: int("userId").notNull(),
   /** Nome do vendedor */
-  salesPersonName: varchar("salesPersonName", { length: 255 }).notNull(),
+  vendorName: varchar("vendorName", { length: 255 }).notNull(),
   /** Nome do cliente */
   clientName: varchar("clientName", { length: 255 }).notNull(),
   
