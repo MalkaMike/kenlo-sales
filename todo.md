@@ -4588,3 +4588,39 @@
 - [x] All pricing logic pulls from shared/pricing-values.json (source of truth)
 - [x] Feature matrices updated with correct business model distinctions
 - [x] Implementation Costs Summary updated with business model notes
+
+## Sales Enablement Pages - Products & Add-ons
+
+### Core Products
+- [ ] IMOB + Site Bundle sales playbook page
+- [ ] Locação sales playbook page
+
+### Add-ons
+- [ ] Leads sales playbook page
+- [ ] Inteligência sales playbook page
+- [ ] Assinaturas sales playbook page
+- [ ] Pay sales playbook page
+- [ ] Seguros sales playbook page
+- [ ] Cash sales playbook page
+
+### Content Structure for Each Page
+- [ ] Key Talking Points (3-5 critical messages)
+- [ ] Value Propositions (pain points solved)
+- [ ] Objection Handlers (common pushbacks + responses)
+- [ ] Competitive Advantages (what makes Kenlo different)
+- [ ] Pricing Strategy (when to offer which plan/tier)
+- [ ] Cross-sell/Upsell Opportunities
+- [ ] Success Stories/Use Cases
+- [ ] Demo Flow (features to show + order)
+
+## Sales Enablement Pages - Products & Add-ons (Feb 2026)
+
+- [x] IMOB sales playbook content (Markdown)
+- [x] Locação sales playbook content (Markdown)
+- [x] Leads add-on sales playbook content (Markdown)
+- [x] Inteligência add-on sales playbook content (Markdown)
+- [x] Assinaturas add-on sales playbook content (Markdown)
+- [x] Pay add-on sales playbook content (Markdown)
+- [x] Seguros add-on sales playbook content (Markdown)
+- [x] Cash add-on sales playbook content (Markdown)
+- [ ] Build frontend pages with sales enablement content (in progress - paused for user review tomorrow)
