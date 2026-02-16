@@ -4731,3 +4731,14 @@
 - [x] Update QuoteInfoDialog to use OAuth user instead of salesperson login
 - [x] Server-side domain validation in oauth.ts callback
 - [x] Client-side domain validation in AuthGuard.tsx
+
+## Cleanup: Remove old salesperson authentication system
+- [x] Remove client/src/hooks/useSalesperson.ts hook
+- [x] Remove server/routers/salespersonAuth.ts router
+- [x] Remove salesperson router registration from server/routers.ts
+- [x] Remove all remaining useSalesperson imports across the codebase
+- [x] Remove isAuthorizedEmail from calculadora/types.tsx (AuthGuard handles domain check)
+- [x] Clean up getSalespersonFromContext from quotesRouter.ts, proposalsRouter.ts, profileRouter.ts, pricingAdmin.ts
+- [x] Remove getSalespersonByEmail, getSalespersonById, getAllSalespeople from server/db.ts
+- [x] Verify TypeScript compiles cleanly (0 errors)
+- [x] Verify all 670 tests pass (22 test files)

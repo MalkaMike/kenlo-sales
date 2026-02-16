@@ -77,7 +77,6 @@ export default function PerformancePage() {
   const utils = trpc.useUtils();
   const { data: quotes, isLoading, refetch: refetchQuotes } = trpc.quotes.list.useQuery({ limit: 1000 });
   const { data: performanceMetrics, isLoading: metricsLoading } = trpc.quotes.performance.useQuery();
-  const { data: salespeople } = trpc.salesperson.list.useQuery();
 
   const deleteMutation = trpc.quotes.delete.useMutation({
     onSuccess: () => {

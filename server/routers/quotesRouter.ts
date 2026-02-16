@@ -4,7 +4,6 @@
 
 import { publicProcedure, router } from "../_core/trpc";
 import { saveQuote, getQuotes, getQuoteStats, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics } from "../quotes";
-import { getSalespersonFromContext } from "./salespersonAuth";
 import { z } from "zod";
 
 export const quotesRouter = router({
@@ -88,22 +87,26 @@ export const quotesRouter = router({
   delete: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const currentUser = await getSalespersonFromContext(ctx);
-      if (!currentUser) {
+      // Use OAuth user — all authenticated users have full access
+      const oauthUser = ctx.user;
+      if (!oauthUser) {
         return { success: false, error: "Não autorizado" };
       }
-      const result = await softDeleteQuote(input.id, currentUser.id, currentUser.isMaster);
+      // Authenticated users via OAuth are treated as master (full access)
+      const result = await softDeleteQuote(input.id, -1, true);
       return result;
     }),
 
   deleteBatch: publicProcedure
     .input(z.object({ ids: z.array(z.number()) }))
     .mutation(async ({ ctx, input }) => {
-      const currentUser = await getSalespersonFromContext(ctx);
-      if (!currentUser) {
+      // Use OAuth user — all authenticated users have full access
+      const oauthUser = ctx.user;
+      if (!oauthUser) {
         return { success: false, deletedCount: 0, errors: ["Não autorizado"] };
       }
-      const result = await softDeleteQuotesBatch(input.ids, currentUser.id, currentUser.isMaster);
+      // Authenticated users via OAuth are treated as master (full access)
+      const result = await softDeleteQuotesBatch(input.ids, -1, true);
       return result;
     }),
 

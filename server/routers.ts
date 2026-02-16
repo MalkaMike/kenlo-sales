@@ -3,7 +3,6 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { pricingAdminRouter } from "./pricingAdmin";
-import { salespersonRouter } from "./routers/salespersonAuth";
 import { quotesRouter } from "./routers/quotesRouter";
 import { proposalsRouter } from "./routers/proposalsRouter";
 import { profileRouter } from "./routers/profileRouter";
@@ -22,7 +21,6 @@ export const appRouter = router({
     }),
   }),
 
-  salesperson: salespersonRouter,
   quotes: quotesRouter,
   proposals: proposalsRouter,
   profile: profileRouter,

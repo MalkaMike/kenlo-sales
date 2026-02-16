@@ -5,8 +5,16 @@
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { createProposal } from "../proposals";
 import { generateProposalPDF } from "../pdfGenerator";
-import { getSalespersonFromContext } from "./salespersonAuth";
 import { z } from "zod";
+
+/** Allowed email domains for PDF export access */
+const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
+
+function isAllowedDomain(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const domain = email.toLowerCase().split("@")[1];
+  return ALLOWED_DOMAINS.includes(domain);
+}
 
 export const proposalsRouter = router({
   create: protectedProcedure
@@ -108,18 +116,9 @@ export const proposalsRouter = router({
       postPaidBreakdown: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const salesperson = await getSalespersonFromContext(ctx);
       const oauthUser = ctx.user;
       
-      const isAuthorizedEmail = (email: string | null | undefined): boolean => {
-        if (!email) return false;
-        const authorizedDomains = ['@kenlo.com.br', '@i-value.com.br', '@laik.com.br'];
-        return authorizedDomains.some(domain => email.toLowerCase().endsWith(domain));
-      };
-      
-      const canExport = salesperson || isAuthorizedEmail(oauthUser?.email);
-      
-      if (!canExport) {
+      if (!isAllowedDomain(oauthUser?.email)) {
         throw new Error("Acesso negado: Apenas usuários Kenlo podem gerar orçamentos. Faça login com sua conta Google corporativa.");
       }
       const pdfBuffer = await generateProposalPDF(input);

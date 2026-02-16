@@ -22,7 +22,6 @@ import {
   type MetricsState,
   type AddonsState,
   KOMBOS,
-  isAuthorizedEmail,
   DEFAULT_BUSINESS_NATURE,
   DEFAULT_METRICS,
   DEFAULT_ADDONS,
@@ -39,7 +38,8 @@ import { useKomboRecommendation } from "./hooks/useKomboRecommendation";
 export function useCalculadora() {
   // ─── Authentication ─────────────────────────────────────────────────────────
   const { user: oauthUser } = useAuth();
-  const canExportPDF = isAuthorizedEmail(oauthUser?.email);
+  // All authenticated users can export PDF (AuthGuard already restricts to allowed domains)
+  const canExportPDF = !!oauthUser;
 
   // Derive salesperson-compatible object from OAuth user for backward compatibility
   const salesperson = oauthUser ? {

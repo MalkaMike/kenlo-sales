@@ -6,7 +6,6 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { updateUserProfile, getUserById } from "../db";
 import { getQuotesByUser } from "../quotes";
 import { storagePut } from "../storage";
-import { getSalespersonFromContext } from "./salespersonAuth";
 import { z } from "zod";
 
 export const profileRouter = router({
@@ -56,10 +55,8 @@ export const profileRouter = router({
       limit: z.number().optional(),
     }))
     .query(async ({ ctx, input }) => {
-      const salesperson = await getSalespersonFromContext(ctx);
-      
+      // Use OAuth user name to filter quotes (no more salesperson JWT)
       const quotes = await getQuotesByUser({
-        salespersonId: salesperson?.id,
         userName: ctx.user?.name || undefined,
         limit: input.limit || 100,
       });

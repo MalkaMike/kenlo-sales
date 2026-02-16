@@ -4,28 +4,13 @@ import { TRPCError } from "@trpc/server";
 import * as fs from "fs/promises";
 import * as path from "path";
 
-// Helper to get salesperson from context
-async function getSalespersonFromContext(ctx: any): Promise<{ id: number; isMaster: boolean } | null> {
-  const SALESPERSON_COOKIE_NAME = "kenlo_salesperson_session";
-  let token = ctx.req.cookies?.[SALESPERSON_COOKIE_NAME];
-  const authHeader = ctx.req.headers.authorization;
-  if (!token && authHeader?.startsWith('Bearer ')) {
-    token = authHeader.slice(7);
-  }
-  if (!token) return null;
-  
-  // Verify token (simplified - should use actual JWT verification from routers.ts)
-  try {
-    const jose = await import("jose");
-    const getJwtSecret = () => new TextEncoder().encode(process.env.JWT_SECRET || "kenlo-sales-secret-key");
-    const { payload } = await jose.jwtVerify(token, getJwtSecret());
-    return {
-      id: payload.salespersonId as number,
-      isMaster: (payload.isMaster as boolean) || false,
-    };
-  } catch {
-    return null;
-  }
+/** Allowed email domains for admin access */
+const ALLOWED_ADMIN_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
+
+function isAllowedDomain(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const domain = email.toLowerCase().split("@")[1];
+  return ALLOWED_ADMIN_DOMAINS.includes(domain);
 }
 
 // DETERMINISTIC PRICING CONFIG SCHEMA - VERSION 2.0.0
@@ -245,12 +230,12 @@ export const pricingAdminRouter = router({
   saveConfig: publicProcedure
     .input(PricingValuesSchema)
     .mutation(async ({ ctx, input }) => {
-      // Check if user is master
-      const salesperson = await getSalespersonFromContext(ctx);
-      if (!salesperson?.isMaster) {
+      // Check if user is authenticated with an allowed domain
+      const oauthUser = ctx.user;
+      if (!oauthUser || !isAllowedDomain(oauthUser.email)) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Apenas o usuário master pode editar a configuração de preços",
+          message: "Apenas usuários autorizados podem editar a configuração de preços",
         });
       }
 

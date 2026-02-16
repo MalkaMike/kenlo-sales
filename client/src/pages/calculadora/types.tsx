@@ -195,13 +195,6 @@ export const highlightPlanName = (name: string): React.ReactNode => {
   return name;
 };
 
-/** Check if email is from authorized domain */
-export const isAuthorizedEmail = (email: string | null | undefined): boolean => {
-  if (!email) return false;
-  const authorizedDomains = ['@kenlo.com.br', '@i-value.com.br', '@laik.com.br'];
-  return authorizedDomains.some(domain => email.toLowerCase().endsWith(domain));
-};
-
 // ─── Line Item Type ─────────────────────────────────────────────────────────
 export interface LineItem {
   name: string;
