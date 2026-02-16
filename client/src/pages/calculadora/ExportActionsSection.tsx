@@ -1,10 +1,10 @@
 /**
- * ExportActionsSection - Export buttons and validation messages
- * Extracted from CalculadoraPage.tsx (lines ~4058-4134)
+ * ExportActionsSection - Single centered "Exportar Cotação (PDF)" button
+ * This is the final step of the calculator workflow.
  */
 
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Key, Zap, Download, Shuffle, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useCalc } from "./CalculadoraContext";
 
@@ -12,8 +12,6 @@ export function ExportActionsSection() {
   const {
     canExportPDF,
     selectedPlans,
-    isGeneratingExamples,
-    handleGenerate3Examples,
     businessNature,
     isBusinessNatureComplete,
     setShowValidationErrors,
@@ -61,58 +59,18 @@ export function ExportActionsSection() {
   };
 
   return (
-    <div className="flex flex-col gap-3 mt-6 mb-24">
-      {selectedPlans.length > 0 && canExportPDF && (
-        <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-          <CheckCircle2 className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-medium text-green-900">
-            Plano selecionado para a proposta. Clique em "Exportar Cotação" para gerar o PDF.
-          </span>
-        </div>
-      )}
-      {canExportPDF && selectedPlans.length === 0 && (
-        <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <Zap className="w-5 h-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-900">
-            Selecione um plano na tabela acima para exportar na cotação.
-          </span>
-        </div>
-      )}
-      {!canExportPDF && (
-        <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <Key className="w-5 h-5 text-amber-600" />
-          <span className="text-sm font-medium text-amber-900">
-            Para exportar cotações, faça login como vendedor autorizado.
-          </span>
-        </div>
-      )}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button
-          className="flex-1 min-h-[50px]"
-          size="lg"
-          onClick={handleGenerate3Examples}
-          variant="outline"
-          disabled={isGeneratingExamples}
-        >
-          {isGeneratingExamples ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Shuffle className="w-4 h-4 mr-2" />
-          )}
-          {isGeneratingExamples ? "Gerando..." : "Gerar 3 Exemplos"}
-        </Button>
-        <Button
-          className="flex-1 min-h-[50px]"
-          size="lg"
-          onClick={handleExportClick}
-          variant={
-            selectedPlans.length > 0 && canExportPDF ? "default" : "outline"
-          }
-        >
-          <Download className="w-4 h-4 mr-2" />
-          Exportar Cotação (PDF)
-        </Button>
-      </div>
+    <div className="flex flex-col items-center gap-4 mt-10 mb-24">
+      <p className="text-sm text-muted-foreground text-center max-w-md">
+        Tudo pronto? Gere a cotação personalizada em PDF para enviar ao cliente.
+      </p>
+      <Button
+        className="min-h-[56px] min-w-[280px] text-base font-semibold shadow-lg"
+        size="lg"
+        onClick={handleExportClick}
+      >
+        <Download className="w-5 h-5 mr-2" />
+        Exportar Cotação (PDF)
+      </Button>
     </div>
   );
 }

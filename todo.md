@@ -4838,3 +4838,8 @@
 - [x] Leads pricing already reads from centralized config (pricing-values.json) correctly
 - [x] Fix LeadsAddonCard.tsx: replaced hardcoded tooltip text "R$1,50 a R$1,10/lead" with dynamic range from config (R$1,50 a R$0,90)
 - [x] Verify the fix in the calculadora UI
+
+## Simplificar seção de exportação da calculadora
+- [x] Remover botão "Gerar 3 Exemplos"
+- [x] Remover banner azul de aviso ("Selecione um plano na tabela acima...")
+- [x] Centralizar botão "Exportar Cotação (PDF)" como ponto final claro da calculadora
