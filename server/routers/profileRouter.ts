@@ -55,7 +55,7 @@ export const profileRouter = router({
       limit: z.number().optional(),
     }))
     .query(async ({ ctx, input }) => {
-      // Use OAuth user name to filter quotes (no more salesperson JWT)
+      // Use OAuth user name to filter quotes
       const quotes = await getQuotesByUser({
         userName: ctx.user?.name || undefined,
         limit: input.limit || 100,

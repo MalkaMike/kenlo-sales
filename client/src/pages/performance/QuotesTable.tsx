@@ -30,16 +30,16 @@ import { ptBR } from "date-fns/locale";
 import { formatCurrency, planNames, frequencyNames } from "./performanceConstants";
 import type { QuoteRecord } from "./performanceCalculators";
 
-interface SalespersonInfo {
+interface CurrentUser {
   id: number;
   name: string;
-  isMaster?: boolean;
+  isAdmin?: boolean;
 }
 
 interface QuotesTableProps {
   quotes: QuoteRecord[] | undefined;
   isLoading: boolean;
-  salesperson: SalespersonInfo;
+  currentUser: CurrentUser;
   // Selection
   selectedQuotes: Set<number>;
   onToggleSelection: (quoteId: number) => void;
@@ -61,7 +61,7 @@ interface QuotesTableProps {
 export function QuotesTable({
   quotes,
   isLoading,
-  salesperson,
+  currentUser,
   selectedQuotes,
   onToggleSelection,
   onToggleSelectAll,
@@ -86,7 +86,7 @@ export function QuotesTable({
   };
 
   const allDeletable = quotes?.filter(
-    (q) => salesperson.isMaster || q.userId === salesperson.id
+    (q) => currentUser.isAdmin || q.userId === currentUser.id
   ) ?? [];
 
   const allSelected = allDeletable.length > 0 && selectedQuotes.size === allDeletable.length;
@@ -103,7 +103,7 @@ export function QuotesTable({
               </CardTitle>
               <CardDescription>
                 {quotes?.length || 0} cotações encontradas
-                {!salesperson.isMaster && " (você pode apagar apenas suas próprias cotações)"}
+                {!currentUser.isAdmin && " (você pode apagar apenas suas próprias cotações)"}
               </CardDescription>
             </div>
             {selectedQuotes.size > 0 && (
@@ -151,7 +151,7 @@ export function QuotesTable({
                   {quotes.slice(0, 50).map((quote) => {
                     const totals = parseJSON(quote.totals);
                     const canDelete =
-                      salesperson.isMaster || quote.userId === salesperson.id;
+                      currentUser.isAdmin || quote.userId === currentUser.id;
 
                     return (
                       <TableRow

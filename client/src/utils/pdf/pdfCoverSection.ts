@@ -107,7 +107,7 @@ export function renderCover(doc: jsPDF, data: ProposalPrintData): void {
   });
   doc.text(today, cx, infoY, { align: "center" });
 
-  // ── Salesperson info (prominent, below date) ───────────────
+  // ── Vendor info (prominent, below date) ──────────────────
   if (data.salesPersonName || data.vendorEmail || data.vendorPhone) {
     // Thin divider
     infoY += 24;
@@ -116,7 +116,7 @@ export function renderCover(doc: jsPDF, data: ProposalPrintData): void {
     doc.setLineWidth(0.4);
     doc.line(cx - sellerDivW / 2, infoY, cx + sellerDivW / 2, infoY);
 
-    // Salesperson name
+    // Vendor name
     infoY += 20;
     if (data.salesPersonName) {
       doc.setFontSize(11);

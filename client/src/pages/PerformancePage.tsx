@@ -7,7 +7,7 @@
  *   performance/performanceCalculators.ts — 7 pure metric calculators
  *   performance/DashboardMetricsCards.tsx — 6 KPI cards
  *   performance/PerformanceCharts.tsx     — MRR trend, Kombo pie, Plan bar
- *   performance/VendorRankingTable.tsx    — Salesperson ranking table
+ *   performance/VendorRankingTable.tsx    — Vendor ranking table
  *   performance/FrequencyAddonCharts.tsx  — Frequency & add-on popularity
  *   performance/QuotesTable.tsx           — Recent quotes table + delete dialogs
  *   performance/PerformanceFilters.tsx    — View mode, quick period, filter panel
@@ -62,15 +62,15 @@ const parseJSON = (str: string | null) => {
 export default function PerformancePage() {
   const { user, loading: authLoading, logout } = useAuth();
 
-  // Derive a salesperson-compatible object from the OAuth user
-  // All OAuth users with allowed domains are treated as "master" (full access)
-  const salesperson = useMemo(() => {
+  // Derive current user info for the performance dashboard
+  // All users who reach this page are admins (enforced by AuthGuard)
+  const currentUser = useMemo(() => {
     if (!user) return null;
     return {
-      id: -1,
+      id: user.id,
       name: user.name || user.email || "Usuário",
       email: user.email || "",
-      isMaster: true, // All authenticated users get full dashboard access
+      isAdmin: user.role === "admin",
     };
   }, [user]);
 
@@ -146,9 +146,9 @@ export default function PerformancePage() {
   };
 
   const toggleSelectAll = () => {
-    if (!filteredQuotes || !salesperson) return;
+    if (!filteredQuotes || !currentUser) return;
     const deletable = filteredQuotes.filter(
-      (q) => salesperson.isMaster || q.userId === salesperson.id
+      (q) => currentUser.isAdmin || q.userId === currentUser.id
     );
     if (selectedQuotes.size === deletable.length && deletable.length > 0) {
       setSelectedQuotes(new Set());
@@ -181,15 +181,15 @@ export default function PerformancePage() {
 
   // ── View mode side-effects ──────────────────────────────────────────────
   useEffect(() => {
-    if (salesperson && !salesperson.isMaster && viewMode === "individual") {
-      setFilterVendor(salesperson.name);
+    if (currentUser && !currentUser.isAdmin && viewMode === "individual") {
+      setFilterVendor(currentUser.name);
     }
-  }, [salesperson, viewMode]);
+  }, [currentUser, viewMode]);
 
   const handleViewModeChange = (mode: "team" | "individual") => {
     setViewMode(mode);
     if (mode === "team") setFilterVendor("all");
-    else if (salesperson && !salesperson.isMaster) setFilterVendor(salesperson.name);
+    else if (currentUser && !currentUser.isAdmin) setFilterVendor(currentUser.name);
   };
 
   const handleLogout = async () => {
@@ -291,7 +291,7 @@ export default function PerformancePage() {
     );
   }
 
-  if (!salesperson) return null;
+  if (!currentUser) return null;
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
@@ -310,7 +310,7 @@ export default function PerformancePage() {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Logado como</p>
-            <p className="font-medium">{salesperson.name}</p>
+            <p className="font-medium">{currentUser.name}</p>
           </div>
           <Button variant="outline" size="sm" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
@@ -320,7 +320,7 @@ export default function PerformancePage() {
       </div>
 
       <PerformanceFilters
-        salesperson={salesperson}
+        currentUser={currentUser}
         vendorNames={vendorNames}
         viewMode={viewMode}
         onViewModeChange={handleViewModeChange}
@@ -361,7 +361,7 @@ export default function PerformancePage() {
       <QuotesTable
         quotes={filteredQuotes}
         isLoading={isLoading}
-        salesperson={salesperson}
+        currentUser={currentUser}
         selectedQuotes={selectedQuotes}
         onToggleSelection={toggleQuoteSelection}
         onToggleSelectAll={toggleSelectAll}

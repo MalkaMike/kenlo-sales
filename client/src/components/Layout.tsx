@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, FileText, Package, Layers, User, LogOut, Settings, BookOpen } from "lucide-react";
+import { Menu, FileText, Package, Layers, User, LogOut, Settings, BookOpen, BarChart3, ShieldCheck } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -51,6 +51,8 @@ const addons = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -292,8 +294,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="footer-link-hover inline-block">Kombos</Link></li>
                 <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
-                <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
-                <li><Link href="/admin/pricing" className="footer-link-hover inline-block flex items-center gap-1"><Settings className="w-3 h-3" />Configurar Preços</Link></li>
+                {isAdmin && (
+                  <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
+                )}
+                {isAdmin && (
+                  <li><Link href="/admin/pricing" className="footer-link-hover inline-block flex items-center gap-1"><Settings className="w-3 h-3" />Configurar Preços</Link></li>
+                )}
               </ul>
             </div>
           </div>
@@ -349,6 +355,27 @@ function UserProfileButton() {
             Meu Perfil
           </Link>
         </DropdownMenuItem>
+        {user.role === "admin" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3" /> Admin
+            </DropdownMenuLabel>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/performance" className="flex items-center">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Performance
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/admin/pricing" className="flex items-center">
+                <Settings className="w-4 h-4 mr-2" />
+                Configurar Preços
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="w-4 h-4 mr-2" />
           Logout

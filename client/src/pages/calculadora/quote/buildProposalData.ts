@@ -270,7 +270,7 @@ export function buildQuoteSaveData(
         : undefined,
     clientName: businessNature.ownerName,
     vendorName: quoteInfo.vendorName,
-    userId: quoteInfo.userId,
+    // userId is auto-populated server-side from OAuth session
     agencyName: businessNature.companyName,
     cellPhone: businessNature.cellphone,
     landlinePhone: businessNature.landline,

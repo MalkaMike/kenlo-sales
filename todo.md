@@ -4773,3 +4773,27 @@
 - [x] Deleted ProtectedRoute.tsx
 - [x] Verify TypeScript compiles cleanly (0 errors)
 - [x] Verify all 670 tests pass (22 test files)
+
+## Role-based access control for admin routes
+- [x] adminProcedure already exists in server/_core/trpc.ts with role check
+- [x] Restrict /admin/pricing server routes to adminProcedure (was publicProcedure + manual check)
+- [x] Restrict quotes performance/delete routes to protectedProcedure
+- [x] Add client-side AuthGuard support for admin-only routes (/admin/pricing, /performance)
+- [x] Conditionally hide admin nav items in Layout.tsx footer and user dropdown
+- [x] Existing tests pass (adminProcedure was already tested)
+
+## Auto-populate userId on quote save
+- [x] quotesRouter.save already injects ctx.user.id as userId server-side
+- [x] Removed userId from QuoteInfo interface in QuoteInfoDialog.tsx
+- [x] Removed userId from buildQuoteSaveData in buildProposalData.ts
+
+## Clean up lingering salesperson references
+- [x] Verified useSalesperson.ts, salespersonAuth.ts, ProtectedRoute.tsx are all deleted
+- [x] Renamed SalespersonInfo to CurrentUser in PerformanceFilters.tsx and QuotesTable.tsx
+- [x] Renamed isMaster to isAdmin across all performance components
+- [x] Renamed salesperson variable to currentUser in PerformancePage.tsx
+- [x] Removed unused salesperson variable from useCalculadora.ts
+- [x] Cleaned up comments in VendorRankingTable.tsx, pdfHelpers.ts, pdfCoverSection.ts, profileRouter.ts
+- [x] Only remaining "salesPersonName" is a legitimate data field in schema/PDF (not auth-related)
+- [x] Zero salesperson auth references remain in codebase
+- [x] All 670 tests pass, 0 TypeScript errors

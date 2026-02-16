@@ -41,14 +41,6 @@ export function useCalculadora() {
   // All authenticated users can export PDF (AuthGuard already restricts to allowed domains)
   const canExportPDF = !!oauthUser;
 
-  // Derive salesperson-compatible object from OAuth user for backward compatibility
-  const salesperson = oauthUser ? {
-    id: -1,
-    name: oauthUser.name || oauthUser.email || "Usuário",
-    email: oauthUser.email || "",
-    phone: "",
-    isMaster: true,
-  } : null;
 
   // ─── Business Nature State ──────────────────────────────────────────────────
   const [businessNature, setBusinessNature] = useState<BusinessNatureState>(DEFAULT_BUSINESS_NATURE);
@@ -227,7 +219,7 @@ export function useCalculadora() {
   return {
     // Auth
     canExportPDF,
-    salesperson,
+
     oauthUser,
 
     // Business Nature

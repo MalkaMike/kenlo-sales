@@ -1,17 +1,8 @@
 import { z } from "zod";
-import { router, publicProcedure } from "./_core/trpc";
+import { router, protectedProcedure, adminProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as fs from "fs/promises";
 import * as path from "path";
-
-/** Allowed email domains for admin access */
-const ALLOWED_ADMIN_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
-
-function isAllowedDomain(email: string | null | undefined): boolean {
-  if (!email) return false;
-  const domain = email.toLowerCase().split("@")[1];
-  return ALLOWED_ADMIN_DOMAINS.includes(domain);
-}
 
 // DETERMINISTIC PRICING CONFIG SCHEMA - VERSION 2.0.0
 // Follows 7-block structure (A-G) with zero interpretation
@@ -213,7 +204,7 @@ const PricingValuesSchema = z.object({
 
 export const pricingAdminRouter = router({
   // Get current pricing config
-  getConfig: publicProcedure.query(async () => {
+  getConfig: protectedProcedure.query(async () => {
     try {
       const configPath = path.join(process.cwd(), "shared", "pricing-values.json");
       const content = await fs.readFile(configPath, "utf-8");
@@ -226,19 +217,10 @@ export const pricingAdminRouter = router({
     }
   }),
 
-  // Save pricing config (master user only)
-  saveConfig: publicProcedure
+  // Save pricing config (admin only)
+  saveConfig: adminProcedure
     .input(PricingValuesSchema)
-    .mutation(async ({ ctx, input }) => {
-      // Check if user is authenticated with an allowed domain
-      const oauthUser = ctx.user;
-      if (!oauthUser || !isAllowedDomain(oauthUser.email)) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Apenas usuários autorizados podem editar a configuração de preços",
-        });
-      }
-
+    .mutation(async ({ input }) => {
       try {
         const configPath = path.join(process.cwd(), "shared", "pricing-values.json");
         

@@ -11,7 +11,6 @@ export interface QuoteInfo {
   vendorEmail: string;
   vendorPhone: string;
   vendorRole: string;
-  userId?: number;
   installments: number; // Número de parcelas (1 = à vista)
   validityDays: number; // Validade da proposta em dias (1-7)
 }
@@ -95,7 +94,7 @@ export function QuoteInfoDialog({ open, onOpenChange, onSubmit, paymentFrequency
       vendorEmail: currentUser?.email || "",
       vendorPhone: currentUser?.phone || "",
       vendorRole: currentUser?.role || "Colaborador Kenlo",
-      userId: undefined,
+
       installments: installments,
       validityDays: validityDays,
     });

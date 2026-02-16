@@ -16,13 +16,13 @@ import {
 } from "@/components/ui/select";
 import { Filter, X, Users, User, Download } from "lucide-react";
 
-interface SalespersonInfo {
+interface CurrentUser {
   name: string;
-  isMaster?: boolean;
+  isAdmin?: boolean;
 }
 
 interface PerformanceFiltersProps {
-  salesperson: SalespersonInfo;
+  currentUser: CurrentUser;
   vendorNames: string[];
   // View mode
   viewMode: "team" | "individual";
@@ -49,7 +49,7 @@ interface PerformanceFiltersProps {
 }
 
 export function PerformanceFilters({
-  salesperson,
+  currentUser,
   vendorNames,
   viewMode,
   onViewModeChange,
@@ -101,7 +101,7 @@ export function PerformanceFilters({
               <SelectValue placeholder="Selecione um vendedor" />
             </SelectTrigger>
             <SelectContent>
-              {salesperson.isMaster && (
+              {currentUser.isAdmin && (
                 <SelectItem value="all">Todos os vendedores</SelectItem>
               )}
               {vendorNames.map((name) => (

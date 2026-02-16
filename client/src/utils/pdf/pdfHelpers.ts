@@ -160,7 +160,7 @@ export function newPage(doc: jsPDF, data: ProposalPrintData): number {
   return 38;
 }
 
-/** Shared footer renderer — salesperson contact on the left, proposal label on the right, page number centered */
+/** Shared footer renderer — vendor contact on the left, proposal label on the right, page number centered */
 export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
   const footerY = PH - 28;
 
@@ -169,7 +169,7 @@ export function renderPageFooter(doc: jsPDF, data: ProposalPrintData): void {
   doc.setLineWidth(0.3);
   doc.line(M, footerY, M + CW, footerY);
 
-  // Left side: salesperson info
+  // Left side: vendor info
   const parts: string[] = [];
   if (data.salesPersonName) parts.push(data.salesPersonName);
   if (data.vendorEmail) parts.push(data.vendorEmail);

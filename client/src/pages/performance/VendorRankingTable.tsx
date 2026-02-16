@@ -1,5 +1,5 @@
 /**
- * VendorRankingTable — Salesperson ranking table for the Performance dashboard.
+ * VendorRankingTable — Vendor ranking table for the Performance dashboard.
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

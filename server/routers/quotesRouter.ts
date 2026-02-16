@@ -1,13 +1,14 @@
 /**
  * Quotes router — save, list, stats, delete, performance.
+ * All routes require authentication (protectedProcedure).
  */
 
-import { publicProcedure, router } from "../_core/trpc";
+import { protectedProcedure, adminProcedure, router } from "../_core/trpc";
 import { saveQuote, getQuotes, getQuoteStats, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics } from "../quotes";
 import { z } from "zod";
 
 export const quotesRouter = router({
-  save: publicProcedure
+  save: protectedProcedure
     .input(z.object({
       action: z.enum(["link_copied", "pdf_exported"]),
       product: z.string(),
@@ -23,7 +24,6 @@ export const quotesRouter = router({
       shareableUrl: z.string().optional(),
       clientName: z.string().optional(),
       vendorName: z.string().optional(),
-      userId: z.number().optional(),
       agencyName: z.string().optional(),
       cellPhone: z.string().optional(),
       landlinePhone: z.string().optional(),
@@ -37,7 +37,8 @@ export const quotesRouter = router({
       erpSystem: z.string().optional(),
       erpOther: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      // Auto-populate userId from the authenticated OAuth session
       const quoteId = await saveQuote({
         action: input.action,
         product: input.product,
@@ -53,7 +54,7 @@ export const quotesRouter = router({
         shareableUrl: input.shareableUrl,
         clientName: input.clientName,
         vendorName: input.vendorName,
-        userId: input.userId,
+        userId: ctx.user.id,
         agencyName: input.agencyName,
         cellPhone: input.cellPhone,
         landlinePhone: input.landlinePhone,
@@ -70,7 +71,7 @@ export const quotesRouter = router({
       return { success: true, quoteId };
     }),
   
-  list: publicProcedure
+  list: protectedProcedure
     .input(z.object({
       limit: z.number().optional().default(100),
     }).optional())
@@ -79,38 +80,29 @@ export const quotesRouter = router({
       return quotes;
     }),
   
-  stats: publicProcedure
+  stats: protectedProcedure
     .query(async () => {
       return await getQuoteStats();
     }),
   
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      // Use OAuth user — all authenticated users have full access
-      const oauthUser = ctx.user;
-      if (!oauthUser) {
-        return { success: false, error: "Não autorizado" };
-      }
-      // Authenticated users via OAuth are treated as master (full access)
-      const result = await softDeleteQuote(input.id, oauthUser.id, true);
+      // Admin users can delete any quote; regular users can only delete their own
+      const isAdmin = ctx.user.role === "admin";
+      const result = await softDeleteQuote(input.id, ctx.user.id, isAdmin);
       return result;
     }),
 
-  deleteBatch: publicProcedure
+  deleteBatch: protectedProcedure
     .input(z.object({ ids: z.array(z.number()) }))
     .mutation(async ({ ctx, input }) => {
-      // Use OAuth user — all authenticated users have full access
-      const oauthUser = ctx.user;
-      if (!oauthUser) {
-        return { success: false, deletedCount: 0, errors: ["Não autorizado"] };
-      }
-      // Authenticated users via OAuth are treated as master (full access)
-      const result = await softDeleteQuotesBatch(input.ids, oauthUser.id, true);
+      const isAdmin = ctx.user.role === "admin";
+      const result = await softDeleteQuotesBatch(input.ids, ctx.user.id, isAdmin);
       return result;
     }),
 
-  performance: publicProcedure
+  performance: adminProcedure
     .input(z.object({
       userId: z.number().optional(),
       dateFrom: z.string().optional(),
