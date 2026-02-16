@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, CreditCard, Split, Receipt, DollarSign, ArrowRight, Calculator, Zap, Info, Wallet, RefreshCw, BarChart3 } from "lucide-react";
+import { Check, X, CreditCard, Split, Receipt, DollarSign, ArrowRight, Calculator, Zap, Info, Wallet, RefreshCw, BarChart3, Lightbulb, Target, TrendingUp } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -161,6 +161,31 @@ const useCases = [
   },
 ];
 
+const sellingQuestions = [
+  {
+    icon: Lightbulb,
+    question: "Você sabe que 90% das imobiliárias cobram boleto do inquilino?",
+    answer: "E a maioria faz isso manualmente. Kenlo Pay automatiza tudo - o dinheiro vai para a pessoa certa em 1-2 dias."
+  },
+  {
+    icon: Target,
+    question: "Quanto tempo sua equipe gasta com repasses manuais?",
+    answer: "15-20 horas/mês. Com Kenlo Pay, o split automático faz tudo: você, proprietário, terceiros. Escale sua operação desde o dia 1."
+  },
+  {
+    icon: TrendingUp,
+    question: "Você sabia que pode GANHAR dinheiro com boleto?",
+    answer: "O preço que você cobra do inquilino é sempre maior que o custo Kenlo. Resultado: você ganha dinheiro todo mês automaticamente, com custo zero!"
+  }
+];
+
+const bigNumbers = [
+    { number: "90%", label: "das imobiliárias já cobram boleto do inquilino" },
+    { number: "1-2 dias", label: "para o dinheiro chegar na pessoa certa" },
+    { number: "15-20h", label: "economizadas por mês em repasses manuais" },
+    { number: "R$ 0", label: "custo de implantação" },
+];
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -247,6 +272,58 @@ export default function PayPage() {
         </div>
       </section>
 
+      {/* Perguntas que Vendem Section */}
+      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Perguntas que Vendem</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Questões que revelam o poder do Kenlo Pay para transformar sua operação.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {sellingQuestions.map((item, index) => (
+              <div key={index} className="p-6 rounded-xl border border-border bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-lg bg-yellow-100 text-yellow-600">
+                    <item.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-2">{item.question}</h3>
+                    <p className="text-sm text-muted-foreground">{item.answer}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Big Numbers Section */}
+      <section className="py-12 bg-white dark:bg-gray-800">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {bigNumbers.map((item, index) => (
+              <div key={index} className="p-4">
+                <p className="text-3xl font-black text-primary">{item.number}</p>
+                <p className="text-sm text-muted-foreground mt-1">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Positioning Statement Section */}
+      <section className="py-16">
+        <div className="container">
+          <div className="max-w-3xl mx-auto bg-gray-100 dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+            <p className="text-lg italic text-center text-gray-700 dark:text-gray-300">
+              "A ferramenta mais poderosa! 90% das imobiliárias cobram boleto do inquilino e PSLI do proprietário. A maioria faz manualmente. Kenlo Pay automatiza tudo - dinheiro vai para a pessoa certa em 1-2 dias. E o melhor: você cobra mais do que o custo Kenlo. Você GANHA dinheiro todo mês com zero trabalho."
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Highlights */}
       <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
@@ -276,7 +353,7 @@ export default function PayPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
               <div key={index} className="p-6 rounded-xl border border-border hover:border-secondary/30 hover:shadow-md transition-all">
                 <div className="p-3 rounded-xl bg-secondary/10 text-secondary w-fit mb-4">

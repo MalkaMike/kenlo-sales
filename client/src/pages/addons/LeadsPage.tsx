@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot, Globe, Repeat, BarChart3 } from "lucide-react";
+import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot, Globe, Repeat, BarChart3, Lightbulb, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -195,6 +195,43 @@ const useCases = [
   },
 ];
 
+const sellingQuestions = [
+  {
+    icon: Target,
+    question: "Seus leads estão sendo atendidos pela PESSOA CERTA?",
+    answer: "Não basta velocidade. O lead precisa ir para o especialista certo - por tipo de imóvel, faixa de preço, região. Kenlo Leads configura tudo isso automaticamente."
+  },
+  {
+    icon: BarChart3,
+    question: "Você tem visibilidade de quem atende mais rápido?",
+    answer: "O sistema de transparência mostra ranking em tempo real: 1º, 2º, 3º lugar. Corretores são competitivos - a transparência é a melhor ferramenta de gestão."
+  },
+  {
+    icon: AlertTriangle,
+    question: "Quantos leads você perde por demora no atendimento?",
+    answer: "Estudos mostram que responder em menos de 5 minutos aumenta 21x a chance de conversão. O AI SDR da Kenlo responde instantaneamente via WhatsApp."
+  }
+];
+
+const bigNumbers = [
+  {
+    number: "21x",
+    description: "mais chance de conversão respondendo em 5 min"
+  },
+  {
+    number: "100",
+    description: "leads WhatsApp/mês incluídos"
+  },
+  {
+    number: "R$ 0",
+    description: "custo de implantação"
+  },
+  {
+    number: "24/7",
+    description: "AI SDR responde automaticamente"
+  }
+];
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -286,14 +323,64 @@ export default function LeadsPage() {
         </div>
       </section>
 
+      {/* Selling Questions */}
+      <section className="py-16 lg:py-24 bg-gray-50/50 dark:bg-gray-900/50">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Perguntas que Vendem</h2>
+            <p className="text-lg text-muted-foreground">
+              Responda a estas perguntas e veja como a Kenlo pode transformar sua operação.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {sellingQuestions.map((item, index) => (
+              <div key={index} className="bg-card border border-border/40 rounded-lg p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <item.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold">{item.question}</h3>
+                </div>
+                <p className="text-muted-foreground">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Big Numbers */}
+      <section className="py-12">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {bigNumbers.map((item, index) => (
+              <div key={index} className="bg-card/30 p-6 rounded-lg">
+                <p className="text-3xl font-black text-primary">{item.number}</p>
+                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Positioning Statement */}
+      <section className="pb-16 lg:pb-24">
+        <div className="container">
+          <div className="max-w-3xl mx-auto bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-lg p-8 text-center">
+            <blockquote className="text-xl italic text-foreground">
+              "Todo mundo sabe que leads precisam ser respondidos rápido. Mas nós resolvemos o problema real: a <span className="font-semibold text-primary">PESSOA CERTA</span> respondendo. Nosso sistema de transparência mostra ranking em tempo real. Seus especialistas recebem os leads certos, seu time fecha mais, todos ganham."
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
       {/* Highlights */}
       <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {highlights.map((item, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <item.icon className="w-5 h-5" />
+                <div className="w-10 h-10 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                  <item.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">{item.title}</h3>
@@ -306,133 +393,109 @@ export default function LeadsPage() {
       </section>
 
       {/* Use Cases */}
-      <section className="py-20">
+      <section className="py-16 lg:py-24">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja como o {leads.name} transforma a captação e conversão da sua imobiliária
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Casos de Uso</h2>
+            <p className="text-lg text-muted-foreground">
+              Veja como imobiliárias de todos os portes usam o Kenlo Leads para escalar suas operações e vender mais.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 mt-12 max-w-4xl mx-auto">
             {useCases.map((item, index) => (
-              <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
-                <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-4">
-                  <item.icon className="w-6 h-6" />
+              <div key={index} className="flex gap-6">
+                <div className="w-12 h-12 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                  <item.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Table */}
-      <section className="py-20 bg-card/30">
+      {/* Pricing Section */}
+      <section className="py-16 lg:py-24 border-y border-border/40 bg-card/30">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Modelo transparente com preços por faixas. <span className="font-semibold text-foreground">Quanto mais leads, menor o custo por unidade.</span>
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Planos e Preços</h2>
+            <p className="text-lg text-muted-foreground">
+              Preços transparentes e flexíveis para se adaptar ao tamanho da sua operação.
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto">
-            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-              <table className="w-full border-collapse min-w-[400px]">
-                <thead ref={theadRef} className="pricing-sticky-header">
-                  <tr className="border-b border-border">
-                    <th className="text-left py-4 px-4 font-medium text-muted-foreground">
-                      Categoria / Recurso
-                    </th>
-                    <th className="text-center py-4 px-4 min-w-[200px]">
-                      <div className="flex flex-col items-center">
-                        <Users className="w-8 h-8 text-primary mb-2" />
-                        <span className="font-bold text-lg">{leads.name}</span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pricingData.map((section, sectionIndex) => (
-                    <React.Fragment key={`section-${sectionIndex}`}>
-                      <tr className="bg-muted/30">
-                        <td
-                          colSpan={2}
-                          className="py-3 px-4 font-semibold text-foreground"
-                        >
-                          {section.title}
+          <div className="overflow-x-auto max-w-5xl mx-auto">
+            <table className="w-full text-sm">
+              <thead ref={theadRef} className="sticky top-16 z-10 bg-card/80 backdrop-blur-sm">
+                <tr className="border-b border-border/40">
+                  <th className="p-4 text-left font-semibold">Funcionalidade</th>
+                  <th className="p-4 text-center font-semibold whitespace-nowrap">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pricingData.map((section, sectionIndex) => (
+                  <React.Fragment key={sectionIndex}>
+                    <tr>
+                      <td colSpan={2} className="p-4 pt-8">
+                        <h3 className="font-semibold text-primary">{section.title}</h3>
+                      </td>
+                    </tr>
+                    {section.rows.map((row, rowIndex) => (
+                      <tr key={rowIndex} className="border-b border-border/40 last:border-none">
+                        <td className="p-4 text-muted-foreground">
+                          {row.tooltip ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="border-b border-dashed border-muted-foreground cursor-help">{row.feature}</span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{row.tooltip}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            row.feature
+                          )}
                         </td>
+                        <td className="p-4 text-center">{renderValue(row)}</td>
                       </tr>
-                      {section.rows.map((row, rowIndex) => (
-                        <tr
-                          key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/50 pricing-row"
-                        >
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span>{row.feature}</span>
-                              {row.tooltip && (
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <span className="text-muted-foreground hover:text-foreground cursor-help">
-                                      ⓘ
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="max-w-xs">{row.tooltip}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-center pricing-table-text">
-                            {renderValue(row)}
-                          </td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {exampleCalc && (
-              <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  <strong>Exemplo de cálculo:</strong> {exampleCalc}
-                </p>
-              </div>
-            )}
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           </div>
+
+          {exampleCalc && (
+            <div className="max-w-5xl mx-auto mt-6 text-center text-sm text-muted-foreground bg-gray-100 dark:bg-gray-800/50 p-4 rounded-lg">
+              <p><strong className="text-foreground">Exemplo de cálculo:</strong> {exampleCalc}</p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Kombos CTA */}
-      <section className="py-16">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <Users className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Economize com Kombos
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Combine {leads.name} com outros produtos e ganhe até 20% de desconto.
-              O Kombo Imob Start inclui IMOB + Leads + Assinatura com 10% OFF!
+      {/* CTA Section */}
+      <section className="py-16 lg:py-24">
+        <div className="container text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Pronto para escalar sua operação?</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Deixe a Kenlo cuidar da gestão de leads e libere seu time para focar no que realmente importa: vender.
             </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Explorar Kombos
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+            <div className="flex justify-center gap-4">
               <Link href="/calculadora">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
                   <Calculator className="w-5 h-5" />
-                  Simular Cotação
+                  Monte seu Plano
+                </Button>
+              </Link>
+              <Link href="/contato">
+                <Button size="lg" variant="outline" className="gap-2">
+                  Fale com um Especialista
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>

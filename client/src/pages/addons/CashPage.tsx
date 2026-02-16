@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Banknote, Clock, TrendingUp, Users, Wallet, ArrowRight, Calculator, Handshake, ShieldCheck, Landmark } from "lucide-react";
+import { Check, Banknote, Clock, TrendingUp, Users, Wallet, ArrowRight, Calculator, Handshake, ShieldCheck, Landmark, Star } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -228,6 +228,104 @@ export default function CashPage() {
         </div>
       </section>
 
+      {/* Big Numbers */}
+      <section className="py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Grandes Números</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Resultados que falam por si e mostram o poder da antecipação de aluguel.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="p-6 rounded-xl border border-border text-center">
+              <h3 className="text-3xl font-black text-primary mb-2">24 meses</h3>
+              <p className="text-sm text-muted-foreground">de aluguel antecipados para o proprietário</p>
+            </div>
+            <div className="p-6 rounded-xl border border-border text-center">
+              <h3 className="text-3xl font-black text-primary mb-2">R$ 0</h3>
+              <p className="text-sm text-muted-foreground">capital necessário da imobiliária</p>
+            </div>
+            <div className="p-6 rounded-xl border border-border text-center">
+              <h3 className="text-3xl font-black text-primary mb-2">Exclusivo</h3>
+              <p className="text-sm text-muted-foreground">só na Kenlo - diferencial competitivo real</p>
+            </div>
+            <div className="p-6 rounded-xl border border-border text-center">
+              <h3 className="text-3xl font-black text-primary mb-2">Comissão</h3>
+              <p className="text-sm text-muted-foreground">a imobiliária ganha na operação</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Positioning Statement */}
+      <section className="py-20 bg-card/30">
+          <div className="container">
+              <div className="max-w-3xl mx-auto text-center">
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-secondary/20 to-transparent border border-secondary/30 mb-6 inline-block">
+                      <Star className="w-8 h-8 text-secondary" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4">Posicionamento Único</h2>
+                  <blockquote className="text-lg md:text-xl italic text-muted-foreground border-l-4 border-secondary pl-6">
+                  "Antecipe até 24 meses de aluguel para proprietários sem usar capital próprio. A Kenlo financia, você ganha comissão. Diferencial competitivo exclusivo que nenhum concorrente oferece."
+                  </blockquote>
+              </div>
+          </div>
+      </section>
+
+      {/* Selling Questions */}
+      <section className="py-16 lg:py-20 bg-muted/30">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Perguntas que Vendem</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+              Use estas perguntas para apresentar o Kenlo Cash como diferencial competitivo.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                  <Wallet className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Seus proprietários já pediram antecipação de aluguel?</h3>
+                  <p className="text-muted-foreground">
+                    É a demanda nº 1 de proprietários. Com Kenlo Cash, você antecipa até 24 meses sem usar capital próprio. A Kenlo financia, você ganha comissão. O proprietário fica, o concorrente perde.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                  <Handshake className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Quantos proprietários você perdeu para concorrentes que oferecem antecipação?</h3>
+                  <p className="text-muted-foreground">
+                    Proprietários migram para quem oferece mais serviços. Com Kenlo Cash, você tem um argumento exclusivo de retenção: "Posso antecipar até 24 meses do seu aluguel". Nenhum concorrente sem Kenlo pode dizer isso.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Você gostaria de ganhar comissão sem investir nada?</h3>
+                  <p className="text-muted-foreground">
+                    Zero capital próprio necessário. A Kenlo financia a antecipação, você intermedia e ganha comissão. É receita extra pura — sem risco, sem investimento, sem complicação.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Highlights */}
       <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
@@ -287,50 +385,34 @@ export default function CashPage() {
                 <thead ref={theadRef} className="pricing-sticky-header">
                   <tr className="border-b border-border">
                     <th className="text-left py-4 px-4 font-medium text-muted-foreground">
-                      Categoria / Recurso
+                      Funcionalidade
                     </th>
-                    <th className="text-center py-4 px-4 min-w-[200px]">
-                      <div className="flex flex-col items-center">
-                        <Banknote className="w-8 h-8 text-secondary mb-2" />
-                        <span className="font-bold text-lg">Cash</span>
-                      </div>
+                    <th className="text-center py-4 px-4 font-medium text-muted-foreground w-32">
+                      Disponível
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {pricingData.map((section, sectionIndex) => (
-                    <React.Fragment key={`section-${sectionIndex}`}>
-                      <tr className="bg-muted/30">
-                        <td
-                          colSpan={2}
-                          className="py-3 px-4 font-semibold text-foreground"
-                        >
-                          {section.title}
+                    <React.Fragment key={sectionIndex}>
+                      <tr className="border-b border-border">
+                        <td colSpan={2} className="py-3 px-4">
+                          <h4 className="font-semibold text-lg">{section.title}</h4>
                         </td>
                       </tr>
                       {section.rows.map((row, rowIndex) => (
-                        <tr
-                          key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/50 pricing-row"
-                        >
+                        <tr key={rowIndex} className="border-b border-border/80 hover:bg-card transition-colors">
                           <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span>{row.feature}</span>
-                              {row.tooltip && (
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <span className="text-muted-foreground hover:text-foreground cursor-help">
-                                      ⓘ
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="max-w-xs">{row.tooltip}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="font-medium border-b border-dashed border-border cursor-help">{row.feature}</span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{row.tooltip}</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </td>
-                          <td className="py-4 px-4 text-center pricing-table-text">
+                          <td className="py-4 px-4 text-center">
                             {renderValue(row)}
                           </td>
                         </tr>
@@ -339,36 +421,6 @@ export default function CashPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <TrendingUp className="w-16 h-16 text-secondary mx-auto mb-6" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Fidelize proprietários com antecipação
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Ofereça Kenlo Cash e transforme a relação com seus proprietários.
-              Combine com outros add-ons nos Kombos e economize ainda mais.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Explorar Kombos
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/calculadora">
-                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2">
-                  <Calculator className="w-5 h-5" />
-                  Simular Cotação
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

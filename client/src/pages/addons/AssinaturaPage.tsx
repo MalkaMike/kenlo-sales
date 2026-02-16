@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, FileSignature, Shield, Clock, Smartphone, ArrowRight, Calculator, ScanFace, FileCheck, Workflow, Lock } from "lucide-react";
+import { Check, FileSignature, Shield, Clock, Smartphone, ArrowRight, Calculator, ScanFace, FileCheck, Workflow, Lock, Zap, Star } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -250,6 +250,96 @@ export default function AssinaturaPage() {
         </div>
       </section>
 
+      {/* Big Numbers */}
+      <section className="py-12 bg-gray-50 border-y">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="flex flex-col items-center">
+              <p className="text-3xl font-black text-primary">15</p>
+              <p className="text-sm text-muted-foreground mt-1">assinaturas/mês incluídas no plano</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-3xl font-black text-primary">R$ 0</p>
+              <p className="text-sm text-muted-foreground mt-1">custo de implantação</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-3xl font-black text-primary">Cerisign</p>
+              <p className="text-sm text-muted-foreground mt-1">parceria com uma das maiores do mundo</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-3xl font-black text-primary">100%</p>
+              <p className="text-sm text-muted-foreground mt-1">embutido na plataforma</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Positioning Statement */}
+      <section className="py-20">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="p-6 rounded-xl bg-gray-50 border">
+              <p className="text-lg italic text-gray-700">
+                "Parceria com a <strong className="text-primary">Cerisign</strong>, uma das maiores empresas de assinatura digital do mundo. Todos os contratos assinados diretamente na plataforma. Facilita o dia a dia e elimina papel."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Selling Questions */}
+      <section className="py-16 lg:py-20 bg-muted/30">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Perguntas que Vendem</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+              Use estas perguntas para mostrar o valor real da assinatura digital.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <Clock className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Quanto tempo seu time gasta indo ao cartório?</h3>
+                  <p className="text-muted-foreground">
+                    Cada ida ao cartório = 2-3 horas perdidas. Com 10 contratos/mês, são 20-30 horas que poderiam ser usadas para vender. Com Kenlo Assinaturas, o contrato é assinado em 5 minutos pelo celular.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <Shield className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Você sabia que assinatura digital tem a mesma validade jurídica que cartório?</h3>
+                  <p className="text-muted-foreground">
+                    Parceria com a Cerisign — uma das maiores certificadoras do mundo. Validade jurídica completa, com trilha de auditoria e biometria facial opcional. Mais seguro que papel.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold mb-2">Quantos negócios você perde porque o cliente demora para assinar?</h3>
+                  <p className="text-muted-foreground">
+                    O cliente recebe o contrato no WhatsApp, assina na hora pelo celular. Sem deslocamento, sem agendar horário. R$ 0 de implantação e 15 assinaturas/mês já incluídas no plano.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Highlights */}
       <section className="py-12 border-y border-border/40 bg-card/30">
         <div className="container">
@@ -293,104 +383,54 @@ export default function AssinaturaPage() {
         </div>
       </section>
 
-      {/* Pricing Table */}
-      <section className="py-20 bg-card/30">
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-gray-50 border-t">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Plano e Preços</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Investimento e Funcionalidades</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              O add-on mais acessível da Kenlo. <span className="font-semibold text-foreground">Implantação gratuita</span> e {assin.includedSignatures} assinaturas inclusas por mês.
+              Preços transparentes e funcionalidades completas para digitalizar seus contratos
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto">
-            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-              <table className="w-full border-collapse min-w-[400px]">
-                <thead ref={theadRef} className="pricing-sticky-header">
-                  <tr className="border-b border-border">
-                    <th className="text-left py-4 px-4 font-medium text-muted-foreground">
-                      Categoria / Recurso
-                    </th>
-                    <th className="text-center py-4 px-4 min-w-[200px]">
-                      <div className="flex flex-col items-center">
-                        <FileSignature className="w-8 h-8 text-primary mb-2" />
-                        <span className="font-bold text-lg">{assin.name}</span>
-                      </div>
-                    </th>
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-xl border overflow-hidden">
+              <table className="w-full">
+                <thead ref={theadRef} className="bg-card border-b sticky top-0 z-10">
+                  <tr>
+                    <th className="px-6 py-4 text-left font-semibold text-sm w-2/3">Funcionalidade</th>
+                    <th className="px-6 py-4 text-center font-semibold text-sm w-1/3">Valor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pricingData.map((section, sectionIndex) => (
-                    <React.Fragment key={`section-${sectionIndex}`}>
-                      <tr className="bg-muted/30">
-                        <td
-                          colSpan={2}
-                          className="py-3 px-4 font-semibold text-foreground"
-                        >
-                          {section.title}
-                        </td>
+                    <React.Fragment key={sectionIndex}>
+                      <tr className="bg-gray-50 border-b">
+                        <td colSpan={2} className="px-6 py-3 font-semibold text-primary">{section.title}</td>
                       </tr>
                       {section.rows.map((row, rowIndex) => (
-                        <tr
-                          key={`row-${sectionIndex}-${rowIndex}`}
-                          className="border-b border-border/50 pricing-row"
-                        >
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span>{row.feature}</span>
-                              {row.tooltip && (
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <span className="text-muted-foreground hover:text-foreground cursor-help">
-                                      ⓘ
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="max-w-xs">{row.tooltip}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
+                        <tr key={rowIndex} className="border-b last:border-b-0">
+                          <td className="px-6 py-4 text-sm text-muted-foreground flex items-center gap-2">
+                            {row.tooltip ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="border-b border-dashed border-muted-foreground cursor-help">{row.feature}</span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="max-w-xs">{row.tooltip}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              row.feature
+                            )}
                           </td>
-                          <td className="py-4 px-4 text-center pricing-table-text">
-                            {renderValue(row)}
-                          </td>
+                          <td className="px-6 py-4 text-center text-sm">{renderValue(row)}</td>
                         </tr>
                       ))}
                     </React.Fragment>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Kombos CTA */}
-      <section className="py-16">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <FileSignature className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Economize com Kombos
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {assin.name} está presente em quase todos os Kombos Kenlo.
-              Combine com outros produtos e ganhe descontos progressivos!
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Explorar Kombos
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/calculadora">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
-                  <Calculator className="w-5 h-5" />
-                  Simular Cotação
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

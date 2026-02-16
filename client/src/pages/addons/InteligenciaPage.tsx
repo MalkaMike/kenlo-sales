@@ -11,10 +11,6 @@ import {
 } from "@/components/ui/tooltip";
 import { ADDONS } from "@shared/pricing-config";
 
-// ============================================================================
-// DYNAMIC PRICING DATA BUILDER
-// ============================================================================
-
 const intel = ADDONS.inteligencia;
 
 function formatCurrency(value: number): string {
@@ -77,10 +73,6 @@ function buildPricingData() {
   ];
 }
 
-// ============================================================================
-// STATIC DATA
-// ============================================================================
-
 const highlights = [
   {
     icon: BarChart3,
@@ -104,9 +96,124 @@ const highlights = [
   },
 ];
 
-// ============================================================================
-// COMPONENT
-// ============================================================================
+const PerguntasQueVendem = () => (
+  <section className="py-20 bg-muted/30">
+    <div className="container">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold">Perguntas que Vendem</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+          Respostas que a Kenlo Inteligência traz para otimizar sua operação.
+        </p>
+      </div>
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="bg-card p-6 rounded-lg border">
+          <div className="flex items-start gap-4">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <Target className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold mb-2">Você sabe qual é a sua taxa de conversão real?</h3>
+              <p className="text-muted-foreground">
+                Média Kenlo: 4,5% em vendas, 7,5% em locação. Campeões: 9% e 10%. Sem inteligência, você está voando às cegas.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-card p-6 rounded-lg border">
+          <div className="flex items-start gap-4">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <Eye className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold mb-2">Você consegue analisar quais leads de Janeiro fecharam em Setembro?</h3>
+              <p className="text-muted-foreground">
+                O funil SAFRA mostra exatamente isso. Criamos o primeiro funil do mercado há 12 anos - todo mundo copiou, mas errado. Agora temos o funil real.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-card p-6 rounded-lg border">
+          <div className="flex items-start gap-4">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <BarChart3 className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold mb-2">Sua conversão de 10% é boa ou ruim? Como você sabe?</h3>
+              <p className="text-muted-foreground">
+                Nosso relatório de Performance vs Mercado compara seu time contra o mercado local e nacional. Você está entre os 33% melhores? Os piores? Hora de encarar a realidade!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const BigNumbers = () => (
+  <section className="py-12">
+    <div className="container">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div>
+          <p className="text-3xl font-black text-primary">1 de 12</p>
+          <p className="text-muted-foreground mt-1">empresas selecionadas pelo Google como parceiro estratégico</p>
+        </div>
+        <div>
+          <p className="text-3xl font-black text-primary">12 anos</p>
+          <p className="text-muted-foreground mt-1">criamos o primeiro funil do mercado (todo mundo copiou)</p>
+        </div>
+        <div>
+          <p className="text-3xl font-black text-primary">4,5%</p>
+          <p className="text-muted-foreground mt-1">conversão média vendas (campeões: 9%)</p>
+        </div>
+        <div>
+          <p className="text-3xl font-black text-primary">7,5%</p>
+          <p className="text-muted-foreground mt-1">conversão média locação (campeões: 10%)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const GooglePartnership = () => (
+  <section className="py-12">
+    <div className="container">
+      <div className="bg-gradient-to-r from-blue-500 to-green-500 p-8 rounded-lg text-white text-center">
+        <h3 className="text-2xl font-bold mb-2">Parceria Estratégica com o Google</h3>
+        <p className="max-w-3xl mx-auto">
+          Google selecionou a Kenlo entre apenas 12 empresas como parceiro estratégico no mercado imobiliário. Integramos o Google Looker Studio Pro diretamente no Kenlo IMOB e Locação. Dados que ninguém mais tem.
+        </p>
+      </div>
+    </div>
+  </section>
+);
+
+const TwoReports = () => (
+  <section className="py-20">
+    <div className="container">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold">Relatórios Exclusivos</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+          Ferramentas de análise que só a Kenlo oferece.
+        </p>
+      </div>
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="bg-card p-6 rounded-lg border text-center">
+          <h3 className="font-bold text-xl mb-2">SAFRA</h3>
+          <p className="text-muted-foreground">
+            Funil real que mostra leads de um mês e o que aconteceu com eles ao longo do tempo. Muda toda a estratégia de marketing.
+          </p>
+        </div>
+        <div className="bg-card p-6 rounded-lg border text-center">
+          <h3 className="font-bold text-xl mb-2">Performance vs Mercado</h3>
+          <p className="text-muted-foreground">
+            Compare seu time contra o mercado local e nacional. Descubra se você está entre os melhores ou piores.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
 
 export default function InteligenciaPage() {
   const { theadRef } = useStickyHeader();
@@ -193,6 +300,11 @@ export default function InteligenciaPage() {
           </div>
         </div>
       </section>
+
+      <PerguntasQueVendem />
+      <BigNumbers />
+      <GooglePartnership />
+      <TwoReports />
 
       {/* Highlights */}
       <section className="py-12 border-y border-border/40 bg-card/30">
@@ -281,128 +393,6 @@ export default function InteligenciaPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Key Reports Section */}
-      <section className="py-20">
-        <div className="container">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold mb-4">
-                <Award className="w-4 h-4" />
-                Relatórios Exclusivos
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                2 relatórios que mudam o jogo
-              </h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* SAFRA Report */}
-              <div className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-blue-600 text-white">
-                    <Target className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-blue-900">Relatório SAFRA</h3>
-                </div>
-                <p className="text-sm text-blue-800 mb-4">
-                  Mostra o funil completo: quantos leads entraram, quantos viraram visitas, quantos viraram propostas, quantos fecharam.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-blue-700">
-                    <Check className="w-4 h-4 text-blue-600" />
-                    <span>Identifica onde está o gargalo da operação</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-blue-700">
-                    <Check className="w-4 h-4 text-blue-600" />
-                    <span>Compara performance por corretor</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-blue-700">
-                    <Check className="w-4 h-4 text-blue-600" />
-                    <span>Responde: "Preciso de mais leads ou melhor conversão?"</span>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-blue-200/50 rounded-lg">
-                  <p className="text-xs text-blue-900 font-medium">
-                    <AlertTriangle className="w-3 h-3 inline mr-1" />
-                    Caso real: cliente descobriu que sua melhor campanha era completamente diferente do que pensava. Mudou a estratégia e aumentou fechamentos em 40%.
-                  </p>
-                </div>
-              </div>
-
-              {/* Performance vs Market Report */}
-              <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-purple-600 text-white">
-                    <Eye className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-purple-900">Performance vs Mercado</h3>
-                </div>
-                <p className="text-sm text-purple-800 mb-4">
-                  Compara a imobiliária com a média da Comunidade Kenlo. O "reality check" que todo gestor precisa.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-purple-700">
-                    <Check className="w-4 h-4 text-purple-600" />
-                    <span>Taxa de conversão vs média (4,5% vendas / 7,5% locação)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-purple-700">
-                    <Check className="w-4 h-4 text-purple-600" />
-                    <span>Tempo de fechamento vs benchmark</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-purple-700">
-                    <Check className="w-4 h-4 text-purple-600" />
-                    <span>Distribuição de leads por origem vs mercado</span>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-purple-200/50 rounded-lg">
-                  <p className="text-xs text-purple-900 font-medium">
-                    <Lightbulb className="w-3 h-3 inline mr-1" />
-                    Pergunta-chave: "Você sabe se está acima ou abaixo da média do mercado?" — 80% não sabem.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Google Partnership Badge */}
-            <div className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center">
-              <div className="text-lg font-bold mb-2">Parceria Estratégica Google</div>
-              <div className="text-4xl font-black mb-2">1 de 12 empresas</div>
-              <p className="text-sm text-white/80">selecionadas pelo Google como parceira em real estate no Brasil. Google Looker Studio Pro integrado.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Kombos CTA */}
-      <section className="py-16 bg-card/30">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <Brain className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Economize com Kombos
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Combine {intel.name} com outros produtos e ganhe até 20% de desconto.
-              O Kombo Imob Pro inclui Inteligência + Leads + Assinatura!
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Explorar Kombos
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/calculadora">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
-                  <Calculator className="w-5 h-5" />
-                  Simular Cotação
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
