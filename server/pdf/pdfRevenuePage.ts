@@ -2,6 +2,8 @@
  * Page 4 — Extra Revenue Kenlo (only if applicable) for the server-side PDF.
  */
 
+import { SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
+import pricingValues from "@shared/pricing-values.json";
 import {
   type ProposalData, type DerivedData,
   C, RC, M, CW, fmt, fmtNum,
@@ -78,8 +80,10 @@ export function renderRevenuePage(
   if (hasRevenueFromSeguros) {
     const contracts = data.contracts || 0;
     const monthlyInsurance = data.revenueFromInsurance || 0;
-    const locPlanTier = (data.locPlan || "k").toLowerCase();
-    const commissionRate = locPlanTier === "k2" ? "45%" : locPlanTier === "k" ? "40%" : "35%";
+    const locPlanTier = (data.locPlan || "k").toLowerCase() as "prime" | "k" | "k2";
+    const rawRate = pricingValues.variableCosts.segurosCommission.tiers[locPlanTier]?.[0]?.rate
+      ?? pricingValues.variableCosts.segurosCommission.tiers.prime[0].rate;
+    const commissionRate = `${(rawRate * 100).toFixed(0)}%`;
 
     revenueCards.push({
       type: "seguros", title: "Seguros Integrados", subtitle: "Kenlo Seguros",
@@ -87,7 +91,7 @@ export function renderRevenuePage(
       metric: fmt(monthlyInsurance), metricLabel: "receita estimada/mês",
       details: [
         { label: "Comissão da imobiliária", value: commissionRate },
-        { label: "Receita por contrato", value: "~R$ 10/mês" },
+        { label: "Receita por contrato", value: `~R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/mês` },
         { label: "Contratos ativos", value: fmtNum(contracts) },
       ],
       bgColor: RC.segBg, borderColor: RC.segBorder, accentColor: RC.segAccent, iconColor: RC.segIcon,

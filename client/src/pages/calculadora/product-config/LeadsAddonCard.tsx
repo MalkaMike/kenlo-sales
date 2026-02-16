@@ -134,7 +134,7 @@ export function LeadsAddonCard() {
               }`}
               title={metrics.usesExternalAI
                 ? "Pré-atendimento via WhatsApp e via IA são mutuamente exclusivos. Desative IA para usar WhatsApp."
-                : "Leads via WhatsApp com carência de 100/mês. Excedente cobrado no pós-pago (R$1,50 a R$1,10/lead)."
+                : `Leads via WhatsApp com carência de ${Pricing.getIncludedWhatsAppLeads()}/mês. Excedente cobrado no pós-pago (R$${waTiers[0]?.price.toFixed(2).replace('.', ',')} a R$${waTiers[waTiers.length - 1]?.price.toFixed(2).replace('.', ',')}/lead).`
               }
             >
               <Label htmlFor="whatsapp" className={`text-xs cursor-pointer ${

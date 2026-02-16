@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useState } from "react";
+import { ADDONS } from "@shared/pricing-config";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
@@ -182,10 +183,10 @@ const addonPlaybooks: Playbook[] = [
     icon: FileSignature,
     badge: "ADD-ON",
     badgeColor: "bg-indigo-100 text-indigo-800",
-    heroQuote: "Parceria Cerisign — líder em certificação digital. R$ 0 de implantação, 15 assinaturas incluídas/mês.",
+    heroQuote: `Parceria Cerisign — líder em certificação digital. R$ 0 de implantação, ${ADDONS.assinaturas.includedSignatures} assinaturas incluídas/mês.`,
     killerStats: [
       { value: "5 min", label: "Contrato assinado", color: "text-blue-700" },
-      { value: "15", label: "Assinaturas incluídas/mês", color: "text-green-700" },
+      { value: `${ADDONS.assinaturas.includedSignatures}`, label: "Assinaturas incluídas/mês", color: "text-green-700" },
       { value: "R$ 0", label: "Implantação", color: "text-amber-700" },
       { value: "100%", label: "Validade jurídica", color: "text-purple-700" },
     ],

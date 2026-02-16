@@ -419,7 +419,7 @@ function buildPricingData(): { plans: string[]; sections: PricingSection[] } {
     rows: [
       {
         feature: "Kenlo Leads",
-        tooltip: "Distribuição automatizada + 100 leads WhatsApp/mês",
+        tooltip: `Distribuição automatizada + ${ADDONS.leads.includedWhatsAppLeads} leads WhatsApp/mês`,
         type: "text",
         values: ["➕ Disponível", "➕ Disponível", "➕ Disponível"],
       },

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { ADDONS } from "@shared/pricing-config";
 import { Button } from "@/components/ui/button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,7 +67,7 @@ const addons = [
     description: "Captação e distribuição inteligente de leads — nunca mais perca uma oportunidade",
     icon: Users,
     href: "/addons/leads",
-    highlight: "100 leads/mês inclusos"
+    highlight: `${ADDONS.leads.includedWhatsAppLeads} leads/mês inclusos`
   },
   {
     title: "Inteligência",
@@ -80,7 +81,7 @@ const addons = [
     description: "Feche contratos sem papel, sem cartório, sem atraso — válida juridicamente",
     icon: FileSignature,
     href: "/addons/assinatura",
-    highlight: "15 assinaturas/mês inclusas"
+    highlight: `${ADDONS.assinaturas.includedSignatures} assinaturas/mês inclusas`
   },
   {
     title: "Pay",

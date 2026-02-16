@@ -5,6 +5,7 @@
  */
 
 import PDFDocument from "pdfkit";
+import { ADDONS } from "@shared/pricing-config";
 import { PW, PH, M, CW, C } from "./pdfTypes";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -207,7 +208,7 @@ const productPlaybooks: PlaybookData[] = [
     badgeColor: COLORS.amber,
     keyData: [
       "Parceria Cerisign: certificação digital oficial",
-      "15 assinaturas incluídas no plano",
+      `${ADDONS.assinaturas.includedSignatures} assinaturas incluídas no plano`,
       "Implementação R$ 0",
       "Assinatura embutida no fluxo de trabalho",
       "Validade jurídica completa (ICP-Brasil)",
@@ -218,16 +219,16 @@ const productPlaybooks: PlaybookData[] = [
       "Você usa alguma plataforma externa de assinatura?",
     ],
     sellingPoints: [
-      "15 assinaturas incluídas: cobre a maioria das imobiliárias",
+      `${ADDONS.assinaturas.includedSignatures} assinaturas incluídas: cobre a maioria das imobiliárias`,
       "Cerisign: certificação oficial com validade jurídica",
       "Embutida no fluxo: não precisa sair da plataforma",
       "Implementação R$ 0: sem custo de setup",
       "Excedentes com preço acessível por assinatura",
     ],
     objectionHandlers: [
-      { objection: "Já uso DocuSign/Clicksign", response: "Quanto você paga por mês? Com Kenlo, 15 assinaturas já estão incluídas e a implementação é R$ 0. Tudo embutido no CRM." },
+      { objection: "Já uso DocuSign/Clicksign", response: `Quanto você paga por mês? Com Kenlo, ${ADDONS.assinaturas.includedSignatures} assinaturas já estão incluídas e a implementação é R$ 0. Tudo embutido no CRM.` },
     ],
-    prepaidTip: "15 assinaturas incluídas. Excedentes cobrados por uso.",
+    prepaidTip: `${ADDONS.assinaturas.includedSignatures} assinaturas incluídas. Excedentes cobrados por uso.`,
   },
   {
     title: "Kenlo Pay",

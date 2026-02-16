@@ -4821,3 +4821,20 @@
 - [x] Added nav links in Layout.tsx footer and user dropdown menu
 - [x] Written 12 tests in server/adminUsers.test.ts (self-demotion, role validation, route protection)
 - [x] All 682 tests pass (23 test files), 0 TypeScript errors
+
+### Fix Kenlo Assinaturas pricing (wrong per-plan pricing, should be volume-tiered)
+- [x] Check admin config price page for Assinaturas pricing tiers
+- [x] Fix AssinaturaAddonCard.tsx: replaced hardcoded tier array and calculation with Pricing.getAdditionalSignaturesTiers() and Pricing.calculateAdditionalSignaturesCost()
+- [x] Fix AssinaturaPage.tsx: replaced hardcoded "15 assinaturas" with dynamic ADDONS.assinaturas.includedSignatures
+- [x] Fix pdfStrategicPage.ts: replaced hardcoded "15 assinaturas digitais" and "100 conversas WhatsApp" with dynamic config values
+- [x] Fix pdfPlaybook.ts: replaced all hardcoded "15 assinaturas" references with dynamic ADDONS.assinaturas.includedSignatures
+- [x] Fix Home.tsx: replaced hardcoded "15 assinaturas/mês" and "100 leads/mês" with dynamic config values
+- [x] Fix PlaybookPage.tsx: replaced hardcoded "15 assinaturas" with dynamic config values
+- [x] Fix ImobPage.tsx: replaced hardcoded "100 leads WhatsApp/mês" with dynamic config value
+- [x] Fix pdfRevenuePage.ts: replaced hardcoded seguros commission rates with dynamic config values
+- [x] Verify all 682 tests pass with 0 TypeScript errors
+## Fix Kenlo Leads pricing (wrong prices)
+- [x] Check admin config price page for Leads correct pricing
+- [x] Leads pricing already reads from centralized config (pricing-values.json) correctly
+- [x] Fix LeadsAddonCard.tsx: replaced hardcoded tooltip text "R$1,50 a R$1,10/lead" with dynamic range from config (R$1,50 a R$0,90)
+- [x] Verify the fix in the calculadora UI

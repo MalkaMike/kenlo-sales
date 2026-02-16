@@ -2,7 +2,7 @@
  * Page 2 — Strategic Overview (3-column grid) for the server-side PDF.
  */
 
-import { PREMIUM_SERVICES } from "@shared/pricing-config";
+import { PREMIUM_SERVICES, ADDONS } from "@shared/pricing-config";
 import {
   type ProposalData, type DerivedData,
   C, M, CW, GAP, fmt, fmtNum,
@@ -169,8 +169,8 @@ export function renderStrategicPage(
   const scopeItems: string[] = [];
   if (data.imobUsers && data.imobUsers > 0) scopeItems.push(`${fmtNum(data.imobUsers)} usuários inclusos`);
   if (data.contracts && data.contracts > 0) scopeItems.push(`${fmtNum(data.contracts)} contratos sob gestão`);
-  if (selAddons.includes("assinatura")) scopeItems.push("15 assinaturas digitais");
-  if (data.wantsWhatsApp) scopeItems.push("100 conversas WhatsApp/mês");
+  if (selAddons.includes("assinatura")) scopeItems.push(`${ADDONS.assinaturas.includedSignatures} assinaturas digitais`);
+  if (data.wantsWhatsApp) scopeItems.push(`${ADDONS.leads.includedWhatsAppLeads} conversas WhatsApp/mês`);
   if (selAddons.includes("inteligencia")) scopeItems.push("1 usuário Explorer");
 
   for (const item of scopeItems) {

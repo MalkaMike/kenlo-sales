@@ -1,6 +1,9 @@
 /**
  * AssinaturaAddonCard - Assinatura digital add-on card
  * Shows signature count breakdown with tier pricing
+ * 
+ * IMPORTANT: All pricing comes from the centralized config (pricing-values.json)
+ * via the Pricing utility. Never hardcode prices here.
  */
 
 import { Label } from "@/components/ui/label";
@@ -9,29 +12,26 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useCalc } from "../CalculadoraContext";
 import { toNum, fmtNum, fmtPrice } from "../types";
 import { useAddonPulse } from "./useAddonPulse";
+import * as Pricing from "@/utils/pricing";
 
 export function AssinaturaAddonCard() {
   const { product, addons, setAddons, metrics } = useCalc();
   const { cardRef, activeClass } = useAddonPulse(addons.assinatura);
 
-  const included = 15;
+  const included = Pricing.getIncludedSignatures();
   let totalSignatures = 0;
   if (product === 'imob') totalSignatures = toNum(metrics.closingsPerMonth);
   else if (product === 'loc') totalSignatures = toNum(metrics.newContractsPerMonth);
   else totalSignatures = toNum(metrics.closingsPerMonth) + toNum(metrics.newContractsPerMonth);
   const additional = Math.max(0, totalSignatures - included);
-  const sigTiers = [
-    { from: 1, to: 20, price: 1.8 },
-    { from: 21, to: 40, price: 1.7 },
-    { from: 41, to: Infinity, price: 1.5 },
-  ];
-  const totalCost = (() => {
-    const t1 = Math.min(additional, 20);
-    const t2 = Math.min(Math.max(0, additional - 20), 20);
-    const t3 = Math.max(0, additional - 40);
-    return t1 * 1.8 + t2 * 1.7 + t3 * 1.5;
-  })();
+
+  // Read tier pricing from centralized config (pricing-values.json)
+  const sigTiers = Pricing.getAdditionalSignaturesTiers();
+
+  // Use centralized tier calculation
+  const totalCost = additional > 0 ? Pricing.calculateAdditionalSignaturesCost(additional) : 0;
   const avgPrice = additional > 0 ? totalCost / additional : 0;
+
   const breakdownLines: string[] = [];
   if (additional > 0) {
     let remaining = additional;
@@ -61,7 +61,7 @@ export function AssinaturaAddonCard() {
         <ul className="list-disc list-inside space-y-0.5 mt-0.5">
           <li>Assinatura digital integrada — válida juridicamente</li>
           <li>Sem papel, sem cartório, sem atraso</li>
-          <li>15 assinaturas/mês incluídas na carência</li>
+          <li>{fmtNum(included)} assinaturas/mês incluídas na carência</li>
         </ul>
       </div>
       <div

@@ -214,7 +214,7 @@ export default function AssinaturaPage() {
               Feche contratos em <span className="font-semibold text-foreground">5 minutos, sem cartório</span> — com validade jurídica completa.
             </p>
             <p className="text-sm text-muted-foreground mb-6 italic">
-              "Parceria <strong className="text-primary">Cerisign</strong> — líder em certificação digital no Brasil. R$ 0 de implantação, 15 assinaturas incluídas/mês. Elimine cartório e burocracia."
+              {`Parceria `}<strong className="text-primary">Cerisign</strong>{` — líder em certificação digital no Brasil. R$ 0 de implantação, ${assin.includedSignatures} assinaturas incluídas/mês. Elimine cartório e burocracia.`}
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
@@ -255,7 +255,7 @@ export default function AssinaturaPage() {
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <p className="text-3xl font-black text-primary">15</p>
+              <p className="text-3xl font-black text-primary">{assin.includedSignatures}</p>
               <p className="text-sm text-muted-foreground mt-1">assinaturas/mês incluídas no plano</p>
             </div>
             <div className="flex flex-col items-center">
@@ -331,7 +331,7 @@ export default function AssinaturaPage() {
                 <div>
                   <h3 className="font-bold mb-2">Quantos negócios você perde porque o cliente demora para assinar?</h3>
                   <p className="text-muted-foreground">
-                    O cliente recebe o contrato no WhatsApp, assina na hora pelo celular. Sem deslocamento, sem agendar horário. R$ 0 de implantação e 15 assinaturas/mês já incluídas no plano.
+                    O cliente recebe o contrato no WhatsApp, assina na hora pelo celular. Sem deslocamento, sem agendar horário. R$ 0 de implantação e {assin.includedSignatures} assinaturas/mês já incluídas no plano.
                   </p>
                 </div>
               </div>
