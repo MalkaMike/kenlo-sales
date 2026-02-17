@@ -5460,4 +5460,14 @@
 - [x] Remove "Kombos" link from footer ✓
 - [x] Ensure all remaining menu titles are properly aligned (added Calculator icon to Cotação for consistency) ✓
 - [x] Test navigation menu in browser (verified all links work, Kombos removed, alignment correct) ✓
+- [x] Save checkpoint (version 6fb07908) ✓
+
+## Fix Navigation Menu Icon Alignment
+
+- [x] Verify current icons in navigation menu (Produtos has Package icon, Add-ons has Layers icon) ✓
+- [x] Conteúdo currently has Play icon - was invisible due to CSS height:0 issue ✓
+- [x] Cotação currently has Calculator icon - was invisible due to CSS height:0 issue ✓
+- [x] Added CSS fix: nav svg.lucide { height: 1rem !important; width: 1rem !important; } ✓
+- [x] Ensure all 4 menu items have consistent icon + text layout ✓
+- [x] Test alignment in browser (all 4 menu items now have visible icons and consistent spacing) ✓
 - [ ] Save checkpoint

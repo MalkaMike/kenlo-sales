@@ -512,3 +512,10 @@ html {
 .pricing-sticky-header.is-stuck {
   box-shadow: 0 4px 12px -2px oklch(0 0 0 / 0.08), 0 1px 0 0 oklch(0 0 0 / 0.05);
 }
+
+/* Fix navigation menu icon height - ensure SVG icons are visible */
+nav a svg.lucide,
+nav button svg.lucide {
+  height: 1rem !important; /* 16px - matches w-4 h-4 */
+  width: 1rem !important;
+}

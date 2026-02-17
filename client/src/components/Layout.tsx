@@ -146,7 +146,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/conteudo" && "bg-accent text-primary"
                     )}
                   >
-                    <Play className="w-4 h-4 mr-1" />
+                    <Play className="w-4 h-4 mr-2" />
                     Conteúdo
                   </Link>
                 </NavigationMenuLink>
@@ -162,7 +162,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/calculadora" && "bg-accent text-primary"
                     )}
                   >
-                    <Calculator className="w-4 h-4 mr-1" />
+                    <Calculator className="w-4 h-4 mr-2" />
                     Cotação
                   </Link>
                 </NavigationMenuLink>
