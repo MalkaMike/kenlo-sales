@@ -112,20 +112,26 @@ export default function ImobPage() {
                 <p className="text-gray-500 text-xs mb-2">
                   (média da comunidade)
                 </p>
+                <p className="text-[#242424] text-xs mb-2">
+                  Taxa de Conversão dos leads que vêm de Site: <span className="font-bold text-[#4ABD8D]">9%</span> versus <span className="font-bold text-gray-400">2%</span> dos leads que vêm de portais → <span className="font-semibold text-[#4ABD8D]">Leads muito mais qualificados!</span>
+                </p>
                 <div className="text-sm font-bold text-[#F82E52]">
                   E você?
                 </div>
               </div>
             </div>
 
-            {/* Card 4: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
+            {/* Card 4: 60% + 10,5% - BEST PERFORMERS */}
             <div className="bg-[#F82E52] p-4 rounded-lg border border-[#F82E52] shadow-sm">
               <div className="text-center">
+                <p className="text-white/90 text-xs mb-2 font-semibold">
+                  Best Performers Comunidade Kenlo
+                </p>
                 <div className="text-4xl font-bold text-white mb-1">
                   60%
                 </div>
                 <p className="text-white/90 text-xs mb-2 font-medium">
-                  das vendas (cliente campeão)
+                  dos fechamentos vêm do Site
                 </p>
                 <div className="text-3xl font-bold text-white mb-1">
                   10,5%

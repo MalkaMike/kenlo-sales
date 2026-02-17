@@ -5206,3 +5206,24 @@
 - [x] Card 4 (60% + 10,5%): Change p-6 → p-4, keep text-sm for "E você?" (already correct), adjust spacing mb-2 → mb-1 ✓
 - [x] Test all 4 cards in browser - ALL CARDS NOW CONSISTENT ✓
 - [x] Save checkpoint ✓
+
+
+## Update Bloco 0 Cards Content - Additional Data
+
+### Card 60% (Vermelho #F82E52)
+- [x] Add title at top: "Best Performers Comunidade Kenlo" ✓
+- [x] Change "das vendas (cliente campeão)" to "dos fechamentos vêm do Site" ✓
+- [x] Keep 10,5% taxa de conversão ✓
+- [x] Keep "Mesma ferramenta. Piloto e gasolina diferentes." ✓
+- [x] Keep "E você?" ✓
+
+### Card 25% (Branco)
+- [x] Keep "25% dos fechamentos vêm do site da imobiliária" ✓
+- [x] Add below: "Taxa de Conversão dos leads que vêm de Site: 9% versus 2% dos leads que vêm de portais → Leads muito mais qualificados!" ✓
+- [x] 9% highlighted in green (#4ABD8D), 2% in gray, "Leads muito mais qualificados!" in green ✓
+- [x] Keep "E você?" ✓
+
+### Testing
+- [x] Test both cards in browser - VERIFIED ✓
+- [x] Verify compact sizing maintained - CONFIRMED ✓
+- [x] Save checkpoint ✓
