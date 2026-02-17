@@ -5257,3 +5257,15 @@
 - [x] Added max-w-4xl mx-auto to subtitle for better readability ✓
 - [x] Test in browser - VERIFIED ✓
 - [x] Save checkpoint ✓
+
+
+## Fix Invisible Text in Bloco 2 (A SOLUÇÃO) - Contrast Issue
+
+- [x] Locate section with dark green text on dark blue background (#1A202C) ✓
+- [x] Found "K e K² ganham" and "K² exclusivo" boxes (lines 491-525) ✓
+- [x] Change text color from dark gray to white for readability ✓
+  - Titles: text-[#242424] → text-white
+  - List items: text-gray-600 → text-white/80
+- [x] Keep icon colors as-is (text-[#4ABD8D] green - already visible) ✓
+- [x] Test in browser - TEXT NOW FULLY READABLE ✓
+- [x] Save checkpoint ✓

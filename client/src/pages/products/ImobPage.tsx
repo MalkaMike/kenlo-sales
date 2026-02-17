@@ -495,10 +495,10 @@ export default function ImobPage() {
                   <GraduationCap className="w-5 h-5 text-[#4ABD8D]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#242424] mb-2">
+                  <h3 className="font-bold text-white mb-2">
                     K e K² ganham
                   </h3>
-                  <ul className="text-gray-600 text-sm space-y-1">
+                  <ul className="text-white/80 text-sm space-y-1">
                     <li>• Blog e Landing Pages personalizáveis</li>
                     <li>• Treinamentos 2x/ano (K²)</li>
                   </ul>
@@ -513,10 +513,10 @@ export default function ImobPage() {
                   <Headphones className="w-5 h-5 text-[#4ABD8D]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#242424] mb-2">
+                  <h3 className="font-bold text-white mb-2">
                     K² exclusivo
                   </h3>
-                  <ul className="text-gray-600 text-sm space-y-1">
+                  <ul className="text-white/80 text-sm space-y-1">
                     <li>• API para integrações customizadas</li>
                     <li>• CS Dedicado e Suporte VIP incluídos</li>
                   </ul>
