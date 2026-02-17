@@ -5381,3 +5381,16 @@
 - [ ] Test all pages after redesign
 - [ ] Verify visual homogeneity across all 8 pages
 - [ ] Save checkpoint
+
+
+## Create Kenlo Assinaturas Add-on Page
+
+- [x] Gather pricing data from pricing-config.ts (R$ 97/mês, R$ 497 impl., 15 assinaturas incluídas, R$ 6 adicional) ✓
+- [x] Create /client/src/pages/addons/AssinaturasPage.tsx ✓
+- [x] Structure: Hero + Perguntas que Vendem + Stats + Features + Pricing + FAQ ✓
+- [x] Use Kenlo Design System: #F82E52, #4ABD8D, #1A202C, white, #F2F2F2 ✓
+- [x] Follow same pattern as Leads, Inteligência, Pay, Cash, Seguros pages ✓
+- [x] Content from playbook: Cerisign partnership, 15 assinaturas incluídas, ICP-Brasil, R$ 0 impl. ✓
+- [x] Renamed to AssinaturaPage.tsx to match App.tsx import ✓
+- [x] Test page in browser - FULLY COMPLIANT with Kenlo Design System ✓
+- [x] Save checkpoint ✓

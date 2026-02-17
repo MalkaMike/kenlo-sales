@@ -1,357 +1,236 @@
-import { Link } from "wouter";
-import React, { useMemo } from "react";
-import { useStickyHeader } from "@/hooks/useStickyHeader";
+import { ArrowRight, Check, FileSignature, Shield, Zap, Clock, DollarSign, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, FileSignature, Shield, Clock, Smartphone, ArrowRight, Calculator, ScanFace, FileCheck, Workflow, Lock, Zap, Star } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Link } from "wouter";
 import { ADDONS } from "@shared/pricing-config";
 
-// ============================================================================
-// DYNAMIC PRICING DATA BUILDER
-// ============================================================================
-
-const assin = ADDONS.assinaturas;
-
-function formatCurrency(value: number): string {
-  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
-}
-
-function buildPricingData() {
-  const sections = [];
-
-  // --- Investimento ---
-  sections.push({
-    title: "Investimento",
-    rows: [
-      {
-        feature: "Licença mensal (plano anual)",
-        value: `${formatCurrency(assin.annualPrice)}/mês`,
-        highlight: true,
-        tooltip: undefined as string | undefined,
-      },
-      {
-        feature: "Implantação (única)",
-        value: assin.implementation === 0 ? "Sem custo" : formatCurrency(assin.implementation),
-        tooltip: assin.implementation === 0 ? "Implantação gratuita para todos os clientes" : undefined,
-      },
-      {
-        feature: "Assinaturas inclusas/mês",
-        value: `${assin.includedSignatures} assinaturas`,
-        tooltip: `Carência mensal de ${assin.includedSignatures} assinaturas digitais incluídas`,
-      },
-      {
-        feature: "Produtos atendidos",
-        value: assin.availableFor.map((p) => p.toUpperCase()).join(" e "),
-        tooltip: `Funciona com Kenlo ${assin.availableFor.map((p) => p.toUpperCase()).join(" e/ou Kenlo ")}`,
-      },
-    ],
-  });
-
-  // --- Assinaturas Adicionais (pós-pago) ---
-  const additionalRows = assin.additionalSignaturesTiers.map(
-    (tier: { from: number; to: number; price: number }) => {
-      const rangeLabel =
-        tier.to === Infinity
-          ? `Acima de ${tier.from} assinaturas`
-          : `${tier.from} a ${tier.to} assinaturas`;
-      return {
-        feature: rangeLabel,
-        value: `${formatCurrency(tier.price)}/assinatura`,
-        tooltip: undefined as string | undefined,
-      };
-    }
-  );
-  sections.push({
-    title: "Assinaturas Adicionais (pós-pago)",
-    rows: additionalRows,
-  });
-
-  // --- Funcionalidades Incluídas ---
-  sections.push({
-    title: "Funcionalidades Incluídas",
-    rows: [
-      {
-        feature: "Assinatura digital com validade jurídica",
-        value: true as string | boolean,
-        tooltip: "Certificado digital reconhecido — substitui cartório",
-      },
-      {
-        feature: "Envio por e-mail e WhatsApp",
-        value: true as string | boolean,
-        tooltip: "Cliente recebe o contrato e assina pelo celular",
-      },
-      {
-        feature: "Validação biométrica facial",
-        value: `${formatCurrency(assin.biometricValidation)}/validação` as string | boolean,
-        tooltip: "Validação de identidade por reconhecimento facial — opcional",
-      },
-      {
-        feature: "Histórico e auditoria",
-        value: true as string | boolean,
-        tooltip: "Registro completo de todas as assinaturas com trilha de auditoria",
-      },
-      {
-        feature: "Templates de contrato",
-        value: true as string | boolean,
-        tooltip: "Modelos pré-configurados para contratos de venda e locação",
-      },
-    ],
-  });
-
-  return sections;
-}
-
-// ============================================================================
-// STATIC DATA
-// ============================================================================
-
-const highlights = [
-  {
-    icon: FileSignature,
-    title: "Assinatura Digital",
-    description: "Contratos assinados digitalmente com validade jurídica — sem cartório, sem papel",
-  },
-  {
-    icon: Shield,
-    title: "Validade Jurídica",
-    description: "Certificado digital reconhecido que substitui a necessidade de cartório",
-  },
-  {
-    icon: Clock,
-    title: "Fechamento em 5 Min",
-    description: "Cliente assina pelo celular em minutos — sem deslocamento, sem atraso",
-  },
-  {
-    icon: Smartphone,
-    title: "100% Mobile",
-    description: "Processo completo pelo smartphone do cliente — envio por e-mail ou WhatsApp",
-  },
-];
-
-const useCases = [
-  {
-    icon: FileCheck,
-    title: "Contratos de Venda",
-    description: "Feche contratos de compra e venda em minutos. O comprador assina pelo celular, você acompanha em tempo real e o contrato fica armazenado com validade jurídica.",
-  },
-  {
-    icon: Workflow,
-    title: "Contratos de Locação",
-    description: "Novos contratos de locação assinados digitalmente. Inquilino, proprietário e fiador assinam de qualquer lugar — sem burocracia.",
-  },
-  {
-    icon: ScanFace,
-    title: "Validação Biométrica",
-    description: `Para contratos de alto valor, adicione validação biométrica facial por ${formatCurrency(assin.biometricValidation)}/validação. Segurança extra com reconhecimento de identidade.`,
-  },
-  {
-    icon: Lock,
-    title: "Auditoria e Compliance",
-    description: "Histórico completo de todas as assinaturas com trilha de auditoria. Prove quem assinou, quando e de onde — tudo registrado.",
-  },
-];
-
-// ============================================================================
-// COMPONENT
-// ============================================================================
-
-function formatCurrency2(value: number): string {
-  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: value % 1 !== 0 ? 2 : 0 })}`;
-}
-
-export default function AssinaturaPage() {
-  const { theadRef } = useStickyHeader();
-  const pricingData = useMemo(() => buildPricingData(), []);
-
-  const renderValue = (row: { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string }) => {
-    if (typeof row.value === "boolean") {
-      return row.value ? (
-        <div className="flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-            <Check className="w-5 h-5 text-green-600" />
-          </div>
-        </div>
-      ) : (
-        <span className="text-muted-foreground">—</span>
-      );
-    }
-
-    if (row.highlight) {
-      return (
-        <span className="inline-flex items-center gap-1.5">
-          <span className="text-lg font-bold text-foreground">{row.value}</span>
-          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">investimento</span>
-        </span>
-      );
-    }
-
-    return <span className="font-medium">{row.value}</span>;
-  };
+export default function AssinaturasPage() {
+  const addon = ADDONS.assinaturas;
+  const monthlyPrice = Math.ceil(addon.annualPrice / 12);
 
   return (
-    <div className="flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* Hero Section */}
-      <section className="relative py-16 lg:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-
-        <div className="container relative">
-          <div className="max-w-3xl">
-            <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              ADD-ON • {assin.availableFor.map((p) => p.toUpperCase()).join(" + ")}
-            </Badge>
-
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {assin.name}
+      <section className="py-16 bg-gradient-to-br from-[#F2F2F2] via-white to-[#F2F2F2]">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F82E52]/10 text-[#F82E52] text-sm font-semibold mb-6">
+              <FileSignature className="w-4 h-4" />
+              ADD-ON IMOB + LOC
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold text-[#242424] mb-6">
+              Kenlo Assinaturas
             </h1>
-
-            <p className="text-xl text-muted-foreground mb-4">
-              Assinatura digital embutida na plataforma.
-              Feche contratos em <span className="font-semibold text-foreground">5 minutos, sem cartório</span> — com validade jurídica completa.
+            
+            <p className="text-xl text-gray-600 mb-8">
+              Assinatura digital com Cerisign embutida no fluxo de trabalho. 
+              Validade jurídica completa (ICP-Brasil). {addon.includedSignatures} assinaturas incluídas.
             </p>
-            <p className="text-sm text-muted-foreground mb-6 italic">
-              {`Parceria `}<strong className="text-primary">Cerisign</strong>{` — líder em certificação digital no Brasil. R$ 0 de implantação, ${assin.includedSignatures} assinaturas incluídas/mês. Elimine cartório e burocracia.`}
-            </p>
-
-            <div className="flex flex-wrap gap-3 mb-8">
-              <Badge variant="outline" className="text-sm py-1">
-                <FileSignature className="w-4 h-4 mr-1" />
-                Validade jurídica
-              </Badge>
-              <Badge variant="outline" className="text-sm py-1">
-                <ScanFace className="w-4 h-4 mr-1" />
-                Biometria facial
-              </Badge>
-              <Badge variant="outline" className="text-sm py-1">
-                <Smartphone className="w-4 h-4 mr-1" />
-                100% mobile
-              </Badge>
-            </div>
-
-            <div className="flex gap-4">
-              <Link href="/calculadora">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 gap-2">
-                  <Calculator className="w-5 h-5" />
-                  Monte seu Plano
-                </Button>
-              </Link>
-              <Link href="/kombos">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Ver Kombos
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+                <Link href="/calculadora">
+                  <DollarSign className="w-5 h-5 mr-2" />
+                  Simular Cotação
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/kombos">
+                  Ver Kombos com Desconto
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Big Numbers */}
-      <section className="py-12 bg-gray-50 border-y">
+      {/* Perguntas que Vendem */}
+      <section className="py-16 bg-[#F2F2F2]">
         <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <p className="text-3xl font-black text-primary">{assin.includedSignatures}</p>
-              <p className="text-sm text-muted-foreground mt-1">assinaturas/mês incluídas no plano</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <p className="text-3xl font-black text-primary">R$ 0</p>
-              <p className="text-sm text-muted-foreground mt-1">custo de implantação</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <p className="text-3xl font-black text-primary">Cerisign</p>
-              <p className="text-sm text-muted-foreground mt-1">parceria com uma das maiores do mundo</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <p className="text-3xl font-black text-primary">100%</p>
-              <p className="text-sm text-muted-foreground mt-1">embutido na plataforma</p>
-            </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#242424] mb-4">
+              Perguntas que Vendem
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Use essas perguntas para identificar a dor do cliente e mostrar o valor da solução
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              "Quantos contratos você assina por mês?",
+              "Quanto tempo leva para coletar todas as assinaturas?",
+              "Você usa alguma plataforma externa de assinatura?",
+            ].map((question, idx) => (
+              <div key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="w-10 h-10 rounded-full bg-[#F82E52]/10 flex items-center justify-center mb-4">
+                  <span className="text-[#F82E52] font-bold text-lg">{idx + 1}</span>
+                </div>
+                <p className="text-[#242424] font-medium">{question}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Positioning Statement */}
-      <section className="py-20">
+      {/* Stats */}
+      <section className="py-16">
         <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="p-6 rounded-xl bg-gray-50 border">
-              <p className="text-lg italic text-gray-700">
-                "Parceria com a <strong className="text-primary">Cerisign</strong>, uma das maiores empresas de assinatura digital do mundo. Todos os contratos assinados diretamente na plataforma. Facilita o dia a dia e elimina papel."
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {[
+              { value: addon.includedSignatures.toString(), label: "Assinaturas incluídas" },
+              { value: "R$ 0", label: "Implementação" },
+              { value: "ICP-Brasil", label: "Certificação oficial" },
+              { value: "100%", label: "Validade jurídica" },
+            ].map((stat, idx) => (
+              <div key={idx} className="text-center p-6 bg-white rounded-lg border border-gray-200">
+                <div className="text-3xl font-bold text-[#F82E52] mb-2">{stat.value}</div>
+                <div className="text-sm text-gray-600">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16 bg-[#1A202C]">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Por que Kenlo Assinaturas?
+            </h2>
+            <p className="text-white/70 max-w-2xl mx-auto">
+              Assinatura digital embutida no fluxo de trabalho com certificação oficial
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {[
+              {
+                icon: Shield,
+                title: "Certificação Cerisign Oficial",
+                description: "Parceria com Cerisign garante validade jurídica completa (ICP-Brasil). Todas as assinaturas têm força legal.",
+              },
+              {
+                icon: FileSignature,
+                title: `${addon.includedSignatures} Assinaturas Incluídas`,
+                description: `Plano já inclui ${addon.includedSignatures} assinaturas por mês. Cobre a maioria das imobiliárias sem custo adicional.`,
+              },
+              {
+                icon: Zap,
+                title: "Embutida no Fluxo",
+                description: "Não precisa sair da plataforma Kenlo. Assinatura integrada no CRM e ERP, sem ferramentas externas.",
+              },
+              {
+                icon: Clock,
+                title: "Implementação R$ 0",
+                description: "Sem custo de setup. Ative e comece a usar imediatamente. Excedentes com preço acessível por assinatura.",
+              },
+            ].map((feature, idx) => (
+              <div key={idx} className="bg-[#4ABD8D]/10 p-6 rounded-lg border border-[#4ABD8D]/20">
+                <div className="w-12 h-12 rounded-lg bg-[#F82E52] flex items-center justify-center mb-4">
+                  <feature.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                <p className="text-white/80">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-16 bg-[#F2F2F2]">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#242424] mb-4">
+              Preços
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Transparência total. Sem surpresas.
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white p-8 rounded-lg border-2 border-[#F82E52]">
+              <div className="text-center mb-6">
+                <div className="text-5xl font-bold text-[#F82E52] mb-2">
+                  R$ {monthlyPrice}
+                  <span className="text-xl text-gray-600">/mês</span>
+                </div>
+                <div className="text-gray-600">ou R$ {addon.annualPrice}/ano</div>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                {[
+                  `${addon.includedSignatures} assinaturas incluídas por mês`,
+                  "Certificação Cerisign (ICP-Brasil)",
+                  "Validade jurídica completa",
+                  "Embutida no CRM/ERP Kenlo",
+                  "Implementação R$ 0",
+                  "Excedentes: R$ 6/assinatura",
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-[#4ABD8D] flex-shrink-0 mt-0.5" />
+                    <span className="text-[#242424]">{item}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <Button size="lg" className="w-full bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+                <Link href="/calculadora">
+                  Simular Cotação Completa
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="mt-6 p-4 bg-[#4ABD8D]/10 rounded-lg border border-[#4ABD8D]/20">
+              <p className="text-sm text-[#242424] text-center">
+                <strong className="text-[#4ABD8D]">Dica:</strong> Contrate via Kombo Imob Start, Imob Pro, Locação Pro ou Elite 
+                para ganhar até 20% de desconto + implementação grátis de outros add-ons.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Selling Questions */}
-      <section className="py-16 lg:py-20 bg-muted/30">
+      {/* FAQ / Objeções */}
+      <section className="py-16">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Perguntas que Vendem</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-              Use estas perguntas para mostrar o valor real da assinatura digital.
+            <h2 className="text-3xl md:text-4xl font-bold text-[#242424] mb-4">
+              Objeções Comuns
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Respostas prontas para as principais dúvidas dos clientes
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-card p-6 rounded-lg border">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <Clock className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold mb-2">Quanto tempo seu time gasta indo ao cartório?</h3>
-                  <p className="text-muted-foreground">
-                    Cada ida ao cartório = 2-3 horas perdidas. Com 10 contratos/mês, são 20-30 horas que poderiam ser usadas para vender. Com Kenlo Assinaturas, o contrato é assinado em 5 minutos pelo celular.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card p-6 rounded-lg border">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <Shield className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold mb-2">Você sabia que assinatura digital tem a mesma validade jurídica que cartório?</h3>
-                  <p className="text-muted-foreground">
-                    Parceria com a Cerisign — uma das maiores certificadoras do mundo. Validade jurídica completa, com trilha de auditoria e biometria facial opcional. Mais seguro que papel.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card p-6 rounded-lg border">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <Zap className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold mb-2">Quantos negócios você perde porque o cliente demora para assinar?</h3>
-                  <p className="text-muted-foreground">
-                    O cliente recebe o contrato no WhatsApp, assina na hora pelo celular. Sem deslocamento, sem agendar horário. R$ 0 de implantação e {assin.includedSignatures} assinaturas/mês já incluídas no plano.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Highlights */}
-      <section className="py-12 border-y border-border/40 bg-card/30">
-        <div className="container">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {highlights.map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <item.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
+          
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[
+              {
+                objection: "Já uso DocuSign/Clicksign",
+                response: `Quanto você paga por mês? Com Kenlo, ${addon.includedSignatures} assinaturas já estão incluídas e a implementação é R$ 0. Tudo embutido no CRM.`,
+              },
+              {
+                objection: "15 assinaturas não são suficientes",
+                response: "Excedentes custam R$ 6 por assinatura. Mesmo assim, sai mais barato que plataformas externas. E você não precisa sair do Kenlo.",
+              },
+              {
+                objection: "Não sei se tem validade jurídica",
+                response: "Parceria oficial com Cerisign, certificação ICP-Brasil. Validade jurídica completa garantida. Mesma tecnologia usada por bancos e cartórios.",
+              },
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-[#F82E52]/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[#F82E52] font-bold">{idx + 1}</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#242424] mb-2">"{item.objection}"</p>
+                    <p className="text-gray-600">{item.response}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -359,79 +238,24 @@ export default function AssinaturaPage() {
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section className="py-20">
+      {/* CTA Final */}
+      <section className="py-16 bg-gradient-to-br from-[#F82E52] to-[#F82E52]/80">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Casos de Uso</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Veja como o {assin.name} elimina burocracia e acelera o fechamento de contratos
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <Building2 className="w-16 h-16 mx-auto mb-6 opacity-90" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Pronto para digitalizar suas assinaturas?
+            </h2>
+            <p className="text-xl mb-8 text-white/90">
+              Monte a proposta perfeita com a calculadora Kenlo. 
+              Detecção automática de Kombos e descontos.
             </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {useCases.map((item, index) => (
-              <div key={index} className="p-6 rounded-xl border border-border hover:border-primary/30 hover:shadow-md transition-all">
-                <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-4">
-                  <item.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-gray-50 border-t">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Investimento e Funcionalidades</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Preços transparentes e funcionalidades completas para digitalizar seus contratos
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-xl border overflow-hidden">
-              <table className="w-full">
-                <thead ref={theadRef} className="bg-card border-b sticky top-0 z-10">
-                  <tr>
-                    <th className="px-6 py-4 text-left font-semibold text-sm w-2/3">Funcionalidade</th>
-                    <th className="px-6 py-4 text-center font-semibold text-sm w-1/3">Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pricingData.map((section, sectionIndex) => (
-                    <React.Fragment key={sectionIndex}>
-                      <tr className="bg-gray-50 border-b">
-                        <td colSpan={2} className="px-6 py-3 font-semibold text-primary">{section.title}</td>
-                      </tr>
-                      {section.rows.map((row, rowIndex) => (
-                        <tr key={rowIndex} className="border-b last:border-b-0">
-                          <td className="px-6 py-4 text-sm text-muted-foreground flex items-center gap-2">
-                            {row.tooltip ? (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span className="border-b border-dashed border-muted-foreground cursor-help">{row.feature}</span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="max-w-xs">{row.tooltip}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            ) : (
-                              row.feature
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-center text-sm">{renderValue(row)}</td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/calculadora">
+                <DollarSign className="w-5 h-5 mr-2" />
+                Abrir Calculadora
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
