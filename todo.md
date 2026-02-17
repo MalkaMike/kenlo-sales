@@ -5353,3 +5353,31 @@
 - [ ] CTAs: "Simular Proposta" and "Falar com Especialista"
 - [ ] Test all pages in browser
 - [ ] Save checkpoint
+
+
+## Test All 8 Product Pages - Kenlo Design System Compliance
+
+### Testing Checklist
+- [ ] Test IMOB+Site page - verify all 7 blocos, Kenlo colors, compact cards
+- [ ] Test Kenlo Locação page - verify structure, pricing table, Kenlo colors
+- [ ] Test Kenlo Leads page - verify Kenlo Design System compliance
+- [ ] Test Kenlo Inteligência page - verify Kenlo Design System compliance
+- [ ] Test Kenlo Assinaturas page - verify Kenlo Design System compliance
+- [ ] Test Kenlo Pay page - verify Kenlo Design System compliance
+- [ ] Test Kenlo Cash page - verify Kenlo Design System compliance
+- [ ] Test Kenlo Seguros page - verify Kenlo Design System compliance
+
+### Review Findings
+- [ ] Document which pages match Kenlo Design System (#F82E52, #4ABD8D, #1A202C, white, #F2F2F2)
+- [ ] Document which pages need redesign
+- [ ] Identify inconsistencies in narrative, structure, or visual design
+
+### Redesign Tasks
+- [ ] Redesign pages that don't match Kenlo Design System
+- [ ] Ensure all pages have consistent structure and narrative
+- [ ] Apply same visual patterns (boxes, borders, shadows, spacing)
+
+### Final Verification
+- [ ] Test all pages after redesign
+- [ ] Verify visual homogeneity across all 8 pages
+- [ ] Save checkpoint
