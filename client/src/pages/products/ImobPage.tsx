@@ -75,9 +75,9 @@ export default function ImobPage() {
               </div>
             </div>
             {/* Card 2: 4,5% e 7,5% - MÉDIA KENLO */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
-                <div className="flex justify-center items-baseline gap-3 mb-3">
+                <div className="flex justify-center items-baseline gap-3 mb-2">
                   <div>
                     <div className="text-4xl font-bold text-[#F82E52]">4,5%</div>
                     <p className="text-gray-500 text-xs mt-1">vendas</p>
@@ -91,43 +91,43 @@ export default function ImobPage() {
                 <p className="text-[#242424] text-sm mb-1 font-semibold">
                   Taxa de conversão média
                 </p>
-                <p className="text-gray-500 text-xs mb-3">
+                <p className="text-gray-500 text-xs mb-2">
                   (comunidade Kenlo)
                 </p>
-                <div className="text-base font-bold text-[#F82E52]">
+                <div className="text-sm font-bold text-[#F82E52]">
                   E você?
                 </div>
               </div>
             </div>
 
             {/* Card 3: 25% - MÉDIA KENLO */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
-                <div className="text-4xl font-bold text-[#F82E52] mb-3">
+                <div className="text-4xl font-bold text-[#F82E52] mb-2">
                   25%
                 </div>
                 <p className="text-[#242424] text-sm mb-1 font-semibold">
                   dos fechamentos vêm do site da imobiliária
                 </p>
-                <p className="text-gray-500 text-xs mb-3">
+                <p className="text-gray-500 text-xs mb-2">
                   (média da comunidade)
                 </p>
-                <div className="text-base font-bold text-[#F82E52]">
+                <div className="text-sm font-bold text-[#F82E52]">
                   E você?
                 </div>
               </div>
             </div>
 
             {/* Card 4: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
-            <div className="bg-[#F82E52] p-6 rounded-lg border border-[#F82E52] shadow-sm">
+            <div className="bg-[#F82E52] p-4 rounded-lg border border-[#F82E52] shadow-sm">
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">
+                <div className="text-4xl font-bold text-white mb-1">
                   60%
                 </div>
                 <p className="text-white/90 text-xs mb-2 font-medium">
                   das vendas (cliente campeão)
                 </p>
-                <div className="text-3xl font-bold text-white mb-2">
+                <div className="text-3xl font-bold text-white mb-1">
                   10,5%
                 </div>
                 <p className="text-white/90 text-xs mb-2 font-medium">

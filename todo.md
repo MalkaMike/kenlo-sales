@@ -5197,3 +5197,12 @@
 - [x] Keep azul marinho #1A202C background ✓
 - [x] Test in browser - VERIFIED ✓
 - [x] Save checkpoint ✓
+
+
+## Standardize All 4 Bloco 0 Cards to Compact Size
+
+- [x] Card 2 (4,5% / 7,5%): Change p-6 → p-4, text-base → text-sm for "E você?", adjust spacing mb-3 → mb-2 ✓
+- [x] Card 3 (25%): Change p-6 → p-4, text-base → text-sm for "E você?", adjust spacing mb-3 → mb-2 ✓
+- [x] Card 4 (60% + 10,5%): Change p-6 → p-4, keep text-sm for "E você?" (already correct), adjust spacing mb-2 → mb-1 ✓
+- [x] Test all 4 cards in browser - ALL CARDS NOW CONSISTENT ✓
+- [x] Save checkpoint ✓
