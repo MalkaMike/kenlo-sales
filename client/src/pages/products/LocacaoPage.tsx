@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check, X, Calculator, ArrowRight, Home, FileText, CreditCard, RefreshCw, Shield, Banknote, Clock, TrendingUp, Lightbulb, BarChart3, Smartphone, Building2, Headphones, GraduationCap } from "lucide-react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import {
   LOC_PLANS,
   LOC_ADDITIONAL_CONTRACTS,
@@ -19,7 +20,12 @@ function formatCurrency(value: number): string {
 
 export default function LocacaoPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-white">
+      {/* Breadcrumbs */}
+      <div className="container">
+        <Breadcrumbs items={[{ label: "Produtos", href: "/" }, { label: "Kenlo Locação" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="relative py-20 lg:py-28 bg-gradient-to-br from-pink-50 via-white to-purple-50/30">
         <div className="container">

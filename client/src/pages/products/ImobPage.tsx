@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import {
   Check,
   X,
@@ -44,6 +45,11 @@ function formatCurrency(value: number): string {
 export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* Breadcrumbs */}
+      <div className="container">
+        <Breadcrumbs items={[{ label: "Produtos", href: "/" }, { label: "Kenlo Imob" }]} />
+      </div>
+
       {/* BLOCO 0: E VOCÊ? - Kenlo Design System (2x2 Grid Compact) */}
       <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-pink-50/30">
         <div className="container">

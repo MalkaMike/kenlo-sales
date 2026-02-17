@@ -20,6 +20,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calculator, RotateCcw } from "lucide-react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 import { CalculadoraProvider, useCalc } from "./CalculadoraContext";
 import { BusinessNatureSection } from "./BusinessNatureSection";
@@ -39,6 +40,9 @@ function CalculadoraContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-6 sm:py-12 px-4 sm:px-6">
       <div className="container max-w-6xl mx-auto">
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={[{ label: "Cotação" }]} />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3">

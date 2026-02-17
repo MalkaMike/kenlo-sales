@@ -9,6 +9,7 @@ import Layout from "./components/Layout";
 import AuthGuard from "./components/AuthGuard";
 import { Toast } from "./components/Toast";
 import { ErrorInterceptorSetup } from "./components/ErrorInterceptorSetup";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 
 // Pages
 import Home from "./pages/Home";
@@ -89,6 +90,9 @@ function Router() {
 }
 
 export default function App() {
+  // Enable global keyboard shortcuts
+  useKeyboardShortcuts();
+
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">

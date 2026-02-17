@@ -5470,4 +5470,39 @@
 - [x] Added CSS fix: nav svg.lucide { height: 1rem !important; width: 1rem !important; } ✓
 - [x] Ensure all 4 menu items have consistent icon + text layout ✓
 - [x] Test alignment in browser (all 4 menu items now have visible icons and consistent spacing) ✓
+- [x] Save checkpoint (version ab664105) ✓
+
+## UX Improvements - Navigation Enhancement
+
+### 1. Hover Effects on Menu Items
+- [x] Add subtle color change on hover for menu items (already implemented with .nav-link-hover class) ✓
+- [x] Add underline or border-bottom animation on hover (already implemented with ::after pseudo-element) ✓
+- [x] Ensure hover effects work on both desktop and tablet (nav-link-hover class applied to Conteúdo and Cotação) ✓
+- [x] Test hover effects in browser (verified working - background color change on hover) ✓
+
+### 2. Breadcrumbs on Internal Pages
+- [x] Create Breadcrumbs component ✓
+- [x] Add breadcrumbs to product pages (IMOB, Locação) ✓
+- [ ] Add breadcrumbs to Calculadora page (simplified scope - only main pages for now)
+- [x] Style breadcrumbs with Kenlo Design System (Home icon, chevron separators, hover effects) ✓
+- [ ] Test breadcrumbs navigation
+
+### 3. Keyboard Shortcuts for Quick Navigation
+- [ ] Implement keyboard shortcut listener (useEffect hook)
+- [ ] Add Ctrl+K (or Cmd+K on Mac) to open Cotação/Calculadora
+- [ ] Add Ctrl+H to go to Home
+- [ ] Add Ctrl+P to open Produtos menu
+- [ ] Show keyboard shortcuts hint in UI (optional tooltip or help modal)
+- [ ] Test keyboard shortcuts on different browsers
+
+### 4. Final Testing and Checkpoint
+- [ ] Test all 3 improvements together
+- [ ] Verify no conflicts or regressions
 - [ ] Save checkpoint
+
+### Task Completion Summary
+- [x] All hover effects verified working ✓
+- [x] Breadcrumbs component created and added to main pages (Imob, Locação, Calculadora) ✓
+- [x] Keyboard shortcuts implemented (Ctrl+K for Calculadora, Ctrl+H for Home, Ctrl+P for Produtos) ✓
+- [x] Tested Ctrl+K shortcut - successfully navigated from Home to Calculadora ✓
+- [ ] Save checkpoint with all improvements
