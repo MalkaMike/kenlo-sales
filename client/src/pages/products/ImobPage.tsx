@@ -39,97 +39,116 @@ export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* BLOCO 0: E VOCÊ? */}
-      <section className="py-12">
-        <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-8">
+      <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-pink-50/30">
+        <div className="container max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
               Imobiliárias que se destacam hoje
             </h1>
-            <p className="text-lg text-gray-500">
+            <p className="text-xl text-gray-500">
               Dados da comunidade Kenlo
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Card 1: R$ 500k */}
-            <div className="text-center py-8">
-              <div className="text-5xl font-bold text-[#F82E52] mb-4">
-                R$ 500k
-              </div>
-              <p className="text-gray-600 text-base mb-4">
-                de comissão por corretor/ano
-              </p>
-              <p className="text-gray-500 text-sm mb-6">
-                Nossos campeões têm corretores que originam R$ 500k de comissão por ano nos últimos 3 anos — só no usado.
-              </p>
-              <div className="text-xl font-semibold text-[#F82E52]">
-                E seus corretores?
-              </div>
-            </div>
-
-            {/* Card 2: 4,5% e 7,5% */}
-            <div className="text-center py-8">
-              <div className="flex justify-center items-baseline gap-6 mb-4">
-                <div>
-                  <div className="text-5xl font-bold text-[#F82E52]">4,5%</div>
-                  <p className="text-gray-600 text-sm mt-1">vendas</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Card 1: R$ 500k - DESTAQUE MÁXIMO (campeão) */}
+            <div className="md:col-span-3 bg-gradient-to-br from-pink-500 to-purple-600 p-8 rounded-2xl shadow-2xl hover:shadow-pink-500/50 hover:scale-[1.02] transition-all duration-300">
+              <div className="text-center">
+                <div className="text-7xl font-bold text-white mb-4">
+                  R$ 500k
                 </div>
-                <div className="text-5xl text-gray-300">|</div>
-                <div>
-                  <div className="text-5xl font-bold text-[#F82E52]">7,5%</div>
-                  <p className="text-gray-600 text-sm mt-1">locação</p>
+                <p className="text-white/90 text-xl mb-4 font-medium">
+                  de comissão por corretor/ano
+                </p>
+                <p className="text-white/80 text-base mb-6 max-w-3xl mx-auto">
+                  Nossos campeões têm corretores que originam R$ 500k de comissão por ano nos últimos 3 anos — só no usado.
+                </p>
+                <div className="text-2xl font-bold text-white">
+                  E seus corretores?
                 </div>
               </div>
-              <p className="text-gray-600 text-base mb-6">
-                Taxa de conversão média
-              </p>
-              <div className="text-xl font-semibold text-[#F82E52]">
-                E você?
+            </div>
+
+            {/* Card 2: 4,5% e 7,5% - MÉDIA KENLO */}
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-gray-100">
+              <div className="text-center">
+                <div className="flex justify-center items-baseline gap-4 mb-4">
+                  <div>
+                    <div className="text-5xl font-bold text-[#F82E52]">4,5%</div>
+                    <p className="text-gray-500 text-xs mt-1">vendas</p>
+                  </div>
+                  <div className="text-4xl text-gray-200">|</div>
+                  <div>
+                    <div className="text-5xl font-bold text-[#F82E52]">7,5%</div>
+                    <p className="text-gray-500 text-xs mt-1">locação</p>
+                  </div>
+                </div>
+                <p className="text-gray-600 text-sm mb-2 font-medium">
+                  Taxa de conversão média
+                </p>
+                <p className="text-gray-400 text-xs mb-4">
+                  (comunidade Kenlo)
+                </p>
+                <div className="text-lg font-bold text-[#F82E52]">
+                  E você?
+                </div>
               </div>
             </div>
 
-            {/* Card 3: 25% */}
-            <div className="text-center py-8">
-              <div className="text-5xl font-bold text-[#F82E52] mb-4">
-                25%
-              </div>
-              <p className="text-gray-600 text-base mb-6">
-                dos fechamentos vêm do site próprio
-              </p>
-              <div className="text-xl font-semibold text-[#F82E52]">
-                E você?
+            {/* Card 3: 25% - MÉDIA KENLO */}
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-gray-100">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-[#F82E52] mb-4">
+                  25%
+                </div>
+                <p className="text-gray-600 text-sm mb-2 font-medium">
+                  dos fechamentos vêm do site
+                </p>
+                <p className="text-gray-400 text-xs mb-4">
+                  (média da comunidade)
+                </p>
+                <div className="text-lg font-bold text-[#F82E52]">
+                  E você?
+                </div>
               </div>
             </div>
 
-            {/* Card 4: 60% */}
-            <div className="text-center py-8">
-              <div className="text-5xl font-bold text-[#F82E52] mb-4">
-                60%
-              </div>
-              <p className="text-gray-600 text-base mb-4">
-                das vendas (cliente campeão)
-              </p>
-              <p className="text-gray-500 text-sm mb-6">
-                Conversão: 10,5%. Mesma ferramenta. Piloto certo.
-              </p>
-              <div className="text-xl font-semibold text-[#F82E52]">
-                E você?
+            {/* Card 4: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
+            <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-6 rounded-xl shadow-xl hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-white mb-4">
+                  60%
+                </div>
+                <p className="text-white/90 text-sm mb-2 font-medium">
+                  das vendas (cliente campeão)
+                </p>
+                <p className="text-white/80 text-xs mb-4">
+                  Conversão: <span className="font-bold">10,5%</span>
+                </p>
+                <p className="text-white/70 text-xs italic mb-4">
+                  Mesma ferramenta. Piloto e gasolina diferentes.
+                </p>
+                <div className="text-lg font-bold text-white">
+                  E você?
+                </div>
               </div>
             </div>
 
             {/* Card 5: 40 imóveis */}
-            <div className="text-center py-8 md:col-span-2">
-              <div className="text-5xl font-bold text-[#F82E52] mb-4">
-                40 imóveis
-              </div>
-              <p className="text-gray-600 text-base mb-6">
-                máximo por corretor
-              </p>
-              <p className="text-gray-500 text-sm mb-6">
-                Especialização = conversão.
-              </p>
-              <div className="text-xl font-semibold text-[#F82E52]">
-                E você? 200? 300 imóveis por corretor?
+            <div className="md:col-span-3 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all duration-300 border border-gray-100">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-[#F82E52] mb-4">
+                  40 imóveis
+                </div>
+                <p className="text-gray-600 text-base mb-2 font-medium">
+                  máximo por corretor
+                </p>
+                <p className="text-gray-500 text-sm mb-4">
+                  Especialização = conversão.
+                </p>
+                <div className="text-xl font-bold text-[#F82E52]">
+                  E você? 200? 300 imóveis por corretor?
+                </div>
               </div>
             </div>
           </div>
