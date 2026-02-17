@@ -67,11 +67,14 @@ export default function ImobPage() {
                   de comissão por corretor/ano
                 </p>
                 <p className="text-white/70 text-sm mb-4 max-w-3xl mx-auto">
-                  Nossos campeões têm corretores que originam R$ 500k de comissão por ano nos últimos 3 anos — só no usado.
+                  Nossos campeões têm corretores que originam R$ 500k de comissão por ano<sup>(1)</sup> nos últimos 3 anos — só no usado.
                 </p>
                 <div className="text-xl font-bold text-[#F82E52]">
                   E seus corretores?
                 </div>
+                <p className="text-white/50 text-xs mt-4">
+                  (1) Top 10 corretores de 2025 da Comunidade Kenlo
+                </p>
               </div>
             </div>
 
@@ -108,7 +111,7 @@ export default function ImobPage() {
                   25%
                 </div>
                 <p className="text-[#242424] text-sm mb-1 font-semibold">
-                  dos fechamentos vêm do site
+                  dos fechamentos vêm do site da imobiliária
                 </p>
                 <p className="text-gray-500 text-xs mb-3">
                   (média da comunidade)
@@ -119,29 +122,8 @@ export default function ImobPage() {
               </div>
             </div>
 
-            {/* Card 4: 60% + 10,5% - CAMPEÃO EXPLODINDO (vermelho Kenlo) */}
-            <div className="bg-[#F82E52] p-6 rounded-lg border border-[#F82E52] shadow-sm">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-3">
-                  60%
-                </div>
-                <p className="text-white/90 text-sm mb-1 font-semibold">
-                  das vendas (cliente campeão)
-                </p>
-                <p className="text-white/80 text-xs mb-3">
-                  Conversão: <span className="font-bold">10,5%</span>
-                </p>
-                <p className="text-white/70 text-xs italic mb-3">
-                  Mesma ferramenta. Piloto e gasolina diferentes.
-                </p>
-                <div className="text-base font-bold text-white">
-                  E você?
-                </div>
-              </div>
-            </div>
-
-            {/* Card 5: 40 imóveis */}
-            <div className="md:col-span-3 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            {/* Card 4: 40 imóveis */}
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#F82E52] mb-3">
                   40 imóveis

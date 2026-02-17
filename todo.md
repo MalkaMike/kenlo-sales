@@ -5096,3 +5096,34 @@
 - [x] Estilo informativo premium (não Apple, não teatral) ✓
 - [x] Testar no navegador - COMPLIANT ✓
 - [x] Salvar checkpoint ✓
+
+
+## Bloco 0 Adjustments - PDF Feedback
+
+### Card R$ 500k
+- [x] Add superscript (1) after "ano" → "ano⁽¹⁾" ✓
+- [x] Add footnote below card: "(1) Top 10 corretores de 2025 da Comunidade Kenlo" ✓
+
+### Card 4,5% / 7,5%
+- [x] Keep current design (already correct) ✓
+- [x] Note: Based on R$40bn sales, R$12bn rentals, 12mn leads, 3.5mn ads ✓
+
+### Card 25%
+- [x] Clarify text: "Do site da imobiliária" (not just "do site") ✓
+- [x] Keep "E você?" challenge ✓
+
+### Card 60% (REMOVE)
+- [x] Remove 60% card from Bloco 0 (will be used in "Dicas" section later) ✓
+- [x] Save content for future "Dicas" section ✓
+
+### Layout Adjustment
+- [x] Change from 5 cards to 4 cards total ✓
+- [x] Current layout: R$ 500k (full-width) + 3 cards in row (4,5%/7,5%, 25%, 40 imóveis) ✓
+- [ ] ⚠️ Clarification needed: PDF said "2x2 grid" but unclear if current 1+3 layout is correct or needs 1+2+2 layout
+
+### Testing
+- [x] Test in browser ✓
+- [x] Verify superscript displays correctly ✓
+- [x] Verify 60% card removed ✓
+- [x] Verify "site da imobiliária" text ✓
+- [ ] Save checkpoint (pending layout clarification)
