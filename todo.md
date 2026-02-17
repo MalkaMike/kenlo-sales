@@ -4927,3 +4927,11 @@
 ## Publicar em produção
 - [x] Salvar checkpoint final
 - [ ] Usuário clicar no botão Publish na UI
+
+## Correção de preços pré-pago (valores errados)
+- [x] Corrigir pricing-values.json: usuário adicional 34 → 37
+- [x] Corrigir pricing-values.json: contrato adicional 2.20 → 2.50
+- [x] Verificar propagação automática em toda a cadeia (pricing-config → UI → PDF) — CONFIRMADO
+- [x] Confirmar que nenhum arquivo tem valores hardcoded que não passam pelo config central — CONFIRMADO
+- [x] Atualizar exemplos de cálculo no PlaybookPage (R$ 680→740, R$ 1.100→1.250, etc.)
+- [x] Atualizar testes: prepaid-pricing.test.ts e business-rules-verification.test.ts

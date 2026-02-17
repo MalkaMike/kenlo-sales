@@ -95,7 +95,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Site não traz resultado", response: "Porque não é qualquer site. O site Kenlo foi otimizado por Neil Patel. A melhor ficha de imóvel do mercado." },
     ],
     demoTip: "Comece pelo DADO, não pela feature. Mostre o problema (dependência de portais) antes da solução.",
-    prepaidTip: `Pré-pago de usuários: ${PP_USERS}/mês (fixo). Exemplo: 20 extras no K = R$ 680/mês vs R$ 840 pós-pago. Economia de R$ 1.920/ano.`,
+    prepaidTip: `Pré-pago de usuários: ${PP_USERS}/mês (fixo). Exemplo: 20 extras no K = R$ 740/mês vs R$ 840 pós-pago. Economia de R$ 1.200/ano.`,
     crossSell: ["Leads", "Inteligência", "Assinatura"],
   },
   {
@@ -123,7 +123,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Muito caro", response: "Investimento de R$ 247/mês gera R$ 1.500+ em valor (Seguros + Pay + economia de tempo)." },
     ],
     demoTip: "Foque em RECEITA, não em gestão. Mostre Seguros (receita passiva), Pay (economia), Cash (fidelização).",
-    prepaidTip: `Pré-pago de contratos: ${PP_CONTRACTS}/mês (fixo). Exemplo: 500 extras no K = R$ 1.100/mês vs R$ 1.450 pós-pago. Economia de R$ 4.200/ano.`,
+    prepaidTip: `Pré-pago de contratos: ${PP_CONTRACTS}/mês (fixo). Exemplo: 500 extras no K = R$ 1.250/mês vs R$ 1.450 pós-pago. Economia de R$ 2.400/ano.`,
     crossSell: ["Pay", "Seguros", "Cash", "Inteligência"],
   },
 ];

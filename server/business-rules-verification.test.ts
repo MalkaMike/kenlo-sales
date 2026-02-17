@@ -664,12 +664,12 @@ import {
 } from "@shared/pricing-config";
 
 describe("Business Rule: Prepaid Pricing", () => {
-  it("additional users flat rate is R$ 34/user/month", () => {
-    expect(PREPAID_PRICING.additionalUsers.pricePerMonth).toBe(34);
+  it("additional users flat rate is R$ 37/user/month", () => {
+    expect(PREPAID_PRICING.additionalUsers.pricePerMonth).toBe(37);
   });
 
-  it("additional contracts flat rate is R$ 2.20/contract/month", () => {
-    expect(PREPAID_PRICING.additionalContracts.pricePerMonth).toBe(2.20);
+  it("additional contracts flat rate is R$ 2.50/contract/month", () => {
+    expect(PREPAID_PRICING.additionalContracts.pricePerMonth).toBe(2.50);
   });
 
   it("prepaid users is for IMOB product", () => {
@@ -700,24 +700,24 @@ describe("Business Rule: Prepaid Pricing", () => {
     expect(getPrepaidMonths("semiannual")).toBe(0);
   });
 
-  it("calculate prepaid users: 5 users × annual = 5 × 34 × 12 = R$ 2.040", () => {
-    expect(calculatePrepaidUsers(5, "annual")).toBe(5 * 34 * 12);
-    expect(calculatePrepaidUsers(5, "annual")).toBe(2040);
+  it("calculate prepaid users: 5 users × annual = 5 × 37 × 12 = R$ 2.220", () => {
+    expect(calculatePrepaidUsers(5, "annual")).toBe(5 * 37 * 12);
+    expect(calculatePrepaidUsers(5, "annual")).toBe(2220);
   });
 
-  it("calculate prepaid users: 10 users × biennial = 10 × 34 × 24 = R$ 8.160", () => {
-    expect(calculatePrepaidUsers(10, "biennial")).toBe(10 * 34 * 24);
-    expect(calculatePrepaidUsers(10, "biennial")).toBe(8160);
+  it("calculate prepaid users: 10 users × biennial = 10 × 37 × 24 = R$ 8.880", () => {
+    expect(calculatePrepaidUsers(10, "biennial")).toBe(10 * 37 * 24);
+    expect(calculatePrepaidUsers(10, "biennial")).toBe(8880);
   });
 
-  it("calculate prepaid contracts: 100 contracts × annual = 100 × 2.20 × 12 = R$ 2.640", () => {
-    expect(calculatePrepaidContracts(100, "annual")).toBe(100 * 2.20 * 12);
-    expect(calculatePrepaidContracts(100, "annual")).toBeCloseTo(2640, 2);
+  it("calculate prepaid contracts: 100 contracts × annual = 100 × 2.50 × 12 = R$ 3.000", () => {
+    expect(calculatePrepaidContracts(100, "annual")).toBe(100 * 2.50 * 12);
+    expect(calculatePrepaidContracts(100, "annual")).toBeCloseTo(3000, 2);
   });
 
-  it("calculate prepaid contracts: 500 contracts × biennial = 500 × 2.20 × 24 = R$ 26.400", () => {
-    expect(calculatePrepaidContracts(500, "biennial")).toBe(500 * 2.20 * 24);
-    expect(calculatePrepaidContracts(500, "biennial")).toBeCloseTo(26400, 2);
+  it("calculate prepaid contracts: 500 contracts × biennial = 500 × 2.50 × 24 = R$ 30.000", () => {
+    expect(calculatePrepaidContracts(500, "biennial")).toBe(500 * 2.50 * 24);
+    expect(calculatePrepaidContracts(500, "biennial")).toBeCloseTo(30000, 2);
   });
 
   it("prepaid returns 0 for monthly and semiannual frequencies", () => {
