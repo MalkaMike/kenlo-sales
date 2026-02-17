@@ -4935,3 +4935,42 @@
 - [x] Confirmar que nenhum arquivo tem valores hardcoded que não passam pelo config central — CONFIRMADO
 - [x] Atualizar exemplos de cálculo no PlaybookPage (R$ 680→740, R$ 1.100→1.250, etc.)
 - [x] Atualizar testes: prepaid-pricing.test.ts e business-rules-verification.test.ts
+
+## Reestruturação do site - Navegação e Conteúdo
+- [ ] Mover Playbook do menu principal para o footer
+- [ ] Menu: Produtos Core → IMOB+Site (juntos) & Locação
+- [ ] Menu: Add-ons mantém como está
+- [ ] Menu: Kombos mantém como está
+- [ ] Adicionar seção "Conteúdo" no menu
+- [ ] Criar página de Conteúdo com 3 vídeos + resumos em bullet points
+  - [ ] Video 1: Especialização, dados e IA (Kenlo Masters, Mickael Malka)
+  - [ ] Video 2: SEO, IA e marca (Kenlo Masters, Diego Ivo + Mickael Malka)
+  - [ ] Video 3: A mídia que mais converte não é digital (Kenlo Partners, Natã Popping + Mickael Malka)
+
+## Reestruturação das páginas de produto - Estrutura homogênea 6 blocos
+- [ ] Definir estrutura padrão para todas as páginas de produto:
+  - Bloco 1: O Problema (dores do mercado com dados em destaque)
+  - Bloco 2: A Solução (o que é + funcionalidades-chave)
+  - Bloco 3: Os Diferenciais (por que Kenlo, com números comparativos)
+  - Bloco 4: Os Números (KPIs, cases, ROI em destaque máximo)
+  - Bloco 5: Planos e Preços (tabela comparativa)
+  - Bloco 6: Objeções Frequentes (pergunta → resposta com dado)
+- [ ] Números, dados e fatos devem ser SUPER destacados visualmente
+- [ ] IMOB+Site: integrar CRM e Site como narrativa única (pacote)
+- [ ] Aplicar estrutura na página IMOB+Site (primeira página)
+
+## Implementação da página IMOB+Site com nova estrutura de conteúdo
+- [x] Criar documento final com Blocos 0-6 (conteúdo aprovado pelo usuário) → imob-site-content-APPROVED.md
+- [x] Implementar ImobPage.tsx com nova estrutura visual:
+  - [x] Bloco 0: "E VOCÊ?" com dados impactantes (R$ 500k, 4,5%, 25%, 60%, 40 imóveis)
+  - [x] Bloco 1: "O PROBLEMA" com perguntas provocativas sobre canais, leads, corretor, site, portais, processos
+  - [x] Bloco 2: "A SOLUÇÃO" (CRM + Site + App + +100 Portais)
+  - [x] Bloco 3: "POR QUE KENLO" (4 razões sem enrolação)
+  - [x] Bloco 4: "KENLO EM NÚMEROS" (cards gigantes)
+  - [x] Bloco 5: "PLANOS E PREÇOS" (tabela + add-ons + CTAs)
+  - [x] Bloco 6: "OBJEÇÕES" (perguntas diretas, respostas diretas)
+- [x] Garantir transição fluida entre blocos
+- [x] Números em destaque máximo (cor primária #F82E52, fonte text-6xl = 72px)
+- [x] "E você?" em destaque visual máximo (text-2xl, bold, pink)
+- [x] Testar no navegador → Blocos 0, 1, 2 verificados visualmente
+- [ ] Salvar checkpoint

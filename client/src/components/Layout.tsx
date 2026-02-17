@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, FileText, Package, Layers, User, Users, LogOut, Settings, BookOpen, BarChart3, ShieldCheck } from "lucide-react";
+import { Menu, FileText, Package, Layers, User, Users, LogOut, Settings, BookOpen, BarChart3, ShieldCheck, Play } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -26,9 +26,9 @@ import { cn } from "@/lib/utils";
 
 const products = [
   {
-    title: "Kenlo Imob",
+    title: "Kenlo Imob + Site",
     href: "/produtos/imob",
-    description: "CRM + Site para vendas de imóveis",
+    description: "CRM + Site otimizado para vendas de imóveis",
     badge: "VENDAS",
   },
   {
@@ -151,18 +151,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Sales Playbook */}
+              {/* Conteúdo */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
-                    href="/playbook"
+                    href="/conteudo"
                     className={cn(
                       "nav-link-hover group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-                      location === "/playbook" && "bg-accent text-primary"
+                      location === "/conteudo" && "bg-accent text-primary"
                     )}
                   >
-                    <BookOpen className="w-4 h-4 mr-1" />
-                    Playbook
+                    <Play className="w-4 h-4 mr-1" />
+                    Conteúdo
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -232,11 +232,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   Kombos
                 </Link>
                 <Link
-                  href="/playbook"
+                  href="/conteudo"
                   onClick={() => setMobileMenuOpen(false)}
                   className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
                 >
-                  Playbook
+                  Conteúdo
                 </Link>
                 <Link
                   href="/calculadora"
@@ -275,7 +275,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="font-semibold mb-4">Produtos</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/produtos/imob" className="footer-link-hover inline-block">Kenlo Imob</Link></li>
+                <li><Link href="/produtos/imob" className="footer-link-hover inline-block">Kenlo Imob + Site</Link></li>
                 <li><Link href="/produtos/locacao" className="footer-link-hover inline-block">Kenlo Locação</Link></li>
               </ul>
             </div>
@@ -294,6 +294,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/kombos" className="footer-link-hover inline-block">Kombos</Link></li>
                 <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
+                <li><Link href="/playbook" className="footer-link-hover inline-block">Playbook de Vendas</Link></li>
+                <li><Link href="/conteudo" className="footer-link-hover inline-block">Conteúdo</Link></li>
                 {isAdmin && (
                   <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
                 )}

@@ -31,6 +31,7 @@ import ProfilePage from "./pages/ProfilePage";
 import PricingAdminPage from "./pages/PricingAdminPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import PlaybookPage from "./pages/PlaybookPage";
+import ConteudoPage from "./pages/ConteudoPage";
 
 function Router() {
   return (
@@ -62,6 +63,8 @@ function Router() {
               <Route path="/kombos" component={KombosPage} />
               {/* Sales Playbook */}
               <Route path="/playbook" component={PlaybookPage} />
+              {/* Conteúdo */}
+              <Route path="/conteudo" component={ConteudoPage} />
               {/* Calculator / Cotação */}
               <Route path="/calculadora" component={CalculadoraPage} />
               <Route path="/cotacao" component={CalculadoraPage} />
