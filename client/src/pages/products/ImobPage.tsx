@@ -122,7 +122,29 @@ export default function ImobPage() {
               </div>
             </div>
 
-
+            {/* Card 4: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
+            <div className="bg-[#F82E52] p-6 rounded-lg border border-[#F82E52] shadow-sm">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-white mb-2">
+                  60%
+                </div>
+                <p className="text-white/90 text-xs mb-2 font-medium">
+                  das vendas (cliente campeão)
+                </p>
+                <div className="text-3xl font-bold text-white mb-2">
+                  10,5%
+                </div>
+                <p className="text-white/90 text-xs mb-2 font-medium">
+                  taxa de conversão
+                </p>
+                <p className="text-white/70 text-xs italic mb-2">
+                  Mesma ferramenta. Piloto e gasolina diferentes.
+                </p>
+                <div className="text-sm font-bold text-white">
+                  E você?
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1083,32 +1105,8 @@ export default function ImobPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Card 1: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
-            <div className="bg-[#F82E52] p-8 rounded-lg border border-[#F82E52] shadow-sm">
-              <div className="text-center">
-                <div className="text-5xl font-bold text-white mb-3">
-                  60%
-                </div>
-                <p className="text-white/90 text-base mb-2 font-semibold">
-                  das vendas (cliente campeão)
-                </p>
-                <div className="text-4xl font-bold text-white mb-3">
-                  10,5%
-                </div>
-                <p className="text-white/90 text-sm mb-3 font-medium">
-                  taxa de conversão
-                </p>
-                <p className="text-white/70 text-sm italic mb-3">
-                  Mesma ferramenta. Piloto e gasolina diferentes.
-                </p>
-                <div className="text-base font-bold text-white">
-                  E você?
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: 40 imóveis */}
+          <div className="max-w-md mx-auto">
+            {/* Card: 40 imóveis */}
             <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
                 <div className="text-5xl font-bold text-[#F82E52] mb-3">

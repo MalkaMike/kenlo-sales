@@ -5170,3 +5170,15 @@
 ### 5. Final Checkpoint
 - [ ] Save checkpoint after 100% review complete
 - [ ] Prepare for next page (Kenlo Locação or add-ons)
+
+
+## Move 60% + 10,5% Card Back to Bloco 0
+
+- [x] Add 60% + 10,5% card back to Bloco 0 (E VOCÊ?) ✓
+- [x] Bloco 0 now has 4 cards in 2x2 grid: ✓
+  - Linha 1: R$ 500k (azul marinho) | 4,5%/7,5% (white)
+  - Linha 2: 25% (white) | 60% + 10,5% (vermelho #F82E52)
+- [x] Remove 60% + 10,5% card from Dicas section ✓
+- [x] Dicas section now has only 40 imóveis card (single card, centered, max-w-md) ✓
+- [x] Test in browser - VERIFIED ✓
+- [x] Save checkpoint ✓
