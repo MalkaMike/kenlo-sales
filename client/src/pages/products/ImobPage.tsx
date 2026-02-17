@@ -74,25 +74,27 @@ export default function ImobPage() {
                 </p>
               </div>
             </div>
-            {/* Card 2: 4,5% e 7,5% - MÉDIA KENLO */}
+
+            {/* Card 2: 4,5% / 7,5% - MÉDIA KENLO */}
             <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
-                <div className="flex justify-center items-baseline gap-3 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-2">
                   <div>
-                    <div className="text-4xl font-bold text-[#F82E52]">4,5%</div>
-                    <p className="text-gray-500 text-xs mt-1">vendas</p>
+                    <div className="text-4xl font-bold text-[#F82E52]">
+                      4,5%
+                    </div>
+                    <p className="text-gray-500 text-xs">vendas</p>
                   </div>
-                  <div className="text-3xl text-gray-300">|</div>
+                  <div className="text-2xl text-gray-300">|</div>
                   <div>
-                    <div className="text-4xl font-bold text-[#F82E52]">7,5%</div>
-                    <p className="text-gray-500 text-xs mt-1">locação</p>
+                    <div className="text-4xl font-bold text-[#F82E52]">
+                      7,5%
+                    </div>
+                    <p className="text-gray-500 text-xs">locação</p>
                   </div>
                 </div>
-                <p className="text-[#242424] text-sm mb-1 font-semibold">
+                <p className="text-[#242424] text-sm mb-2 font-semibold">
                   Taxa de conversão média
-                </p>
-                <p className="text-gray-500 text-xs mb-2">
-                  (comunidade Kenlo)
                 </p>
                 <div className="text-sm font-bold text-[#F82E52]">
                   E você?
@@ -103,17 +105,17 @@ export default function ImobPage() {
             {/* Card 3: 25% - MÉDIA KENLO */}
             <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
-                <div className="text-4xl font-bold text-[#F82E52] mb-2">
+                <div className="text-4xl font-bold text-[#F82E52] mb-1">
                   25%
                 </div>
-                <p className="text-[#242424] text-sm mb-1 font-semibold">
-                  dos fechamentos vêm do site da imobiliária
+                <p className="text-[#242424] text-sm mb-2 font-semibold">
+                  dos fechamentos na média vêm do site da imobiliária
                 </p>
-                <p className="text-gray-500 text-xs mb-2">
-                  (média da comunidade)
-                </p>
+                <div className="text-4xl font-bold text-[#4ABD8D] mb-1">
+                  9% <span className="text-gray-400">vs</span> <span className="text-gray-400">2%</span>
+                </div>
                 <p className="text-[#242424] text-xs mb-2">
-                  Taxa de Conversão dos leads que vêm de Site: <span className="font-bold text-[#4ABD8D]">9%</span> versus <span className="font-bold text-gray-400">2%</span> dos leads que vêm de portais → <span className="font-semibold text-[#4ABD8D]">Leads muito mais qualificados!</span>
+                  Taxa de conversão dos leads que vêm do site vs Portais nacionais
                 </p>
                 <div className="text-sm font-bold text-[#F82E52]">
                   E você?

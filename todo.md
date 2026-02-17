@@ -5227,3 +5227,23 @@
 - [x] Test both cards in browser - VERIFIED ✓
 - [x] Verify compact sizing maintained - CONFIRMED ✓
 - [x] Save checkpoint ✓
+
+
+## Adjust Card 4,5%/7,5% and Card 25% Text Formatting
+
+### Card 4,5% / 7,5%
+- [x] Remove "(comunidade Kenlo)" text ✓
+- [x] Keep only: "4,5% vendas | 7,5% locação" + "Taxa de conversão média" + "E você?" ✓
+
+### Card 25%
+- [x] Remove "(média da comunidade)" text ✓
+- [x] Change main text to: "25% dos fechamentos na média vêm do site da imobiliária" ✓
+- [x] Add below in same size as 25%: "9% vs 2%" (text-4xl) ✓
+- [x] 9% in green (#4ABD8D), "vs" and "2%" in gray ✓
+- [x] Add below 9% vs 2%: "Taxa de conversão dos leads que vêm do site vs Portais nacionais" (text-xs) ✓
+- [x] Remove previous long text about "Taxa de Conversão dos leads que vêm de Site: 9% versus 2%..." ✓
+
+### Testing
+- [x] Test both cards in browser - VERIFIED ✓
+- [x] Verify text hierarchy and sizing - CONFIRMED ✓
+- [x] Save checkpoint ✓
