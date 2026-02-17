@@ -5394,3 +5394,45 @@
 - [x] Renamed to AssinaturaPage.tsx to match App.tsx import ✓
 - [x] Test page in browser - FULLY COMPLIANT with Kenlo Design System ✓
 - [x] Save checkpoint ✓
+
+
+## Test Mobile Responsiveness - All 8 Product Pages
+
+- [x] Test IMOB+Site at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Locação at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Leads at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Inteligência at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Assinatura at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Pay at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Cash at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Test Kenlo Seguros at 375px, 768px, 1024px breakpoints - FULLY RESPONSIVE ✓
+- [x] Code review confirms all pages use Tailwind responsive utilities correctly (md:, lg: breakpoints) ✓
+- [x] Document findings in mobile-responsiveness-testing.md - NO ISSUES FOUND ✓
+- [x] Save checkpoint ✓
+
+## Redesign Home Page - Product Cards + Kombos Section
+
+### Product/Add-on Cards Section
+- [ ] Create visual cards grid for all 8 products/add-ons
+- [ ] 2 main products: IMOB+Site, Locação (larger cards with more prominence)
+- [ ] 6 add-ons: Leads, Inteligência, Assinatura, Pay, Cash, Seguros (smaller cards)
+- [ ] Each card: icon, title, short description, "Saiba Mais" CTA
+- [ ] Use Kenlo Design System: #F82E52, #4ABD8D, #1A202C, white, #F2F2F2
+- [ ] Hover effects: scale 102%, shadow increase
+
+### Kombos Section
+- [x] Create section highlighting 4 main kombos ✓
+- [x] Kombo cards: Imob Start, Imob Pro, Locação Pro, Elite ✓
+- [x] Each card: products included, 25% OFF badge, features list ✓
+- [x] Show "25% OFF" badge on each card ✓
+- [x] "Simular" CTA button linking to /calculadora ✓
+- [x] Elite card highlighted with gradient bg and Trophy icon ✓
+- [x] Background: azul marinho #1A202C with white text ✓
+- [x] Implementation cost shown below cards: R$ 1.497 ✓
+
+### General
+- [ ] Remove old/placeholder content from Home page
+- [ ] Keep hero section but update messaging
+- [ ] Ensure mobile responsiveness (grid cols-1 md:cols-2 lg:cols-3)
+- [ ] Test in browser
+- [ ] Save checkpoint

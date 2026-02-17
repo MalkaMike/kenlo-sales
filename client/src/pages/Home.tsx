@@ -383,6 +383,179 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Kombos Section - Packages with Savings */}
+      <section className="py-24 bg-[#1A202C] text-white">
+        <div className="container">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F82E52]/20 text-[#F82E52] text-sm font-semibold mb-4">
+              <TrendingUp className="w-4 h-4" />
+              Economize até 25%
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Kombos: Produtos + Add-ons com{" "}
+              <span className="text-[#F82E52]">desconto</span>
+            </h2>
+            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+              Combine Imob + Locação com add-ons e ganhe descontos progressivos. 
+              Quanto mais você digitaliza, menor o custo por unidade.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {/* Imob Start */}
+            <Card className="bg-white/10 border-white/20 hover:bg-white/15 transition-all">
+              <CardHeader>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-white">Imob Start</CardTitle>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                </div>
+                <CardDescription className="text-white/70 text-xs">
+                  Kenlo Imob + Leads + Inteligência
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>CRM Completo</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Site + App</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Captação de Leads</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>BI Ilimitado</span>
+                  </div>
+                </div>
+                <Button variant="secondary" size="sm" className="w-full" asChild>
+                  <Link href="/calculadora">Simular</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Imob Pro */}
+            <Card className="bg-white/10 border-white/20 hover:bg-white/15 transition-all">
+              <CardHeader>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-white">Imob Pro</CardTitle>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                </div>
+                <CardDescription className="text-white/70 text-xs">
+                  Imob Start + Assinatura + Pay
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Tudo do Imob Start</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Assinatura Digital</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Boleto + Split</span>
+                  </div>
+                </div>
+                <Button variant="secondary" size="sm" className="w-full" asChild>
+                  <Link href="/calculadora">Simular</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Locação Pro */}
+            <Card className="bg-white/10 border-white/20 hover:bg-white/15 transition-all">
+              <CardHeader>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-white">Locação Pro</CardTitle>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                </div>
+                <CardDescription className="text-white/70 text-xs">
+                  Locação + Assinatura + Pay + Seguros
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>ERP Completo</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Assinatura Digital</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Boleto + Split</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Seguros Embutidos</span>
+                  </div>
+                </div>
+                <Button variant="secondary" size="sm" className="w-full" asChild>
+                  <Link href="/calculadora">Simular</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Elite */}
+            <Card className="bg-gradient-to-br from-[#F82E52]/20 to-[#F82E52]/10 border-[#F82E52]/30 hover:border-[#F82E52]/50 transition-all">
+              <CardHeader>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-[#F82E52]" />
+                    Elite
+                  </CardTitle>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52] text-white">25% OFF</span>
+                </div>
+                <CardDescription className="text-white/70 text-xs">
+                  Tudo incluído: Imob + Locação + Todos os Add-ons
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Imob + Locação</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Todos os 6 Add-ons</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/80">
+                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <span>Máxima economia</span>
+                  </div>
+                </div>
+                <Button variant="default" size="sm" className="w-full bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+                  <Link href="/calculadora">Simular</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-white/70 text-sm mb-4">
+              Implantação: R$ 1.497 (única vez) • 25% de desconto em todas as mensalidades
+            </p>
+            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
+              <Link href="/kombos">
+                Ver Todos os Kombos
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* KEY INSIGHTS - Data that Sells */}
       <section className="py-24">
         <div className="container">
