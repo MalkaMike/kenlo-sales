@@ -56,9 +56,9 @@ export default function ImobPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* Card 1: R$ 500k - DESTAQUE MÁXIMO (azul marinho) */}
-            <div className="md:col-span-3 bg-[#1A202C] p-8 rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-[#1A202C] p-8 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
                 <div className="text-6xl font-bold text-white mb-3">
                   R$ 500k
@@ -122,23 +122,7 @@ export default function ImobPage() {
               </div>
             </div>
 
-            {/* Card 4: 40 imóveis */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-[#F82E52] mb-3">
-                  40 imóveis
-                </div>
-                <p className="text-[#242424] text-base mb-1 font-semibold">
-                  máximo por corretor
-                </p>
-                <p className="text-gray-600 text-sm mb-3">
-                  Especialização = conversão.
-                </p>
-                <div className="text-lg font-bold text-[#F82E52]">
-                  E você? 200? 300 imóveis por corretor?
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
@@ -1082,6 +1066,64 @@ export default function ImobPage() {
               <p className="text-gray-600 text-sm">
                 7-14 dias. Migração + treinamento + go-live. Equipe dedicada. {formatCurrency(IMOB_IMPLEMENTATION)} (única vez).
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BLOCO 7: DICAS - Kenlo Design System */}
+      <section className="py-14 bg-white">
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold text-[#242424] mb-3">
+              Dicas dos Campeões
+            </h2>
+            <p className="text-gray-600 text-lg">
+              O que os melhores fazem diferente
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Card 1: 60% + 10,5% - CAMPEÃO EXPLODINDO */}
+            <div className="bg-[#F82E52] p-8 rounded-lg border border-[#F82E52] shadow-sm">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-white mb-3">
+                  60%
+                </div>
+                <p className="text-white/90 text-base mb-2 font-semibold">
+                  das vendas (cliente campeão)
+                </p>
+                <div className="text-4xl font-bold text-white mb-3">
+                  10,5%
+                </div>
+                <p className="text-white/90 text-sm mb-3 font-medium">
+                  taxa de conversão
+                </p>
+                <p className="text-white/70 text-sm italic mb-3">
+                  Mesma ferramenta. Piloto e gasolina diferentes.
+                </p>
+                <div className="text-base font-bold text-white">
+                  E você?
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: 40 imóveis */}
+            <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-[#F82E52] mb-3">
+                  40 imóveis
+                </div>
+                <p className="text-[#242424] text-base mb-2 font-semibold">
+                  máximo por corretor
+                </p>
+                <p className="text-gray-600 text-sm mb-3">
+                  Especialização = conversão.
+                </p>
+                <div className="text-lg font-bold text-[#F82E52]">
+                  E você? 200? 300 imóveis por corretor?
+                </div>
+              </div>
             </div>
           </div>
         </div>

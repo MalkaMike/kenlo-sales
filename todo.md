@@ -5127,3 +5127,46 @@
 - [x] Verify 60% card removed ✓
 - [x] Verify "site da imobiliária" text ✓
 - [ ] Save checkpoint (pending layout clarification)
+
+
+## Next Steps - IMOB+Site Final Review
+
+### 1. Adjust Bloco 0 to True 2x2 Grid
+- [x] Change R$ 500k from full-width to same size as other cards ✓
+- [x] New layout: 2x2 grid with 3 cards total ✓
+  - Linha 1: R$ 500k | 4,5%/7,5%
+  - Linha 2: 25% | (empty - only 3 cards)
+- [x] Remove "40 imóveis" card from Bloco 0 ✓
+- [x] Move "40 imóveis" content to Dicas section ✓
+
+### 2. Create "Dicas" Section
+- [x] Design new section for tips/best practices ✓
+- [x] Add 60% card content (cliente campeão, 10,5% conversão) ✓
+- [x] Add 40 imóveis card content ✓
+- [x] Use Kenlo Design System (boxes, vermelho #F82E52, white bg) ✓
+- [x] Place after Bloco 6 (Objeções) as Bloco 7 ✓
+- [x] 2x1 grid layout (2 cards side-by-side) ✓
+
+### 3. Replicate Adjustments to Other Pages
+- [ ] Apply footnote pattern to Kenlo Locação page
+- [ ] Apply clarifications to add-on pages (Leads, Inteligência, Assinaturas, Pay, Seguros, Cash)
+- [ ] Ensure consistency across all pages
+
+### 4. Review 100% of IMOB+Site Content
+- [x] Bloco 0 (E VOCÊ?) - verify all 3 cards (2x2 grid) ✓
+- [x] Bloco 1 (O PROBLEMA) - verify 12 perguntas ✓
+- [x] Bloco 2 (A SOLUÇÃO) - verify CRM, Site, App, Portais ✓
+- [x] Bloco 3 (POR QUE KENLO) - verify 4 razões ✓
+- [x] Bloco 4 (NÚMEROS) - verify 5 stats ✓
+- [x] Bloco 5 (PREÇOS) - verify tabela, usuários adicionais, add-ons ✓
+- [x] Bloco 6 (OBJEÇÕES) - verify FAQ ✓
+- [x] Bloco 7 (DICAS) - verify 2 cards (60%, 40 imóveis) ✓
+- [x] Hero section - verify headline, CTAs ✓
+- [x] Footer - verify links, legal ✓
+- [x] Navigation - verify menu structure ✓
+- [ ] Mobile responsiveness - test all breakpoints (pending)
+- [x] Kenlo Design System compliance - verify colors, fonts, spacing ✓
+
+### 5. Final Checkpoint
+- [ ] Save checkpoint after 100% review complete
+- [ ] Prepare for next page (Kenlo Locação or add-ons)
