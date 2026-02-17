@@ -5436,3 +5436,28 @@
 - [ ] Ensure mobile responsiveness (grid cols-1 md:cols-2 lg:cols-3)
 - [ ] Test in browser
 - [ ] Save checkpoint
+
+
+## Review and Redesign Kombos Page (/kombos)
+
+- [ ] Test current Kombos page in browser
+- [ ] Check Kenlo Design System compliance:
+  - [ ] Colors: #F82E52 (red), #4ABD8D (green), #1A202C (azul marinho)
+  - [ ] Typography: Manrope font family
+  - [ ] Boxes: rounded-lg, border-gray-200, shadow-sm
+  - [ ] Layout: clean, informative, premium style
+- [ ] Compare with IMOB+Site, Locação, and add-on pages structure
+- [ ] Redesign if needed to match other pages
+- [ ] Test redesigned page
+- [ ] Save checkpoint
+
+
+## Remove Kombos Page from Navigation Menu
+
+- [x] Locate navigation menu component (Layout.tsx) ✓
+- [x] Remove "Kombos" link from desktop navigation menu ✓
+- [x] Remove "Kombos" link from mobile navigation menu ✓
+- [x] Remove "Kombos" link from footer ✓
+- [x] Ensure all remaining menu titles are properly aligned (added Calculator icon to Cotação for consistency) ✓
+- [x] Test navigation menu in browser (verified all links work, Kombos removed, alignment correct) ✓
+- [ ] Save checkpoint
