@@ -207,7 +207,7 @@ export function usePricing({
       const additional = Math.max(0, toNum(metrics.imobUsers) - included);
       if (additional > 0) {
         userCount = additional;
-        // Use flat prepaid rate: R$ 34/user/month regardless of plan or volume
+        // Use flat prepaid rate regardless of plan or volume
         usersPrepayment = additional * PREPAID_USER_PRICE_PER_MONTH * months;
       }
     }
@@ -217,7 +217,7 @@ export function usePricing({
       const additional = Math.max(0, toNum(metrics.contractsUnderManagement) - included);
       if (additional > 0) {
         contractCount = additional;
-        // Use flat prepaid rate: R$ 2.20/contract/month regardless of plan or volume
+        // Use flat prepaid rate regardless of plan or volume
         contractsPrepayment = additional * PREPAID_CONTRACT_PRICE_PER_MONTH * months;
       }
     }

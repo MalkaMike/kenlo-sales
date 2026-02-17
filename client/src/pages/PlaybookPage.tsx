@@ -1,6 +1,9 @@
 import { Link } from "wouter";
 import { useState } from "react";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS, PREPAID_PRICING } from "@shared/pricing-config";
+
+const PP_USERS = `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}`;
+const PP_CONTRACTS = `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}`;
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
@@ -92,7 +95,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Site não traz resultado", response: "Porque não é qualquer site. O site Kenlo foi otimizado por Neil Patel. A melhor ficha de imóvel do mercado." },
     ],
     demoTip: "Comece pelo DADO, não pela feature. Mostre o problema (dependência de portais) antes da solução.",
-    prepaidTip: "Pré-pago de usuários: R$ 34/mês (fixo). Exemplo: 20 extras no K = R$ 680/mês vs R$ 840 pós-pago. Economia de R$ 1.920/ano.",
+    prepaidTip: `Pré-pago de usuários: ${PP_USERS}/mês (fixo). Exemplo: 20 extras no K = R$ 680/mês vs R$ 840 pós-pago. Economia de R$ 1.920/ano.`,
     crossSell: ["Leads", "Inteligência", "Assinatura"],
   },
   {
@@ -120,7 +123,7 @@ const productPlaybooks: Playbook[] = [
       { objection: "Muito caro", response: "Investimento de R$ 247/mês gera R$ 1.500+ em valor (Seguros + Pay + economia de tempo)." },
     ],
     demoTip: "Foque em RECEITA, não em gestão. Mostre Seguros (receita passiva), Pay (economia), Cash (fidelização).",
-    prepaidTip: "Pré-pago de contratos: R$ 2,20/mês (fixo). Exemplo: 500 extras no K = R$ 1.100/mês vs R$ 1.450 pós-pago. Economia de R$ 4.200/ano.",
+    prepaidTip: `Pré-pago de contratos: ${PP_CONTRACTS}/mês (fixo). Exemplo: 500 extras no K = R$ 1.100/mês vs R$ 1.450 pós-pago. Economia de R$ 4.200/ano.`,
     crossSell: ["Pay", "Seguros", "Cash", "Inteligência"],
   },
 ];
@@ -148,7 +151,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos gestão de leads", response: "Mas tem transparência de origem e custo por canal? AI SDR qualificando antes do corretor?" },
     ],
     demoTip: "Mostre a transparência: de onde vem, quanto custa, qual converte. Depois mostre a redistribuição automática.",
-    prepaidTip: "Combine com pré-pago de usuários (R$ 34/mês) para reduzir o TCO total da operação de vendas.",
+    prepaidTip: `Combine com pré-pago de usuários (${PP_USERS}/mês) para reduzir o TCO total da operação de vendas.`,
     crossSell: ["IMOB", "Inteligência"],
   },
   {
@@ -197,7 +200,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já usamos DocuSign", response: "DocuSign não é integrado ao CRM. Kenlo Assinatura é embutida — sem copiar/colar dados." },
     ],
     demoTip: "Mostre a velocidade: 5 minutos para assinar um contrato completo. Biometria facial para alto valor.",
-    prepaidTip: "Assinatura R$ 37/mês com 15 inclusas. Combine com pré-pago de contratos (R$ 2,20) para máxima economia em locação.",
+    prepaidTip: `Assinatura R$ 37/mês com 15 inclusas. Combine com pré-pago de contratos (${PP_CONTRACTS}) para máxima economia em locação.`,
     crossSell: ["IMOB", "Locação"],
   },
   {
@@ -222,7 +225,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos sistema de cobrança", response: "Mas tem split automático? Conciliação automática? Integrado ao ERP? Economiza 15-20h/mês?" },
     ],
     demoTip: "Foque no SPLIT: inquilino paga, dinheiro cai automaticamente na conta do proprietário, comissão na da imobiliária.",
-    prepaidTip: "Pay + pré-pago de contratos (R$ 2,20/contrato) = operação de locação com custo mínimo e receita máxima.",
+    prepaidTip: `Pay + pré-pago de contratos (${PP_CONTRACTS}/contrato) = operação de locação com custo mínimo e receita máxima.`,
     crossSell: ["Locação", "Seguros", "Cash"],
   },
   {
@@ -247,7 +250,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Já temos parceria com seguradora", response: "Mas é embutido no boleto? Automático? 35-45% de comissão? R$ 0 de implantação?" },
     ],
     demoTip: `Calcule na hora: 100 contratos × R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12}/ano = R$ ${(100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}+/ano de receita passiva. Sem fazer nada.`,
-    prepaidTip: "Seguros gera receita passiva. Combine com pré-pago de contratos (R$ 2,20) para maximizar margem por contrato.",
+    prepaidTip: `Seguros gera receita passiva. Combine com pré-pago de contratos (${PP_CONTRACTS}) para maximizar margem por contrato.`,
     crossSell: ["Locação", "Pay", "Cash"],
   },
   {
@@ -272,7 +275,7 @@ const addonPlaybooks: Playbook[] = [
       { objection: "Proprietário não vai querer", response: "Proprietário que precisa de liquidez adora. Reforma, investimento, emergência — Cash resolve." },
     ],
     demoTip: "Cenário: proprietário quer reformar o imóvel. Ofereça antecipação de 12 meses. Ele fica, você ganha comissão.",
-    prepaidTip: "Cash + pré-pago de contratos (R$ 2,20) = fidelização + economia. Ofereça no plano bienal para máximo desconto.",
+    prepaidTip: `Cash + pré-pago de contratos (${PP_CONTRACTS}) = fidelização + economia. Ofereça no plano bienal para máximo desconto.`,
     crossSell: ["Locação", "Pay", "Seguros"],
   },
 ];
@@ -285,7 +288,7 @@ const komboPlaybooks = [
     discount: "10%",
     idealFor: "Imobiliárias focadas em vendas que querem captar leads",
     keyMessage: "Entrada no digital com captação de leads. FREE impl. Leads. VIP/CS não incluído (pago à parte).",
-    prepaidTip: "Pré-pago usuários R$ 34/mês + 10% Kombo = máxima economia na entrada.",
+    prepaidTip: `Pré-pago usuários ${PP_USERS}/mês + 10% Kombo = máxima economia na entrada.`,
     color: "bg-blue-500",
   },
   {
@@ -295,7 +298,7 @@ const komboPlaybooks = [
     discount: "15%",
     idealFor: "Quem quer maximizar conversão com dados (Google partnership)",
     keyMessage: "Vendas data-driven. Parceria Google. SAFRA + Performance vs Mercado. VIP + CS incluídos.",
-    prepaidTip: "15% OFF + pré-pago usuários R$ 34/mês = economia combinada significativa.",
+    prepaidTip: `15% OFF + pré-pago usuários ${PP_USERS}/mês = economia combinada significativa.`,
     color: "bg-primary",
   },
   {
@@ -305,7 +308,7 @@ const komboPlaybooks = [
     discount: "10%",
     idealFor: "Administradoras focadas em locação inteligente",
     keyMessage: "Gestão inteligente com BI + assinatura digital. VIP + CS incluídos.",
-    prepaidTip: "Pré-pago contratos R$ 2,20/mês + 10% Kombo = custo mínimo por contrato.",
+    prepaidTip: `Pré-pago contratos ${PP_CONTRACTS}/mês + 10% Kombo = custo mínimo por contrato.`,
     color: "bg-green-500",
   },
   {
@@ -315,7 +318,7 @@ const komboPlaybooks = [
     discount: "0%",
     idealFor: "Imobiliárias que fazem vendas E locação",
     keyMessage: `Plataforma unificada. Economize R$ ${IMOB_IMPLEMENTATION.toLocaleString("pt-BR")} em impl. VIP + CS incluídos.`,
-    prepaidTip: "Pré-pago usuários R$ 34 + contratos R$ 2,20 = economia dupla.",
+    prepaidTip: `Pré-pago usuários ${PP_USERS} + contratos ${PP_CONTRACTS} = economia dupla.`,
     color: "bg-purple-500",
   },
   {
@@ -325,7 +328,7 @@ const komboPlaybooks = [
     discount: "20%",
     idealFor: "Quem quer liderar o mercado com digitalização total",
     keyMessage: `Tudo incluído. 20% OFF + VIP + CS. Economize R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano.`,
-    prepaidTip: "20% Kombo + pré-pago usuários R$ 34 + contratos R$ 2,20 = economia máxima absoluta.",
+    prepaidTip: `20% Kombo + pré-pago usuários ${PP_USERS} + contratos ${PP_CONTRACTS} = economia máxima absoluta.`,
     color: "bg-amber-500",
   },
 ];

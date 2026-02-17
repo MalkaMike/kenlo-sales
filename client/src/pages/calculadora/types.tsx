@@ -227,9 +227,11 @@ export const frequencyInstallments: Record<PaymentFrequency, string> = {
   biennial: "até 6x",
 };
 
-/** Prepaid pricing constants (flat rate, any plan, any volume) */
-export const PREPAID_USER_PRICE_PER_MONTH = 34;
-export const PREPAID_CONTRACT_PRICE_PER_MONTH = 2.20;
+/** Prepaid pricing constants (flat rate, any plan, any volume) — sourced from pricing-config.ts */
+export { PREPAID_PRICING } from "@shared/pricing-config";
+import { PREPAID_PRICING } from "@shared/pricing-config";
+export const PREPAID_USER_PRICE_PER_MONTH = PREPAID_PRICING.additionalUsers.pricePerMonth;
+export const PREPAID_CONTRACT_PRICE_PER_MONTH = PREPAID_PRICING.additionalContracts.pricePerMonth;
 
 /** Get prepaid period in months based on frequency */
 export const getPrepaidMonths = (freq: PaymentFrequency): number => {

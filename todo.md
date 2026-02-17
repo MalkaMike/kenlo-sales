@@ -4905,3 +4905,25 @@
 ## Melhorar validação de URL do site
 - [x] Quando "Tem site? = Sim", mostrar erro claro se URL não preenchida
 - [x] Melhorar UX de validação do campo URL (borda vermelha + mensagem "Informe a URL do site da imobiliária")
+
+## Validação de formato de URL
+- [x] Adicionar validação regex para garantir formato válido (http/https) via isValidUrl()
+- [x] Mostrar mensagem de erro específica quando URL tem formato inválido ("URL inválida. Use o formato: https://www.exemplo.com.br")
+- [x] Manter validação de campo vazio existente ("Informe a URL do site da imobiliária")
+
+## Dinamizar preços pré-pago em textos de marketing
+- [x] Substituir R$ 34/mês hardcoded por referência ao PREPAID_PRICING.additionalUsers.pricePerMonth
+- [x] Substituir R$ 2,20/mês hardcoded por referência ao PREPAID_PRICING.additionalContracts.pricePerMonth
+- [x] Verificar todos os arquivos com valores hardcoded de pré-pago (8 arquivos atualizados):
+  - [x] KomboCellRenderers.tsx
+  - [x] types.tsx (constantes agora referenciam pricing-config)
+  - [x] usePricing.ts (comentários atualizados)
+  - [x] ImobPage.tsx (tooltip + texto)
+  - [x] LocacaoPage.tsx (tooltip + texto)
+  - [x] PlaybookPage.tsx (12 prepaidTip strings)
+  - [x] pdfPlaybook.ts (11 prepaidTip strings + 2 textos + 2 tabela)
+- [x] PREPAID_PRICING já existia no pricing-config.ts, reutilizado em todos os arquivos
+
+## Publicar em produção
+- [x] Salvar checkpoint final
+- [ ] Usuário clicar no botão Publish na UI

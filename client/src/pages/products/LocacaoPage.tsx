@@ -449,7 +449,7 @@ function buildPricingData(): { plans: string[]; sections: PricingSection[] } {
       {
         feature: "Pré-pago (compromisso anual/bienal)",
         tooltip:
-          "Preço fixo de R$ 2,20/contrato/mês para quem opta por pré-pagar",
+          `Preço fixo de R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}/contrato/mês para quem opta por pré-pagar`,
         type: "text",
         values: [
           `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}/un`,
@@ -1258,7 +1258,7 @@ export default function LocacaoPage() {
                   )}
                   /mês
                 </strong>{" "}
-                em contratos adicionais. Ou pré-pague a R$ 2,20/un/mês com
+                em contratos adicionais. Ou pré-pague a R$ {PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}/un/mês com
                 compromisso anual/bienal.
               </p>
             </div>

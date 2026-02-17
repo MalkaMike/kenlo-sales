@@ -8,6 +8,7 @@ import { TrendingUp } from "lucide-react";
 import { KOMBO_DEFINITIONS } from "./komboDefinitions";
 import { formatCurrency, CYCLE_LABELS } from "./komboColumnCalculators";
 import { ColumnCycleSelector } from "./ColumnCycleSelector";
+import { PREPAID_PRICING } from "@shared/pricing-config";
 import type {
   PaymentFrequency,
   KomboId,
@@ -243,7 +244,7 @@ export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode
   return (
     <div className="flex flex-col items-center gap-0.5">
       <span className="text-[8px] text-gray-400 italic">
-        {isPrepaid ? "R$ 34,00/usuário/mês (fixo)" : `R$ ${pp.perUnit.toFixed(2)}/usuário`}
+        {isPrepaid ? `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth.toFixed(2).replace(".", ",")}/usuário/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/usuário`}
       </span>
       {isPrepaid ? (
         <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
@@ -282,7 +283,7 @@ export function renderPostPaidContractsCell(ctx: CellRenderContext): React.React
   return (
     <div className="flex flex-col items-center gap-0.5">
       <span className="text-[8px] text-gray-400 italic">
-        {isPrepaidC ? "R$ 2,20/contrato/mês (fixo)" : `R$ ${pp.perUnit.toFixed(2)}/contrato`}
+        {isPrepaidC ? `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}/contrato/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/contrato`}
       </span>
       {isPrepaidC ? (
         <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>

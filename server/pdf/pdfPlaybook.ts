@@ -5,7 +5,10 @@
  */
 
 import PDFDocument from "pdfkit";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS, PREPAID_PRICING } from "@shared/pricing-config";
+
+const PP_USERS = `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}`;
+const PP_CONTRACTS = `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}`;
 import { PW, PH, M, CW, C } from "./pdfTypes";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -90,7 +93,7 @@ const productPlaybooks: PlaybookData[] = [
       { objection: "Meu CRM atual atende", response: "Seu CRM integra com 50+ portais, sincroniza 3,5M imóveis/noite e dá acesso à Comunidade Kenlo (planos K e K²) com 8.500 imobiliárias?" },
       { objection: "É caro demais", response: "Com Comunidade Kenlo (planos K e K²), um único fechamento por co-corretagem paga o investimento de meses. Escodelar faz 60% dos fechamentos pelo site." },
     ],
-    prepaidTip: "Usuários adicionais: R$ 34/mês fixo (pré-pago). Anual = 12 meses, Bienal = 24 meses.",
+    prepaidTip: `Usuários adicionais: ${PP_USERS}/mês fixo (pré-pago). Anual = 12 meses, Bienal = 24 meses.`,
     demoFlow: [
       "1. Mostre os DADOS primeiro (conversão, lead origin)",
       "2. Cadastro Unificado → cadastre 1x, publique em todos os portais",
@@ -132,7 +135,7 @@ const productPlaybooks: PlaybookData[] = [
       { objection: "Muito caro", response: `Com Seguros (R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês) + Pay (taxa de boleto), a plataforma se paga. 100 contratos com 50% adesão = R$ ${100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/mês só de seguros.` },
       { objection: "Já tenho um sistema", response: "Seu sistema tem Pay, Seguros e Cash embutidos? Kenlo é a única plataforma que GERA receita enquanto você usa." },
     ],
-    prepaidTip: "Contratos adicionais: R$ 2,20/mês fixo (pré-pago). Anual = 12 meses, Bienal = 24 meses.",
+    prepaidTip: `Contratos adicionais: ${PP_CONTRACTS}/mês fixo (pré-pago). Anual = 12 meses, Bienal = 24 meses.`,
     demoFlow: [
       "1. Mostre o ciclo completo de locação",
       "2. Kenlo Pay: o game changer (5 min)",
@@ -338,7 +341,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
       "NÃO inclui VIP/CS Dedicado (contrate à parte se necessário)",
       "Ideal para imobiliárias com 5-20 corretores",
     ],
-    prepaidTip: "Usuários adicionais: R$ 34/mês fixo. Anual (12 meses) ou Bienal (24 meses).",
+    prepaidTip: `Usuários adicionais: ${PP_USERS}/mês fixo. Anual (12 meses) ou Bienal (24 meses).`,
   },
   {
     title: "Kombo Imob Pro",
@@ -354,7 +357,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
       "Inclui VIP Support + CS Dedicado",
       "Relatório SAFRA + Performance vs Mercado incluídos",
     ],
-    prepaidTip: "Usuários adicionais: R$ 34/mês fixo. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.",
+    prepaidTip: `Usuários adicionais: ${PP_USERS}/mês fixo. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.`,
   },
   {
     title: "Kombo Locação Pro",
@@ -369,7 +372,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
       "Adicione Pay e Seguros para maximizar receita",
       "Ideal para administradoras com 100+ contratos",
     ],
-    prepaidTip: "Contratos adicionais: R$ 2,20/mês fixo. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.",
+    prepaidTip: `Contratos adicionais: ${PP_CONTRACTS}/mês fixo. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.`,
   },
   {
     title: "Kombo Core Gestão",
@@ -384,7 +387,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
       "Base perfeita para adicionar add-ons depois",
       "Gateway para o Kombo Elite no futuro",
     ],
-    prepaidTip: "Usuários: R$ 34/mês. Contratos: R$ 2,20/mês. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.",
+    prepaidTip: `Usuários: ${PP_USERS}/mês. Contratos: ${PP_CONTRACTS}/mês. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.`,
   },
   {
     title: "Kombo Elite",
@@ -401,7 +404,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
       `Economia de R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano vs comprar tudo separado`,
       "Adicione Pay, Seguros e Cash para receita máxima",
     ],
-    prepaidTip: "Usuários: R$ 34/mês. Contratos: R$ 2,20/mês. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.",
+    prepaidTip: `Usuários: ${PP_USERS}/mês. Contratos: ${PP_CONTRACTS}/mês. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.`,
   },
 ];
 
@@ -549,9 +552,9 @@ export function generatePlaybookPDF(): Promise<Buffer> {
       .text("Pré-Pago (Anual/Bienal)", M, y);
     y += 14;
     doc.fontSize(8).fillColor(COLORS.text).font("Helvetica");
-    doc.text("• Usuários adicionais: R$ 34/usuário/mês (fixo, qualquer plano/volume)", M + 10, y);
+    doc.text(`• Usuários adicionais: ${PP_USERS}/usuário/mês (fixo, qualquer plano/volume)`, M + 10, y);
     y += 12;
-    doc.text("• Contratos adicionais: R$ 2,20/contrato/mês (fixo, qualquer plano/volume)", M + 10, y);
+    doc.text(`• Contratos adicionais: ${PP_CONTRACTS}/contrato/mês (fixo, qualquer plano/volume)`, M + 10, y);
     y += 12;
     doc.text("• Anual = 12 meses pré-pagos | Bienal = 24 meses pré-pagos", M + 10, y);
 
@@ -794,8 +797,8 @@ export function generatePlaybookPDF(): Promise<Buffer> {
       ["1,8%", "Taxa de conversão dos portais"],
       ["60-70%", "Leads vêm de portais, mas só 30% dos fechamentos"],
       ["35-45%", "Comissão de seguros (Tokyo Marine)"],
-      ["R$ 34", "Preço fixo por usuário adicional pré-pago/mês"],
-      ["R$ 2,20", "Preço fixo por contrato adicional pré-pago/mês"],
+      [PP_USERS, "Preço fixo por usuário adicional pré-pago/mês"],
+      [PP_CONTRACTS, "Preço fixo por contrato adicional pré-pago/mês"],
       ["15-20h", "Economia mensal com Kenlo Pay"],
       ["R$ 0", "Implementação de Leads, Inteligência, Assinaturas (via Kombo)"],
       ["1 de 12", "Parceria exclusiva Google no Brasil"],

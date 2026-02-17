@@ -35,6 +35,24 @@ import { useUrlParams } from "./hooks/useUrlParams";
 import { useAutoEffects } from "./hooks/useAutoEffects";
 import { useKomboRecommendation } from "./hooks/useKomboRecommendation";
 
+/**
+ * Validates URL format: must start with http:// or https:// and have a valid domain.
+ * Also accepts URLs without protocol (adds https:// automatically in the form).
+ */
+export function isValidUrl(url: string): boolean {
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  try {
+    // If no protocol, prepend https:// for validation
+    const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(withProtocol);
+    // Must have a valid hostname with at least one dot (e.g., example.com)
+    return parsed.hostname.includes(".");
+  } catch {
+    return false;
+  }
+}
+
 export function useCalculadora() {
   // ─── Authentication ─────────────────────────────────────────────────────────
   const { user: oauthUser } = useAuth();
@@ -49,7 +67,7 @@ export function useCalculadora() {
   const isBusinessNatureComplete = useCallback((): boolean => {
     if (businessNature.businessType === "broker" || businessNature.businessType === "both") {
       if (businessNature.hasWebsite === null) return false;
-      if (businessNature.hasWebsite && businessNature.websiteUrl === "") return false;
+      if (businessNature.hasWebsite && !isValidUrl(businessNature.websiteUrl)) return false;
     }
     if (businessNature.businessType === "broker" || businessNature.businessType === "both") {
       if (businessNature.hasCRM === null) return false;

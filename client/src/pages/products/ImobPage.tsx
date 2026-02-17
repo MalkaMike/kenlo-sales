@@ -42,6 +42,7 @@ import {
   IMOB_ADDITIONAL_USERS,
   PREMIUM_SERVICES,
   ADDONS,
+  PREPAID_PRICING,
   type PlanTier,
 } from "@shared/pricing-config";
 
@@ -406,9 +407,9 @@ function buildPricingData(): { plans: string[]; sections: PricingSection[] } {
       {
         feature: "Pré-pago (compromisso anual/bienal)",
         tooltip:
-          "Preço fixo de R$ 34/usuário/mês para quem opta por pré-pagar",
+          `Preço fixo de R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}/usuário/mês para quem opta por pré-pagar`,
         type: "text",
-        values: ["R$ 34/un", "R$ 34/un", "R$ 34/un"],
+        values: [`R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}/un`, `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}/un`, `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}/un`],
       },
     ],
   });
@@ -1088,7 +1089,7 @@ export default function ImobPage() {
                   )}
                   /mês
                 </strong>{" "}
-                em usuários adicionais. Ou pré-pague a R$ 34/un/mês com
+                em usuários adicionais. Ou pré-pague a R$ {PREPAID_PRICING.additionalUsers.pricePerMonth}/un/mês com
                 compromisso anual/bienal.
               </p>
             </div>

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CRM_SYSTEMS, ERP_SYSTEMS, type CRMSystem, type ERPSystem } from "@/constants/systems";
 import { useCalc } from "./CalculadoraContext";
+import { isValidUrl } from "./useCalculadora";
 import type { BusinessType } from "./types";
 
 export function BusinessNatureSection() {
@@ -94,10 +95,13 @@ export function BusinessNatureSection() {
                       value={businessNature.websiteUrl}
                       onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
                       placeholder="https://www.imobiliaria.com.br"
-                      className={`text-sm ${showValidationErrors && !businessNature.websiteUrl.trim() ? "border-red-500 ring-1 ring-red-500" : ""}`}
+                      className={`text-sm ${showValidationErrors && !isValidUrl(businessNature.websiteUrl) ? "border-red-500 ring-1 ring-red-500" : ""}`}
                     />
                     {showValidationErrors && !businessNature.websiteUrl.trim() && (
                       <p className="text-xs text-red-600">Informe a URL do site da imobiliária</p>
+                    )}
+                    {showValidationErrors && businessNature.websiteUrl.trim() && !isValidUrl(businessNature.websiteUrl) && (
+                      <p className="text-xs text-red-600">URL inválida. Use o formato: https://www.exemplo.com.br</p>
                     )}
                   </div>
                 )}
