@@ -5027,3 +5027,72 @@
 - [x] Manter números em destaque mas com design mais bonito - text-7xl (56px) com gradientes e shadows ✓
 - [x] Testar no navegador - Todos os 5 cards verificados, narrativa correta, visual premium alcançado ✓
 - [x] Salvar checkpoint ✓
+
+
+## Redesign Completo IMOB+Site - Kenlo Design System (Informativo Premium)
+
+### Paleta de Cores
+- [x] Vermelho Kenlo #F82E52: números-chave, CTAs, badges, destaques ✓
+- [x] Verde Kenlo #4ABD8D: indicadores positivos, "incluído", crescimento ✓
+- [x] Azul Marinho #1A202C: backgrounds alternativos, seções de contraste, boxes premium ✓
+- [x] Cinza claro #F2F2F2: backgrounds neutros, separadores ✓
+- [x] Preto Kenlo #242424: textos principais ✓
+- [x] Branco #FFFFFF: backgrounds de cards, espaço limpo ✓
+
+### Bloco 0 (E VOCÊ?)
+- [x] Manter narrativa correta (média vs campeão) ✓
+- [x] Redesenhar com boxes Kenlo: bg-white, border-gray-200, shadow-sm, rounded-lg ✓
+- [x] Card R$ 500k: usar azul marinho #1A202C como background, texto branco ✓
+- [x] Cards 4,5%/7,5% e 25%: bg-white com border sutil ✓
+- [x] Card 60% campeão: usar vermelho #F82E52 como destaque ✓
+- [x] Remover gradientes purple/blue, usar cores Kenlo puras ✓
+
+### Bloco 1 (O PROBLEMA)
+- [x] Redesenhar 12 perguntas em boxes limpos ✓
+- [x] Grid 2 colunas com cards bg-#F2F2F2 ✓
+- [x] Borders sutis border-gray-200 ✓
+- [x] Ícones em vermelho #F82E52 ✓
+- [x] Shadows leves (implicit in design) ✓
+
+### Bloco 2 (A SOLUÇÃO)
+- [x] Boxes para CRM, Site, App, Portais ✓
+- [x] bg-white com borders ✓
+- [x] Ícones em vermelho (#F82E52 icon backgrounds) ✓
+- [x] Layout grid limpo e organizado ✓
+- [x] Azul marinho #1A202C background para seção ✓
+
+### Bloco 3 (POR QUE KENLO)
+- [x] 4 razões em boxes numerados ✓
+- [x] Números em circles com bg vermelho #F82E52 ✓
+- [x] Cards bg-#F2F2F2 com border-gray-200 ✓
+
+### Bloco 4 (NÚMEROS)
+- [x] 5 stats em boxes grandes ✓
+- [x] Números em vermelho #F82E52 ✓
+- [x] bg-white com borders ✓
+- [x] Grid responsivo (grid-cols-2 md:grid-cols-3 lg:grid-cols-5) ✓
+
+### Bloco 5 (PREÇOS)
+- [x] Tabela limpa com borders sutis ✓
+- [x] Headers com bg-#F2F2F2 ✓
+- [x] Checkmarks em verde #4ABD8D ✓
+- [x] X em gray-300 ✓
+- [x] Preços em vermelho #F82E52 ✓
+- [x] Usuários Adicionais section com bg-#F2F2F2 e white boxes ✓
+- [x] Add-ons section com bg-#F2F2F2 e white boxes ✓
+
+### Bloco 6 (OBJEÇÕES)
+- [x] FAQ em boxes simples (não accordion, static display) ✓
+- [x] bg-white com borders ✓
+- [x] Perguntas em bold preto #242424 ✓
+- [x] Respostas em gray-600 ✓
+
+### Geral
+- [x] Remover todos os gradientes purple/pink/blue (exceto card R$500k e 60% que usam cores Kenlo) ✓
+- [x] Usar apenas cores Kenlo + azul marinho ✓
+- [x] Boxes com rounded-lg, border-gray-200, shadow-sm ✓
+- [x] Espaçamento generoso mas não excessivo (py-14, py-16) ✓
+- [x] Tipografia Manrope (já aplicada globalmente) ✓
+- [x] Estilo informativo premium (não Apple, não teatral) ✓
+- [x] Testar no navegador - COMPLIANT ✓
+- [x] Salvar checkpoint ✓
