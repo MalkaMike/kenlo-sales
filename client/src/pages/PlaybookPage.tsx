@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useState } from "react";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS } from "@shared/pricing-config";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
@@ -314,7 +314,7 @@ const komboPlaybooks = [
     products: "IMOB + LOC",
     discount: "0%",
     idealFor: "Imobiliárias que fazem vendas E locação",
-    keyMessage: "Plataforma unificada. Economize R$ 1.497 em impl. VIP + CS incluídos.",
+    keyMessage: `Plataforma unificada. Economize R$ ${IMOB_IMPLEMENTATION.toLocaleString("pt-BR")} em impl. VIP + CS incluídos.`,
     prepaidTip: "Pré-pago usuários R$ 34 + contratos R$ 2,20 = economia dupla.",
     color: "bg-purple-500",
   },
@@ -324,7 +324,7 @@ const komboPlaybooks = [
     products: "IMOB + LOC + Todos Add-ons",
     discount: "20%",
     idealFor: "Quem quer liderar o mercado com digitalização total",
-    keyMessage: "Tudo incluído. 20% OFF + VIP + CS. Economize R$ 5.087 no primeiro ano.",
+    keyMessage: `Tudo incluído. 20% OFF + VIP + CS. Economize R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano.`,
     prepaidTip: "20% Kombo + pré-pago usuários R$ 34 + contratos R$ 2,20 = economia máxima absoluta.",
     color: "bg-amber-500",
   },

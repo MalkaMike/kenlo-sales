@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { KOMBOS as PRICING_KOMBOS } from "@shared/pricing-config";
+import { KOMBOS as PRICING_KOMBOS, ELITE_FIRST_YEAR_SAVINGS } from "@shared/pricing-config";
 import pricingValues from "@shared/pricing-values.json";
 
 // ============================================================================
@@ -258,7 +258,7 @@ export default function KombosPage() {
               Compare e escolha o ideal para cada imobiliária.
             </p>
             <p className="text-sm text-muted-foreground mb-8 max-w-2xl mx-auto italic">
-              "Todos os Kombos incluem <strong className="text-primary">VIP + CS Dedicado</strong>. O Elite economiza até R$ 5.087 no primeiro ano. Quanto mais digitaliza, menor o custo por unidade."
+              {`Todos os Kombos incluem `}<strong className="text-primary">VIP + CS Dedicado</strong>{`. O Elite economiza até R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano. Quanto mais digitaliza, menor o custo por unidade.`}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

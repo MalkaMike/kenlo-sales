@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Globe, Smartphone, Palette, Search, Mail, BarChart3, ArrowRight, Calculator, Zap, Shield, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { IMOB_IMPLEMENTATION } from "@shared/pricing-config";
 
 export default function SitePage() {
   return (
@@ -64,7 +65,7 @@ export default function SitePage() {
                       R$ 249<span className="text-lg font-normal text-muted-foreground">/mês</span>
                     </div>
                     <div className="text-sm text-muted-foreground mt-2">
-                      + R$ 1.497 de implantação (única)
+                      {`+ R$ ${IMOB_IMPLEMENTATION.toLocaleString("pt-BR")} de implantação (única)`}
                     </div>
                   </div>
                   <ul className="space-y-3 text-left mb-6">

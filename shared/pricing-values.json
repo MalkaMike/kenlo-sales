@@ -312,7 +312,9 @@
       "premiumServicesIncluded": [
         "vipSupport",
         "csDedicado"
-      ]
+      ],
+      "estimatedFirstYearSavings": 5087,
+      "_noteEstimatedSavings": "Estimativa de economia no 1o ano vs comprar tudo separado (inclui impls zeradas + desconto mensal + impl 50% off)"
     }
   },
   "prepaidPricing": {

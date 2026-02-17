@@ -731,3 +731,15 @@ export function calculatePayProfitRange(
     max: Math.max(0, suggestedCharge - priceRange.min), // Profit when paying lowest Kenlo fee
   };
 }
+
+// ============================================================================
+// ELITE KOMBO SAVINGS ESTIMATE
+// ============================================================================
+
+/**
+ * Estimated first-year savings for the Elite Kombo.
+ * This marketing estimate includes zeroed addon implementations,
+ * implementation discount, and monthly subscription savings.
+ * Source of truth: pricing-values.json → kombos.elite.estimatedFirstYearSavings
+ */
+export const ELITE_FIRST_YEAR_SAVINGS = pricingValues.kombos.elite.estimatedFirstYearSavings;

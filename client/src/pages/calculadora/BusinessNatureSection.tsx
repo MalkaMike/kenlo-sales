@@ -89,12 +89,17 @@ export function BusinessNatureSection() {
                   )}
                 </div>
                 {businessNature.hasWebsite === true && (
-                  <Input
-                    value={businessNature.websiteUrl}
-                    onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
-                    placeholder="https://www.imobiliaria.com.br"
-                    className="text-sm"
-                  />
+                  <div className="space-y-1">
+                    <Input
+                      value={businessNature.websiteUrl}
+                      onChange={(e) => setBusinessNature({ ...businessNature, websiteUrl: e.target.value })}
+                      placeholder="https://www.imobiliaria.com.br"
+                      className={`text-sm ${showValidationErrors && !businessNature.websiteUrl.trim() ? "border-red-500 ring-1 ring-red-500" : ""}`}
+                    />
+                    {showValidationErrors && !businessNature.websiteUrl.trim() && (
+                      <p className="text-xs text-red-600">Informe a URL do site da imobiliária</p>
+                    )}
+                  </div>
                 )}
               </div>
             )}

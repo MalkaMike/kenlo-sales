@@ -5,7 +5,7 @@
  */
 
 import PDFDocument from "pdfkit";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS } from "@shared/pricing-config";
 import { PW, PH, M, CW, C } from "./pdfTypes";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -334,7 +334,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
     keyPoints: [
       "Entrada perfeita para quem quer profissionalizar vendas",
       "CRM + Leads integrados desde o dia 1",
-      "Implementação do Leads é GRÁTIS (economia de R$ 997)",
+      `Implementação do Leads é GRÁTIS (economia de R$ ${ADDONS.leads.implementation.toLocaleString("pt-BR")})`,
       "NÃO inclui VIP/CS Dedicado (contrate à parte se necessário)",
       "Ideal para imobiliárias com 5-20 corretores",
     ],
@@ -349,7 +349,8 @@ const komboPlaybooks: KomboPlaybookData[] = [
       "O pacote mais inteligente para vendas",
       "CRM + Leads + BI com Google Partnership",
       "15% de desconto sobre preços individuais",
-      "Implementação Leads + Inteligência GRÁTIS (economia de R$ 1.994)",
+      `Implementação Leads + Inteligência GRÁTIS (economia de R$ ${(ADDONS.leads.implementation + ADDONS.inteligencia.implementation).toLocaleString("pt-BR")})`,
+
       "Inclui VIP Support + CS Dedicado",
       "Relatório SAFRA + Performance vs Mercado incluídos",
     ],
@@ -374,7 +375,7 @@ const komboPlaybooks: KomboPlaybookData[] = [
     title: "Kombo Core Gestão",
     subtitle: "Vendas + Locação em uma só plataforma",
     products: ["Kenlo Imob (Prime)", "Kenlo Locação (Prime)"],
-    savings: "50% de desconto na implementação (economia de R$ 1.497)",
+    savings: `50% de desconto na implementação (economia de R$ ${IMOB_IMPLEMENTATION.toLocaleString("pt-BR")})`,
     keyPoints: [
       "Para quem faz vendas E locação",
       "Cadastro unificado: imóvel vira locação sem recadastrar",
@@ -389,14 +390,15 @@ const komboPlaybooks: KomboPlaybookData[] = [
     title: "Kombo Elite",
     subtitle: "Ecossistema completo — tudo incluído",
     products: ["Kenlo Imob (K2)", "Kenlo Locação (K2)", "Kenlo Leads", "Kenlo Inteligência", "Kenlo Assinaturas"],
-    savings: "20% de desconto + economia de R$ 5.087 no primeiro ano",
+    savings: `20% de desconto + economia de R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano`,
+
     keyPoints: [
       "O pacote MÁXIMO: tudo incluído com o maior desconto",
       "20% de desconto sobre preços individuais",
       "Implementação Leads + Inteligência GRÁTIS",
       "VIP Support + CS Dedicado incluídos",
       "Planos K2 com limites expandidos",
-      "Economia de R$ 5.087 no primeiro ano vs comprar tudo separado",
+      `Economia de R$ ${ELITE_FIRST_YEAR_SAVINGS.toLocaleString("pt-BR")} no primeiro ano vs comprar tudo separado`,
       "Adicione Pay, Seguros e Cash para receita máxima",
     ],
     prepaidTip: "Usuários: R$ 34/mês. Contratos: R$ 2,20/mês. Parcelas: Semestral 2x, Anual 3x, Bienal 6x.",

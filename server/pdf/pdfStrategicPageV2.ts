@@ -9,7 +9,7 @@
  * ✅ No mixing of product contexts
  */
 
-import { PREMIUM_SERVICES } from "@shared/pricing-config";
+import { PREMIUM_SERVICES, IMOB_IMPLEMENTATION, LOC_IMPLEMENTATION } from "@shared/pricing-config";
 import {
   type ProposalData, type DerivedData,
   C, M, CW, GAP, fmt, fmtNum,
@@ -89,7 +89,7 @@ function renderImobSection(
   // RIGHT COLUMN: Investimento
   let rY = h2(doc, "Investimento Mensal", col2X, Y);
   const imobMonthly = data.imobPrice || 0;
-  const imobSetup = 1497; // Standard implementation fee
+  const imobSetup = IMOB_IMPLEMENTATION;
   rY = labelValue(doc, "Licença", fmt(imobMonthly), col2X, rY, colW);
   rY = labelValue(doc, "Implantação (única)", fmt(imobSetup), col2X, rY, colW);
 
@@ -151,7 +151,7 @@ function renderLocacaoSection(
   // RIGHT COLUMN: Investimento
   let rY = h2(doc, "Investimento Mensal", col2X, Y);
   const locMonthly = data.locPrice || 0;
-  const locSetup = 1497; // Standard implementation fee
+  const locSetup = LOC_IMPLEMENTATION;
   rY = labelValue(doc, "Licença", fmt(locMonthly), col2X, rY, colW);
   rY = labelValue(doc, "Implantação (única)", fmt(locSetup), col2X, rY, colW);
 

@@ -4,6 +4,15 @@
 
 import { Building2, Home, Layers } from "lucide-react";
 import type { ProductSelection, KomboId, KomboComparisonProps } from "./komboComparisonTypes";
+import { KOMBOS, ADDONS, IMOB_IMPLEMENTATION } from "@shared/pricing-config";
+
+/** Format implementation text dynamically from config */
+const formatImpl = (komboKey: keyof typeof KOMBOS) => {
+  const impl = KOMBOS[komboKey].implementation;
+  const freeImpls = KOMBOS[komboKey].freeImplementations;
+  const freeNames = freeImpls.length > 0 ? ` (${freeImpls.join(" + ")} grátis)` : "";
+  return `R$ ${impl.toLocaleString("pt-BR")}${freeNames}`;
+};
 
 export interface KomboDefinition {
   name: string;
@@ -38,7 +47,7 @@ export const KOMBO_DEFINITIONS: Record<Exclude<KomboId, "none">, KomboDefinition
       includes: ["Imob", "Leads", "Assinatura"],
       discountText: "10% OFF em todos produtos e add-ons",
       premiumServices: "Não inclui (pagar à parte)",
-      implementation: "R$ 1.497 (Leads grátis)",
+      implementation: formatImpl("imob-start"),
     },
   },
   imob_pro: {
@@ -55,7 +64,7 @@ export const KOMBO_DEFINITIONS: Record<Exclude<KomboId, "none">, KomboDefinition
       includes: ["Imob", "Leads", "Inteligência", "Assinatura"],
       discountText: "15% OFF em todos produtos e add-ons",
       premiumServices: "VIP + CS Dedicado incluídos",
-      implementation: "R$ 1.497 (Leads + Intel grátis)",
+      implementation: formatImpl("imob-pro"),
     },
   },
   locacao_pro: {
@@ -72,7 +81,7 @@ export const KOMBO_DEFINITIONS: Record<Exclude<KomboId, "none">, KomboDefinition
       includes: ["Locação", "Inteligência", "Assinatura"],
       discountText: "10% OFF em todos produtos e add-ons",
       premiumServices: "VIP + CS Dedicado incluídos",
-      implementation: "R$ 1.497 (Intel grátis)",
+      implementation: formatImpl("loc-pro"),
     },
   },
   core_gestao: {
@@ -89,7 +98,7 @@ export const KOMBO_DEFINITIONS: Record<Exclude<KomboId, "none">, KomboDefinition
       includes: ["Imob", "Locação"],
       discountText: "Desconto conforme tabela",
       premiumServices: "VIP + CS Dedicado incluídos",
-      implementation: "R$ 1.497 (IMOB grátis)",
+      implementation: formatImpl("core-gestao"),
     },
   },
   elite: {
@@ -106,7 +115,7 @@ export const KOMBO_DEFINITIONS: Record<Exclude<KomboId, "none">, KomboDefinition
       includes: ["Imob", "Locação", "Todos Add-ons"],
       discountText: "20% OFF em todos produtos e add-ons",
       premiumServices: "VIP + CS Dedicado incluídos",
-      implementation: "R$ 1.497 (IMOB + Leads + Intel grátis)",
+      implementation: formatImpl("elite"),
     },
   },
 };

@@ -4887,3 +4887,21 @@
 - [x] Buscar outros valores hardcoded - 0 referências R$10/contrato restantes
 - [x] pricing-config.ts já exporta SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT
 - [x] 682 testes passaram, 0 erros TypeScript
+
+## Testar PDF com Seguros ativo
+- [x] PDF gerado com sucesso (Imob Pro selecionado, API 200, proposta salva)
+- [x] Fluxo completo funciona: validação → modal → geração → download → salvamento
+## Dinamizar preços de implantação
+- [x] Identificar valores hardcoded de implantação (R$ 1.497, R$ 497, R$ 997) em textos de marketing
+- [x] Verificar se já existem no pricing-values.json
+- [x] Substituir por referências ao config centralizado:
+  - [x] SitePage.tsx: R$ 1.497 → IMOB_IMPLEMENTATION
+  - [x] PlaybookPage.tsx: R$ 1.497 → IMOB_IMPLEMENTATION, R$ 5.087 → ELITE_FIRST_YEAR_SAVINGS
+  - [x] pdfStrategicPageV2.ts: 1497 (IMOB) → IMOB_IMPLEMENTATION, 1497 (LOC) → LOC_IMPLEMENTATION
+  - [x] pdfPlaybook.ts: R$ 997 → ADDONS.leads.implementation, R$ 1.994 → ADDONS.leads+inteligencia, R$ 1.497 → IMOB_IMPLEMENTATION, R$ 5.087 → ELITE_FIRST_YEAR_SAVINGS
+  - [x] KombosPage.tsx: R$ 5.087 → ELITE_FIRST_YEAR_SAVINGS
+  - [x] Adicionado estimatedFirstYearSavings: 5087 ao pricing-values.json (kombos.elite)
+  - [x] Adicionado ELITE_FIRST_YEAR_SAVINGS ao pricing-config.ts
+## Melhorar validação de URL do site
+- [x] Quando "Tem site? = Sim", mostrar erro claro se URL não preenchida
+- [x] Melhorar UX de validação do campo URL (borda vermelha + mensagem "Informe a URL do site da imobiliária")
