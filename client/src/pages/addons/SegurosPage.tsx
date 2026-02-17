@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { SEGUROS_COMMISSION } from "@shared/pricing-config";
+import { SEGUROS_COMMISSION, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 import pricingValues from "@shared/pricing-values.json";
 
 // ============================================================================
@@ -25,8 +25,8 @@ const commissionPct = {
   k2: `${(pricingValues.variableCosts.segurosCommission.tiers.k2[0].rate * 100).toFixed(0)}%`,
 };
 
-// Approximate revenue per contract (based on ~35% commission on average premium ≈ R$10)
-const approxRevenuePerContract = 10;
+// Approximate revenue per contract from centralized config
+const approxRevenuePerContract = SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT;
 
 function buildPricingData() {
   return [
@@ -262,7 +262,7 @@ export default function SegurosPage() {
               Ganhe <span className="font-semibold text-foreground">a partir de R$ {approxRevenuePerContract} por contrato/mês</span> sem esforço — receita passiva garantida.
             </p>
             <p className="text-sm text-muted-foreground mb-6 italic">
-              "Seguros é o <strong className="text-secondary">segredo do sucesso</strong> da locação. Tokyo Marine embutido no boleto com 35-45% de comissão. R$ 0 de implantação. 100 contratos = R$ 10.000+/ano."
+              {`"Seguros é o segredo do sucesso da locação. Tokyo Marine embutido no boleto com 35-45% de comissão. R$ 0 de implantação. 100 contratos = R$ ${(approxRevenuePerContract * 100 * 12).toLocaleString('pt-BR')}+/ano."`}
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
@@ -348,10 +348,10 @@ export default function SegurosPage() {
             <p className="mt-4 text-green-700 dark:text-green-300">Veja um exemplo do potencial de ganho com zero esforço:</p>
             <div className="mt-6 space-y-4">
               <div className="p-4 bg-white dark:bg-gray-800 rounded-md text-center font-mono tracking-tight">
-                100 contratos × 50% adesão × R$ 100/ano = <span className="font-bold text-green-600">R$ 5.000/ano</span>
+                {`100 contratos × 50% adesão × R$ ${approxRevenuePerContract * 12}/ano = `}<span className="font-bold text-green-600">{`R$ ${(100 * 0.5 * approxRevenuePerContract * 12).toLocaleString('pt-BR')}/ano`}</span>
               </div>
               <div className="p-4 bg-white dark:bg-gray-800 rounded-md text-center font-mono tracking-tight">
-                500 contratos × 50% adesão × R$ 100/ano = <span className="font-bold text-green-600">R$ 25.000/ano</span>
+                {`500 contratos × 50% adesão × R$ ${approxRevenuePerContract * 12}/ano = `}<span className="font-bold text-green-600">{`R$ ${(500 * 0.5 * approxRevenuePerContract * 12).toLocaleString('pt-BR')}/ano`}</span>
               </div>
             </div>
             <p className="mt-4 text-sm text-center text-green-600 dark:text-green-400">Zero trabalho, zero custo.</p>

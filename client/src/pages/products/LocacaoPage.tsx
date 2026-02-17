@@ -43,6 +43,7 @@ import {
   PREMIUM_SERVICES,
   ADDONS,
   PREPAID_PRICING,
+  SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT,
   type PlanTier,
 } from "@shared/pricing-config";
 import pricingValues from "@shared/pricing-values.json";
@@ -681,7 +682,7 @@ const sellingQuestions = [
     icon: Shield,
     question: "Quanto a imobiliária ganha com seguro por contrato?",
     insight:
-      "Com Kenlo Seguros: 35-45% de comissão. 200 contratos com 50% de adesão = R$ 10.000+/ano de receita passiva.",
+      `Com Kenlo Seguros: 35-45% de comissão. 200 contratos com 50% de adesão = R$ ${(200 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}+/ano de receita passiva.`,
   },
   {
     icon: Banknote,
@@ -1095,7 +1096,7 @@ export default function LocacaoPage() {
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                 <div>
-                  <div className="text-2xl font-black">R$ 10.000+</div>
+                  <div className="text-2xl font-black">{`R$ ${(200 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}+`}</div>
                   <div className="text-xs text-green-200">Seguros/ano</div>
                 </div>
                 <div>
@@ -1509,13 +1510,12 @@ export default function LocacaoPage() {
                     CASO DE SUCESSO
                   </Badge>
                   <h3 className="text-xl font-bold mb-2">
-                    Imobiliária com 200 contratos: R$ 10.000/ano em receita
-                    passiva
+                    {`Imobiliária com 200 contratos: R$ ${(200 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}/ano em receita passiva`}
                   </h3>
                   <p className="text-muted-foreground mb-4">
                     Uma administradora com 200 contratos implementou Kenlo
                     Seguros (R$ 0 de implantação). Com 50% de adesão dos
-                    inquilinos, passou a receber R$ 10.000/ano em comissões
+                    {`inquilinos, passou a receber R$ ${(200 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}/ano em comissões`}
                     passivas de seguro — sem nenhum trabalho adicional. Além
                     disso, com Kenlo Pay, economizou 15-20h/mês em cobranças
                     manuais e passou a lucrar com as taxas de boleto.
@@ -1523,7 +1523,7 @@ export default function LocacaoPage() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                       <div className="text-2xl font-black text-green-700">
-                        R$ 10k
+                        {`R$ ${(200 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12 / 1000).toLocaleString('pt-BR')}k`}
                       </div>
                       <div className="text-xs text-green-600">
                         receita passiva/ano

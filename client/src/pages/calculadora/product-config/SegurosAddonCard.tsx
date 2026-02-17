@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCalc } from "../CalculadoraContext";
 import { useAddonPulse } from "./useAddonPulse";
+import { SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 
 export function SegurosAddonCard() {
   const { addons, setAddons, isAddonAvailable } = useCalc();
@@ -31,7 +32,7 @@ export function SegurosAddonCard() {
         {!isAddonAvailable("seguros") ? "Requer Kenlo Locação" : (
           <ul className="list-disc list-inside space-y-0.5 mt-0.5">
             <li>Seguro embutido no boleto do inquilino</li>
-            <li>A partir de R$10/contrato/mês sem esforço</li>
+            <li>A partir de R${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês sem esforço</li>
             <li>Receita recorrente garantida para a imobiliária</li>
           </ul>
         )}

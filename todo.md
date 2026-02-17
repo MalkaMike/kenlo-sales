@@ -4878,3 +4878,12 @@
 - [x] Verificar PlaybookPage.tsx e adicionar disclaimer "(planos K e K²)" na menção de co-corretagem
 - [x] Verificar pdfPlaybook.ts e adicionar disclaimers "(planos K e K²)" em 5 menções
 - [x] Testar PDF gerado: fluxo completo funciona, PDFs antigos confirmam estrutura correta, código atualizado com Comunidade Kenlo K/K² only
+
+## Confirmar Comunidade Kenlo é apenas IMOB (K e K²), NÃO Locação
+- [x] Verificar que nenhum arquivo associa Comunidade Kenlo à Locação (confirmado: apenas IMOB)
+- [x] Documento de referência já está correto (IMOB K/K² only)
+## Dinamizar preços restantes hardcoded
+- [x] Seguros: R$ 10/contrato/mês dinamizado em 7 arquivos (Home.tsx, SegurosAddonCard.tsx, SegurosPage.tsx, LocacaoPage.tsx, PlaybookPage.tsx, pdfTypes.ts, pdfPlaybook.ts)
+- [x] Buscar outros valores hardcoded - 0 referências R$10/contrato restantes
+- [x] pricing-config.ts já exporta SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT
+- [x] 682 testes passaram, 0 erros TypeScript

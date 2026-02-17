@@ -5,7 +5,7 @@
  */
 
 import PDFDocument from "pdfkit";
-import { ADDONS } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 import { PW, PH, M, CW, C } from "./pdfTypes";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ const productPlaybooks: PlaybookData[] = [
     ],
     objectionHandlers: [
       { objection: "Planilhas funcionam bem", response: "Planilhas custam 15-20 horas/mês em trabalho manual. Isso é R$ 750-1.000/mês em custo de mão de obra. Kenlo Locação custa R$ 247/mês." },
-      { objection: "Muito caro", response: "Com Seguros (R$ 10/contrato/mês) + Pay (taxa de boleto), a plataforma se paga. 100 contratos com 50% adesão = R$ 500/mês só de seguros." },
+      { objection: "Muito caro", response: `Com Seguros (R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês) + Pay (taxa de boleto), a plataforma se paga. 100 contratos com 50% adesão = R$ ${100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/mês só de seguros.` },
       { objection: "Já tenho um sistema", response: "Seu sistema tem Pay, Seguros e Cash embutidos? Kenlo é a única plataforma que GERA receita enquanto você usa." },
     ],
     prepaidTip: "Contratos adicionais: R$ 2,20/mês fixo (pré-pago). Anual = 12 meses, Bienal = 24 meses.",
@@ -269,7 +269,7 @@ const productPlaybooks: PlaybookData[] = [
     keyData: [
       "Parceria Tokyo Marine: seguradora de primeira linha",
       "Comissão de 35-45% para a imobiliária",
-      "R$ 10/contrato/mês de receita estimada",
+      `R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês de receita estimada`,
       "Seguro embutido no boleto: adesão automática",
       "Renda passiva: o segredo do sucesso em locação",
     ],
@@ -282,7 +282,7 @@ const productPlaybooks: PlaybookData[] = [
       "Tokyo Marine: marca confiável, seguro de qualidade",
       "35-45% de comissão: a maior do mercado",
       "Embutido no boleto: adesão automática, sem fricção",
-      "R$ 10/contrato/mês: 100 contratos = R$ 1.000/mês",
+      `R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês: 100 contratos = R$ ${100 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/mês`,
       "Renda passiva: ganha enquanto dorme",
       "O SEGREDO do sucesso das melhores imobiliárias de locação",
     ],

@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useState } from "react";
-import { ADDONS } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
@@ -112,7 +112,7 @@ const productPlaybooks: Playbook[] = [
     sellingQuestions: [
       { question: "Quanto tempo sua equipe gasta com cobrança manual?", insight: "Com Kenlo Pay, economize 15-20 horas/mês em trabalho manual." },
       { question: "Você já cobra taxa de boleto dos inquilinos?", insight: "90% das imobiliárias já cobram. Com Pay, automatize e ganhe." },
-      { question: "Quanto a imobiliária ganha com seguro por contrato?", insight: "35-45% de comissão. 100 contratos = R$ 10.000+/ano." },
+      { question: "Quanto a imobiliária ganha com seguro por contrato?", insight: `35-45% de comissão. 100 contratos = R$ ${(100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}+/ano.` },
       { question: "Como você fideliza proprietários hoje?", insight: "Kenlo Cash: antecipação de até 24 meses. Nenhum concorrente tem." },
     ],
     keyObjections: [
@@ -235,7 +235,7 @@ const addonPlaybooks: Playbook[] = [
     heroQuote: "O segredo do sucesso da locação. Tokyo Marine embutido no boleto. 35-45% de comissão. R$ 0 de implantação.",
     killerStats: [
       { value: "35-45%", label: "Comissão por contrato", color: "text-green-700" },
-      { value: "R$ 10.000+", label: "Receita/ano (100 contratos)", color: "text-amber-700" },
+      { value: `R$ ${(100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12 / 1000).toLocaleString('pt-BR')}k+`, label: "Receita/ano (100 contratos)", color: "text-amber-700" },
       { value: "R$ 0", label: "Implantação e custo", color: "text-blue-700" },
       { value: "Tokyo Marine", label: "Parceira de confiança", color: "text-purple-700" },
     ],
@@ -246,7 +246,7 @@ const addonPlaybooks: Playbook[] = [
     keyObjections: [
       { objection: "Já temos parceria com seguradora", response: "Mas é embutido no boleto? Automático? 35-45% de comissão? R$ 0 de implantação?" },
     ],
-    demoTip: "Calcule na hora: 100 contratos × R$ 100/ano = R$ 10.000+/ano de receita passiva. Sem fazer nada.",
+    demoTip: `Calcule na hora: 100 contratos × R$ ${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12}/ano = R$ ${(100 * 0.5 * SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT * 12).toLocaleString('pt-BR')}+/ano de receita passiva. Sem fazer nada.`,
     prepaidTip: "Seguros gera receita passiva. Combine com pré-pago de contratos (R$ 2,20) para maximizar margem por contrato.",
     crossSell: ["Locação", "Pay", "Cash"],
   },

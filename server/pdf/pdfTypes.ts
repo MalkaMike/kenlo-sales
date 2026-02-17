@@ -3,6 +3,7 @@
  */
 
 import PDFDocument from "pdfkit";
+import { SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 
 // ── Data interfaces ─────────────────────────────────────────────
 export interface PostPaidItem {
@@ -207,7 +208,7 @@ export const getAddonDescription = (addonLabel: string): string => {
     "Inteligência": "Dashboards estratégicos com Google Looker.",
     "Assinatura": "Assinatura digital embutida na plataforma.",
     "Pay": "Boleto e Split digital embutido na plataforma.",
-    "Seguros": "Seguros embutido no boleto — ganhe R$10/contrato/mês.",
+    "Seguros": `Seguros embutido no boleto — ganhe R$${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês.`,
     "Cash": "Antecipe até 24 meses de aluguel para proprietários.",
   };
   return descriptions[addonLabel] || "";

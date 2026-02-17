@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ADDONS } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 import { Button } from "@/components/ui/button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -95,7 +95,7 @@ const addons = [
     description: "Seguro embutido no boleto — receita recorrente garantida sem nenhum esforço",
     icon: Shield,
     href: "/addons/seguros",
-    highlight: "A partir de R$10/contrato/mês"
+    highlight: `A partir de R$${SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês`
   },
   {
     title: "Cash",
