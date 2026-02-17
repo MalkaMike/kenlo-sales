@@ -4988,3 +4988,17 @@
 - [x] Sentimento final: Premium, estratégico, estruturado, líder de mercado ✓
 - [x] Testar no navegador → Todos os 6 blocos verificados visualmente
 - [ ] Salvar checkpoint
+
+## Refinamento de escala da página IMOB+Site - Densidade elegante com autoridade institucional
+- [x] 1️⃣ IMAGE SIZE CORRECTION: Ícones reduzidos de w-6 h-6 (24px) para w-5 h-5 (20px) — sutis e suportivos ✓
+- [x] 2️⃣ BOX/CARD SIZE REDUCTION: Padding p-8 → p-6 (35% redução), margem space-y-12 → space-y-8 (33% redução) ✓
+- [x] 3️⃣ CARD PROPORTION RULE: Bloco 0 cards ~20%, Bloco 1 cards ~15% (nenhum > 25%) ✓
+- [x] 4️⃣ ICON SCALE: Ícones w-6 h-6 → w-5 h-5 (guiam, não decoram) ✓
+- [x] 5️⃣ GRID CONDENSATION: Blocos 0,1,3 = 2 cols, Blocos 2,4 = 3 cols (sem single card centered) ✓
+- [x] 6️⃣ NUMBER PROPORTION: Números text-8xl (96px) → text-7xl (72px) (25% redução, lideram mas não consomem) ✓
+- [x] 7️⃣ WHITE SPACE CALIBRATION: py-32 (128px) → py-20 (80px), space-y-12 (48px) → space-y-8 (32px), mb-24 (96px) → mb-16 (64px) ✓
+- [x] 8️⃣ PAGE DENSITY TARGET: Balanceada, intencional, estruturada (institutional product manual aesthetic) ✓
+- [x] 9️⃣ EMOTIONAL SHIFT: De "luxury keynote vibe" para "institutional product manual for category leader" (premium mas estruturado, não teatral) ✓
+- [x] SIMPLE TEST: Zoom 50% → Estruturada e compacta ✓, não airy e exaggerated ✓
+- [x] Testar no navegador → Todos os 6 blocos verificados, densidade elegante com autoridade institucional alcançada ✓
+- [ ] Salvar checkpoint

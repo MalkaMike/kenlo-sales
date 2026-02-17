@@ -39,96 +39,96 @@ export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* BLOCO 0: E VOCÊ? */}
-      <section className="py-32">
+      <section className="py-20">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
               Imobiliárias que se destacam hoje
             </h1>
-            <p className="text-xl text-gray-500">
+            <p className="text-lg text-gray-500">
               Dados da comunidade Kenlo
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-12">
             {/* Card 1: R$ 500k */}
-            <div className="text-center py-12">
-              <div className="text-8xl font-bold text-[#F82E52] mb-6">
+            <div className="text-center py-8">
+              <div className="text-7xl font-bold text-[#F82E52] mb-4">
                 R$ 500k
               </div>
-              <p className="text-gray-600 text-lg mb-6">
+              <p className="text-gray-600 text-base mb-4">
                 de comissão por corretor/ano
               </p>
-              <p className="text-gray-500 mb-8">
+              <p className="text-gray-500 text-sm mb-6">
                 Nossos campeões têm corretores que originam R$ 500k de comissão por ano nos últimos 3 anos — só no usado.
               </p>
-              <div className="text-2xl font-semibold text-[#F82E52]">
+              <div className="text-xl font-semibold text-[#F82E52]">
                 E seus corretores?
               </div>
             </div>
 
             {/* Card 2: 4,5% e 7,5% */}
-            <div className="text-center py-12">
-              <div className="flex justify-center items-baseline gap-8 mb-6">
+            <div className="text-center py-8">
+              <div className="flex justify-center items-baseline gap-6 mb-4">
                 <div>
-                  <div className="text-8xl font-bold text-[#F82E52]">4,5%</div>
-                  <p className="text-gray-600 mt-2">vendas</p>
+                  <div className="text-7xl font-bold text-[#F82E52]">4,5%</div>
+                  <p className="text-gray-600 text-sm mt-1">vendas</p>
                 </div>
-                <div className="text-6xl text-gray-300">|</div>
+                <div className="text-5xl text-gray-300">|</div>
                 <div>
-                  <div className="text-8xl font-bold text-[#F82E52]">7,5%</div>
-                  <p className="text-gray-600 mt-2">locação</p>
+                  <div className="text-7xl font-bold text-[#F82E52]">7,5%</div>
+                  <p className="text-gray-600 text-sm mt-1">locação</p>
                 </div>
               </div>
-              <p className="text-gray-600 text-lg mb-8">
+              <p className="text-gray-600 text-base mb-6">
                 Taxa de conversão média
               </p>
-              <div className="text-2xl font-semibold text-[#F82E52]">
+              <div className="text-xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 3: 25% */}
-            <div className="text-center py-12">
-              <div className="text-8xl font-bold text-[#F82E52] mb-6">
+            <div className="text-center py-8">
+              <div className="text-7xl font-bold text-[#F82E52] mb-4">
                 25%
               </div>
-              <p className="text-gray-600 text-lg mb-8">
+              <p className="text-gray-600 text-base mb-6">
                 dos fechamentos vêm do site próprio
               </p>
-              <div className="text-2xl font-semibold text-[#F82E52]">
+              <div className="text-xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 4: 60% */}
-            <div className="text-center py-12">
-              <div className="text-8xl font-bold text-[#F82E52] mb-6">
+            <div className="text-center py-8">
+              <div className="text-7xl font-bold text-[#F82E52] mb-4">
                 60%
               </div>
-              <p className="text-gray-600 text-lg mb-6">
+              <p className="text-gray-600 text-base mb-4">
                 das vendas (cliente campeão)
               </p>
-              <p className="text-gray-500 mb-8">
-                Conversão: <span className="font-bold text-[#F82E52]">10,5%</span>. Mesma ferramenta. Piloto certo.
+              <p className="text-gray-500 text-sm mb-6">
+                Conversão: 10,5%. Mesma ferramenta. Piloto certo.
               </p>
-              <div className="text-2xl font-semibold text-[#F82E52]">
+              <div className="text-xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 5: 40 imóveis */}
-            <div className="md:col-span-2 text-center py-12">
-              <div className="text-8xl font-bold text-[#F82E52] mb-6">
-                40
+            <div className="text-center py-8 md:col-span-2">
+              <div className="text-7xl font-bold text-[#F82E52] mb-4">
+                40 imóveis
               </div>
-              <p className="text-gray-600 text-lg mb-6">
-                imóveis máximo por corretor
+              <p className="text-gray-600 text-base mb-6">
+                máximo por corretor
               </p>
-              <p className="text-gray-500 mb-8">
-                Especialização = conversão
+              <p className="text-gray-500 text-sm mb-6">
+                Especialização = conversão.
               </p>
-              <div className="text-2xl font-semibold text-[#F82E52]">
+              <div className="text-xl font-semibold text-[#F82E52]">
                 E você? 200? 300 imóveis por corretor?
               </div>
             </div>
@@ -137,447 +137,804 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 1: O PROBLEMA */}
-      <section className="py-32 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900 mb-8">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Você sabe onde está perdendo dinheiro?
             </h2>
-            <div className="text-2xl font-semibold text-[#F82E52]">
-              O corretor falha, o lead é ruim, ou são os processos da própria imobiliária?
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Card 1 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Canais de origem
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Você acompanha? Quem origina mais leads? Quem origina mais vendas?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Leads dispersos
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    10 lugares diferentes. Zero controle. Zero rastreabilidade.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <HelpCircle className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Corretor falha
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Mas você sabe quando? Redistribui em 5 min? Ou descobre semanas depois?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Globe className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Site bonito
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Gera venda ou só gasta dinheiro?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 5 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Network className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Portais trazem leads
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Mas de que qualidade? Você mede?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 6 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Layers className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Tudo separado
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    CRM, site, app, assinatura — nada conversa. Você perde leads no meio do caminho.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 7 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <HelpCircle className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Decisões no "achismo"
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Sem dados. Sem BI. Sem rastreabilidade.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 8 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Metas
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Você coloca suas próprias metas? Ou tenta entender o que é possível?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 9 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <HardDrive className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Funil
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Faz sentido? Leads de janeiro — quem fechou em novembro? Como foi sua campanha nesse momento?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 10 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Building2 className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Proprietário
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    80% vendem para comprar. Você cuida dele? Manda feedback provando seu trabalho?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 11 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Globe className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    SEO e IA
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Seu site é otimizado para Google? E para IA (AEO)? Como você acompanha?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 12 */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Autoridade e marca
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Como você constrói? Como você mede?
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
-            {[
-              {
-                title: "Canais de origem",
-                text: "Você acompanha? Quem origina mais leads? Quem origina mais vendas?",
-              },
-              {
-                title: "Leads dispersos",
-                text: "10 lugares diferentes. Zero controle. Zero rastreabilidade.",
-              },
-              {
-                title: "Corretor falha",
-                text: "Mas você sabe quando? Redistribui em 5 min? Ou descobre semanas depois?",
-              },
-              {
-                title: "Site bonito",
-                text: "Gera venda ou só gasta dinheiro?",
-              },
-              {
-                title: "Portais trazem leads",
-                text: "Mas de que qualidade? Você mede?",
-              },
-              {
-                title: "Tudo separado",
-                text: "CRM, site, app, assinatura — nada conversa. Você perde leads no meio do caminho.",
-              },
-              {
-                title: "Decisões no achismo",
-                text: "Sem dados. Sem BI. Sem rastreabilidade.",
-              },
-              {
-                title: "Metas",
-                text: "Você coloca suas próprias metas? Ou tenta entender o que é possível?",
-              },
-              {
-                title: "Funil",
-                text: "Faz sentido? Leads de janeiro — quem fechou em novembro? Como foi sua campanha nesse momento?",
-              },
-              {
-                title: "Proprietário",
-                text: "80% vendem para comprar. Você cuida dele? Manda feedback provando seu trabalho?",
-              },
-              {
-                title: "SEO e IA",
-                text: "Seu site é otimizado para Google? E para IA (AEO)? Como você acompanha?",
-              },
-              {
-                title: "Autoridade e marca",
-                text: "Como você constrói? Como você mede?",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white p-8 rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-900 text-xl mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600">{item.text}</p>
-              </div>
-            ))}
+          <div className="mt-12 text-center">
+            <p className="text-2xl font-bold text-gray-900">
+              O corretor falha, o lead é ruim, ou são os{" "}
+              <span className="text-[#F82E52]">processos da própria imobiliária</span>?
+            </p>
           </div>
         </div>
       </section>
 
       {/* BLOCO 2: A SOLUÇÃO */}
-      <section className="py-32">
+      <section className="py-20">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
               CRM + Site + App
             </h2>
-            <p className="text-2xl text-gray-500">
+            <p className="text-xl text-gray-600 mb-2">
               Tudo integrado. Tudo rastreável.
+            </p>
+            <p className="text-base text-gray-500 max-w-3xl mx-auto">
+              Plataforma completa para vendas. CRM, Site (SEO + AEO), App nativo, +100 portais. Um lugar. Um login.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12 mb-16">
-            {[
-              {
-                icon: <Building2 className="w-8 h-8" />,
-                title: "CRM Completo",
-                desc: "Lead → Pipeline → Fechamento. Rastreável.",
-              },
-              {
-                icon: <Globe className="w-8 h-8" />,
-                title: "Site Incluso",
-                desc: "SEO + AEO. Google + IA. Responsivo. Integrado ao CRM.",
-              },
-              {
-                icon: <Smartphone className="w-8 h-8" />,
-                title: "App Corretor",
-                desc: "iOS + Android. Offline. Notificação em tempo real.",
-              },
-              {
-                icon: <Network className="w-8 h-8" />,
-                title: "+100 Portais",
-                desc: "1 clique. 100 lugares. Sincronização automática.",
-              },
-              {
-                icon: <Layers className="w-8 h-8" />,
-                title: "Gestão de Imóveis",
-                desc: "Fotos, vídeos, plantas. Histórico completo.",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white p-10 rounded-lg shadow-sm text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-700">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600">{item.desc}</p>
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* CRM Completo */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <Building2 className="w-6 h-6 text-gray-600" />
               </div>
-            ))}
+              <h3 className="font-semibold text-gray-900 mb-2">CRM Completo</h3>
+              <p className="text-gray-600 text-sm">
+                Lead → Pipeline → Fechamento. Rastreável.
+              </p>
+            </div>
+
+            {/* Site Incluso */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <Globe className="w-6 h-6 text-gray-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Site Incluso</h3>
+              <p className="text-gray-600 text-sm">
+                SEO + AEO. Google + IA. Responsivo. Integrado ao CRM.
+              </p>
+            </div>
+
+            {/* App Corretor */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <Smartphone className="w-6 h-6 text-gray-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">App Corretor</h3>
+              <p className="text-gray-600 text-sm">
+                iOS + Android. Offline. Notificação em tempo real.
+              </p>
+            </div>
+
+            {/* +100 Portais */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <Network className="w-6 h-6 text-gray-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">+100 Portais</h3>
+              <p className="text-gray-600 text-sm">
+                1 clique. 100 lugares. Sincronização automática.
+              </p>
+            </div>
+
+            {/* Gestão de Imóveis */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <HardDrive className="w-6 h-6 text-gray-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Gestão de Imóveis</h3>
+              <p className="text-gray-600 text-sm">
+                Cadastro. Fotos. Documentos. Histórico.
+              </p>
+            </div>
+
+            {/* Blog/Landing Page */}
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-6 h-6 text-gray-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Blog/Landing Page</h3>
+              <p className="text-gray-600 text-sm">
+                K e K² ganham. Conteúdo. SEO. Autoridade.
+              </p>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                K e K² ganham:
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* K e K² ganham */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                K e K² ganham
               </h3>
-              <p className="text-gray-600">Blog + Landing Page</p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#F82E52] flex-shrink-0 mt-0.5" />
+                  <span>Blog e Landing Pages personalizáveis</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#F82E52] flex-shrink-0 mt-0.5" />
+                  <span>Treinamentos 2x/ano (K²)</span>
+                </li>
+              </ul>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                K² exclusivo:
+
+            {/* K² exclusivo */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                K² exclusivo
               </h3>
-              <p className="text-gray-600">API (Mar/2026) + 2 treinamentos/ano</p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#F82E52] flex-shrink-0 mt-0.5" />
+                  <span>API para integrações customizadas</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#F82E52] flex-shrink-0 mt-0.5" />
+                  <span>CS Dedicado e Suporte VIP incluídos</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
       {/* BLOCO 3: POR QUE KENLO */}
-      <section className="py-32 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Por que Kenlo
             </h2>
-            <p className="text-2xl text-gray-500">4 razões. Sem enrolação.</p>
+            <p className="text-lg text-gray-500">
+              4 razões. Sem enrolação.
+            </p>
           </div>
 
-          <div className="space-y-16">
-            {[
-              {
-                num: "1",
-                title: "Tudo integrado",
-                desc: "CRM + Site + App + Portais. 1 lugar. 1 login. Lead entra no site → cai no CRM → notifica app. Tempo real. Zero planilha.",
-              },
-              {
-                num: "2",
-                title: "Site incluso",
-                desc: "Outros CRMs: R$ 200-500/mês extra. Kenlo: incluso. Todos os planos.",
-              },
-              {
-                num: "3",
-                title: "+100 portais. 1 clique.",
-                desc: "Cadastra 1x. Publica 100x. Atualiza 1x. Sincroniza 100x. Economize horas por semana.",
-              },
-              {
-                num: "4",
-                title: "Add-ons nativos",
-                desc: "Leads (R$ 497/mês) — Distribuição com IA. Inteligência (R$ 297/mês) — BI Google Looker. Assinatura (R$ 37/mês) — Digital, jurídica. Tudo integrado. Sem gambiarra.",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="flex gap-8 items-start">
-                <div className="flex-shrink-0 w-16 h-16 bg-[#F82E52] text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                  {item.num}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-lg text-gray-600">{item.desc}</p>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Razão 1 */}
+            <div className="flex gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#F82E52] text-white flex items-center justify-center font-bold text-lg">
+                  1
                 </div>
               </div>
-            ))}
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Tudo integrado
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  CRM + Site + App + Portais. Um lugar. Um login. Lead entra no site, cai no CRM, corretor recebe no app. Tempo real.
+                </p>
+              </div>
+            </div>
+
+            {/* Razão 2 */}
+            <div className="flex gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#F82E52] text-white flex items-center justify-center font-bold text-lg">
+                  2
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Site incluso
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Não paga separado. Site otimizado (SEO + AEO). Responsivo. Integrado ao CRM. Todos os planos.
+                </p>
+              </div>
+            </div>
+
+            {/* Razão 3 */}
+            <div className="flex gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#F82E52] text-white flex items-center justify-center font-bold text-lg">
+                  3
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  +100 portais
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Cadastra 1 vez. Publica em 100+ portais. 1 clique. Sincronização automática. Economize horas.
+                </p>
+              </div>
+            </div>
+
+            {/* Razão 4 */}
+            <div className="flex gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#F82E52] text-white flex items-center justify-center font-bold text-lg">
+                  4
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Add-ons nativos
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Leads, Inteligência, Assinatura. Integração nativa. Sem gambiarra. Sem API externa.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* BLOCO 4: KENLO EM NÚMEROS */}
-      <section className="py-32">
+      <section className="py-20">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Kenlo em números
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-16">
-            {[
-              { num: "8.500+", label: "imobiliárias" },
-              { num: "40.000+", label: "corretores" },
-              { num: "R$ 8B+", label: "processados" },
-              { num: "950+", label: "cidades" },
-              { num: "+100", label: "portais integrados" },
-            ].map((item, idx) => (
-              <div key={idx} className="text-center">
-                <div className="text-8xl font-bold text-[#F82E52] mb-6">
-                  {item.num}
-                </div>
-                <div className="text-xl text-gray-600">{item.label}</div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* Stat 1 */}
+            <div className="text-center">
+              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+                8.500+
               </div>
-            ))}
+              <p className="text-lg text-gray-600">
+                Imobiliárias
+              </p>
+            </div>
+
+            {/* Stat 2 */}
+            <div className="text-center">
+              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+                40.000+
+              </div>
+              <p className="text-lg text-gray-600">
+                Corretores ativos
+              </p>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="text-center">
+              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+                R$ 8B+
+              </div>
+              <p className="text-lg text-gray-600">
+                Em vendas
+              </p>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="text-center">
+              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+                950+
+              </div>
+              <p className="text-lg text-gray-600">
+                Cidades
+              </p>
+            </div>
+
+            {/* Stat 5 */}
+            <div className="text-center md:col-span-2">
+              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+                +100
+              </div>
+              <p className="text-lg text-gray-600">
+                Portais integrados
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* BLOCO 5: PLANOS E PREÇOS */}
-      <section className="py-32 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
-              Prime, K ou K²
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
+              Planos e Preços
             </h2>
-            <p className="text-2xl text-gray-500">Você escolhe.</p>
+            <p className="text-lg text-gray-500">
+              Escolha o plano ideal para sua operação
+            </p>
           </div>
 
-          {/* Tabela de Preços */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-16">
+          {/* Pricing Table */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-12">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="p-6 text-left text-gray-600 font-medium"></th>
+                  <th className="text-left p-4 font-semibold text-gray-900">
+                    Plano
+                  </th>
                   {PLAN_KEYS.map((key) => (
-                    <th key={key} className="p-6 text-center">
-                      <div className="text-3xl font-bold text-[#F82E52] mb-2">
-                        {formatCurrency(IMOB_PLANS[key].annualPrice)}
+                    <th key={key} className="text-center p-4">
+                      <div className="font-semibold text-gray-900 capitalize mb-1">
+                        {key === "k2" ? "K²" : key.charAt(0).toUpperCase() + key.slice(1)}
                       </div>
-                      <div className="text-sm text-gray-600">{IMOB_PLANS[key].name}</div>
+                      <div className="text-2xl font-bold text-[#F82E52]">
+                        {formatCurrency(Math.round(IMOB_PLANS[key].annualPrice / 12))}/mês
+                      </div>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">Implantação</td>
+                  <td className="p-4 text-gray-600 text-sm">Usuários inclusos</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center text-gray-600">
-                      {formatCurrency(IMOB_IMPLEMENTATION)}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">Usuários</td>
-                  {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center text-gray-600">
+                    <td key={key} className="p-4 text-center text-gray-900 font-medium">
                       {IMOB_PLANS[key].includedUsers}
                     </td>
                   ))}
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">CRM + Site + App + Portais</td>
+                  <td className="p-4 text-gray-600 text-sm">CRM</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center">
-                      <Check className="w-5 h-5 text-green-600 mx-auto" />
+                    <td key={key} className="p-4 text-center">
+                      <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
                     </td>
                   ))}
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">Blog + Landing</td>
+                  <td className="p-4 text-gray-600 text-sm">Site Incluso</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center">
-                      {key === "prime" ? (
-                        <span className="text-gray-400">—</span>
-                      ) : (
-                        <Check className="w-5 h-5 text-green-600 mx-auto" />
-                      )}
+                    <td key={key} className="p-4 text-center">
+                      <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
                     </td>
                   ))}
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">API</td>
+                  <td className="p-4 text-gray-600 text-sm">App Corretor</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center">
-                      {key === "k2" ? (
-                        <Check className="w-5 h-5 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                    <td key={key} className="p-4 text-center">
+                      <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
                     </td>
                   ))}
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">Treinamentos</td>
+                  <td className="p-4 text-gray-600 text-sm">+100 Portais</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center text-gray-600">
-                      {key === "k2" ? "2x/ano" : "—"}
+                    <td key={key} className="p-4 text-center">
+                      <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
                     </td>
                   ))}
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-6 text-gray-700">Suporte VIP</td>
-                  {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center">
-                      {key === "prime" ? (
-                        <span className="text-gray-600">Opcional</span>
-                      ) : (
-                        <Check className="w-5 h-5 text-green-600 mx-auto" />
-                      )}
-                    </td>
-                  ))}
+                  <td className="p-4 text-gray-600 text-sm">Blog/Landing Page</td>
+                  <td className="p-4 text-center">
+                    <X className="w-5 h-5 text-gray-300 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
                 </tr>
-                <tr>
-                  <td className="p-6 text-gray-700">CS Dedicado</td>
-                  {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-6 text-center">
-                      {key === "k2" ? (
-                        <Check className="w-5 h-5 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-600">Opcional</span>
-                      )}
-                    </td>
-                  ))}
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 text-gray-600 text-sm">Treinamentos</td>
+                  <td className="p-4 text-center">
+                    <X className="w-5 h-5 text-gray-300 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <X className="w-5 h-5 text-gray-300 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-900 text-sm">
+                    2x/ano
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 text-gray-600 text-sm">Suporte VIP</td>
+                  <td className="p-4 text-center text-gray-900 text-sm">
+                    Opcional
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 text-gray-600 text-sm">CS Dedicado</td>
+                  <td className="p-4 text-center text-gray-900 text-sm">
+                    Opcional
+                  </td>
+                  <td className="p-4 text-center text-gray-900 text-sm">
+                    Opcional
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 text-gray-600 text-sm">API</td>
+                  <td className="p-4 text-center">
+                    <X className="w-5 h-5 text-gray-300 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <X className="w-5 h-5 text-gray-300 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-[#F82E52] mx-auto" />
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* Usuários Adicionais */}
-          <div className="bg-white rounded-lg shadow-sm p-8 mb-16">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-8">Usuários adicionais</h3>
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="p-4 text-left text-gray-600 font-medium">Faixa</th>
-                  {PLAN_KEYS.map((key) => (
-                    <th key={key} className="p-4 text-center text-gray-600 font-medium">
-                      {IMOB_PLANS[key].name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {IMOB_ADDITIONAL_USERS.prime.map((tier, idx) => (
-                  <tr key={idx} className="border-b border-gray-100">
-                    <td className="p-4 text-gray-700">
-                      {tier.to === Infinity ? `${tier.from}+` : `${tier.from}-${tier.to}`}
-                    </td>
-                    {PLAN_KEYS.map((key) => {
-                      const planTier = IMOB_ADDITIONAL_USERS[key][idx];
-                      return (
-                        <td key={key} className="p-4 text-center text-gray-600">
-                          {formatCurrency(planTier.price)}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-12">
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Usuários Adicionais
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {PLAN_KEYS.map((key) => (
+                <div key={key}>
+                  <div className="font-semibold text-gray-900 capitalize mb-3">
+                    {key === "k2" ? "K²" : key.charAt(0).toUpperCase() + key.slice(1)}
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    {IMOB_ADDITIONAL_USERS[key].map((tier, idx) => (
+                      <div key={idx} className="flex justify-between">
+                        <span className="text-gray-600">{tier.from}-{tier.to === 999 ? '100+' : tier.to}</span>
+                        <span className="font-medium text-gray-900">
+                          {formatCurrency(tier.price)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Add-ons */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Leads</h3>
-              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 497/mês</div>
-              <p className="text-gray-600">Distribuição com IA</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Inteligência</h3>
-              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 297/mês</div>
-              <p className="text-gray-600">BI Google Looker</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Assinatura</h3>
-              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 37/mês</div>
-              <p className="text-gray-600">Digital, jurídica</p>
+          <div className="mb-12">
+            <h3 className="font-semibold text-gray-900 mb-6 text-center">
+              Add-ons Disponíveis
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Leads */}
+              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  Kenlo Leads
+                </h4>
+                <div className="text-2xl font-bold text-[#F82E52] mb-3">
+                  {formatCurrency(Math.round(ADDONS.leads.annualPrice / 12))}/mês
+                </div>
+                <p className="text-gray-600 text-sm mb-4">
+                  Distribuição automática, qualificação por score, WhatsApp integrado
+                </p>
+                <p className="text-gray-500 text-xs">
+                  Implantação: {formatCurrency(ADDONS.leads.implementation)}
+                </p>
+              </div>
+
+              {/* Inteligência */}
+              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  Kenlo Inteligência
+                </h4>
+                <div className="text-2xl font-bold text-[#F82E52] mb-3">
+                  {formatCurrency(Math.round(ADDONS.inteligencia.annualPrice / 12))}/mês
+                </div>
+                <p className="text-gray-600 text-sm mb-4">
+                  BI powered by Google Looker Pro. Usuários ilimitados.
+                </p>
+                <p className="text-gray-500 text-xs">
+                  Implantação: {formatCurrency(ADDONS.inteligencia.implementation)}
+                </p>
+              </div>
+
+              {/* Assinatura */}
+              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  Kenlo Assinatura
+                </h4>
+                <div className="text-2xl font-bold text-[#F82E52] mb-3">
+                  {formatCurrency(Math.round(ADDONS.assinaturas.annualPrice / 12))}/mês
+                </div>
+                <p className="text-gray-600 text-sm mb-4">
+                  Assinatura digital embutida. 15 assinaturas inclusas.
+                </p>
+                <p className="text-gray-500 text-xs">
+                  Implantação: {formatCurrency(ADDONS.assinaturas.implementation)}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/calculadora">
-              <Button size="lg" className="bg-[#F82E52] hover:bg-[#d92847] text-white">
+            <Link href="/cotacao">
+              <Button size="lg" className="bg-[#F82E52] hover:bg-[#F82E52]/90 text-white">
+                <Calculator className="w-5 h-5 mr-2" />
                 Simular Proposta
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-[#F82E52] text-[#F82E52] hover:bg-red-50">
+            <Button size="lg" variant="outline">
               Falar com Especialista
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* BLOCO 6: OBJEÇÕES */}
-      <section className="py-32">
-        <div className="container max-w-4xl mx-auto px-4">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+      <section className="py-20">
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Perguntas diretas. Respostas diretas.
             </h2>
-            <p className="text-2xl text-gray-500">Sem enrolação.</p>
+            <p className="text-lg text-gray-500">
+              Sem enrolação.
+            </p>
           </div>
 
-          <div className="space-y-12">
-            {[
-              {
-                q: "Já tenho CRM",
-                a: "Tem site incluso? App? +100 portais? Kenlo = CRM + Site + App + Portais. 1 lugar.",
-              },
-              {
-                q: "Meu site funciona",
-                a: "Integrado ao CRM? Lead cai no pipeline automaticamente? Kenlo: site → CRM → app. Tempo real. Zero planilha.",
-              },
-              {
-                q: "Quanto custa publicar em portais?",
-                a: "Integração inclusa. Todos os planos. 1 clique. 100 portais. Mensalidade dos portais você paga direto para eles.",
-              },
-              {
-                q: "Quero distribuir leads automaticamente",
-                a: "Add-on Leads (R$ 497/mês). Distribuição por região/especialidade. Score. WhatsApp. Não atendeu em 5 min? Redistribui.",
-              },
-              {
-                q: "Quero BI e relatórios",
-                a: "Add-on Inteligência (R$ 297/mês). Google Looker Pro. Usuários ilimitados. Dashboards personalizáveis. Toda a equipe.",
-              },
-              {
-                q: "Quanto tempo para implementar?",
-                a: "7-14 dias. Migração + treinamento + go-live. Equipe dedicada. R$ 1.497 (única vez).",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-gray-50 p-8 rounded-lg">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  "{item.q}"
-                </h3>
-                <p className="text-gray-600 leading-relaxed">{item.a}</p>
-              </div>
-            ))}
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {/* Pergunta 1 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Já tenho CRM"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Tem site incluso? App? +100 portais? Kenlo = CRM + Site + App + Portais. 1 lugar.
+              </p>
+            </div>
+
+            {/* Pergunta 2 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Meu site funciona"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Integrado ao CRM? Lead cai no pipeline automaticamente? Kenlo: site → CRM → app. Tempo real. Zero planilha.
+              </p>
+            </div>
+
+            {/* Pergunta 3 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Quanto custa publicar em portais?"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Integração inclusa. Todos os planos. 1 clique. 100 portais. Mensalidade dos portais você paga direto para eles.
+              </p>
+            </div>
+
+            {/* Pergunta 4 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Quero distribuir leads automaticamente"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Add-on Leads (R$ 497/mês). Distribuição por região/especialidade. Score. WhatsApp. Não atendeu em 5 min? Redistribui.
+              </p>
+            </div>
+
+            {/* Pergunta 5 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Quero BI e relatórios"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Add-on Inteligência (R$ 297/mês). Google Looker Pro. Usuários ilimitados. Dashboards personalizáveis. Toda a equipe.
+              </p>
+            </div>
+
+            {/* Pergunta 6 */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">
+                "Quanto tempo para implementar?"
+              </h3>
+              <p className="text-gray-600 text-sm">
+                7-14 dias. Migração + treinamento + go-live. Equipe dedicada. R$ 1.497 (única vez).
+              </p>
+            </div>
           </div>
         </div>
       </section>
