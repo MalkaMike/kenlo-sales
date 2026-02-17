@@ -5182,3 +5182,18 @@
 - [x] Dicas section now has only 40 imóveis card (single card, centered, max-w-md) ✓
 - [x] Test in browser - VERIFIED ✓
 - [x] Save checkpoint ✓
+
+
+## R$ 500k Card Compact Redesign
+
+- [x] Reduce card size - make box much smaller/more compact (p-6 → p-4) ✓
+- [x] Simplify text content: ✓
+  - R$ 500k (text-4xl, reduced from text-5xl)
+  - de comissão por corretor/ano⁽¹⁾ (text-xs)
+  - E seus corretores? (text-sm font-bold text-[#F82E52])
+  - (1) Média Comissões de venda dos top Performers da Comunidade Kenlo 2025 (text-[9px])
+- [x] Remove long paragraph text (removed 3-line paragraph) ✓
+- [x] Reduce padding/spacing inside card (mb-3 → mb-1, mb-2) ✓
+- [x] Keep azul marinho #1A202C background ✓
+- [x] Test in browser - VERIFIED ✓
+- [x] Save checkpoint ✓

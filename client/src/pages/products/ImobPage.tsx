@@ -57,27 +57,23 @@ export default function ImobPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Card 1: R$ 500k - DESTAQUE MÁXIMO (azul marinho) */}
-            <div className="bg-[#1A202C] p-8 rounded-lg border border-gray-200 shadow-sm">
+            {/* Card 1: R$ 500k - DESTAQU            {/* Card 1: R$ 500k - AZUL MARINHO COMPACT */}
+            <div className="bg-[#1A202C] p-4 rounded-lg border border-[#1A202C] shadow-sm">
               <div className="text-center">
-                <div className="text-6xl font-bold text-white mb-3">
+                <div className="text-4xl font-bold text-white mb-1">
                   R$ 500k
                 </div>
-                <p className="text-white/90 text-lg mb-3 font-medium">
-                  de comissão por corretor/ano
+                <p className="text-white/90 text-xs mb-2">
+                  de comissão por corretor/ano⁽¹⁾
                 </p>
-                <p className="text-white/70 text-sm mb-4 max-w-3xl mx-auto">
-                  Nossos campeões têm corretores que originam R$ 500k de comissão por ano<sup>(1)</sup> nos últimos 3 anos — só no usado.
-                </p>
-                <div className="text-xl font-bold text-[#F82E52]">
+                <div className="text-sm font-bold text-[#F82E52] mb-2">
                   E seus corretores?
                 </div>
-                <p className="text-white/50 text-xs mt-4">
-                  (1) Top 10 corretores de 2025 da Comunidade Kenlo
+                <p className="text-white/50 text-[9px]">
+                  (1) Média Comissões de venda dos top Performers da Comunidade Kenlo 2025
                 </p>
               </div>
             </div>
-
             {/* Card 2: 4,5% e 7,5% - MÉDIA KENLO */}
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-center">
