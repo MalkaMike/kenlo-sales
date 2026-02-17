@@ -5269,3 +5269,87 @@
 - [x] Keep icon colors as-is (text-[#4ABD8D] green - already visible) ✓
 - [x] Test in browser - TEXT NOW FULLY READABLE ✓
 - [x] Save checkpoint ✓
+
+
+## Recreate All 7 Product Pages - Kenlo Design System Pattern
+
+### Data Gathering
+- [ ] Read pricing-config.ts for all product pricing data
+- [ ] Review Kenlo Design & Branding PDF for product descriptions
+- [ ] Check existing page files for any useful content
+- [ ] Identify what data is available vs what needs sensible placeholder content
+
+### 1. Kenlo Locação Page
+- [x] Use same structure as IMOB+Site (6 blocos - removed Bloco 0 as no performance data available) ✓
+- [x] Hero section with value prop ✓
+- [x] Bloco 1: O PROBLEMA (12 rental-specific pain points) ✓
+- [x] Bloco 2: A SOLUÇÃO (ERP features, K/K² benefits) ✓
+- [x] Bloco 3: POR QUE KENLO (4 reasons) ✓
+- [x] Bloco 4: NÚMEROS (8.500+ imobiliárias, R$ 12B+ aluguéis) ✓
+- [x] Bloco 5: PREÇOS (pricing table, contratos adicionais, add-ons) ✓
+- [x] Bloco 6: OBJEÇÕES (6 rental-specific FAQs) ✓
+- [x] CTA final section ✓
+- [x] Kenlo Design System: #F82E52, #4ABD8D, #1A202C, white, #F2F2F2 ✓
+
+### 2. Kenlo Leads Page (Add-on)
+- [ ] Hero: What is Kenlo Leads
+- [ ] Problem: Lead distribution chaos
+- [ ] Solution: Auto-distribution, scoring, WhatsApp
+- [ ] Features: Key capabilities
+- [ ] Pricing: From pricing-config.ts
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### 3. Kenlo Inteligência Page (Add-on)
+- [ ] Hero: BI powered by Google Looker Pro
+- [ ] Problem: Decisions without data
+- [ ] Solution: Dashboards, unlimited users
+- [ ] Features: What's included
+- [ ] Pricing: From pricing-config.ts
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### 4. Kenlo Assinaturas Page (Add-on)
+- [ ] Hero: Digital signatures embedded
+- [ ] Problem: Paper contracts, delays
+- [ ] Solution: Digital signing in platform
+- [ ] Features: What's included (15 signatures)
+- [ ] Pricing: From pricing-config.ts
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### 5. Kenlo Pay Page (Add-on)
+- [ ] Hero: Boleto + Split digital
+- [ ] Problem: Payment collection chaos
+- [ ] Solution: Embedded payment in platform
+- [ ] Features: What's included
+- [ ] Pricing: From pricing-config.ts (Locação only)
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### 6. Kenlo Cash Page (Add-on)
+- [ ] Hero: Advance up to 24 months rent
+- [ ] Problem: Owner cash flow issues
+- [ ] Solution: Rent advance for owners
+- [ ] Features: How it works
+- [ ] Pricing: From pricing-config.ts (if available)
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### 7. Kenlo Seguros Page (Add-on)
+- [ ] Hero: Insurance embedded in boleto
+- [ ] Problem: Insurance complexity
+- [ ] Solution: Earn R$10/contract/month
+- [ ] Features: What's included
+- [ ] Pricing: From pricing-config.ts (if available)
+- [ ] FAQ: Common questions
+- [ ] Kenlo Design System colors
+
+### General Requirements for All Pages
+- [ ] Consistent Kenlo Design System (colors, fonts, spacing)
+- [ ] Same box/card style (rounded-lg, border-gray-200, shadow-sm)
+- [ ] Responsive design (mobile-first)
+- [ ] No invented numbers - use real data or sensible placeholders
+- [ ] CTAs: "Simular Proposta" and "Falar com Especialista"
+- [ ] Test all pages in browser
+- [ ] Save checkpoint
