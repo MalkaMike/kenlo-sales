@@ -5247,3 +5247,13 @@
 - [x] Test both cards in browser - VERIFIED ✓
 - [x] Verify text hierarchy and sizing - CONFIRMED ✓
 - [x] Save checkpoint ✓
+
+
+## Update Bloco 0 Title - More Impactful
+
+- [x] Change title from "Imobiliárias que se destacam hoje" to "Performance da Comunidade Kenlo em 2025" ✓
+- [x] Change subtitle from "Dados da comunidade Kenlo" to impactful message: ✓
+  "Se você está abaixo da média, ou você não conhece sua performance, é importante rever tudo — desde a ferramenta até seus processos!"
+- [x] Added max-w-4xl mx-auto to subtitle for better readability ✓
+- [x] Test in browser - VERIFIED ✓
+- [x] Save checkpoint ✓

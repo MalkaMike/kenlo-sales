@@ -44,20 +44,20 @@ function formatCurrency(value: number): string {
 export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* BLOCO 0: E VOCÊ? - Kenlo Design System */}
-      <section className="py-16 bg-[#F2F2F2]">
-        <div className="container max-w-7xl mx-auto px-4">
+      {/* BLOCO 0: E VOCÊ? - Kenlo Design System (2x2 Grid Compact) */}
+      <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-pink-50/30">
+        <div className="container">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#242424] mb-3">
-              Imobiliárias que se destacam hoje
-            </h1>
-            <p className="text-lg text-gray-600">
-              Dados da comunidade Kenlo
+            <h2 className="text-4xl md:text-5xl font-bold text-[#242424] mb-4">
+              Performance da Comunidade Kenlo em 2025
+            </h2>
+            <p className="text-gray-600 text-lg max-w-4xl mx-auto">
+              Se você está abaixo da média, ou você não conhece sua performance, é importante rever tudo — desde a ferramenta até seus processos!
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Card 1: R$ 500k - DESTAQU            {/* Card 1: R$ 500k - AZUL MARINHO COMPACT */}
+            {/* Card 1: R$ 500k - AZUL MARINHO COMPACT */}
             <div className="bg-[#1A202C] p-4 rounded-lg border border-[#1A202C] shadow-sm">
               <div className="text-center">
                 <div className="text-4xl font-bold text-white mb-1">
