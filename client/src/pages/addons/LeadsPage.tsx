@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Check, Users, Zap, Clock, Target, MessageSquare, ArrowRight, Calculator, Bot, Globe, Repeat, BarChart3, Lightbulb, AlertTriangle } from "lucide-react";
 import {
@@ -268,6 +269,11 @@ export default function LeadsPage() {
 
   return (
     <div className="flex flex-col">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Add-ons", href: "/" }, { label: "Kenlo Leads" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />

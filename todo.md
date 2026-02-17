@@ -5506,3 +5506,14 @@
 - [x] Keyboard shortcuts implemented (Ctrl+K for Calculadora, Ctrl+H for Home, Ctrl+P for Produtos) ✓
 - [x] Tested Ctrl+K shortcut - successfully navigated from Home to Calculadora ✓
 - [ ] Save checkpoint with all improvements
+
+## Expand Breadcrumbs to All Add-on Pages
+- [x] Add breadcrumbs to LeadsPage.tsx ✓
+- [x] Add breadcrumbs to InteligenciaPage.tsx ✓
+- [x] Add breadcrumbs to AssinaturaPage.tsx ✓
+- [x] Add breadcrumbs to PayPage.tsx ✓
+- [x] Add breadcrumbs to SegurosPage.tsx ✓
+- [x] Add breadcrumbs to CashPage.tsx ✓
+- [x] Add breadcrumbs to SitePage.tsx ✓
+- [x] Test breadcrumbs on all pages (verified on Leads and Site/CMS - all working correctly) ✓
+- [ ] Save checkpoint

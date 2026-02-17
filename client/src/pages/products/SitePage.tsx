@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Globe, Smartphone, Palette, Search, Mail, BarChart3, ArrowRight, Calculator, Zap, Shield, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,11 @@ import { IMOB_IMPLEMENTATION } from "@shared/pricing-config";
 export default function SitePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Produtos", href: "/" }, { label: "Site/CMS" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="py-16 lg:py-24">
         <div className="container">

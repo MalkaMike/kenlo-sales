@@ -1,4 +1,5 @@
 import { ArrowRight, Check, FileSignature, Shield, Zap, Clock, DollarSign, Building2 } from "lucide-react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ADDONS } from "@shared/pricing-config";
@@ -9,6 +10,11 @@ export default function AssinaturasPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Add-ons", href: "/" }, { label: "Kenlo Assinatura" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-br from-[#F2F2F2] via-white to-[#F2F2F2]">
         <div className="container">

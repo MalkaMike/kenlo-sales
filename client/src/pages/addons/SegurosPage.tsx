@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
@@ -243,6 +244,11 @@ export default function SegurosPage() {
 
   return (
     <div className="flex flex-col">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Add-ons", href: "/" }, { label: "Kenlo Seguros" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent" />
@@ -445,6 +451,11 @@ export default function SegurosPage() {
                             </Tooltip>
                           ) : (
                             <div className="flex justify-start">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Add-ons", href: "/" }, { label: "Kenlo Seguros" }]} />
+      </div>
+
                               {renderValue(row as { feature: string; value: string | boolean; highlight?: boolean; tooltip?: string })}
                             </div>
                           )}

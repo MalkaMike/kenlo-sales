@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import React, { useMemo } from "react";
 import { useStickyHeader } from "@/hooks/useStickyHeader";
 import { Button } from "@/components/ui/button";
@@ -246,6 +247,11 @@ export default function InteligenciaPage() {
 
   return (
     <div className="flex flex-col">
+      {/* Breadcrumbs */}
+      <div className="container pt-4">
+        <Breadcrumbs items={[{ label: "Add-ons", href: "/" }, { label: "Kenlo Inteligência" }]} />
+      </div>
+
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
