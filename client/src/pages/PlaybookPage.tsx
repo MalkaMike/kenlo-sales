@@ -85,7 +85,7 @@ const productPlaybooks: Playbook[] = [
       { question: "Você sabe quantos dos seus fechamentos vem do seu site?", insight: "Média Kenlo: 23%. Campeões: 60%. Escodelar: 60% dos fechamentos vem do site." },
       { question: "Qual é a sua taxa de conversão?", insight: "Média Kenlo: 4,5% em vendas. Campeões: 9%. Portais: apenas 1,8%." },
       { question: "Quanto dos seus leads vem de portais vs originação própria?", insight: "60-70% dos leads vem de portais, mas geram apenas 30% dos fechamentos." },
-      { question: "Você já pensou em ganhar com co-corretagem?", insight: "Comunidade Kenlo: 10% dos fechamentos via parcerias. Melhor 50% de algo que 100% de nada." },
+      { question: "Você já pensou em ganhar com co-corretagem?", insight: "Comunidade Kenlo (planos K e K²): 10% dos fechamentos via parcerias. Melhor 50% de algo que 100% de nada." },
     ],
     keyObjections: [
       { objection: "Já temos portais", response: "Portais convertem 1,8%. Seu site Kenlo converte 8,7%. Não é sobre abandonar portais — é sobre diversificar." },
