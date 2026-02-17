@@ -39,9 +39,9 @@ export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* BLOCO 0: E VOCÊ? */}
-      <section className="py-20">
+      <section className="py-12">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
               Imobiliárias que se destacam hoje
             </h1>
@@ -53,7 +53,7 @@ export default function ImobPage() {
           <div className="grid md:grid-cols-2 gap-12">
             {/* Card 1: R$ 500k */}
             <div className="text-center py-8">
-              <div className="text-7xl font-bold text-[#F82E52] mb-4">
+              <div className="text-5xl font-bold text-[#F82E52] mb-4">
                 R$ 500k
               </div>
               <p className="text-gray-600 text-base mb-4">
@@ -71,12 +71,12 @@ export default function ImobPage() {
             <div className="text-center py-8">
               <div className="flex justify-center items-baseline gap-6 mb-4">
                 <div>
-                  <div className="text-7xl font-bold text-[#F82E52]">4,5%</div>
+                  <div className="text-5xl font-bold text-[#F82E52]">4,5%</div>
                   <p className="text-gray-600 text-sm mt-1">vendas</p>
                 </div>
                 <div className="text-5xl text-gray-300">|</div>
                 <div>
-                  <div className="text-7xl font-bold text-[#F82E52]">7,5%</div>
+                  <div className="text-5xl font-bold text-[#F82E52]">7,5%</div>
                   <p className="text-gray-600 text-sm mt-1">locação</p>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function ImobPage() {
 
             {/* Card 3: 25% */}
             <div className="text-center py-8">
-              <div className="text-7xl font-bold text-[#F82E52] mb-4">
+              <div className="text-5xl font-bold text-[#F82E52] mb-4">
                 25%
               </div>
               <p className="text-gray-600 text-base mb-6">
@@ -103,7 +103,7 @@ export default function ImobPage() {
 
             {/* Card 4: 60% */}
             <div className="text-center py-8">
-              <div className="text-7xl font-bold text-[#F82E52] mb-4">
+              <div className="text-5xl font-bold text-[#F82E52] mb-4">
                 60%
               </div>
               <p className="text-gray-600 text-base mb-4">
@@ -119,7 +119,7 @@ export default function ImobPage() {
 
             {/* Card 5: 40 imóveis */}
             <div className="text-center py-8 md:col-span-2">
-              <div className="text-7xl font-bold text-[#F82E52] mb-4">
+              <div className="text-5xl font-bold text-[#F82E52] mb-4">
                 40 imóveis
               </div>
               <p className="text-gray-600 text-base mb-6">
@@ -137,9 +137,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 1: O PROBLEMA */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Você sabe onde está perdendo dinheiro?
             </h2>
@@ -147,7 +147,7 @@ export default function ImobPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Card 1 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <TrendingUp className="w-5 h-5 text-gray-400" />
@@ -164,7 +164,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -181,7 +181,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <HelpCircle className="w-5 h-5 text-gray-400" />
@@ -198,7 +198,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Globe className="w-5 h-5 text-gray-400" />
@@ -215,7 +215,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 5 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Network className="w-5 h-5 text-gray-400" />
@@ -232,7 +232,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 6 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Layers className="w-5 h-5 text-gray-400" />
@@ -249,7 +249,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 7 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <HelpCircle className="w-5 h-5 text-gray-400" />
@@ -266,7 +266,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 8 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <TrendingUp className="w-5 h-5 text-gray-400" />
@@ -283,7 +283,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 9 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <HardDrive className="w-5 h-5 text-gray-400" />
@@ -300,7 +300,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 10 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Building2 className="w-5 h-5 text-gray-400" />
@@ -317,7 +317,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 11 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Globe className="w-5 h-5 text-gray-400" />
@@ -334,7 +334,7 @@ export default function ImobPage() {
             </div>
 
             {/* Card 12 */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <TrendingUp className="w-5 h-5 text-gray-400" />
@@ -361,9 +361,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 2: A SOLUÇÃO */}
-      <section className="py-20">
+      <section className="py-12">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               CRM + Site + App
             </h2>
@@ -445,7 +445,7 @@ export default function ImobPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* K e K² ganham */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 K e K² ganham
               </h3>
@@ -462,7 +462,7 @@ export default function ImobPage() {
             </div>
 
             {/* K² exclusivo */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 K² exclusivo
               </h3>
@@ -482,9 +482,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 3: POR QUE KENLO */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Por que Kenlo
             </h2>
@@ -566,9 +566,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 4: KENLO EM NÚMEROS */}
-      <section className="py-20">
+      <section className="py-12">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Kenlo em números
             </h2>
@@ -577,7 +577,7 @@ export default function ImobPage() {
           <div className="grid md:grid-cols-3 gap-12">
             {/* Stat 1 */}
             <div className="text-center">
-              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+              <div className="text-5xl font-bold text-[#F82E52] mb-3">
                 8.500+
               </div>
               <p className="text-lg text-gray-600">
@@ -587,7 +587,7 @@ export default function ImobPage() {
 
             {/* Stat 2 */}
             <div className="text-center">
-              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+              <div className="text-5xl font-bold text-[#F82E52] mb-3">
                 40.000+
               </div>
               <p className="text-lg text-gray-600">
@@ -597,7 +597,7 @@ export default function ImobPage() {
 
             {/* Stat 3 */}
             <div className="text-center">
-              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+              <div className="text-5xl font-bold text-[#F82E52] mb-3">
                 R$ 8B+
               </div>
               <p className="text-lg text-gray-600">
@@ -607,7 +607,7 @@ export default function ImobPage() {
 
             {/* Stat 4 */}
             <div className="text-center">
-              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+              <div className="text-5xl font-bold text-[#F82E52] mb-3">
                 950+
               </div>
               <p className="text-lg text-gray-600">
@@ -617,7 +617,7 @@ export default function ImobPage() {
 
             {/* Stat 5 */}
             <div className="text-center md:col-span-2">
-              <div className="text-7xl font-bold text-[#F82E52] mb-3">
+              <div className="text-5xl font-bold text-[#F82E52] mb-3">
                 +100
               </div>
               <p className="text-lg text-gray-600">
@@ -629,9 +629,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 5: PLANOS E PREÇOS */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Planos e Preços
             </h2>
@@ -766,7 +766,7 @@ export default function ImobPage() {
           </div>
 
           {/* Usuários Adicionais */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-12">
+          <div className="bg-white rounded-lg shadow-sm p-4 mb-12">
             <h3 className="font-semibold text-gray-900 mb-4">
               Usuários Adicionais
             </h3>
@@ -798,7 +798,7 @@ export default function ImobPage() {
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               {/* Leads */}
-              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 mb-2">
                   Kenlo Leads
                 </h4>
@@ -814,7 +814,7 @@ export default function ImobPage() {
               </div>
 
               {/* Inteligência */}
-              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 mb-2">
                   Kenlo Inteligência
                 </h4>
@@ -830,7 +830,7 @@ export default function ImobPage() {
               </div>
 
               {/* Assinatura */}
-              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 mb-2">
                   Kenlo Assinatura
                 </h4>
@@ -864,9 +864,9 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 6: OBJEÇÕES */}
-      <section className="py-20">
+      <section className="py-12">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Perguntas diretas. Respostas diretas.
             </h2>
@@ -875,9 +875,9 @@ export default function ImobPage() {
             </p>
           </div>
 
-          <div className="space-y-8 max-w-4xl mx-auto">
+          <div className="space-y-4 max-w-4xl mx-auto">
             {/* Pergunta 1 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Já tenho CRM"
               </h3>
@@ -887,7 +887,7 @@ export default function ImobPage() {
             </div>
 
             {/* Pergunta 2 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Meu site funciona"
               </h3>
@@ -897,7 +897,7 @@ export default function ImobPage() {
             </div>
 
             {/* Pergunta 3 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Quanto custa publicar em portais?"
               </h3>
@@ -907,7 +907,7 @@ export default function ImobPage() {
             </div>
 
             {/* Pergunta 4 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Quero distribuir leads automaticamente"
               </h3>
@@ -917,7 +917,7 @@ export default function ImobPage() {
             </div>
 
             {/* Pergunta 5 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Quero BI e relatórios"
               </h3>
@@ -927,7 +927,7 @@ export default function ImobPage() {
             </div>
 
             {/* Pergunta 6 */}
-            <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-3">
                 "Quanto tempo para implementar?"
               </h3>

@@ -5002,3 +5002,13 @@
 - [x] SIMPLE TEST: Zoom 50% → Estruturada e compacta ✓, não airy e exaggerated ✓
 - [x] Testar no navegador → Todos os 6 blocos verificados, densidade elegante com autoridade institucional alcançada ✓
 - [ ] Salvar checkpoint
+
+## Redução agressiva de escala - IMOB+Site ainda mais compacta
+- [x] Números: text-7xl (72px) → text-5xl (48px) — 33% redução, 50% do original text-8xl ✓
+- [x] Boxes padding: p-6 → p-4 — 33% redução, padding mínimo ✓
+- [x] Seções verticais: py-20 (80px) → py-12 (48px) — 40% redução, seções muito mais próximas ✓
+- [x] Cards spacing: space-y-8 (32px) → space-y-4 (16px) — 50% redução, quase colados ✓
+- [x] Margem entre blocos: mb-16 (64px) → mb-8 (32px) — 50% redução, blocos mais próximos ✓
+- [x] Testar no navegador → Todos os 6 blocos verificados, ultra-compacto alcançado ✓
+- [x] Resultado: Scroll vertical reduzido ~40-50%, densidade institucional máxima, números ainda prominentes mas não teatrais ✓
+- [ ] Salvar checkpoint
