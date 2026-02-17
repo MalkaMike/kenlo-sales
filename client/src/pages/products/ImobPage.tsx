@@ -39,95 +39,96 @@ export default function ImobPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* BLOCO 0: E VOCÊ? */}
-      <section className="relative py-20 bg-gradient-to-br from-pink-50 via-white to-pink-50 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNGODJFNTIiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0di00aDJ2NGgtMnptMC02di00aDJ2NGgtMnptLTYgNnYtNGgydjRoLTJ6bTAtNnYtNGgydjRoLTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
-        
-        <div className="container relative max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      <section className="py-32">
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-24">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Imobiliárias que se destacam hoje
             </h1>
-            <p className="text-xl text-gray-600">
-              Compare seus resultados com os líderes do mercado
+            <p className="text-xl text-gray-500">
+              Dados da comunidade Kenlo
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-16">
             {/* Card 1: R$ 500k */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-pink-100 hover:border-pink-500 transition-all">
-              <div className="text-6xl font-bold text-[#F82E52] mb-4">
+            <div className="text-center py-12">
+              <div className="text-8xl font-bold text-[#F82E52] mb-6">
                 R$ 500k
               </div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-600 text-lg mb-6">
                 de comissão por corretor/ano
               </p>
-              <p className="text-sm text-gray-600 mb-6">
+              <p className="text-gray-500 mb-8">
                 Nossos campeões têm corretores que originam R$ 500k de comissão por ano nos últimos 3 anos — só no usado.
               </p>
-              <div className="text-2xl font-bold text-[#F82E52]">
+              <div className="text-2xl font-semibold text-[#F82E52]">
                 E seus corretores?
               </div>
             </div>
 
             {/* Card 2: 4,5% e 7,5% */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-pink-100 hover:border-pink-500 transition-all">
-              <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-6xl font-bold text-[#F82E52]">4,5%</span>
-                <span className="text-2xl text-gray-600">vendas</span>
+            <div className="text-center py-12">
+              <div className="flex justify-center items-baseline gap-8 mb-6">
+                <div>
+                  <div className="text-8xl font-bold text-[#F82E52]">4,5%</div>
+                  <p className="text-gray-600 mt-2">vendas</p>
+                </div>
+                <div className="text-6xl text-gray-300">|</div>
+                <div>
+                  <div className="text-8xl font-bold text-[#F82E52]">7,5%</div>
+                  <p className="text-gray-600 mt-2">locação</p>
+                </div>
               </div>
-              <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-6xl font-bold text-[#F82E52]">7,5%</span>
-                <span className="text-2xl text-gray-600">locação</span>
-              </div>
-              <p className="text-gray-700 mb-6">
-                Taxa de conversão média da comunidade Kenlo
+              <p className="text-gray-600 text-lg mb-8">
+                Taxa de conversão média
               </p>
-              <div className="text-2xl font-bold text-[#F82E52]">
+              <div className="text-2xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 3: 25% */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-pink-100 hover:border-pink-500 transition-all">
-              <div className="text-6xl font-bold text-[#F82E52] mb-4">
+            <div className="text-center py-12">
+              <div className="text-8xl font-bold text-[#F82E52] mb-6">
                 25%
               </div>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-600 text-lg mb-8">
                 dos fechamentos vêm do site próprio
               </p>
-              <div className="text-2xl font-bold text-[#F82E52]">
+              <div className="text-2xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 4: 60% */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-pink-100 hover:border-pink-500 transition-all">
-              <div className="text-6xl font-bold text-[#F82E52] mb-4">
+            <div className="text-center py-12">
+              <div className="text-8xl font-bold text-[#F82E52] mb-6">
                 60%
               </div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-600 text-lg mb-6">
                 das vendas (cliente campeão)
               </p>
-              <p className="text-sm text-gray-600 mb-6">
+              <p className="text-gray-500 mb-8">
                 Conversão: <span className="font-bold text-[#F82E52]">10,5%</span>. Mesma ferramenta. Piloto certo.
               </p>
-              <div className="text-2xl font-bold text-[#F82E52]">
+              <div className="text-2xl font-semibold text-[#F82E52]">
                 E você?
               </div>
             </div>
 
             {/* Card 5: 40 imóveis */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-pink-100 hover:border-pink-500 transition-all">
-              <div className="text-6xl font-bold text-[#F82E52] mb-4">
+            <div className="md:col-span-2 text-center py-12">
+              <div className="text-8xl font-bold text-[#F82E52] mb-6">
                 40
               </div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-600 text-lg mb-6">
                 imóveis máximo por corretor
               </p>
-              <p className="text-sm text-gray-600 mb-6">
+              <p className="text-gray-500 mb-8">
                 Especialização = conversão
               </p>
-              <div className="text-2xl font-bold text-[#F82E52]">
+              <div className="text-2xl font-semibold text-[#F82E52]">
                 E você? 200? 300 imóveis por corretor?
               </div>
             </div>
@@ -136,122 +137,92 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 1: O PROBLEMA */}
-      <section className="py-20 bg-white">
+      <section className="py-32 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900 mb-8">
               Você sabe onde está perdendo dinheiro?
             </h2>
+            <div className="text-2xl font-semibold text-[#F82E52]">
+              O corretor falha, o lead é ruim, ou são os processos da própria imobiliária?
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
             {[
               {
-                icon: <TrendingUp className="w-6 h-6" />,
                 title: "Canais de origem",
                 text: "Você acompanha? Quem origina mais leads? Quem origina mais vendas?",
               },
               {
-                icon: <AlertCircle className="w-6 h-6" />,
                 title: "Leads dispersos",
                 text: "10 lugares diferentes. Zero controle. Zero rastreabilidade.",
               },
               {
-                icon: <HelpCircle className="w-6 h-6" />,
                 title: "Corretor falha",
                 text: "Mas você sabe quando? Redistribui em 5 min? Ou descobre semanas depois?",
               },
               {
-                icon: <Globe className="w-6 h-6" />,
                 title: "Site bonito",
                 text: "Gera venda ou só gasta dinheiro?",
               },
               {
-                icon: <Network className="w-6 h-6" />,
                 title: "Portais trazem leads",
                 text: "Mas de que qualidade? Você mede?",
               },
               {
-                icon: <Layers className="w-6 h-6" />,
                 title: "Tudo separado",
                 text: "CRM, site, app, assinatura — nada conversa. Você perde leads no meio do caminho.",
               },
               {
-                icon: <AlertCircle className="w-6 h-6" />,
                 title: "Decisões no achismo",
                 text: "Sem dados. Sem BI. Sem rastreabilidade.",
               },
               {
-                icon: <TrendingUp className="w-6 h-6" />,
                 title: "Metas",
                 text: "Você coloca suas próprias metas? Ou tenta entender o que é possível?",
               },
               {
-                icon: <Layers className="w-6 h-6" />,
                 title: "Funil",
                 text: "Faz sentido? Leads de janeiro — quem fechou em novembro? Como foi sua campanha nesse momento?",
               },
               {
-                icon: <Building2 className="w-6 h-6" />,
                 title: "Proprietário",
                 text: "80% vendem para comprar. Você cuida dele? Manda feedback provando seu trabalho?",
               },
               {
-                icon: <Globe className="w-6 h-6" />,
                 title: "SEO e IA",
                 text: "Seu site é otimizado para Google? E para IA (AEO)? Como você acompanha?",
               },
               {
-                icon: <TrendingUp className="w-6 h-6" />,
                 title: "Autoridade e marca",
                 text: "Como você constrói? Como você mede?",
               },
             ].map((item, idx) => (
-              <div
-                key={idx}
-                className="flex gap-4 p-6 rounded-xl border border-gray-200 hover:border-pink-500 hover:shadow-lg transition-all"
-              >
-                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-pink-100 text-[#F82E52] flex items-center justify-center">
-                  {item.icon}
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-gray-600 text-sm">{item.text}</p>
-                </div>
+              <div key={idx} className="bg-white p-8 rounded-lg shadow-sm">
+                <h3 className="font-semibold text-gray-900 text-xl mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600">{item.text}</p>
               </div>
             ))}
-          </div>
-
-          <div className="bg-[#F82E52] text-white rounded-2xl p-12 text-center">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">
-              O corretor falha, o lead é ruim, ou são os processos da própria imobiliária?
-            </h3>
           </div>
         </div>
       </section>
 
       {/* BLOCO 2: A SOLUÇÃO */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-32">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
               CRM + Site + App
             </h2>
-            <p className="text-2xl text-gray-600">
+            <p className="text-2xl text-gray-500">
               Tudo integrado. Tudo rastreável.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 mb-12 shadow-lg">
-            <p className="text-xl text-gray-700 mb-4">
-              Plataforma completa para vendas. CRM, Site (SEO + AEO), App nativo, +100 portais.
-            </p>
-            <p className="text-xl font-bold text-[#F82E52]">
-              Um lugar. Um login.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-3 gap-12 mb-16">
             {[
               {
                 icon: <Building2 className="w-8 h-8" />,
@@ -279,14 +250,11 @@ export default function ImobPage() {
                 desc: "Fotos, vídeos, plantas. Histórico completo.",
               },
             ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all border-2 border-transparent hover:border-pink-500"
-              >
-                <div className="w-16 h-16 rounded-lg bg-pink-100 text-[#F82E52] flex items-center justify-center mb-4">
+              <div key={idx} className="bg-white p-10 rounded-lg shadow-sm text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-700">
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   {item.title}
                 </h3>
                 <p className="text-gray-600">{item.desc}</p>
@@ -294,15 +262,15 @@ export default function ImobPage() {
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 border-2 border-green-500">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 K e K² ganham:
               </h3>
               <p className="text-gray-600">Blog + Landing Page</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border-2 border-pink-500">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 K² exclusivo:
               </h3>
               <p className="text-gray-600">API (Mar/2026) + 2 treinamentos/ano</p>
@@ -312,21 +280,21 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 3: POR QUE KENLO */}
-      <section className="py-20 bg-white">
+      <section className="py-32 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
               Por que Kenlo
             </h2>
-            <p className="text-2xl text-gray-600">4 razões. Sem enrolação.</p>
+            <p className="text-2xl text-gray-500">4 razões. Sem enrolação.</p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-16">
             {[
               {
                 num: "1",
                 title: "Tudo integrado",
-                desc: "CRM + Site + App + Portais. Lead entra → CRM → App. 1 login. 0 planilhas.",
+                desc: "CRM + Site + App + Portais. 1 lugar. 1 login. Lead entra no site → cai no CRM → notifica app. Tempo real. Zero planilha.",
               },
               {
                 num: "2",
@@ -336,7 +304,7 @@ export default function ImobPage() {
               {
                 num: "3",
                 title: "+100 portais. 1 clique.",
-                desc: "Cadastra 1x. Publica 100x. Atualiza 1x. Sincroniza 100x.",
+                desc: "Cadastra 1x. Publica 100x. Atualiza 1x. Sincroniza 100x. Economize horas por semana.",
               },
               {
                 num: "4",
@@ -344,15 +312,12 @@ export default function ImobPage() {
                 desc: "Leads (R$ 497/mês) — Distribuição com IA. Inteligência (R$ 297/mês) — BI Google Looker. Assinatura (R$ 37/mês) — Digital, jurídica. Tudo integrado. Sem gambiarra.",
               },
             ].map((item, idx) => (
-              <div
-                key={idx}
-                className="flex gap-6 p-8 rounded-2xl bg-gray-50 hover:bg-pink-50 transition-all border-2 border-transparent hover:border-pink-500"
-              >
-                <div className="flex-shrink-0 w-16 h-16 rounded-full bg-[#F82E52] text-white flex items-center justify-center text-3xl font-bold">
+              <div key={idx} className="flex gap-8 items-start">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#F82E52] text-white rounded-full flex items-center justify-center text-2xl font-bold">
                   {item.num}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                     {item.title}
                   </h3>
                   <p className="text-lg text-gray-600">{item.desc}</p>
@@ -364,27 +329,24 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 4: KENLO EM NÚMEROS */}
-      <section className="py-20 bg-gradient-to-br from-pink-50 via-white to-pink-50">
+      <section className="py-32">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900">
               Kenlo em números
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-16">
             {[
               { num: "8.500+", label: "imobiliárias" },
               { num: "40.000+", label: "corretores" },
-              { num: "R$ 8 bilhões+", label: "processados" },
+              { num: "R$ 8B+", label: "processados" },
               { num: "950+", label: "cidades" },
               { num: "+100", label: "portais integrados" },
             ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-2xl transition-all"
-              >
-                <div className="text-6xl font-bold text-[#F82E52] mb-4">
+              <div key={idx} className="text-center">
+                <div className="text-8xl font-bold text-[#F82E52] mb-6">
                   {item.num}
                 </div>
                 <div className="text-xl text-gray-600">{item.label}</div>
@@ -395,106 +357,109 @@ export default function ImobPage() {
       </section>
 
       {/* BLOCO 5: PLANOS E PREÇOS */}
-      <section className="py-20 bg-white">
+      <section className="py-32 bg-gray-50">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
               Prime, K ou K²
             </h2>
-            <p className="text-2xl text-gray-600">Você escolhe.</p>
+            <p className="text-2xl text-gray-500">Você escolhe.</p>
           </div>
 
           {/* Tabela de Preços */}
-          <div className="overflow-x-auto mb-12">
-            <table className="w-full border-collapse">
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-16">
+            <table className="w-full">
               <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-4 text-left font-bold text-gray-900"></th>
+                <tr className="border-b border-gray-200">
+                  <th className="p-6 text-left text-gray-600 font-medium"></th>
                   {PLAN_KEYS.map((key) => (
-                    <th key={key} className="p-4 text-center font-bold text-gray-900">
-                      {IMOB_PLANS[key].name}
+                    <th key={key} className="p-6 text-center">
+                      <div className="text-3xl font-bold text-[#F82E52] mb-2">
+                        {formatCurrency(IMOB_PLANS[key].annualPrice)}
+                      </div>
+                      <div className="text-sm text-gray-600">{IMOB_PLANS[key].name}</div>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-200">
-                  <td className="p-4 font-semibold text-gray-900">Preço/mês</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">Implantação</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-2xl font-bold text-[#F82E52]">
-                      {formatCurrency(IMOB_PLANS[key].annualPrice)}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="p-4 font-semibold text-gray-900">Implantação</td>
-                  {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-gray-700">
+                    <td key={key} className="p-6 text-center text-gray-600">
                       {formatCurrency(IMOB_IMPLEMENTATION)}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="p-4 font-semibold text-gray-900">Usuários</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">Usuários</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-gray-700">
+                    <td key={key} className="p-6 text-center text-gray-600">
                       {IMOB_PLANS[key].includedUsers}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="p-4 font-semibold text-gray-900">CRM + Site + App + Portais</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">CRM + Site + App + Portais</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center">
-                      <Check className="w-6 h-6 text-green-500 mx-auto" />
+                    <td key={key} className="p-6 text-center">
+                      <Check className="w-5 h-5 text-green-600 mx-auto" />
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="p-4 font-semibold text-gray-900">Blog + Landing</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">Blog + Landing</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center">
+                    <td key={key} className="p-6 text-center">
                       {key === "prime" ? (
-                        <X className="w-6 h-6 text-red-500 mx-auto" />
+                        <span className="text-gray-400">—</span>
                       ) : (
-                        <Check className="w-6 h-6 text-green-500 mx-auto" />
+                        <Check className="w-5 h-5 text-green-600 mx-auto" />
                       )}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="p-4 font-semibold text-gray-900">API</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">API</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center">
+                    <td key={key} className="p-6 text-center">
                       {key === "k2" ? (
-                        <Check className="w-6 h-6 text-green-500 mx-auto" />
+                        <Check className="w-5 h-5 text-green-600 mx-auto" />
                       ) : (
-                        <X className="w-6 h-6 text-red-500 mx-auto" />
+                        <span className="text-gray-400">—</span>
                       )}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="p-4 font-semibold text-gray-900">Treinamentos</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">Treinamentos</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-gray-700">
+                    <td key={key} className="p-6 text-center text-gray-600">
                       {key === "k2" ? "2x/ano" : "—"}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="p-4 font-semibold text-gray-900">Suporte VIP</td>
+                <tr className="border-b border-gray-100">
+                  <td className="p-6 text-gray-700">Suporte VIP</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-gray-700">
-                      {key === "prime" ? "Opcional" : <Check className="w-6 h-6 text-green-500 mx-auto" />}
+                    <td key={key} className="p-6 text-center">
+                      {key === "prime" ? (
+                        <span className="text-gray-600">Opcional</span>
+                      ) : (
+                        <Check className="w-5 h-5 text-green-600 mx-auto" />
+                      )}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="p-4 font-semibold text-gray-900">CS Dedicado</td>
+                <tr>
+                  <td className="p-6 text-gray-700">CS Dedicado</td>
                   {PLAN_KEYS.map((key) => (
-                    <td key={key} className="p-4 text-center text-gray-700">
-                      {key === "k2" ? <Check className="w-6 h-6 text-green-500 mx-auto" /> : "Opcional"}
+                    <td key={key} className="p-6 text-center">
+                      {key === "k2" ? (
+                        <Check className="w-5 h-5 text-green-600 mx-auto" />
+                      ) : (
+                        <span className="text-gray-600">Opcional</span>
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -503,56 +468,54 @@ export default function ImobPage() {
           </div>
 
           {/* Usuários Adicionais */}
-          <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Usuários adicionais:</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-300">
-                    <th className="p-3 text-left font-semibold text-gray-900">Faixa</th>
-                    {PLAN_KEYS.map((key) => (
-                      <th key={key} className="p-3 text-center font-semibold text-gray-900">
-                        {IMOB_PLANS[key].name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {IMOB_ADDITIONAL_USERS.prime.map((tier, idx) => (
-                    <tr key={idx} className="border-b border-gray-200">
-                      <td className="p-3 text-gray-700">
-                        {tier.to === Infinity ? `${tier.from}+` : `${tier.from}-${tier.to}`}
-                      </td>
-                      {PLAN_KEYS.map((key) => {
-                        const planTier = IMOB_ADDITIONAL_USERS[key][idx];
-                        return (
-                          <td key={key} className="p-3 text-center text-gray-700">
-                            {formatCurrency(planTier.price)}
-                          </td>
-                        );
-                      })}
-                    </tr>
+          <div className="bg-white rounded-lg shadow-sm p-8 mb-16">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-8">Usuários adicionais</h3>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="p-4 text-left text-gray-600 font-medium">Faixa</th>
+                  {PLAN_KEYS.map((key) => (
+                    <th key={key} className="p-4 text-center text-gray-600 font-medium">
+                      {IMOB_PLANS[key].name}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </thead>
+              <tbody>
+                {IMOB_ADDITIONAL_USERS.prime.map((tier, idx) => (
+                  <tr key={idx} className="border-b border-gray-100">
+                    <td className="p-4 text-gray-700">
+                      {tier.to === Infinity ? `${tier.from}+` : `${tier.from}-${tier.to}`}
+                    </td>
+                    {PLAN_KEYS.map((key) => {
+                      const planTier = IMOB_ADDITIONAL_USERS[key][idx];
+                      return (
+                        <td key={key} className="p-4 text-center text-gray-600">
+                          {formatCurrency(planTier.price)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {/* Add-ons */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white rounded-xl p-6 shadow-md border-2 border-pink-500">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Kenlo Leads</h3>
-              <p className="text-2xl font-bold text-[#F82E52] mb-2">R$ 497/mês</p>
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Leads</h3>
+              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 497/mês</div>
               <p className="text-gray-600">Distribuição com IA</p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border-2 border-green-500">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Kenlo Inteligência</h3>
-              <p className="text-2xl font-bold text-[#4ABD8D] mb-2">R$ 297/mês</p>
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Inteligência</h3>
+              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 297/mês</div>
               <p className="text-gray-600">BI Google Looker</p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border-2 border-blue-500">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Kenlo Assinatura</h3>
-              <p className="text-2xl font-bold text-blue-600 mb-2">R$ 37/mês</p>
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Kenlo Assinatura</h3>
+              <div className="text-3xl font-bold text-[#F82E52] mb-3">R$ 37/mês</div>
               <p className="text-gray-600">Digital, jurídica</p>
             </div>
           </div>
@@ -560,29 +523,28 @@ export default function ImobPage() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/calculadora">
-              <Button size="lg" className="bg-[#F82E52] hover:bg-[#d91d3f] text-white">
-                <Calculator className="w-5 h-5 mr-2" />
+              <Button size="lg" className="bg-[#F82E52] hover:bg-[#d92847] text-white">
                 Simular Proposta
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-[#F82E52] text-[#F82E52] hover:bg-pink-50">
+            <Button size="lg" variant="outline" className="border-[#F82E52] text-[#F82E52] hover:bg-red-50">
               Falar com Especialista
-              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* BLOCO 6: OBJEÇÕES */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-32">
         <div className="container max-w-4xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
               Perguntas diretas. Respostas diretas.
             </h2>
+            <p className="text-2xl text-gray-500">Sem enrolação.</p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-12">
             {[
               {
                 q: "Já tenho CRM",
@@ -609,11 +571,11 @@ export default function ImobPage() {
                 a: "7-14 dias. Migração + treinamento + go-live. Equipe dedicada. R$ 1.497 (única vez).",
               },
             ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <div key={idx} className="bg-gray-50 p-8 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
                   "{item.q}"
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{item.a}</p>
+                <p className="text-gray-600 leading-relaxed">{item.a}</p>
               </div>
             ))}
           </div>

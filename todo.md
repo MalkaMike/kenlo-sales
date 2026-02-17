@@ -4974,3 +4974,17 @@
 - [x] "E você?" em destaque visual máximo (text-2xl, bold, pink)
 - [x] Testar no navegador → Blocos 0, 1, 2 verificados visualmente
 - [ ] Salvar checkpoint
+
+## Redesign visual da página IMOB+Site (estilo Apple Keynote / Stripe / Linear)
+- [x] Remover fundos vermelhos pesados → usar branco/cinza suave (bg-white, bg-gray-50)
+- [x] Red (#F82E52) APENAS para números-chave, stats importantes, e CTAs
+- [x] Aumentar white space 40-60% (py-20 → py-32 = 128px, gaps 12-16)
+- [x] Aplicar grid de 2 colunas onde possível (Blocos 0, 1, 3)
+- [x] Tipografia: H1 text-5xl/6xl bold, H2 text-5xl, body text-lg/xl, números text-8xl (96px) dominantes
+- [x] Cards brancos com sombra suave (shadow-sm), sem bordas pesadas
+- [x] Tabela de preços clean com linhas finas (border-gray-100/200)
+- [x] FAQ com espaçamento generoso entre perguntas (space-y-12)
+- [x] Seção "Kenlo em números": números text-8xl red, centrados, descrição text-xl abaixo
+- [x] Sentimento final: Premium, estratégico, estruturado, líder de mercado ✓
+- [x] Testar no navegador → Todos os 6 blocos verificados visualmente
+- [ ] Salvar checkpoint
