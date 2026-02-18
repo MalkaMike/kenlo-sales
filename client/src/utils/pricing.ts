@@ -491,3 +491,15 @@ export const IMPLEMENTATION_COSTS = {
   cash: 0,
   combo: IMOB_IMPLEMENTATION, // Kombo implementation = single product implementation
 };
+
+/**
+ * Calculate prepaid leads cost (R$1.30/lead/month for annual/biennial plans)
+ * @param totalLeads - Total number of leads per month
+ * @param frequency - Payment frequency (annual or biennial)
+ * @returns Monthly cost for prepaid leads
+ */
+export function calculatePrepaidLeads(totalLeads: number, frequency: PaymentFrequency): number {
+  if (frequency !== "annual" && frequency !== "biennial") return 0;
+  const monthlyPricePerLead = 1.30;
+  return totalLeads * monthlyPricePerLead;
+}

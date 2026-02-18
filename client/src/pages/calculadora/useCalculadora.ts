@@ -87,6 +87,7 @@ export function useCalculadora() {
   const [frequency, setFrequency] = useState<PaymentFrequency>("annual");
   const [prepayAdditionalUsers, setPrepayAdditionalUsers] = useState(false);
   const [prepayAdditionalContracts, setPrepayAdditionalContracts] = useState(false);
+  const [prepayAdditionalLeads, setPrepayAdditionalLeads] = useState(false);
 
   // ─── Quote & UI State ───────────────────────────────────────────────────────
   const [showQuoteInfoDialog, setShowQuoteInfoDialog] = useState(false);
@@ -120,6 +121,7 @@ export function useCalculadora() {
     setFrequency("annual");
     setPrepayAdditionalUsers(false);
     setPrepayAdditionalContracts(false);
+    setPrepayAdditionalLeads(false);
     setSelectedPlan(null);
     setImobPlan("k");
     setLocPlan("k");
@@ -269,6 +271,8 @@ export function useCalculadora() {
     setPrepayAdditionalUsers,
     prepayAdditionalContracts,
     setPrepayAdditionalContracts,
+    prepayAdditionalLeads,
+    setPrepayAdditionalLeads,
 
     // Kombo
     activeKombo,

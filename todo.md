@@ -5638,3 +5638,77 @@
 - [x] Add imports for PlaybooksPage, ScriptsPage, TreinamentosPage ✓
 - [x] Test navigation from Conteúdo dropdown menu (verified - all pages accessible) ✓
 - [ ] Save checkpoint
+
+## Homepage Strategic Improvements
+
+### 1. Add Social Proof Block
+- [ ] Add numbers block before CTA: +8,500 imobiliárias, +45 mil corretores, +40 bilhões VGV, +12 bilhões VGL
+- [ ] Add tagline: "Dia 14, essa comunidade se encontra"
+- [ ] Position block strategically before main CTA
+- [ ] Style with Kenlo Design System (clean, authoritative)
+
+### 2. Rewrite Value Proposition
+- [ ] Replace "IA. Omnichannel. Novas parcerias."
+- [ ] New copy: "A nova fase da Kenlo começa aqui. Plataforma. Inteligência Artificial. Marketplace. Um novo modelo de crescimento para imobiliárias."
+- [ ] Ensure stronger, more impactful messaging
+
+### 3. Reduce "O Lugar" Section Text by 40%
+- [ ] Identify current "O Lugar" section
+- [ ] Reduce text to: "Beyond The Club. Um dos espaços mais exclusivos de São Paulo. No dia 14, a Kenlo abre as portas para sua comunidade."
+- [ ] Remove romanticization, focus on impact
+
+### 4. Add Rational Benefits Block
+- [ ] Create "O que você leva desse evento" section
+- [ ] List benefits: Novas fontes de receita, IA aplicada à conversão, Novas parcerias integradas ao ecossistema, Networking estratégico
+- [ ] Position to shift perception from "evento bonito" to "evento necessário"
+- [ ] Target audience: donos, diretores, gestores financeiros (ROI-focused)
+
+### 5. Reposition Prizes as Exclusive Commercial Conditions
+- [ ] Replace "Até R$200.000 em prêmios e benefícios"
+- [ ] New copy: "Condições comerciais exclusivas liberadas apenas ao vivo"
+- [ ] More elegant, less retail-focused
+
+### 6. Final Testing
+- [ ] Test all changes in browser
+- [ ] Verify messaging impact and clarity
+- [ ] Save checkpoint
+
+## Implement Prepaid Leads Functionality
+
+### 1. Add Prepaid Leads Configuration
+- [x] Add prepaid leads price (R$1.30) to shared/pricing-values.json ✓
+- [x] Add prepaid leads to PREPAID_PRICING in shared/pricing-config.ts ✓
+- [x] Document prepaid leads logic similar to annual/biannual plans ✓
+- [x] Add calculatePrepaidLeads function ✓
+- [x] Ensure configuration is accessible across all pages ✓
+
+### 2. Update Calculator for Prepaid Leads
+- [ ] Add prepaid leads option to calculator interface
+- [ ] Implement calculation logic for prepaid leads
+- [ ] Show savings/benefits of prepaid leads vs post-paid
+- [ ] Update PDF generation to include prepaid leads
+
+### 3. Update Leads Add-on Page
+- [ ] Add prepaid leads pricing information to LeadsPage.tsx
+- [ ] Explain benefits of prepaid leads (R$1.30 vs regular price)
+- [ ] Update any other pages that reference leads pricing
+
+### 4. Final Testing
+- [ ] Test prepaid leads in calculator
+- [ ] Verify pricing calculations are correct
+- [ ] Test PDF generation with prepaid leads
+- [ ] Save checkpoint
+
+## Implement Prepaid Leads Functionality
+- [x] Add prepaid leads price (R$1.30) to shared/pricing-values.json ✓
+- [x] Add prepaid leads to PREPAID_PRICING in shared/pricing-config.ts ✓
+- [x] Add calculatePrepaidLeads function to pricing-config.ts ✓
+- [x] Add prepayAdditionalLeads state to useCalculadora hook ✓
+- [x] Add prepaid leads toggle in LeadsAddonCard (visible only for annual/biennial) ✓
+- [x] Show prepaid leads cost calculation (R$1.30 × leads × months) ✓
+- [x] Update WhatsAppRow to display prepaid vs postpaid pricing ✓
+- [x] Add visual indicator for prepaid leads in calculator summary ("Pré-pago" badge) ✓
+- [x] Export calculatePrepaidLeads from client/src/utils/pricing.ts ✓
+- [ ] Test prepaid leads functionality in calculator
+- [x] Update Leads add-on page with prepaid option information (added Pré-pagamento section) ✓
+- [ ] Save checkpoint

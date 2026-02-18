@@ -281,6 +281,11 @@ export const PREPAID_PRICING = {
     pricePerMonth: pricingValues.prepaidPricing.additionalContracts.pricePerMonth,
     availableFrequencies: pricingValues.prepaidPricing.additionalContracts.availableFrequencies as PaymentFrequency[],
   },
+  additionalLeads: {
+    product: pricingValues.prepaidPricing.additionalLeads.product as "imob",
+    pricePerMonth: pricingValues.prepaidPricing.additionalLeads.pricePerMonth,
+    availableFrequencies: pricingValues.prepaidPricing.additionalLeads.availableFrequencies as PaymentFrequency[],
+  },
 } as const;
 
 /**
@@ -317,6 +322,15 @@ export function calculatePrepaidContracts(quantity: number, frequency: PaymentFr
   if (!isPrepaidAvailable(frequency)) return 0;
   const months = getPrepaidMonths(frequency);
   return quantity * PREPAID_PRICING.additionalContracts.pricePerMonth * months;
+}
+
+/**
+ * Calculate prepaid total for additional leads
+ */
+export function calculatePrepaidLeads(quantity: number, frequency: PaymentFrequency): number {
+  if (!isPrepaidAvailable(frequency)) return 0;
+  const months = getPrepaidMonths(frequency);
+  return quantity * PREPAID_PRICING.additionalLeads.pricePerMonth * months;
 }
 
 // ============================================================================

@@ -84,6 +84,29 @@ function buildPricingData() {
     rows: additionalRows,
   });
 
+  // --- Pré-pagamento de Leads (planos anuais/bienais) ---
+  sections.push({
+    title: "Pré-pagamento de Leads (planos anuais/bienais)",
+    rows: [
+      {
+        feature: "Preço fixo por lead/mês",
+        value: "R$ 1,30/lead/mês",
+        highlight: true,
+        tooltip: "Preço fixo garantido para planos anuais e bienais",
+      },
+      {
+        feature: "Disponibilidade",
+        value: "Planos Anuais e Bienais",
+        tooltip: "Opção de pré-pagamento disponível apenas para contratos anuais e bienais",
+      },
+      {
+        feature: "Vantagens",
+        value: "Preço fixo + Economia vs pós-pago",
+        tooltip: "Garanta preço fixo e economize comparado ao modelo pós-pago por faixas",
+      },
+    ],
+  });
+
   // --- Funcionalidades Incluídas ---
   sections.push({
     title: "Funcionalidades Incluídas",
