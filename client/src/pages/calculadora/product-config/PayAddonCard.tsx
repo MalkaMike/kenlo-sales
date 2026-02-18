@@ -26,7 +26,19 @@ export function PayAddonCard() {
         <Switch
           id="pay"
           checked={addons.pay}
-          onCheckedChange={(checked) => setAddons({ ...addons, pay: checked })}
+          onCheckedChange={(checked) => {
+            setAddons({ ...addons, pay: checked });
+            // Bug fix: Reset boleto/split metrics when Pay is disabled
+            if (!checked) {
+              setMetrics({
+                ...metrics,
+                chargesBoletoToTenant: false,
+                boletoChargeAmount: 0,
+                chargesSplitToOwner: false,
+                splitChargeAmount: 0,
+              });
+            }
+          }}
           disabled={!isAddonAvailable("pay")}
         />
       </div>

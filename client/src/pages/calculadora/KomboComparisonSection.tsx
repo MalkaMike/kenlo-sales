@@ -17,6 +17,7 @@ export function KomboComparisonSection() {
     frequency,
     setProduct,
     setAddons,
+    setMetrics,
     setSelectedPlan,
     setSelectedPlans,
     setSelectedColumnsData,
@@ -103,8 +104,26 @@ export function KomboComparisonSection() {
                   seguros: false,
                   cash: false,
                 });
+                // Bug fix: Reset boleto/split metrics when all addons disabled
+                setMetrics({
+                  ...metrics,
+                  chargesBoletoToTenant: false,
+                  boletoChargeAmount: 0,
+                  chargesSplitToOwner: false,
+                  splitChargeAmount: 0,
+                });
               } else {
                 setAddons(newAddons);
+                // Bug fix: Reset boleto/split metrics when Pay is not included in Kombo
+                if (!newAddons.pay) {
+                  setMetrics({
+                    ...metrics,
+                    chargesBoletoToTenant: false,
+                    boletoChargeAmount: 0,
+                    chargesSplitToOwner: false,
+                    splitChargeAmount: 0,
+                  });
+                }
               }
             }
           }

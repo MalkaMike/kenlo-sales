@@ -5721,3 +5721,9 @@
 - [x] Implement top-selling products/add-ons ranking
 - [x] Add date range filter for dashboard
 - [x] Test dashboard with sample data
+
+## Bug Fixes - 18/02/2026
+- [x] BUG: Boleto pós-pago continua aparecendo após desabilitar Kenlo Pay (boletos devem aparecer SOMENTE quando Kenlo Pay está habilitado)
+- [x] BUG: PDF mostrando número errado de usuários para plano K2 (mostra 10 em vez de 15) - reportado por Cassia Barbosa
+- [x] BUG: PDF mostrando divergência no número de usuários (mostra 7 na parte superior e 5 inclusos abaixo) - reportado por Marina Yokoo
+- [x] Adicionar testes para os 3 bugs corrigidos

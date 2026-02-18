@@ -167,7 +167,9 @@ export function renderStrategicPage(
   c3Y = h2(doc, "Escopo Incluído", col3X, c3Y);
 
   const scopeItems: string[] = [];
-  if (data.imobUsers && data.imobUsers > 0) scopeItems.push(`${fmtNum(data.imobUsers)} usuários inclusos`);
+  // Bug fix: Show included users per plan, not total users entered
+  const includedImobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 7 : 15;
+  if (data.imobUsers && data.imobUsers > 0) scopeItems.push(`${fmtNum(includedImobUsers)} usuários inclusos`);
   if (data.contracts && data.contracts > 0) scopeItems.push(`${fmtNum(data.contracts)} contratos sob gestão`);
   if (selAddons.includes("assinatura")) scopeItems.push(`${ADDONS.assinaturas.includedSignatures} assinaturas digitais`);
   if (data.wantsWhatsApp) scopeItems.push(`${ADDONS.leads.includedWhatsAppLeads} conversas WhatsApp/mês`);

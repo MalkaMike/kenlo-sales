@@ -196,11 +196,11 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
 
   const scopeItems: string[] = [];
   if (showImob) {
-    const imobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 5 : 10;
+    const imobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 7 : 15;
     scopeItems.push(`${imobUsers} usuários inclusos`);
   }
   if (showLoc) {
-    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 175 : 400;
+    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 175 : 400;  // Verified: matches pricing-values.json
     scopeItems.push(`${locContracts} contratos inclusos`);
   }
   if (selAddons.includes("leads")) scopeItems.push("WhatsApp integrado");
