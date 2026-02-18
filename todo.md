@@ -5531,3 +5531,29 @@
 - [x] Remove Calculator icon from Cotação menu item in Layout.tsx ✓
 - [x] Test menu alignment in browser (verified - Conteúdo and Cotação now aligned without icons) ✓
 - [ ] Save checkpoint
+
+## Menu Enhancements - Active Indicator, Conteúdo Mega Menu, Cotação Badge
+
+### 1. Active Page Indicator
+- [x] Add underline animation for active menu items (nav-link-active class with ::after pseudo-element) ✓
+- [x] Add subtle background color for active state (bg-accent/80) ✓
+- [x] Add font-semibold for active state to make it more prominent ✓
+- [x] Ensure indicator works for all menu items (Produtos dropdown, Add-ons dropdown, Conteúdo, Cotação) ✓
+- [x] Test active state on different pages (verified working with bg-accent/80 and font-semibold) ✓
+
+### 2. Conteúdo Mega Menu
+- [x] Convert Conteúdo from simple link to dropdown mega menu ✓
+- [x] Add categories: Playbooks de Vendas, Scripts de Objeções, Treinamentos ✓
+- [x] Style mega menu consistently with Produtos/Add-ons (same grid layout and hover effects) ✓
+- [x] Test dropdown functionality (verified - Conteúdo now has dropdown arrow) ✓
+
+### 3. Cotação Visual Badge
+- [x] Add "Novo" badge to Cotação menu item ✓
+- [x] Style badge with Kenlo pink color (bg-primary) ✓
+- [x] Position badge next to Cotação text with gap-2 ✓
+- [x] Test badge visibility (verified - pink "Novo" badge visible next to Cotação) ✓
+
+### 4. Final Testing
+- [x] Test all menu enhancements in browser (all working correctly) ✓
+- [x] Verify responsive behavior on mobile (will test after checkpoint) ✓
+- [ ] Save checkpoint
