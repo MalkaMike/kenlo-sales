@@ -5610,3 +5610,31 @@
 - [x] Test global search with Ctrl+S shortcut (verified - search icon visible in header) ✓
 - [x] Test Performance page metrics display (page already exists with full implementation) ✓
 - [ ] Save checkpoint
+
+## Create Content Pages for Playbooks, Scripts, and Treinamentos
+### 1. Playbooks Page
+- [x] Create PlaybooksPage.tsx with structured layout ✓
+- [x] Add sales playbook materials (discovery, qualification, presentation, closing) ✓
+- [x] Include downloadable PDF templates (Download buttons added) ✓
+- [x] Add breadcrumbs navigation ✓
+- [x] Style consistently with Kenlo Design System ✓
+
+### 2. Scripts Page
+- [x] Create ScriptsPage.tsx with structured layout ✓
+- [x] Add objection handling scripts by category (Preço, Timing, Confiança, Necessidade, Decisão) ✓
+- [x] Include common objections and responses (15 scripts total) ✓
+- [x] Add breadcrumbs navigation ✓
+- [x] Style consistently with Kenlo Design System ✓
+
+### 3. Treinamentos Page
+- [x] Create TreinamentosPage.tsx with structured layout ✓
+- [x] Add training materials (5 modules: Onboarding, Demo, Negotiation, Product Knowledge, Consultative Sales) ✓
+- [x] Include onboarding resources for new sales reps (8-week learning path) ✓
+- [x] Add breadcrumbs navigation ✓
+- [x] Style consistently with Kenlo Design System ✓
+
+### 4. Update Routes
+- [x] Add routes for /conteudo/playbooks, /conteudo/scripts, /conteudo/treinamentos in App.tsx ✓
+- [x] Add imports for PlaybooksPage, ScriptsPage, TreinamentosPage ✓
+- [x] Test navigation from Conteúdo dropdown menu (verified - all pages accessible) ✓
+- [ ] Save checkpoint
