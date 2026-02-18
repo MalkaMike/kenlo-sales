@@ -5712,3 +5712,12 @@
 - [ ] Test prepaid leads functionality in calculator
 - [x] Update Leads add-on page with prepaid option information (added Pré-pagamento section) ✓
 - [ ] Save checkpoint
+
+## Conversion Dashboard
+- [x] Create database schema for quotes and conversions tracking
+- [x] Build conversion dashboard page with metrics
+- [x] Implement conversion rate by salesperson chart
+- [x] Implement average ticket value metric
+- [x] Implement top-selling products/add-ons ranking
+- [x] Add date range filter for dashboard
+- [x] Test dashboard with sample data

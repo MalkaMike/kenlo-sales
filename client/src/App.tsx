@@ -36,6 +36,7 @@ import ConteudoPage from "./pages/ConteudoPage";
 import PlaybooksPage from "./pages/conteudo/PlaybooksPage";
 import ScriptsPage from "./pages/conteudo/ScriptsPage";
 import TreinamentosPage from "./pages/conteudo/TreinamentosPage";
+import ConversionDashboardPage from "./pages/ConversionDashboardPage";
 
 function Router() {
   return (
@@ -79,6 +80,8 @@ function Router() {
               <Route path="/historico" component={HistoricoPage} />
               {/* Performance */}
               <Route path="/performance" component={PerformancePage} />
+              {/* Conversion Dashboard */}
+              <Route path="/conversao" component={ConversionDashboardPage} />
               {/* Profile */}
               <Route path="/perfil" component={ProfilePage} />
               {/* Pricing Admin */}

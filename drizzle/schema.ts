@@ -155,6 +155,14 @@ export const quotes = mysqlTable("quotes", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   /** Soft delete timestamp - null means active, set means deleted */
   deletedAt: timestamp("deletedAt"),
+  
+  /** Conversion tracking */
+  /** Status of the quote: pending, won (closed deal), lost */
+  status: mysqlEnum("status", ["pending", "won", "lost"]).default("pending").notNull(),
+  /** Date when the deal was won or lost */
+  closedAt: timestamp("closedAt"),
+  /** Notes about why deal was won or lost */
+  closureNotes: text("closureNotes"),
 });
 
 export type Quote = typeof quotes.$inferSelect;
