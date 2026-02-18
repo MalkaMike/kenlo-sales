@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Menu, FileText, Package, Layers, User, Users, LogOut, Settings, BookOpen, BarChart3, ShieldCheck } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { cn } from "@/lib/utils";
@@ -216,6 +217,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             </NavigationMenuList>
           </NavigationMenu>
+
+          {/* Global Search */}
+          <GlobalSearch />
 
           {/* User Profile / Login Button */}
           <UserProfileButton />
