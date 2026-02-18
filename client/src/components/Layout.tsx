@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, FileText, Package, Layers, User, Users, LogOut, Settings, BookOpen, BarChart3, ShieldCheck, Play, Calculator } from "lucide-react";
+import { Menu, FileText, Package, Layers, User, Users, LogOut, Settings, BookOpen, BarChart3, ShieldCheck } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -146,7 +146,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/conteudo" && "bg-accent text-primary"
                     )}
                   >
-                    <Play className="w-4 h-4 mr-2" />
                     Conteúdo
                   </Link>
                 </NavigationMenuLink>
@@ -162,7 +161,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       location === "/calculadora" && "bg-accent text-primary"
                     )}
                   >
-                    <Calculator className="w-4 h-4 mr-2" />
                     Cotação
                   </Link>
                 </NavigationMenuLink>

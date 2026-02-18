@@ -5517,3 +5517,17 @@
 - [x] Add breadcrumbs to SitePage.tsx ✓
 - [x] Test breadcrumbs on all pages (verified on Leads and Site/CMS - all working correctly) ✓
 - [ ] Save checkpoint
+
+## Authentication Domain Restriction
+- [x] Check current OAuth implementation for domain restrictions (already implemented correctly in server/_core/oauth.ts) ✓
+- [x] Implement email domain whitelist (@laik.com.br, @kenlo.com.br, @i-value.com.br) - already implemented ✓
+- [x] Add access denied page for unauthorized domains (already exists at /acesso-negado) ✓
+- [ ] Test login with allowed domain
+- [ ] Test login with blocked domain
+- [ ] Save checkpoint
+
+## Remove Icons from Conteúdo and Cotação Menu Items
+- [x] Remove Play icon from Conteúdo menu item in Layout.tsx ✓
+- [x] Remove Calculator icon from Cotação menu item in Layout.tsx ✓
+- [x] Test menu alignment in browser (verified - Conteúdo and Cotação now aligned without icons) ✓
+- [ ] Save checkpoint
