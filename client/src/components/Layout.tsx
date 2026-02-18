@@ -51,8 +51,7 @@ const addons = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  const { user, isAdmin } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -325,10 +324,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
                 )}
                 {isAdmin && (
-                  <li><Link href="/admin/pricing" className="footer-link-hover inline-block flex items-center gap-1"><Settings className="w-3 h-3" />Configurar Preços</Link></li>
+                  <li><Link href="/admin/pricing" className="footer-link-hover inline-block">Configurar Preços</Link></li>
                 )}
                 {isAdmin && (
-                  <li><Link href="/admin/users" className="footer-link-hover inline-block flex items-center gap-1"><Users className="w-3 h-3" />Gestão de Usuários</Link></li>
+                  <li><Link href="/admin/users" className="footer-link-hover inline-block">Gestão de Usuários</Link></li>
                 )}
               </ul>
             </div>
@@ -344,7 +343,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 // User Profile Button Component
 function UserProfileButton() {
-  const { user, isAuthenticated, loading, logout } = useAuth();
+  const { user, isAuthenticated, loading, logout, isAdmin } = useAuth();
 
   if (loading) {
     return null;
@@ -385,7 +384,7 @@ function UserProfileButton() {
             Meu Perfil
           </Link>
         </DropdownMenuItem>
-        {user.role === "admin" && (
+        {isAdmin && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
@@ -398,14 +397,12 @@ function UserProfileButton() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/admin/pricing" className="flex items-center">
-                <Settings className="w-4 h-4 mr-2" />
+              <Link href="/admin/pricing">
                 Configurar Preços
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/admin/users" className="flex items-center">
-                <Users className="w-4 h-4 mr-2" />
+              <Link href="/admin/users">
                 Gestão de Usuários
               </Link>
             </DropdownMenuItem>

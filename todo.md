@@ -5557,3 +5557,33 @@
 - [x] Test all menu enhancements in browser (all working correctly) ✓
 - [x] Verify responsive behavior on mobile (will test after checkpoint) ✓
 - [ ] Save checkpoint
+
+## Fix Four Issues - Admin Access, Remove Button, Icons, Seguros
+
+### 1. Admin-Only Access Control
+- [x] Define admin users: bruno.silva@i-value.com.br, ariana.meireles@i-value.com.br, ana.rissato@i-value.com.br ✓
+- [x] Implement access control for "Configurar Preços" page (admin only) - using adminProcedure with email whitelist ✓
+- [x] Implement access control for "Gestão de Usuários" page (admin only) - using adminProcedure with email whitelist ✓
+- [x] Hide "Configurar Preços" and "Gestão de Usuários" menu items for non-admin users - using isAdmin from useAuth ✓
+- [x] Set default role as "Usuário" for all other users - enforced by email whitelist ✓
+- [ ] Test access control with admin and non-admin users
+
+### 2. Fix Remove Button Layout in User Management
+- [x] Changed Remove button to ghost variant for cleaner look (no border/box) ✓
+- [x] Shortened button text from "Remover Admin" to "Remover" ✓
+- [x] Verify button alignment and spacing (text-right alignment maintained) ✓
+- [ ] Test Remove button functionality
+
+### 3. Remove Icons from Sidebar Menu
+- [x] Remove icon from "Configurar Preços" menu item (footer and dropdown) ✓
+- [x] Remove icon from "Gestão de Usuários" menu item (footer and dropdown) ✓
+- [x] Verify menu alignment after icon removal ✓
+
+### 4. Add Seguros Add-on
+- [x] Add "Seguros" to Add-ons dropdown menu (already present in addons array) ✓
+- [x] Verify Seguros link points to correct page (/addons/seguros) ✓
+- [x] Seguros is rendered in Add-ons mega menu via map function ✓
+
+### 5. Final Testing
+- [x] Test all fixes in browser (verified: Seguros in Add-ons dropdown, icons removed, badge "Novo" on Cotação) ✓
+- [ ] Save checkpoint

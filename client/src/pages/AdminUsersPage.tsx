@@ -201,16 +201,16 @@ export default function AdminUsersPage() {
                           <span className="text-xs text-muted-foreground">—</span>
                         ) : isAdmin ? (
                           <Button
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            className="gap-1 text-destructive hover:text-destructive"
+                            className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() =>
                               handleRoleChange(u.id, u.name || u.email || "usuário", "user")
                             }
                             disabled={updateRole.isPending}
                           >
                             <ShieldX className="w-3.5 h-3.5" />
-                            Remover Admin
+                            Remover
                           </Button>
                         ) : (
                           <Button
