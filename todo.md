@@ -5831,3 +5831,15 @@
 ## Filtros Performance - Excluir dados de teste
 - [x] Excluir cotações de "Updated Name Test", "Mastr Admin", "Mickael Malka" da Performance
 - [x] Excluir todas as cotações anteriores a 18/02/2026 da Performance
+
+## Sistema de Upload de Logo para Evento
+- [ ] Página pública de upload de logo acessível via link único (usuário já identificado pelo email)
+- [ ] Quando usuário confirmou presença mas não mandou logo, página mostra "Nos mande seu logo"
+- [ ] Upload de logo com preview e confirmação
+- [ ] Armazenar logo no S3 e vincular ao registro do convidado
+- [ ] Email separado após confirmação de presença pedindo o logo ("presente especial dedicado")
+- [ ] Lembrete semanal automático por email até o logo ser enviado
+- [ ] Link no email leva direto para a página de upload já identificado
+
+## Remover todos os ícones (i) da tabela Kombo
+- [x] Remover todos os tooltips/ícones (i) da tabela de comparação Kombo

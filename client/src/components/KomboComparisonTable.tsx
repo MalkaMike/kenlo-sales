@@ -14,7 +14,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Star, Info, CheckCircle2, Sparkles, Plus, X, Minus, RotateCcw } from "lucide-react";
+import { Check, Star, CheckCircle2, Sparkles, Plus, X, Minus, RotateCcw } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -535,10 +535,6 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                 <tr className="border-b border-gray-200 bg-white">
                   <th className="text-left py-2 px-2 bg-white"></th>
                   {columns.map((col, colIndex) => {
-                    const isKomboCol = !col.isCustom && col.id !== "none";
-                    const tooltipData = isKomboCol && col.id in KOMBO_DEFINITIONS
-                      ? KOMBO_DEFINITIONS[col.id as Exclude<KomboId, "none">]?.tooltipInfo
-                      : null;
                     const isFirstCustom = col.isCustom && colIndex === 1 + komboColumnCount;
 
                     return (
@@ -567,7 +563,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               <X className="w-3 h-3" />
                             </button>
                           )}
-                          {isKomboCol && (
+                          {(!col.isCustom && col.id !== "none") && (
                             <button
                               onClick={(e) => { e.stopPropagation(); hideKombo(col.id as KomboId); }}
                               className="absolute top-1 right-1 p-0.5 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500 transition-colors"
@@ -586,29 +582,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               />
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1">
-                              <span className="font-bold text-gray-900">{col.shortName}</span>
-                              {tooltipData && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Info className="w-4 h-4 text-gray-400 hover:text-primary cursor-help" />
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top" className="max-w-[280px] p-3">
-                                      <div className="space-y-2 text-left">
-                                        <p className="font-semibold text-sm">{tooltipData.description}</p>
-                                        <div className="text-xs space-y-1">
-                                          <p><span className="font-medium">Inclui:</span> {tooltipData.includes.join(", ")}</p>
-                                          <p><span className="font-medium">Desconto:</span> {tooltipData.discountText}</p>
-                                          <p><span className="font-medium">Serviços Premium:</span> {tooltipData.premiumServices}</p>
-                                          <p><span className="font-medium">Implantação:</span> {tooltipData.implementation}</p>
-                                        </div>
-                                      </div>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}
-                            </div>
+                            <span className="font-bold text-gray-900">{col.shortName}</span>
                           )}
                           {col.discount > 0 && (
                             <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
@@ -715,56 +689,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             }
                           `}
                         >
-                          {row.key === "training" ? (
-                            <span className="inline-flex items-center gap-1">
-                              {row.label}
-                              <TooltipProvider><Tooltip><TooltipTrigger asChild><Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" /></TooltipTrigger>
-                                <TooltipContent side="top" className="max-w-[240px] p-3">
-                                  <div className="space-y-1.5 text-left">
-                                    <p className="font-semibold text-sm">Disponível no K²</p>
-                                    <p className="text-xs">Online: <span className="font-bold">R$2.000</span></p>
-                                    <p className="text-xs">Presencial: <span className="font-bold">R$3.000</span></p>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip></TooltipProvider>
-                            </span>
-                          ) : row.key === "vipSupport" ? (
-                            <span className="inline-flex items-center gap-1">
-                              {row.label}
-                              <TooltipProvider><Tooltip><TooltipTrigger asChild><Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" /></TooltipTrigger>
-                                <TooltipContent side="top" className="max-w-[240px] p-3">
-                                  <div className="space-y-1.5 text-left">
-                                    <p className="font-semibold text-sm">Preço de ref:</p>
-                                    <p className="text-xs"><span className="font-bold">R$97</span>/mês (ciclo anual)</p>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip></TooltipProvider>
-                            </span>
-                          ) : row.key === "dedicatedCS" ? (
-                            <span className="inline-flex items-center gap-1">
-                              {row.label}
-                              <TooltipProvider><Tooltip><TooltipTrigger asChild><Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" /></TooltipTrigger>
-                                <TooltipContent side="top" className="max-w-[240px] p-3">
-                                  <div className="space-y-1.5 text-left">
-                                    <p className="font-semibold text-sm">Preço de ref:</p>
-                                    <p className="text-xs"><span className="font-bold">R$297</span>/mês (ciclo anual)</p>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip></TooltipProvider>
-                            </span>
-                          ) : row.key === "komboDiscount" ? (
-                            <span className="inline-flex items-center gap-1">
-                              {row.label}
-                              <TooltipProvider><Tooltip><TooltipTrigger asChild><Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" /></TooltipTrigger>
-                                <TooltipContent side="top" className="max-w-[260px] p-3">
-                                  <div className="space-y-1.5 text-left">
-                                    <p className="font-semibold text-sm">Desconto Kombo</p>
-                                    <p className="text-xs text-muted-foreground">Desconto aplicado ao combinar produtos e add-ons em um Kombo. Passe o mouse sobre o valor para ver detalhes do Kombo.</p>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip></TooltipProvider>
-                            </span>
-                          ) : (row as any).sublabel ? (
+                          {(row as any).sublabel ? (
                             <div className="flex flex-col items-start">
                               <span style={{fontSize: '12px'}}>{row.label}</span>
                               <span
