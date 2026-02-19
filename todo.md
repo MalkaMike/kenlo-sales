@@ -5783,3 +5783,10 @@
 - [x] Dentro de Descontos: Desconto Ciclo (vermelho negativo)
 - [x] Renomear "Mensalidade Pré-Pago" para "Mensalidade Final Pré-Pago" como última linha da seção Descontos
 - [x] Remover as 3 linhas de breakdown antigas que estavam acima da Mensalidade Pré-Pago
+
+## Ajustes Tabela Kombo - Reordenação e Renomeação
+- [x] Mover "Ciclo Pré-Pago" para DEPOIS da "Mensalidade Final Pré-Pago" (abaixo da seção Descontos)
+- [x] Renomear "Mensalidade antes dos descontos" → "Mensalidade (antes) Pré-Pago"
+- [x] Renomear "Mensalidade Final Pré-Pago" → "Mensalidade (depois) Pré-Pago"
+- [x] Remover ícone (i) do Desconto Ciclo nos valores numéricos
+- [x] Uniformizar tamanho de fonte em TODA a tabela (mesmo tamanho, bem alinhado)

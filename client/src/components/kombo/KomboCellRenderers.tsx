@@ -66,7 +66,7 @@ export function renderPlanCell(
       className={`flex flex-col items-center gap-0.5 ${isEditable ? "cursor-pointer group" : ""}`}
       onClick={isEditable ? (e) => ctx.handlePlanCellClick(ctx.colIndex, planType, e) : undefined}
     >
-      <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>
+      <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>
       <span className={`text-[9px] font-bold ${isEditable ? "text-primary group-hover:underline" : "text-gray-500"}`}>
         {currentPlan === "k2" ? <>K<sup className="text-[0.6em]">2</sup></> : currentPlan.toUpperCase()}
       </span>
@@ -85,11 +85,11 @@ export function renderAddonCell(
   if (ctx.isSuaSelecao) {
     if (["pay", "seguros", "cash"].includes(addonKey)) {
       const isOn = ctx.props.addons[addonKey as keyof typeof ctx.props.addons];
-      if (!isOn) return <span className="text-gray-300 text-sm">—</span>;
-      return <span className="font-medium text-gray-700 text-sm">{addonKey === "cash" ? "Grátis" : "Pós-pago"}</span>;
+      if (!isOn) return <span className="text-gray-300">—</span>;
+      return <span className="font-medium text-gray-700">{addonKey === "cash" ? "Grátis" : "Pós-pago"}</span>;
     }
-    if (price === null) return <span className="text-gray-300 text-sm">—</span>;
-    return <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>;
+    if (price === null) return <span className="text-gray-300">—</span>;
+    return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
   }
 
   // Kombo columns: fixed
@@ -99,14 +99,14 @@ export function renderAddonCell(
       const isIncluded = KOMBO_DEFINITIONS[effectiveKomboId]?.includedAddons.includes(addonKey);
       if (isIncluded) {
         const label = addonKey === "cash" ? "Grátis" : "Pós-pago";
-        return <span className="font-medium text-gray-700 text-sm">{label}</span>;
+        return <span className="font-medium text-gray-700">{label}</span>;
       }
-      return <span className="text-gray-300 text-sm">—</span>;
+      return <span className="text-gray-300">—</span>;
     }
     if (price !== null) {
-      return <span className="font-medium text-gray-700 text-sm">R$ {formatCurrency(price)}</span>;
+      return <span className="font-medium text-gray-700">R$ {formatCurrency(price)}</span>;
     }
-    return <span className="text-gray-300 text-sm">—</span>;
+    return <span className="text-gray-300">—</span>;
   }
 
   // Custom columns: toggleable
@@ -119,7 +119,7 @@ export function renderAddonCell(
         onClick={(e) => ctx.handleAddonCellClick(ctx.colIndex, addonKey, e)}
       >
         {isActive ? (
-          <span className="text-green-600 font-semibold text-xs group-hover:underline">{label}</span>
+          <span className="text-green-600 font-semibold group-hover:underline">{label}</span>
         ) : (
           <span className="text-gray-300 group-hover:text-gray-500 transition-colors">—</span>
         )}
@@ -135,7 +135,7 @@ export function renderAddonCell(
         className="cursor-pointer group"
         onClick={(e) => ctx.handleAddonCellClick(ctx.colIndex, addonKey, e)}
       >
-        <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
+        <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
           R$ {formatCurrency(price)}
         </span>
       </div>
@@ -160,7 +160,7 @@ export function renderPremiumCell(
   ctx: CellRenderContext
 ): React.ReactNode {
   if (priceOrLabel === "Incluído") {
-    return <span className="text-green-600 font-semibold text-xs">Incluído</span>;
+    return <span className="text-green-600 font-semibold">Incluído</span>;
   }
 
   // Custom columns (not Perso-Kombo): toggleable
@@ -171,7 +171,7 @@ export function renderPremiumCell(
           className="cursor-pointer group"
           onClick={(e) => ctx.handlePremiumCellClick(ctx.colIndex, serviceKey, e)}
         >
-          <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
+          <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
             R$ {formatCurrency(priceOrLabel)}
           </span>
         </div>
@@ -190,9 +190,9 @@ export function renderPremiumCell(
 
   // Non-custom columns
   if (typeof priceOrLabel === "number") {
-    return <span className="font-medium text-sm">R$ {formatCurrency(priceOrLabel)}</span>;
+    return <span className="font-medium">R$ {formatCurrency(priceOrLabel)}</span>;
   }
-  return <span className="text-gray-300 text-sm">—</span>;
+  return <span className="text-gray-300">—</span>;
 }
 
 // ─── Training Cell ───────────────────────────────────────────────────────────
@@ -200,9 +200,9 @@ export function renderPremiumCell(
 export function renderTrainingCell(ctx: CellRenderContext): React.ReactNode {
   const { column } = ctx;
 
-  if (column.trainingPrice === "Incluído") return <span className="text-green-600 font-semibold text-xs">Incluído</span>;
+  if (column.trainingPrice === "Incluído") return <span className="text-green-600 font-semibold">Incluído</span>;
   if (typeof column.trainingPrice === "string" && column.trainingPrice) {
-    return <span className="text-green-600 font-semibold text-xs">{column.trainingPrice}</span>;
+    return <span className="text-green-600 font-semibold">{column.trainingPrice}</span>;
   }
 
   // Custom columns (not Perso-Kombo): toggleable
@@ -213,7 +213,7 @@ export function renderTrainingCell(ctx: CellRenderContext): React.ReactNode {
           className="cursor-pointer group"
           onClick={(e) => ctx.handlePremiumCellClick(ctx.colIndex, "training", e)}
         >
-          <span className="font-medium text-gray-700 text-sm group-hover:line-through group-hover:text-red-400 transition-colors">
+          <span className="font-medium text-gray-700 group-hover:line-through group-hover:text-red-400 transition-colors">
             R$ {formatCurrency(column.trainingPrice)}
           </span>
         </div>
@@ -230,16 +230,16 @@ export function renderTrainingCell(ctx: CellRenderContext): React.ReactNode {
   }
 
   if (typeof column.trainingPrice === "number") {
-    return <span className="font-medium text-sm">R$ {formatCurrency(column.trainingPrice)}</span>;
+    return <span className="font-medium">R$ {formatCurrency(column.trainingPrice)}</span>;
   }
-  return <span className="text-gray-300 text-sm">—</span>;
+  return <span className="text-gray-300">—</span>;
 }
 
 // ─── Post-Paid Cells ─────────────────────────────────────────────────────────
 
 export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidUsers;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   if (pp.cost === 0) return (
     <div className="flex flex-col items-center">
       <span className="text-[10px] text-green-600 font-medium">No Plano</span>
@@ -278,7 +278,7 @@ export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode
 
 export function renderPostPaidContractsCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidContracts;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   if (pp.cost === 0) return (
     <div className="flex flex-col items-center">
       <span className="text-[10px] text-green-600 font-medium">No Plano</span>
@@ -317,7 +317,7 @@ export function renderPostPaidContractsCell(ctx: CellRenderContext): React.React
 
 export function renderPostPaidWhatsAppCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidWhatsApp;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   if (pp.cost === 0) return (
     <div className="flex flex-col items-center">
       <span className="text-[10px] text-green-600 font-semibold">Sem custos</span>
@@ -341,7 +341,7 @@ export function renderPostPaidWhatsAppCell(ctx: CellRenderContext): React.ReactN
 
 export function renderPostPaidAssinaturasCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidAssinaturas;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   if (pp.cost === 0) return (
     <div className="flex flex-col items-center">
       <span className="text-[10px] text-green-600 font-medium">No Plano</span>
@@ -359,7 +359,7 @@ export function renderPostPaidAssinaturasCell(ctx: CellRenderContext): React.Rea
 
 export function renderPostPaidBoletosCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidBoletos;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   return (
     <div className="flex flex-col items-center">
       <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/boleto</span>
@@ -371,7 +371,7 @@ export function renderPostPaidBoletosCell(ctx: CellRenderContext): React.ReactNo
 
 export function renderPostPaidSplitsCell(ctx: CellRenderContext): React.ReactNode {
   const pp = ctx.column.postPaidSplits;
-  if (!pp) return <span className="text-gray-300 text-xs">—</span>;
+  if (!pp) return <span className="text-gray-300">—</span>;
   return (
     <div className="flex flex-col items-center">
       <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2)}/split</span>
@@ -385,15 +385,15 @@ export function renderPostPaidSplitsCell(ctx: CellRenderContext): React.ReactNod
 
 export function renderMonthlyBeforeDiscountsCell(ctx: CellRenderContext): React.ReactNode {
   return (
-    <span className="text-xs text-muted-foreground">R$ {formatCurrency(ctx.column.monthlyBeforeDiscounts)}</span>
+    <span className="text-muted-foreground">R$ {formatCurrency(ctx.column.monthlyBeforeDiscounts)}</span>
   );
 }
 
 export function renderKomboDiscountCell(ctx: CellRenderContext): React.ReactNode {
   const amount = ctx.column.komboDiscountAmount;
-  if (!amount || amount <= 0) return <span className="text-gray-300 text-sm">—</span>;
+  if (!amount || amount <= 0) return <span className="text-gray-300">—</span>;
   return (
-    <span className="text-xs font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+    <span className="font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
   );
 }
 
@@ -407,52 +407,22 @@ const CYCLE_DISCOUNT_INFO: Record<PaymentFrequency, { label: string; explanation
 
 export function renderCycleDiscountCell(ctx: CellRenderContext): React.ReactNode {
   const amount = ctx.column.cycleDiscountAmount;
-  const freq: PaymentFrequency = ctx.overrides?.frequency || ctx.props.frequency;
-  const cycleInfo = CYCLE_DISCOUNT_INFO[freq];
 
   if (!amount || amount <= 0) {
-    // Even when no discount, show tooltip explaining why
-    if (freq === "annual") {
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-gray-300 text-sm cursor-help inline-flex items-center gap-1">
-                — <Info className="w-3 h-3 text-muted-foreground" />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-[250px] p-2">
-              <p className="text-xs">{cycleInfo.explanation}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    }
-    return <span className="text-gray-300 text-sm">—</span>;
+    return <span className="text-gray-300">—</span>;
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="text-xs font-semibold cursor-help inline-flex items-center gap-1" style={{ color: "var(--kenlo-red, #E11D48)" }}>
-            -R$ {formatCurrency(amount)}
-            <Info className="w-3 h-3" />
-          </span>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[250px] p-2">
-          <p className="text-xs font-medium">{cycleInfo.label} OFF</p>
-          <p className="text-xs text-muted-foreground mt-1">{cycleInfo.explanation}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <span className="font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>
+      -R$ {formatCurrency(amount)}
+    </span>
   );
 }
 
 export function renderTotalMonthlyCell(ctx: CellRenderContext): React.ReactNode {
   return (
     <div className="flex flex-col items-center gap-0">
-      <span className="font-bold text-sm">R$ {formatCurrency(ctx.column.totalMonthly)}</span>
+      <span className="font-bold">R$ {formatCurrency(ctx.column.totalMonthly)}</span>
       <span className="text-[9px] text-gray-400 font-normal">
         {ctx.column.subscriptionCount} {ctx.column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
       </span>
@@ -469,22 +439,22 @@ export function renderImplCell(rowKey: string, ctx: CellRenderContext): React.Re
   };
   const implLabel = implKeyMap[rowKey];
   const item = ctx.column.implBreakdown.find(b => b.label === implLabel);
-  if (!item) return <span className="text-gray-300 text-sm">—</span>;
+  if (!item) return <span className="text-gray-300">—</span>;
   if (item.free) {
-    return <span className="text-green-600 text-[10px] font-semibold">Ofertado</span>;
+    return <span className="text-green-600 font-semibold">Ofertado</span>;
   }
-  return <span className="text-xs text-gray-600">R$ {formatCurrency(item.cost)}</span>;
+  return <span className="text-gray-600">R$ {formatCurrency(item.cost)}</span>;
 }
 
 export function renderImplTotalCell(ctx: CellRenderContext): React.ReactNode {
-  return <span className="font-bold text-gray-700 text-sm">R$ {formatCurrency(ctx.column.implementation)}</span>;
+  return <span className="font-bold text-gray-700">R$ {formatCurrency(ctx.column.implementation)}</span>;
 }
 
 export function renderCycleTotalCell(ctx: CellRenderContext): React.ReactNode {
   const cycleLabel = CYCLE_LABELS[ctx.column.overrides?.frequency ?? ctx.props.frequency];
   return (
     <div className="flex flex-col items-center gap-0">
-      <span className="font-bold text-gray-800 text-sm">R$ {formatCurrency(ctx.column.cycleTotalValue)}</span>
+      <span className="font-bold text-gray-800">R$ {formatCurrency(ctx.column.cycleTotalValue)}</span>
       <span className="text-[9px] text-gray-400 font-normal">({cycleLabel})</span>
     </div>
   );
@@ -521,7 +491,7 @@ export function renderSavingsCell(ctx: CellRenderContext): React.ReactNode {
   if (savings <= 0) return null;
   const cycleLabel = CYCLE_LABELS[ctx.column.overrides?.frequency ?? ctx.props.frequency].toLowerCase();
   return (
-    <span className="text-[11px] text-green-600 font-semibold">
+    <span className="text-green-600 font-semibold">
       Economia de R$ {formatCurrency(savings)}/{cycleLabel}
     </span>
   );
@@ -530,18 +500,18 @@ export function renderSavingsCell(ctx: CellRenderContext): React.ReactNode {
 export function renderPostPaidTotalCell(ctx: CellRenderContext): React.ReactNode {
   if (ctx.column.postPaidTotal === 0) {
     const hasAnyPostPaid = ctx.column.postPaidUsers || ctx.column.postPaidContracts || ctx.column.postPaidWhatsApp || ctx.column.postPaidAssinaturas || ctx.column.postPaidBoletos || ctx.column.postPaidSplits;
-    if (!hasAnyPostPaid) return <span className="text-gray-300 text-xs">—</span>;
-    return <span className="text-[10px] text-green-600 font-semibold">Sem custos</span>;
+    if (!hasAnyPostPaid) return <span className="text-gray-300">—</span>;
+    return <span className="text-green-600 font-semibold">Sem custos</span>;
   }
   return (
-    <span className="text-[11px] text-amber-700 font-bold">R$ {ctx.column.postPaidTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
+    <span className="text-amber-700 font-bold">R$ {ctx.column.postPaidTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
   );
 }
 
 export function renderGrandTotalCell(ctx: CellRenderContext): React.ReactNode {
   const totalEstimate = ctx.column.totalMonthly + ctx.column.postPaidTotal;
   return (
-    <span className="text-[13px] font-extrabold" style={{color: '#151414'}}>R$ {totalEstimate.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
+    <span className="font-extrabold" style={{color: '#151414'}}>R$ {totalEstimate.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
   );
 }
 
@@ -577,8 +547,6 @@ export function getCellValue(rowKey: string, ctx: CellRenderContext): React.Reac
       return renderKomboDiscountCell(ctx);
     case "cycleDiscount":
       return renderCycleDiscountCell(ctx);
-    case "totalMonthly":
-      return renderTotalMonthlyCell(ctx);
     case "totalMonthlyFinal":
       return renderTotalMonthlyCell(ctx);
     case "implImob":

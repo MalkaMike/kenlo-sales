@@ -60,14 +60,12 @@ const rows = [
   { key: "vipSupport", label: "Suporte VIP", indent: true },
   { key: "dedicatedCS", label: "CS Dedicado", indent: true },
   { key: "training", label: "Treinamentos", indent: true },
-  { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, isMensalidadeRow: true },
-  { key: "cycle", label: "Ciclo Pré-Pago", isTotal: true, needsBottomSpacing: true },
-
   { key: "descontos", label: "Descontos", isHeader: true, needsTopSpacing: true },
-  { key: "monthlyBeforeDiscounts", label: "Mensalidade antes dos descontos", indent: true, isBreakdownRow: true },
+  { key: "monthlyBeforeDiscounts", label: "Mensalidade (antes) Pré-Pago", indent: true, isBreakdownRow: true },
   { key: "komboDiscount", label: "Desconto Kombo", indent: true, isDiscountRow: true, isBreakdownRow: true },
   { key: "cycleDiscount", label: "Desconto Ciclo", indent: true, isDiscountRow: true, isBreakdownRow: true },
-  { key: "totalMonthlyFinal", label: "Mensalidade Final Pré-Pago", isTotal: true, needsBottomSpacing: true, isMensalidadeRow: true },
+  { key: "totalMonthlyFinal", label: "Mensalidade (depois) Pré-Pago", isTotal: true, isMensalidadeRow: true },
+  { key: "cycle", label: "Ciclo Pré-Pago", isTotal: true, needsBottomSpacing: true },
 
   { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
   { key: "implImob", label: "Imob", indent: true },
@@ -693,9 +691,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                             ${row.indent ? "pl-8" : ""}
                             ${(row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
                             ${row.isHeader ? "font-semibold text-gray-700 text-xs"
-                              : (row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm"
+                              : (row as any).isGrandTotal ? "font-extrabold text-gray-800 text-xs"
                               : row.isTotal ? "font-bold text-gray-700 text-xs"
-                              : "text-gray-600 text-sm"
+                              : "text-gray-600 text-xs"
                             }
                           `}
                         >
@@ -772,7 +770,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                                   ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                                   : colIndex % 2 === 1 ? "bg-gray-50/50" : ""
-                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-sm" : row.isTotal ? "font-bold text-gray-700" : "text-gray-700"}`} style={{color: '#141313'}}
+                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-xs" : row.isTotal ? "font-bold text-gray-700 text-xs" : "text-gray-700 text-xs"}`} style={{color: '#141313'}}
                             >
                               {row.isHeader ? null : getCellValue(row.key, buildCellCtx(colIndex, col))}
                             </td>
