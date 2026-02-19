@@ -14,7 +14,7 @@ import * as Pricing from "@/utils/pricing";
 import { ADDONS } from "@shared/pricing-config";
 
 export function LeadsAddonCard() {
-  const { addons, setAddons, metrics, setMetrics, isAddonAvailable, frequency, prepayAdditionalLeads: prepayLeads, setPrepayAdditionalLeads: setPrepayLeads } = useCalc();
+  const { addons, setAddons, metrics, setMetrics, isAddonAvailable, frequency } = useCalc();
   const { cardRef, activeClass } = useAddonPulse(addons.leads);
 
   const waTiers = ADDONS.leads.additionalLeadsTiers;
@@ -190,37 +190,7 @@ export function LeadsAddonCard() {
             </div>
           </div>
         </div>
-        {/* Prepaid Leads Option (Annual/Biennial only) */}
-        {(frequency === "annual" || frequency === "biennial") && (
-          <div className="mt-3 pt-2 border-t border-gray-200/60">
-            <div className="flex items-center justify-between p-2 rounded-lg border bg-blue-50 border-blue-200">
-              <div className="flex flex-col">
-                <Label htmlFor="prepayLeads" className="text-xs font-medium text-gray-700 cursor-pointer">
-                  Pré-pagar Leads (R$1,30/lead/mês)
-                </Label>
-                <span className="text-[10px] text-gray-500 mt-0.5">
-                  Fixe o preço e economize vs pós-pago
-                </span>
-              </div>
-              <Switch
-                id="prepayLeads"
-                checked={prepayLeads}
-                onCheckedChange={setPrepayLeads}
-              />
-            </div>
-            {prepayLeads && totalLeads > 0 && (
-              <div className="mt-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/60">
-                <p className="text-xs font-medium text-gray-700">
-                  <span className="font-bold text-blue-600">{fmtNum(totalLeads)} leads</span> pré-pagos por{" "}
-                  <span className="font-bold text-blue-600">{frequency === "annual" ? "12 meses" : "24 meses"}</span>
-                </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  Total: <span className="font-bold">R${fmtPrice(totalLeads * 1.30 * (frequency === "annual" ? 12 : 24))}</span>
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+
       </div>
     </div>
   );

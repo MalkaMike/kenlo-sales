@@ -5813,3 +5813,6 @@
 - [x] Recalcular selectedColumnsData no momento da exportação do PDF (não usar dados em cache)
 - [x] Garantir que imobUsers no PDF sempre reflita o valor atual do formulário
 - [x] Adicionar validação de integridade dos dados antes da geração do PDF
+
+## Remover toggle Pré-pagar Leads da configuração
+- [x] Remover opção "Pré-pagar Leads (R$1,30/lead/mês)" da seção de configuração (já existe na tabela pós-pago)
