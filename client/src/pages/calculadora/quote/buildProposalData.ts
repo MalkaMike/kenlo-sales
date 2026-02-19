@@ -173,6 +173,26 @@ export function buildProposalData(input: ProposalDataInput): Record<string, any>
     totalAnnual,
     implantationFee,
     firstYearTotal,
+
+    // Price breakdown (for PDF transparency)
+    monthlyBeforeDiscounts: lineItems.reduce(
+      (sum: number, item: LineItem) => sum + item.monthlyRefSemKombo,
+      0
+    ),
+    komboDiscountAmount: activeKombo !== "none"
+      ? lineItems.reduce(
+          (sum: number, item: LineItem) => sum + (item.monthlyRefComKombo - item.monthlyRefSemKombo),
+          0
+        )
+      : 0,
+    cycleDiscountAmount: lineItems.reduce(
+      (sum: number, item: LineItem) => {
+        const ref = activeKombo !== "none" ? item.monthlyRefComKombo : item.monthlyRefSemKombo;
+        const final = activeKombo !== "none" ? item.priceComKombo : item.priceSemKombo;
+        return sum + (final - ref);
+      },
+      0
+    ),
     postPaidTotal,
     revenueFromBoletos,
     revenueFromInsurance,

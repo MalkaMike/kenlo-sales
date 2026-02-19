@@ -89,6 +89,12 @@ export interface ProposalData {
   vipPrice?: number;
   csPrice?: number;
   postPaidBreakdown?: string;
+  /** Price breakdown: monthly price before any discounts (mensal reference) */
+  monthlyBeforeDiscounts?: number;
+  /** Price breakdown: kombo discount amount (negative) */
+  komboDiscountAmount?: number;
+  /** Price breakdown: cycle discount amount (negative) */
+  cycleDiscountAmount?: number;
 }
 
 // ── Design-system colors ────────────────────────────────────────

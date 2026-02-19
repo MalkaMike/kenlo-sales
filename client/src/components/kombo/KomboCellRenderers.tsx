@@ -4,11 +4,17 @@
  */
 
 import React from "react";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Info } from "lucide-react";
 import { KOMBO_DEFINITIONS } from "./komboDefinitions";
-import { formatCurrency, CYCLE_LABELS } from "./komboColumnCalculators";
+import { formatCurrency, CYCLE_LABELS, PAYMENT_FREQUENCY_MULTIPLIERS } from "./komboColumnCalculators";
 import { ColumnCycleSelector } from "./ColumnCycleSelector";
 import { PREPAID_PRICING } from "@shared/pricing-config";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type {
   PaymentFrequency,
   KomboId,
@@ -391,11 +397,55 @@ export function renderKomboDiscountCell(ctx: CellRenderContext): React.ReactNode
   );
 }
 
+/** Cycle discount percentage labels relative to annual base */
+const CYCLE_DISCOUNT_INFO: Record<PaymentFrequency, { label: string; explanation: string }> = {
+  monthly: { label: "+25%", explanation: "Ciclo Mensal: +25% sobre o valor anual de referência" },
+  semestral: { label: "+12,5%", explanation: "Ciclo Semestral: +12,5% sobre o valor anual de referência" },
+  annual: { label: "Referência", explanation: "Ciclo Anual: preço de referência (sem ajuste)" },
+  biennial: { label: "-12,5%", explanation: "Ciclo Bienal: -12,5% sobre o valor anual de referência" },
+};
+
 export function renderCycleDiscountCell(ctx: CellRenderContext): React.ReactNode {
   const amount = ctx.column.cycleDiscountAmount;
-  if (!amount || amount <= 0) return <span className="text-gray-300 text-sm">—</span>;
+  const freq: PaymentFrequency = ctx.overrides?.frequency || ctx.props.frequency;
+  const cycleInfo = CYCLE_DISCOUNT_INFO[freq];
+
+  if (!amount || amount <= 0) {
+    // Even when no discount, show tooltip explaining why
+    if (freq === "annual") {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-gray-300 text-sm cursor-help inline-flex items-center gap-1">
+                — <Info className="w-3 h-3 text-muted-foreground" />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] p-2">
+              <p className="text-xs">{cycleInfo.explanation}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    return <span className="text-gray-300 text-sm">—</span>;
+  }
+
   return (
-    <span className="text-xs font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="text-xs font-semibold cursor-help inline-flex items-center gap-1" style={{ color: "var(--kenlo-red, #E11D48)" }}>
+            -R$ {formatCurrency(amount)}
+            <Info className="w-3 h-3" />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] p-2">
+          <p className="text-xs font-medium">{cycleInfo.label} OFF</p>
+          <p className="text-xs text-muted-foreground mt-1">{cycleInfo.explanation}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 

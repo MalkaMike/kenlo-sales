@@ -158,12 +158,61 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
   doc.setTextColor(...rgb(C.textMuted));
   doc.setFont("helvetica", "normal");
   doc.text(`Contrato ${cycleDisplay}`, rightX, rY);
-  rY += 6;
+  rY += 12;
+
+  // ── Price Breakdown ──
+  const monthlyBefore = data.monthlyBeforeDiscounts || 0;
+  const komboDisc = data.komboDiscountAmount || 0;
+  const cycleDisc = data.cycleDiscountAmount || 0;
+
+  if (monthlyBefore > 0) {
+    // Mensalidade antes dos descontos
+    doc.setFontSize(7);
+    doc.setTextColor(...rgb(C.textMuted));
+    doc.setFont("helvetica", "normal");
+    doc.text("Mensalidade antes dos descontos:", rightX, rY);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...rgb(C.dark));
+    doc.text(fmt(monthlyBefore), rightX + rightW - 5, rY, { align: "right" });
+    rY += 10;
+
+    // Desconto Kombo (only if there is one)
+    if (komboDisc !== 0) {
+      const komboPercent = data.komboDiscount || 0;
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...rgb(C.textMuted));
+      doc.text(`Desconto Kombo (${komboPercent}%):`, rightX, rY);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...rgb(C.primary));
+      doc.text(`-${fmt(Math.abs(komboDisc))}`, rightX + rightW - 5, rY, { align: "right" });
+      rY += 10;
+    }
+
+    // Desconto Ciclo (only if not monthly)
+    if (cycleDisc !== 0) {
+      const cyclePercLabel = cycleDisplay === "Semestral" ? "+10%" : cycleDisplay === "Anual" ? "Refer\u00eancia" : cycleDisplay === "Bienal" ? "-12,5%" : "+25%";
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...rgb(C.textMuted));
+      doc.text(`Desconto Ciclo (${cyclePercLabel}):`, rightX, rY);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...rgb(C.primary));
+      doc.text(`-${fmt(Math.abs(cycleDisc))}`, rightX + rightW - 5, rY, { align: "right" });
+      rY += 10;
+    }
+
+    // Divider line
+    doc.setDrawColor(...rgb(C.border));
+    doc.setLineWidth(0.3);
+    doc.line(rightX, rY, rightX + rightW, rY);
+    rY += 6;
+  }
 
   doc.setFontSize(7);
   doc.setTextColor(...rgb(C.textMuted));
   doc.setFont("helvetica", "normal");
-  doc.text("Investimento Total:", rightX, rY);
+  doc.text("Investimento Mensal:", rightX, rY);
   rY += 4;
 
   // Big price

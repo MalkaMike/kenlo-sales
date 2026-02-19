@@ -5765,3 +5765,12 @@
 - [x] Renderizar desconto Kombo e Ciclo em vermelho negativo (cor Kenlo)
 - [x] Esconder linhas de desconto quando valor é zero (mostra "—")
 - [x] Verificação matemática: antes - kombo - ciclo = final ✓
+
+## Breakdown de Preço no PDF + Tooltip Desconto Ciclo (CONCLUÍDO)
+- [x] Incluir breakdown de preço no PDF da proposta (Mensalidade antes dos descontos, Desconto Kombo, Desconto Ciclo)
+- [x] Adicionar tooltip no "Desconto Ciclo" na tabela Kombo mostrando a porcentagem do ciclo (ex: "20% OFF - Ciclo Anual")
+- [x] Adicionar campos monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount ao ProposalPrintData
+- [x] Calcular breakdown no buildProposalData
+- [x] Renderizar breakdown no pdfContractSection (client-side PDF)
+- [x] Adicionar campos ao schema Zod do proposalsRouter (server-side)
+- [x] Tooltip com ícone Info e explicação do ciclo (Mensal +25%, Semestral +12.5%, Anual referência, Bienal -12.5%)

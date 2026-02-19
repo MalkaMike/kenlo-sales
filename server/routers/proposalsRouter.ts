@@ -114,6 +114,9 @@ export const proposalsRouter = router({
       vipPrice: z.number().optional(),
       csPrice: z.number().optional(),
       postPaidBreakdown: z.string().optional(),
+      monthlyBeforeDiscounts: z.number().optional(),
+      komboDiscountAmount: z.number().optional(),
+      cycleDiscountAmount: z.number().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const oauthUser = ctx.user;
