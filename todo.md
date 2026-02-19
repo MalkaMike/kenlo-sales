@@ -5804,3 +5804,12 @@
 ## Assinaturas condicional + Tooltip Desconto Kombo
 - [x] Ocultar "Assinaturas" na seção Pós-Pago quando o add-on Assinatura está desligado
 - [x] Tooltip no "Desconto Kombo" (título e valores) mostrando composição do kombo e porcentagem aplicada
+
+## Bugs Reportados por Usuários (18/02/26)
+- [x] Bug Cassia Barbosa: PDF proposta K2 com 15 usuários mostra 10 usuários no PDF
+- [x] Bug Marina Yokoo: Divergência no PDF da proposta (valores inconsistentes)
+
+## Fix PDF Data Divergence (Bugs Cassia/Marina)
+- [x] Recalcular selectedColumnsData no momento da exportação do PDF (não usar dados em cache)
+- [x] Garantir que imobUsers no PDF sempre reflita o valor atual do formulário
+- [x] Adicionar validação de integridade dos dados antes da geração do PDF

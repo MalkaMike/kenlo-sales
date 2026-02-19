@@ -8,6 +8,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { downloadProposalPDF } from "@/utils/generateProposalPDF";
 import { useCalc } from "./CalculadoraContext";
 import { buildProposalData, buildQuoteSaveData } from "./quote/buildProposalData";
+import { recalculateSelectedColumns, validateProposalDataIntegrity } from "./quote/recalculateColumns";
 
 export function QuoteInfoHandler() {
   const notification = useNotification();
@@ -41,6 +42,19 @@ export function QuoteInfoHandler() {
     try {
       notification.info("Gerando PDF", "Por favor aguarde...", 0);
 
+      // Recalculate selected columns data fresh to avoid stale state
+      const freshSelectedColumnsData = recalculateSelectedColumns({
+        product,
+        imobPlan,
+        locPlan,
+        addons,
+        frequency,
+        metrics,
+        selectedColumnsData,
+        prepayAdditionalUsers,
+        prepayAdditionalContracts,
+      });
+
       // Build proposal data using the pure utility function
       const input = {
         quoteInfo,
@@ -55,13 +69,19 @@ export function QuoteInfoHandler() {
         businessNature,
         prepayAdditionalUsers,
         prepayAdditionalContracts,
-        selectedColumnsData,
+        selectedColumnsData: freshSelectedColumnsData,
         getLineItems,
         calculateTotalImplementation,
         calculatePrepaymentAmount,
       };
 
       const proposalData = buildProposalData(input);
+
+      // Validate data integrity between main proposal and selected columns
+      const warnings = validateProposalDataIntegrity(proposalData, freshSelectedColumnsData);
+      if (warnings.length > 0) {
+        console.warn("[PDF Export] Data integrity warnings:", warnings);
+      }
 
       // Download the PDF
       await downloadProposalPDF(proposalData as any);
