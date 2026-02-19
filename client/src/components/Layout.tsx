@@ -138,61 +138,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
               {/* Conteúdo */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  Conteúdo
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4">
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/conteudo/playbooks"
-                          className={cn(
-                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location === "/conteudo/playbooks" && "bg-accent"
-                          )}
-                        >
-                          <div className="text-sm font-medium leading-none">Playbooks de Vendas</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Guias completos para fechar mais negócios
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/conteudo/scripts"
-                          className={cn(
-                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location === "/conteudo/scripts" && "bg-accent"
-                          )}
-                        >
-                          <div className="text-sm font-medium leading-none">Scripts de Objeções</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Respostas prontas para as principais objeções
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/conteudo/treinamentos"
-                          className={cn(
-                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location === "/conteudo/treinamentos" && "bg-accent"
-                          )}
-                        >
-                          <div className="text-sm font-medium leading-none">Treinamentos</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Vídeos e materiais de capacitação
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/conteudo"
+                    className={cn(
+                      "nav-link-hover",
+                      location === "/conteudo" && "text-primary"
+                    )}
+                  >
+                    Conteúdo
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Performance */}
@@ -344,7 +300,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h4 className="font-semibold mb-4">Ferramentas</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
-                <li><Link href="/playbook" className="footer-link-hover inline-block">Playbook de Vendas</Link></li>
                 <li><Link href="/conteudo" className="footer-link-hover inline-block">Conteúdo</Link></li>
                 <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
                 {isAdmin && (

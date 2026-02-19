@@ -21,9 +21,7 @@ const searchData = [
   { title: "Kenlo Cash", description: "Antecipação de aluguel", href: "/addons/cash", category: "Add-ons" },
   
   // Content
-  { title: "Playbooks de Vendas", description: "Materiais de vendas e estratégias", href: "/conteudo/playbooks", category: "Conteúdo" },
-  { title: "Scripts de Objeções", description: "Respostas para objeções comuns", href: "/conteudo/scripts", category: "Conteúdo" },
-  { title: "Treinamentos", description: "Materiais de treinamento do time", href: "/conteudo/treinamentos", category: "Conteúdo" },
+  { title: "Conteúdo", description: "Vídeos e materiais de capacitação", href: "/conteudo", category: "Conteúdo" },
   
   // Tools
   { title: "Cotação", description: "Simulador de propostas", href: "/calculadora", category: "Ferramentas" },

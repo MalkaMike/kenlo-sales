@@ -31,11 +31,7 @@ import AcessoNegado from "./pages/AcessoNegado";
 import ProfilePage from "./pages/ProfilePage";
 import PricingAdminPage from "./pages/PricingAdminPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
-import PlaybookPage from "./pages/PlaybookPage";
 import ConteudoPage from "./pages/ConteudoPage";
-import PlaybooksPage from "./pages/conteudo/PlaybooksPage";
-import ScriptsPage from "./pages/conteudo/ScriptsPage";
-import TreinamentosPage from "./pages/conteudo/TreinamentosPage";
 import ConversionDashboardPage from "./pages/ConversionDashboardPage";
 import ClientRegistryPage from "./pages/ClientRegistryPage";
 
@@ -67,13 +63,8 @@ function Router() {
               <Route path="/addons/cash" component={CashPage} />
               {/* Kombos */}
               <Route path="/kombos" component={KombosPage} />
-              {/* Sales Playbook */}
-              <Route path="/playbook" component={PlaybookPage} />
               {/* Conteúdo */}
               <Route path="/conteudo" component={ConteudoPage} />
-              <Route path="/conteudo/playbooks" component={PlaybooksPage} />
-              <Route path="/conteudo/scripts" component={ScriptsPage} />
-              <Route path="/conteudo/treinamentos" component={TreinamentosPage} />
               {/* Calculator / Cotação */}
               <Route path="/calculadora" component={CalculadoraPage} />
               <Route path="/cotacao" component={CalculadoraPage} />

@@ -5843,3 +5843,12 @@
 
 ## Remover todos os ícones (i) da tabela Kombo
 - [x] Remover todos os tooltips/ícones (i) da tabela de comparação Kombo
+
+## Limpar seção Conteúdo
+- [x] Remover Playbook, Script, Treinamento da seção Conteúdo
+- [x] Manter apenas os 3 vídeos com links
+- [x] Remover rotas /playbook, /conteudo/playbooks, /conteudo/scripts, /conteudo/treinamentos
+- [x] Remover dropdown Conteúdo do menu - agora é link direto para /conteudo
+- [x] Remover link Playbook de Vendas do footer
+- [x] Atualizar GlobalSearch removendo sub-páginas de Conteúdo
+- [x] Deletar arquivos: PlaybookPage.tsx, PlaybooksPage.tsx, ScriptsPage.tsx, TreinamentosPage.tsx
