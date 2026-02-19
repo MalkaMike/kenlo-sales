@@ -5727,3 +5727,20 @@
 - [x] BUG: PDF mostrando número errado de usuários para plano K2 (mostra 10 em vez de 15) - reportado por Cassia Barbosa
 - [x] BUG: PDF mostrando divergência no número de usuários (mostra 7 na parte superior e 5 inclusos abaixo) - reportado por Marina Yokoo
 - [x] Adicionar testes para os 3 bugs corrigidos
+
+## Centralizar Valores Inclusos no PDF (CONCLUÍDO)
+- [x] Substituir valores hardcoded de usuários inclusos (prime=2, k=7, k2=15) por import de IMOB_PLANS
+- [x] Substituir valores hardcoded de contratos inclusos (prime=100, k=175, k2=400) por import de LOC_PLANS
+- [x] Aplicar em pdfContractSection.ts (client-side PDF)
+- [x] Aplicar em pdfStrategicPage.ts (server-side PDF)
+- [x] Verificar se há outros arquivos com valores hardcoded
+- [x] Rodar todos os testes para garantir que nada quebrou
+
+## Auditoria Completa - Fonte Única de Verdade e Testes Exaustivos (CONCLUÍDO)
+- [x] Eliminar TODOS os valores hardcoded de preços/inclusos em PDF e calculadora - usar pricing-config como fonte única
+- [x] Testar TODAS as combinações de toggle on/off: IMOB, LOC, IMOB+LOC com cada add-on individualmente e em conjunto
+- [x] Testar TODOS os ciclos de pagamento (Mensal, Semestral, Anual, Bienal) com cada combinação
+- [x] Testar toggle on → off → on para cada produto e add-on (garantir reset correto)
+- [x] Verificar que PDF representa EXATAMENTE os números da seleção do usuário
+- [x] Verificar alinhamento entre pricing-config e todos os cálculos da calculadora
+- [x] Zero bugs tolerados

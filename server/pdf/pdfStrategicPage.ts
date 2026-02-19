@@ -2,7 +2,7 @@
  * Page 2 — Strategic Overview (3-column grid) for the server-side PDF.
  */
 
-import { PREMIUM_SERVICES, ADDONS } from "@shared/pricing-config";
+import { PREMIUM_SERVICES, ADDONS, IMOB_PLANS, LOC_PLANS, type PlanTier } from "@shared/pricing-config";
 import {
   type ProposalData, type DerivedData,
   C, M, CW, GAP, fmt, fmtNum,
@@ -167,10 +167,15 @@ export function renderStrategicPage(
   c3Y = h2(doc, "Escopo Incluído", col3X, c3Y);
 
   const scopeItems: string[] = [];
-  // Bug fix: Show included users per plan, not total users entered
-  const includedImobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 7 : 15;
+  // Use centralized pricing-config as single source of truth for included quantities
+  const imobPlanKey = (data.imobPlan?.toLowerCase() || "k") as PlanTier;
+  const includedImobUsers = IMOB_PLANS[imobPlanKey].includedUsers;
   if (data.imobUsers && data.imobUsers > 0) scopeItems.push(`${fmtNum(includedImobUsers)} usuários inclusos`);
-  if (data.contracts && data.contracts > 0) scopeItems.push(`${fmtNum(data.contracts)} contratos sob gestão`);
+  if (data.contracts && data.contracts > 0) {
+    const locPlanKey = (data.locPlan?.toLowerCase() || "k") as PlanTier;
+    const includedLocContracts = LOC_PLANS[locPlanKey].includedContracts;
+    scopeItems.push(`${fmtNum(includedLocContracts)} contratos inclusos`);
+  }
   if (selAddons.includes("assinatura")) scopeItems.push(`${ADDONS.assinaturas.includedSignatures} assinaturas digitais`);
   if (data.wantsWhatsApp) scopeItems.push(`${ADDONS.leads.includedWhatsAppLeads} conversas WhatsApp/mês`);
   if (selAddons.includes("inteligencia")) scopeItems.push("1 usuário Explorer");

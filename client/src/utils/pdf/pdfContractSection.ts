@@ -12,6 +12,7 @@ import {
   addonNameMap, allAddonKeys,
   getDerivedFlags,
 } from "./pdfHelpers";
+import { IMOB_PLANS, LOC_PLANS, type PlanTier } from "@shared/pricing-config";
 
 export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY?: number): number {
   // Estimate ~300pt needed for the contract layout; only add a new page if insufficient space
@@ -196,12 +197,14 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
 
   const scopeItems: string[] = [];
   if (showImob) {
-    const imobUsers = data.imobPlan?.toLowerCase() === "prime" ? 2 : data.imobPlan?.toLowerCase() === "k" ? 7 : 15;
-    scopeItems.push(`${imobUsers} usuários inclusos`);
+    const imobPlanKey = (data.imobPlan?.toLowerCase() || "k") as PlanTier;
+    const imobIncludedUsers = IMOB_PLANS[imobPlanKey].includedUsers;
+    scopeItems.push(`${imobIncludedUsers} usuários inclusos`);
   }
   if (showLoc) {
-    const locContracts = data.locPlan?.toLowerCase() === "prime" ? 100 : data.locPlan?.toLowerCase() === "k" ? 175 : 400;  // Verified: matches pricing-values.json
-    scopeItems.push(`${locContracts} contratos inclusos`);
+    const locPlanKey = (data.locPlan?.toLowerCase() || "k") as PlanTier;
+    const locIncludedContracts = LOC_PLANS[locPlanKey].includedContracts;
+    scopeItems.push(`${locIncludedContracts} contratos inclusos`);
   }
   if (selAddons.includes("leads")) scopeItems.push("WhatsApp integrado");
   if (data.implantationFee > 0) scopeItems.push(`Implantação: ${fmt(data.implantationFee)}`);
