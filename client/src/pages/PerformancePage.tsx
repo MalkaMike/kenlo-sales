@@ -197,7 +197,19 @@ export default function PerformancePage() {
   };
 
   // ── Filter logic ────────────────────────────────────────────────────────
-  const filteredQuotes = (quotes as QuoteRecord[] | undefined)?.filter((quote) => {
+  // ── Excluded test users and pre-launch data ────────────────────────────
+  const EXCLUDED_VENDORS = ["Updated Name Test", "Mastr Admin", "Mickael Malka"];
+  const PERFORMANCE_START_DATE = new Date("2026-02-18T00:00:00");
+
+  const cleanQuotes = (quotes as QuoteRecord[] | undefined)?.filter((quote) => {
+    // Exclude test users
+    if (quote.vendorName && EXCLUDED_VENDORS.includes(quote.vendorName)) return false;
+    // Exclude quotes before Feb 18, 2026
+    if (new Date(quote.createdAt) < PERFORMANCE_START_DATE) return false;
+    return true;
+  });
+
+  const filteredQuotes = cleanQuotes?.filter((quote) => {
     if (filterVendor && filterVendor !== "all" && quote.vendorName !== filterVendor) return false;
     if (filterKombo && filterKombo !== "all") {
       const quoteKombo = quote.komboId || "sem_kombo";
@@ -233,8 +245,8 @@ export default function PerformancePage() {
     setFilterKombo("all");
   };
 
-  const vendorNames = quotes
-    ? Array.from(new Set((quotes as QuoteRecord[]).map((q) => q.vendorName).filter(Boolean) as string[]))
+  const vendorNames = cleanQuotes
+    ? Array.from(new Set(cleanQuotes.map((q) => q.vendorName).filter(Boolean) as string[]))
     : [];
 
   // ── Computed metrics ────────────────────────────────────────────────────

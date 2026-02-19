@@ -5827,3 +5827,7 @@
 - [x] Admin pode visualizar lista completa de clientes com email
 - [x] Admin pode limpar nomes de clientes individualmente
 - [x] Admin pode limpar nomes de clientes em lote
+
+## Filtros Performance - Excluir dados de teste
+- [x] Excluir cotações de "Updated Name Test", "Mastr Admin", "Mickael Malka" da Performance
+- [x] Excluir todas as cotações anteriores a 18/02/2026 da Performance
