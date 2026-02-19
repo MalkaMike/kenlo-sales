@@ -5793,3 +5793,6 @@
 
 ## Destaque Visual - Mensalidade (depois) Pré-Pago
 - [x] Adicionar cor de fundo destacada na linha "Mensalidade (depois) Pré-Pago" para enfatizar o preço final
+
+## Ocultar Boletos/Splits quando Pay está off
+- [x] Esconder linhas "Boletos" e "Splits" da seção Pós-Pago quando o add-on Kenlo Pay estiver desligado

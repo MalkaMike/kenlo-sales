@@ -668,6 +668,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
               {/* ── Body ── */}
               <tbody>
                 {rows.map((row) => {
+                  // Hide Boletos and Splits rows when Pay add-on is off
+                  if ((row.key === "postpaidBoletos" || row.key === "postpaidSplits") && !props.addons.pay) {
+                    return null;
+                  }
                   const needsSpacerAfter = (row as any).needsBottomSpacing;
                   return (
                     <React.Fragment key={`row-fragment-${row.key}`}>
