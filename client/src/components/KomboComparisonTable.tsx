@@ -60,7 +60,10 @@ const rows = [
   { key: "vipSupport", label: "Suporte VIP", indent: true },
   { key: "dedicatedCS", label: "CS Dedicado", indent: true },
   { key: "training", label: "Treinamentos", indent: true },
-  { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsTopSpacing: true, needsBottomSpacing: true, isMensalidadeRow: true },
+  { key: "monthlyBeforeDiscounts", label: "Mensalidade", sublabel: "antes dos descontos", needsTopSpacing: true, isBreakdownRow: true },
+  { key: "komboDiscount", label: "Desconto Kombo", isDiscountRow: true, isBreakdownRow: true },
+  { key: "cycleDiscount", label: "Desconto Ciclo", isDiscountRow: true, isBreakdownRow: true },
+  { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsBottomSpacing: true, isMensalidadeRow: true },
 
   { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
   { key: "implImob", label: "Imob", indent: true },

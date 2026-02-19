@@ -5754,3 +5754,14 @@
 - [x] Ao clicar "Individual", pré-seleciona o nome do usuário logado por conveniência
 - [x] Qualquer usuário pode selecionar qualquer vendedor no dropdown individual
 - [x] 1093 testes passando
+
+## Breakdown de Preço na Tabela Kombo (CONCLUÍDO)
+- [x] Adicionar linha "Mensalidade antes dos descontos" acima da linha "Mensalidade Pré-Pago"
+- [x] Adicionar linha "Desconto Kombo" com valor negativo em vermelho Kenlo
+- [x] Adicionar linha "Desconto Ciclo" com valor negativo em vermelho Kenlo
+- [x] As 3 linhas explicam como se chega no preço final da Mensalidade
+- [x] Adicionar campos monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount ao KomboColumnData
+- [x] Calcular esses valores em calculateNoKomboColumn, calculateKomboColumn e calculateCustomColumn
+- [x] Renderizar desconto Kombo e Ciclo em vermelho negativo (cor Kenlo)
+- [x] Esconder linhas de desconto quando valor é zero (mostra "—")
+- [x] Verificação matemática: antes - kombo - ciclo = final ✓

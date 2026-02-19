@@ -279,6 +279,18 @@ export const calculateNoKomboColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
+  // ── Discount breakdown ──────────────────────────────────────────────────────
+  let monthlyBeforeDiscounts = 0;
+  if (product === "imob" || product === "both") monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], "monthly");
+  if (product === "loc" || product === "both") monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[locPlan], "monthly");
+  if (addons.leads && (product === "imob" || product === "both")) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.leads, "monthly");
+  if (addons.inteligencia) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, "monthly");
+  if (addons.assinatura) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.assinatura, "monthly");
+  if (typeof vipSupportPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+  if (typeof dedicatedCSPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+  const komboDiscountAmount = 0; // No kombo = no kombo discount
+  const cycleDiscountAmount = monthlyBeforeDiscounts - totalMonthly;
+
   const hasImob = product === "imob" || product === "both";
   const hasLoc = product === "loc" || product === "both";
   const postPaid = calculatePostPaidData(
@@ -297,6 +309,7 @@ export const calculateNoKomboColumn = (
     ...postPaid,
     prePaidUsersActive: false, prePaidContractsActive: false,
     implBreakdown, subscriptionCount, totalMonthly,
+    monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
     overrides: overrides ? overrides : { frequency } as ColumnOverrides,
@@ -442,6 +455,30 @@ export const calculateKomboColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
+  // ── Discount breakdown for Kombo columns ────────────────────────────────────
+  // monthlyBeforeDiscounts = all items at monthly frequency, no kombo discount
+  let monthlyBeforeDiscounts = 0;
+  if (komboIncludesImob) monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], "monthly");
+  if (komboIncludesLoc) monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[locPlan], "monthly");
+  if (kombo.includedAddons.includes("leads")) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.leads, "monthly");
+  if (kombo.includedAddons.includes("inteligencia")) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, "monthly");
+  if (kombo.includedAddons.includes("assinatura")) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.assinatura, "monthly");
+  if (typeof vipSupportPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+  if (typeof dedicatedCSPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+
+  // Step 1: Apply cycle discount (monthly → selected frequency, no kombo)
+  let monthlyAfterCycleOnly = 0;
+  if (komboIncludesImob) monthlyAfterCycleOnly += calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], frequency);
+  if (komboIncludesLoc) monthlyAfterCycleOnly += calculatePrice(PLAN_ANNUAL_PRICES[locPlan], frequency);
+  if (kombo.includedAddons.includes("leads")) monthlyAfterCycleOnly += calculatePrice(ADDON_ANNUAL_PRICES.leads, frequency);
+  if (kombo.includedAddons.includes("inteligencia")) monthlyAfterCycleOnly += calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, frequency);
+  if (kombo.includedAddons.includes("assinatura")) monthlyAfterCycleOnly += calculatePrice(ADDON_ANNUAL_PRICES.assinatura, frequency);
+  if (typeof vipSupportPrice === "number") monthlyAfterCycleOnly += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+  if (typeof dedicatedCSPrice === "number") monthlyAfterCycleOnly += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+
+  const cycleDiscountAmount = monthlyBeforeDiscounts - monthlyAfterCycleOnly;
+  const komboDiscountAmount = monthlyAfterCycleOnly - totalMonthly;
+
   const postPaid = calculatePostPaidData(
     props, imobPlan, locPlan,
     komboIncludesImob, komboIncludesLoc,
@@ -457,7 +494,9 @@ export const calculateKomboColumn = (
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
     prePaidUsersActive: false, prePaidContractsActive: false,
-    implBreakdown, subscriptionCount, totalMonthly, theoreticalImplementation, implementation,
+    implBreakdown, subscriptionCount, totalMonthly,
+    monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
+    theoreticalImplementation, implementation,
     annualEquivalent, cycleTotalValue, cycleMonths,
     overrides: overrides ? overrides : { frequency } as ColumnOverrides,
   };
@@ -578,6 +617,18 @@ export const calculateCustomColumn = (
   if (inteligenciaPrice !== null) subscriptionCount++;
   if (assinaturaPrice !== null) subscriptionCount++;
 
+  // ── Discount breakdown for custom columns (no kombo) ─────────────────────
+  let monthlyBeforeDiscounts = 0;
+  if (product === "imob" || product === "both") monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[imobPlan], "monthly");
+  if (product === "loc" || product === "both") monthlyBeforeDiscounts += calculatePrice(PLAN_ANNUAL_PRICES[locPlan], "monthly");
+  if (addons.leads && (product === "imob" || product === "both")) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.leads, "monthly");
+  if (addons.inteligencia) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.inteligencia, "monthly");
+  if (addons.assinatura) monthlyBeforeDiscounts += calculatePrice(ADDON_ANNUAL_PRICES.assinatura, "monthly");
+  if (typeof vipSupportPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+  if (typeof dedicatedCSPrice === "number") monthlyBeforeDiscounts += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+  const komboDiscountAmount = 0;
+  const cycleDiscountAmount = monthlyBeforeDiscounts - totalMonthly;
+
   const hasImob = product === "imob" || product === "both";
   const hasLoc = product === "loc" || product === "both";
   const postPaid = calculatePostPaidData(
@@ -602,6 +653,7 @@ export const calculateCustomColumn = (
     ...postPaid,
     prePaidUsersActive: false, prePaidContractsActive: false,
     implBreakdown, subscriptionCount, totalMonthly,
+    monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
     overrides,

@@ -86,6 +86,9 @@ export interface KomboColumnData {
   subscriptionCount: number;
   implBreakdown: { label: string; cost: number; free: boolean }[];
   totalMonthly: number;
+  monthlyBeforeDiscounts: number;
+  komboDiscountAmount: number;
+  cycleDiscountAmount: number;
   theoreticalImplementation: number;
   implementation: number;
   annualEquivalent: number;

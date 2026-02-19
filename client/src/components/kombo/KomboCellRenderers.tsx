@@ -377,6 +377,28 @@ export function renderPostPaidSplitsCell(ctx: CellRenderContext): React.ReactNod
 
 // ─── Total Cells ─────────────────────────────────────────────────────────────
 
+export function renderMonthlyBeforeDiscountsCell(ctx: CellRenderContext): React.ReactNode {
+  return (
+    <span className="text-xs text-muted-foreground">R$ {formatCurrency(ctx.column.monthlyBeforeDiscounts)}</span>
+  );
+}
+
+export function renderKomboDiscountCell(ctx: CellRenderContext): React.ReactNode {
+  const amount = ctx.column.komboDiscountAmount;
+  if (!amount || amount <= 0) return <span className="text-gray-300 text-sm">—</span>;
+  return (
+    <span className="text-xs font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+  );
+}
+
+export function renderCycleDiscountCell(ctx: CellRenderContext): React.ReactNode {
+  const amount = ctx.column.cycleDiscountAmount;
+  if (!amount || amount <= 0) return <span className="text-gray-300 text-sm">—</span>;
+  return (
+    <span className="text-xs font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+  );
+}
+
 export function renderTotalMonthlyCell(ctx: CellRenderContext): React.ReactNode {
   return (
     <div className="flex flex-col items-center gap-0">
@@ -499,6 +521,12 @@ export function getCellValue(rowKey: string, ctx: CellRenderContext): React.Reac
       return renderTrainingCell(ctx);
     case "cycle":
       return renderCycleCell(ctx);
+    case "monthlyBeforeDiscounts":
+      return renderMonthlyBeforeDiscountsCell(ctx);
+    case "komboDiscount":
+      return renderKomboDiscountCell(ctx);
+    case "cycleDiscount":
+      return renderCycleDiscountCell(ctx);
     case "totalMonthly":
       return renderTotalMonthlyCell(ctx);
     case "implImob":
