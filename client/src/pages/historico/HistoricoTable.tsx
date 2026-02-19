@@ -12,6 +12,7 @@ import {
   FileText, Link2, Download, Calendar, Building2, Home, Package,
   TrendingUp, Loader2, ExternalLink, Trash2,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency, parseJSON, productNames, planNames, frequencyNames } from "./historicoConstants";
@@ -23,11 +24,15 @@ interface Props {
   error: any;
   hasActiveFilters: boolean;
   onDeleteClick: (id: number) => void;
+  isAdmin?: boolean;
+  selectedIds?: Set<number>;
+  onToggleSelect?: (id: number) => void;
 }
 
 // ── Desktop Table ───────────────────────────────────────────────
 export function HistoricoDesktopTable({
   quotes, filteredQuotes, isLoading, error, hasActiveFilters, onDeleteClick,
+  isAdmin, selectedIds, onToggleSelect,
 }: Props) {
   return (
     <Card className="hidden md:block">
@@ -55,6 +60,7 @@ export function HistoricoDesktopTable({
             <Table>
               <TableHeader>
                 <TableRow>
+                  {isAdmin && <TableHead className="w-10"></TableHead>}
                   <TableHead>Data</TableHead>
                   <TableHead>Ação</TableHead>
                   <TableHead>Cliente</TableHead>
@@ -74,7 +80,14 @@ export function HistoricoDesktopTable({
               </TableHeader>
               <TableBody>
                 {filteredQuotes.map((quote) => (
-                  <QuoteRow key={quote.id} quote={quote} onDeleteClick={onDeleteClick} />
+                  <QuoteRow
+                    key={quote.id}
+                    quote={quote}
+                    onDeleteClick={onDeleteClick}
+                    isAdmin={isAdmin}
+                    isSelected={selectedIds?.has(quote.id) || false}
+                    onToggleSelect={onToggleSelect}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -157,11 +170,25 @@ function ProductIcon({ product }: { product: string }) {
   return null;
 }
 
-function QuoteRow({ quote, onDeleteClick }: { quote: any; onDeleteClick: (id: number) => void }) {
+function QuoteRow({ quote, onDeleteClick, isAdmin, isSelected, onToggleSelect }: {
+  quote: any;
+  onDeleteClick: (id: number) => void;
+  isAdmin?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: number) => void;
+}) {
   const totals = parseJSON(quote.totals);
 
   return (
-    <TableRow>
+    <TableRow className={isSelected ? "bg-blue-50" : ""}>
+      {isAdmin && (
+        <TableCell>
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={() => onToggleSelect?.(quote.id)}
+          />
+        </TableCell>
+      )}
       <TableCell className="whitespace-nowrap">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-muted-foreground" />

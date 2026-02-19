@@ -37,6 +37,7 @@ import PlaybooksPage from "./pages/conteudo/PlaybooksPage";
 import ScriptsPage from "./pages/conteudo/ScriptsPage";
 import TreinamentosPage from "./pages/conteudo/TreinamentosPage";
 import ConversionDashboardPage from "./pages/ConversionDashboardPage";
+import ClientRegistryPage from "./pages/ClientRegistryPage";
 
 function Router() {
   return (
@@ -87,6 +88,7 @@ function Router() {
               {/* Pricing Admin */}
               <Route path="/admin/pricing" component={PricingAdminPage} />
               <Route path="/admin/users" component={AdminUsersPage} />
+              <Route path="/admin/clientes" component={ClientRegistryPage} />
               {/* Fallback */}
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />

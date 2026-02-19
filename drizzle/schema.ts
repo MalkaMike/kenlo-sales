@@ -167,3 +167,53 @@ export const quotes = mysqlTable("quotes", {
 
 export type Quote = typeof quotes.$inferSelect;
 export type InsertQuote = typeof quotes.$inferInsert;
+
+/**
+ * Client Registry — permanent record of all clients who received quotes.
+ * Even when a seller deletes a quote, the client record remains here.
+ * Only admins can clean up entries (individually or in batch).
+ */
+export const clientRegistry = mysqlTable("clientRegistry", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Client name from the quote */
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  /** Client email */
+  email: varchar("email", { length: 320 }),
+  /** Agency / company name */
+  agencyName: varchar("agencyName", { length: 255 }),
+  /** Cell phone */
+  cellPhone: varchar("cellPhone", { length: 50 }),
+  /** Landline phone */
+  landlinePhone: varchar("landlinePhone", { length: 50 }),
+  /** Website URL */
+  websiteUrl: text("websiteUrl"),
+  /** Business type */
+  businessType: varchar("businessType", { length: 50 }),
+  /** ID of the first quote that created this record */
+  firstQuoteId: int("firstQuoteId"),
+  /** ID of the most recent quote for this client */
+  lastQuoteId: int("lastQuoteId"),
+  /** Total number of quotes sent to this client */
+  totalQuotes: int("totalQuotes").default(1).notNull(),
+  /** Vendor who first quoted this client */
+  firstVendorName: varchar("firstVendorName", { length: 255 }),
+  /** Vendor who last quoted this client */
+  lastVendorName: varchar("lastVendorName", { length: 255 }),
+  /** User ID of the vendor who first quoted */
+  firstVendorUserId: int("firstVendorUserId"),
+  /** User ID of the vendor who last quoted */
+  lastVendorUserId: int("lastVendorUserId"),
+  /** Last product quoted */
+  lastProduct: varchar("lastProduct", { length: 20 }),
+  /** Last plan quoted (JSON) */
+  lastPlans: text("lastPlans"),
+  /** Last kombo quoted */
+  lastKomboName: varchar("lastKomboName", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  /** Soft delete for admin cleanup */
+  deletedAt: timestamp("deletedAt"),
+});
+
+export type ClientRegistry = typeof clientRegistry.$inferSelect;
+export type InsertClientRegistry = typeof clientRegistry.$inferInsert;

@@ -353,6 +353,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {isAdmin && (
                   <li><Link href="/admin/users" className="footer-link-hover inline-block">Gestão de Usuários</Link></li>
                 )}
+                {isAdmin && (
+                  <li><Link href="/admin/clientes" className="footer-link-hover inline-block">Registro de Clientes</Link></li>
+                )}
               </ul>
             </div>
           </div>
@@ -428,6 +431,11 @@ function UserProfileButton() {
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/admin/users">
                 Gestão de Usuários
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/admin/clientes">
+                Registro de Clientes
               </Link>
             </DropdownMenuItem>
           </>

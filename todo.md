@@ -5816,3 +5816,14 @@
 
 ## Remover toggle Pré-pagar Leads da configuração
 - [x] Remover opção "Pré-pagar Leads (R$1,30/lead/mês)" da seção de configuração (já existe na tabela pós-pago)
+
+## Gestão de Cotações e Registro de Clientes
+- [x] Vendedor pode apagar suas próprias cotações com tela de confirmação (aviso que perde todos os dados)
+- [x] Admin pode apagar cotações individualmente
+- [x] Admin pode apagar cotações em lote (seleção múltipla)
+- [x] Criar tabela de registro permanente de clientes que receberam cotações
+- [x] Registrar cliente automaticamente ao gerar cotação (nome, email, data, vendedor)
+- [x] Registro permanece mesmo após vendedor apagar a cotação
+- [x] Admin pode visualizar lista completa de clientes com email
+- [x] Admin pode limpar nomes de clientes individualmente
+- [x] Admin pode limpar nomes de clientes em lote

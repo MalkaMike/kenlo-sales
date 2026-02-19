@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const ALLOWED_DOMAINS = ["kenlo.com.br", "i-value.com.br", "laik.com.br"];
 
 /** Routes that require admin role */
-const ADMIN_ROUTES = ["/admin/pricing", "/admin/users", "/performance"];
+const ADMIN_ROUTES = ["/admin/pricing", "/admin/users", "/admin/clientes", "/performance"];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
   if (!email) return false;

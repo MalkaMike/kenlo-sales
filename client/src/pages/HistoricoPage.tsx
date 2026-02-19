@@ -6,12 +6,15 @@
 import { useState } from "react";
 import Layout from "@/components/Layout";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link2, Download, Loader2, Trash2 } from "lucide-react";
+import { Link2, Download, Loader2, Trash2, AlertTriangle, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 import { buildChartData } from "./historico/historicoChartData";
 import { HistoricoCharts } from "./historico/HistoricoCharts";
@@ -21,14 +24,34 @@ import { exportQuotesToExcel } from "./historico/historicoExcelExport";
 
 export default function HistoricoPage() {
   const utils = trpc.useUtils();
+  const { isAdmin } = useAuth();
+
   const { data: quotes, isLoading, error } = trpc.quotes.list.useQuery({ limit: 100 });
   const { data: stats } = trpc.quotes.stats.useQuery();
+
   const deleteMutation = trpc.quotes.delete.useMutation({
     onSuccess: () => {
       utils.quotes.list.invalidate();
       utils.quotes.stats.invalidate();
+      toast.success("Cotação excluída", { description: "A cotação foi removida com sucesso." });
     },
-    onError: () => console.error("Erro ao deletar cotação"),
+    onError: (err) => {
+      toast.error("Erro", { description: err.message });
+    },
+  });
+
+  const deleteBatchMutation = trpc.quotes.deleteBatch.useMutation({
+    onSuccess: (result) => {
+      utils.quotes.list.invalidate();
+      utils.quotes.stats.invalidate();
+      toast.success("Cotações excluídas", {
+        description: `${result.deletedCount} cotação(ões) removida(s) com sucesso.`,
+      });
+      setSelectedIds(new Set());
+    },
+    onError: (err) => {
+      toast.error("Erro", { description: err.message });
+    },
   });
 
   // Filter states
@@ -42,6 +65,10 @@ export default function HistoricoPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
 
+  // Batch selection (admin only)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchDeleteDialogOpen, setBatchDeleteDialogOpen] = useState(false);
+
   const handleDeleteClick = (id: number) => {
     setQuoteToDelete(id);
     setDeleteDialogOpen(true);
@@ -53,6 +80,29 @@ export default function HistoricoPage() {
       setDeleteDialogOpen(false);
       setQuoteToDelete(null);
     }
+  };
+
+  const handleToggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (!filteredQuotes) return;
+    if (selectedIds.size === filteredQuotes.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredQuotes.map((q) => q.id)));
+    }
+  };
+
+  const handleBatchDeleteConfirm = () => {
+    deleteBatchMutation.mutate({ ids: Array.from(selectedIds) });
+    setBatchDeleteDialogOpen(false);
   };
 
   // Filter quotes
@@ -94,15 +144,27 @@ export default function HistoricoPage() {
               Consulte todos os cotações gerados (links copiados e PDFs exportados)
             </p>
           </div>
-          <Button
-            onClick={() => exportQuotesToExcel(filteredQuotes || [])}
-            variant="outline"
-            className="gap-2"
-            disabled={!filteredQuotes || filteredQuotes.length === 0}
-          >
-            <Download className="w-4 h-4" />
-            Exportar para Excel
-          </Button>
+          <div className="flex gap-2">
+            {isAdmin && selectedIds.size > 0 && (
+              <Button
+                onClick={() => setBatchDeleteDialogOpen(true)}
+                variant="destructive"
+                className="gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Excluir {selectedIds.size} selecionada(s)
+              </Button>
+            )}
+            <Button
+              onClick={() => exportQuotesToExcel(filteredQuotes || [])}
+              variant="outline"
+              className="gap-2"
+              disabled={!filteredQuotes || filteredQuotes.length === 0}
+            >
+              <Download className="w-4 h-4" />
+              Exportar para Excel
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -150,6 +212,31 @@ export default function HistoricoPage() {
           hasActiveFilters={hasActiveFilters} clearFilters={clearFilters}
         />
 
+        {/* Admin batch select header */}
+        {isAdmin && filteredQuotes && filteredQuotes.length > 0 && (
+          <div className="flex items-center gap-3 mb-4 p-3 bg-muted/50 rounded-lg">
+            <Checkbox
+              checked={selectedIds.size === filteredQuotes.length && filteredQuotes.length > 0}
+              onCheckedChange={handleSelectAll}
+            />
+            <span className="text-sm text-muted-foreground">
+              {selectedIds.size > 0
+                ? `${selectedIds.size} de ${filteredQuotes.length} selecionada(s)`
+                : "Selecionar todas"}
+            </span>
+            {selectedIds.size > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs"
+              >
+                Limpar seleção
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Desktop Table */}
         <HistoricoDesktopTable
           quotes={quotes}
@@ -158,6 +245,9 @@ export default function HistoricoPage() {
           error={error}
           hasActiveFilters={hasActiveFilters}
           onDeleteClick={handleDeleteClick}
+          isAdmin={isAdmin}
+          selectedIds={selectedIds}
+          onToggleSelect={handleToggleSelect}
         />
 
         {/* Mobile Cards */}
@@ -170,22 +260,85 @@ export default function HistoricoPage() {
         />
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Single Delete Confirmation Dialog — Enhanced for sellers */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirmar Exclusão</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja deletar este cotação? Esta ação não pode ser desfeita.
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-full bg-red-100">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <DialogTitle>Confirmar Exclusão de Cotação</DialogTitle>
+            </div>
+            <DialogDescription className="space-y-3">
+              <p>
+                Ao excluir esta cotação, <strong>todos os dados do plano enviado serão perdidos permanentemente</strong>, incluindo:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Configuração de produtos e add-ons selecionados</li>
+                <li>Valores calculados (mensalidade, implantação, pós-pago)</li>
+                <li>Link compartilhável (se houver)</li>
+                <li>Histórico de interação com o cliente</li>
+              </ul>
+              <p className="text-sm font-medium text-red-600">
+                Esta ação não pode ser desfeita.
+              </p>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deleteMutation.isPending}>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+            >
               {deleteMutation.isPending ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Deletando...</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Excluindo...</>
               ) : (
-                <><Trash2 className="w-4 h-4 mr-2" /> Deletar</>
+                <><Trash2 className="w-4 h-4 mr-2" /> Sim, Excluir Cotação</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Batch Delete Confirmation Dialog — Admin only */}
+      <Dialog open={batchDeleteDialogOpen} onOpenChange={setBatchDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-full bg-red-100">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <DialogTitle>Exclusão em Lote</DialogTitle>
+            </div>
+            <DialogDescription className="space-y-3">
+              <p>
+                Você está prestes a excluir <strong>{selectedIds.size} cotação(ões)</strong> de uma vez.
+              </p>
+              <p>
+                Todos os dados dessas cotações serão perdidos permanentemente. Os registros dos clientes serão mantidos no Registro de Clientes.
+              </p>
+              <p className="text-sm font-medium text-red-600">
+                Esta ação não pode ser desfeita.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBatchDeleteDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBatchDeleteConfirm}
+              disabled={deleteBatchMutation.isPending}
+            >
+              {deleteBatchMutation.isPending ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Excluindo...</>
+              ) : (
+                <><Trash2 className="w-4 h-4 mr-2" /> Excluir {selectedIds.size} Cotação(ões)</>
               )}
             </Button>
           </DialogFooter>

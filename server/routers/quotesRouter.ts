@@ -5,6 +5,7 @@
 
 import { protectedProcedure, adminProcedure, router } from "../_core/trpc";
 import { saveQuote, getQuotes, getQuoteStats, softDeleteQuote, softDeleteQuotesBatch, getPerformanceMetrics } from "../quotes";
+import { upsertClientFromQuote } from "../clientRegistry";
 import { z } from "zod";
 
 export const quotesRouter = router({
@@ -68,6 +69,27 @@ export const quotesRouter = router({
         erpSystem: input.erpSystem,
         erpOther: input.erpOther,
       });
+      // Register client in the permanent registry (fire-and-forget, non-blocking)
+      if (quoteId && input.clientName) {
+        const plans: Record<string, string> = {};
+        if (input.imobPlan) plans.imob = input.imobPlan;
+        if (input.locPlan) plans.loc = input.locPlan;
+        upsertClientFromQuote({
+          clientName: input.clientName,
+          email: input.email,
+          agencyName: input.agencyName,
+          cellPhone: input.cellPhone,
+          landlinePhone: input.landlinePhone,
+          websiteUrl: input.websiteUrl,
+          businessType: input.businessType,
+          quoteId,
+          vendorName: input.vendorName,
+          vendorUserId: ctx.user.id,
+          product: input.product,
+          plans: JSON.stringify(plans),
+          komboName: input.komboName,
+        }).catch((err) => console.error("[ClientRegistry] upsert failed:", err));
+      }
       return { success: true, quoteId };
     }),
   
