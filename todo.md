@@ -5790,3 +5790,6 @@
 - [x] Renomear "Mensalidade Final Pré-Pago" → "Mensalidade (depois) Pré-Pago"
 - [x] Remover ícone (i) do Desconto Ciclo nos valores numéricos
 - [x] Uniformizar tamanho de fonte em TODA a tabela (mesmo tamanho, bem alinhado)
+
+## Destaque Visual - Mensalidade (depois) Pré-Pago
+- [x] Adicionar cor de fundo destacada na linha "Mensalidade (depois) Pré-Pago" para enfatizar o preço final

@@ -64,7 +64,7 @@ const rows = [
   { key: "monthlyBeforeDiscounts", label: "Mensalidade (antes) Pré-Pago", indent: true, isBreakdownRow: true },
   { key: "komboDiscount", label: "Desconto Kombo", indent: true, isDiscountRow: true, isBreakdownRow: true },
   { key: "cycleDiscount", label: "Desconto Ciclo", indent: true, isDiscountRow: true, isBreakdownRow: true },
-  { key: "totalMonthlyFinal", label: "Mensalidade (depois) Pré-Pago", isTotal: true, isMensalidadeRow: true },
+  { key: "totalMonthlyFinal", label: "Mensalidade (depois) Pré-Pago", isTotal: true, isMensalidadeRow: true, isFinalPrice: true },
   { key: "cycle", label: "Ciclo Pré-Pago", isTotal: true, needsBottomSpacing: true },
 
   { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
@@ -674,7 +674,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                       <tr
                         className={`
                           ${(row as any).needsTopSpacing ? "mt-2" : ""}
-                          ${(row as any).isMensalidadeRow
+                          ${(row as any).isFinalPrice
+                            ? "bg-blue-100 rounded-lg border-2 border-blue-300 shadow-sm"
+                            : (row as any).isMensalidadeRow
                             ? "bg-blue-50/50 rounded-lg border-2 border-blue-200/60"
                             : (row as any).isGrandTotal ? ""
                             : row.isHeader ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
@@ -689,7 +691,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           className={`
                             ${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"}
                             ${row.indent ? "pl-8" : ""}
-                            ${(row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
+                            ${(row as any).isFinalPrice || (row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
                             ${row.isHeader ? "font-semibold text-gray-700 text-xs"
                               : (row as any).isGrandTotal ? "font-extrabold text-gray-800 text-xs"
                               : row.isTotal ? "font-bold text-gray-700 text-xs"
@@ -761,7 +763,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               onMouseEnter={() => setHoveredColumn(col.id)}
                               onMouseLeave={() => setHoveredColumn(null)}
                               className={`py-0.5 px-2 text-center text-xs transition-colors duration-150
-                                ${(row as any).isMensalidadeRow && colIndex === columns.length - 1 ? "rounded-r-lg" : ""}
+                                ${((row as any).isFinalPrice || (row as any).isMensalidadeRow) && colIndex === columns.length - 1 ? "rounded-r-lg" : ""}
                                 ${isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""}
                                 ${selectedPlans.includes(col.id)
                                   ? col.isCustom
