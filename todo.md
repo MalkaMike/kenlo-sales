@@ -5800,3 +5800,7 @@
 ## Ocultar linhas condicionais na tabela Pós-Pago
 - [x] Ocultar "Contratos adic." quando Locação não está selecionada
 - [x] Ocultar "WhatsApp Leads" quando o add-on Leads está desligado
+
+## Assinaturas condicional + Tooltip Desconto Kombo
+- [x] Ocultar "Assinaturas" na seção Pós-Pago quando o add-on Assinatura está desligado
+- [x] Tooltip no "Desconto Kombo" (título e valores) mostrando composição do kombo e porcentagem aplicada

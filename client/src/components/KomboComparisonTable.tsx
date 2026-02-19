@@ -680,6 +680,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   if (row.key === "postpaidWhatsApp" && !props.addons.leads) {
                     return null;
                   }
+                  // Hide Assinaturas when Assinatura add-on is off
+                  if (row.key === "postpaidAssinaturas" && !props.addons.assinatura) {
+                    return null;
+                  }
                   const needsSpacerAfter = (row as any).needsBottomSpacing;
                   return (
                     <React.Fragment key={`row-fragment-${row.key}`}>
@@ -744,6 +748,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   <div className="space-y-1.5 text-left">
                                     <p className="font-semibold text-sm">Preço de ref:</p>
                                     <p className="text-xs"><span className="font-bold">R$297</span>/mês (ciclo anual)</p>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip></TooltipProvider>
+                            </span>
+                          ) : row.key === "komboDiscount" ? (
+                            <span className="inline-flex items-center gap-1">
+                              {row.label}
+                              <TooltipProvider><Tooltip><TooltipTrigger asChild><Info className="w-3.5 h-3.5 text-gray-400 hover:text-primary cursor-help" /></TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-[260px] p-3">
+                                  <div className="space-y-1.5 text-left">
+                                    <p className="font-semibold text-sm">Desconto Kombo</p>
+                                    <p className="text-xs text-muted-foreground">Desconto aplicado ao combinar produtos e add-ons em um Kombo. Passe o mouse sobre o valor para ver detalhes do Kombo.</p>
                                   </div>
                                 </TooltipContent>
                               </Tooltip></TooltipProvider>

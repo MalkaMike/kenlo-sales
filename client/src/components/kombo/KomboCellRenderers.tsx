@@ -392,8 +392,39 @@ export function renderMonthlyBeforeDiscountsCell(ctx: CellRenderContext): React.
 export function renderKomboDiscountCell(ctx: CellRenderContext): React.ReactNode {
   const amount = ctx.column.komboDiscountAmount;
   if (!amount || amount <= 0) return <span className="text-gray-300">—</span>;
+
+  // Get kombo info for tooltip
+  const rawKomboId = ctx.isPersoKombo ? ctx.column.sourceKombo : ctx.column.id;
+  const kombo = rawKomboId && rawKomboId !== "none" ? KOMBO_DEFINITIONS[rawKomboId as Exclude<KomboId, "none">] : null;
+
+  const discountContent = (
+    <span className="font-semibold cursor-help" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+  );
+
+  if (!kombo) return discountContent;
+
   return (
-    <span className="font-semibold" style={{ color: "var(--kenlo-red, #E11D48)" }}>-R$ {formatCurrency(amount)}</span>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {discountContent}
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[280px] p-3">
+          <div className="space-y-1.5 text-left">
+            <p className="font-semibold text-sm">{kombo.name}</p>
+            <p className="text-xs text-muted-foreground">{kombo.tooltipInfo.description}</p>
+            <div className="text-xs">
+              <span className="font-medium">Desconto: </span>
+              <span className="font-bold" style={{ color: "var(--kenlo-red, #E11D48)" }}>{Math.round(kombo.discount * 100)}% OFF</span>
+            </div>
+            <div className="text-xs">
+              <span className="font-medium">Inclui: </span>
+              {kombo.tooltipInfo.includes.join(", ")}
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
