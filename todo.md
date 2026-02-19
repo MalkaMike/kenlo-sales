@@ -5744,3 +5744,7 @@
 - [x] Verificar que PDF representa EXATAMENTE os números da seleção do usuário
 - [x] Verificar alinhamento entre pricing-config e todos os cálculos da calculadora
 - [x] Zero bugs tolerados
+
+## Performance Page - Acesso Público (CONCLUÍDO)
+- [x] Garantir que o link de Performance aparece na navegação principal
+- [x] Garantir que a página de Performance é acessível sem autenticação (público)

@@ -195,6 +195,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
+              {/* Performance */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/performance"
+                    className={cn(
+                      "nav-link-hover group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/performance" && "bg-accent/80 text-primary font-semibold nav-link-active"
+                    )}
+                  >
+                    Performance
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
               {/* Cotação */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -268,6 +283,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   Conteúdo
                 </Link>
                 <Link
+                  href="/performance"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
+                >
+                  Performance
+                </Link>
+                <Link
                   href="/calculadora"
                   onClick={() => setMobileMenuOpen(false)}
                   className="mobile-link-hover block py-2 px-3 rounded-md font-medium"
@@ -324,9 +346,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <li><Link href="/calculadora" className="footer-link-hover inline-block">Cotação</Link></li>
                 <li><Link href="/playbook" className="footer-link-hover inline-block">Playbook de Vendas</Link></li>
                 <li><Link href="/conteudo" className="footer-link-hover inline-block">Conteúdo</Link></li>
-                {isAdmin && (
-                  <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
-                )}
+                <li><Link href="/performance" className="footer-link-hover inline-block">Performance</Link></li>
                 {isAdmin && (
                   <li><Link href="/admin/pricing" className="footer-link-hover inline-block">Configurar Preços</Link></li>
                 )}
@@ -388,18 +408,18 @@ function UserProfileButton() {
             Meu Perfil
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/performance" className="flex items-center">
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Performance
+          </Link>
+        </DropdownMenuItem>
         {isAdmin && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
               <ShieldCheck className="w-3 h-3" /> Admin
             </DropdownMenuLabel>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/performance" className="flex items-center">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Performance
-              </Link>
-            </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/admin/pricing">
                 Configurar Preços
