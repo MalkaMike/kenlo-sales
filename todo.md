@@ -5709,9 +5709,9 @@
 - [x] Update WhatsAppRow to display prepaid vs postpaid pricing ✓
 - [x] Add visual indicator for prepaid leads in calculator summary ("Pré-pago" badge) ✓
 - [x] Export calculatePrepaidLeads from client/src/utils/pricing.ts ✓
-- [ ] Test prepaid leads functionality in calculator
+- [x] Test prepaid leads functionality in calculator
 - [x] Update Leads add-on page with prepaid option information (added Pré-pagamento section) ✓
-- [ ] Save checkpoint
+- [x] Save checkpoint
 
 ## Conversion Dashboard
 - [x] Create database schema for quotes and conversions tracking
@@ -5774,3 +5774,12 @@
 - [x] Renderizar breakdown no pdfContractSection (client-side PDF)
 - [x] Adicionar campos ao schema Zod do proposalsRouter (server-side)
 - [x] Tooltip com ícone Info e explicação do ciclo (Mensal +25%, Semestral +12.5%, Anual referência, Bienal -12.5%)
+
+## Reorganização Tabela Kombo - Seção Descontos
+- [x] Mover linha "Ciclo" para abaixo da "Mensalidade" e renomear para "Ciclo Pré-Pago"
+- [x] Criar nova seção header "Descontos" (mesmo formato visual que "Serviços Premium")
+- [x] Dentro de Descontos: Mensalidade antes dos descontos
+- [x] Dentro de Descontos: Desconto Kombo (vermelho negativo)
+- [x] Dentro de Descontos: Desconto Ciclo (vermelho negativo)
+- [x] Renomear "Mensalidade Pré-Pago" para "Mensalidade Final Pré-Pago" como última linha da seção Descontos
+- [x] Remover as 3 linhas de breakdown antigas que estavam acima da Mensalidade Pré-Pago

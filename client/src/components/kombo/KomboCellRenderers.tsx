@@ -579,6 +579,8 @@ export function getCellValue(rowKey: string, ctx: CellRenderContext): React.Reac
       return renderCycleDiscountCell(ctx);
     case "totalMonthly":
       return renderTotalMonthlyCell(ctx);
+    case "totalMonthlyFinal":
+      return renderTotalMonthlyCell(ctx);
     case "implImob":
     case "implLoc":
     case "implLeads":

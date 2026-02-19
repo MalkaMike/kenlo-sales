@@ -60,10 +60,14 @@ const rows = [
   { key: "vipSupport", label: "Suporte VIP", indent: true },
   { key: "dedicatedCS", label: "CS Dedicado", indent: true },
   { key: "training", label: "Treinamentos", indent: true },
-  { key: "monthlyBeforeDiscounts", label: "Mensalidade", sublabel: "antes dos descontos", needsTopSpacing: true, isBreakdownRow: true },
-  { key: "komboDiscount", label: "Desconto Kombo", isDiscountRow: true, isBreakdownRow: true },
-  { key: "cycleDiscount", label: "Desconto Ciclo", isDiscountRow: true, isBreakdownRow: true },
-  { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, needsBottomSpacing: true, isMensalidadeRow: true },
+  { key: "totalMonthly", label: "Mensalidade", sublabel: "Pré-Pago¹", isTotal: true, isMensalidadeRow: true },
+  { key: "cycle", label: "Ciclo Pré-Pago", isTotal: true, needsBottomSpacing: true },
+
+  { key: "descontos", label: "Descontos", isHeader: true, needsTopSpacing: true },
+  { key: "monthlyBeforeDiscounts", label: "Mensalidade antes dos descontos", indent: true, isBreakdownRow: true },
+  { key: "komboDiscount", label: "Desconto Kombo", indent: true, isDiscountRow: true, isBreakdownRow: true },
+  { key: "cycleDiscount", label: "Desconto Ciclo", indent: true, isDiscountRow: true, isBreakdownRow: true },
+  { key: "totalMonthlyFinal", label: "Mensalidade Final Pré-Pago", isTotal: true, needsBottomSpacing: true, isMensalidadeRow: true },
 
   { key: "implantacao", label: "Implantação", isHeader: true, needsTopSpacing: true },
   { key: "implImob", label: "Imob", indent: true },
@@ -72,8 +76,7 @@ const rows = [
   { key: "implInteligencia", label: "Inteligência", indent: true },
   { key: "implTotal", label: "Total Implantação", isTotal: true, needsBottomSpacing: true },
 
-  { key: "cycleTotal", label: "Total 1º Ano", isTotal: true },
-  { key: "cycle", label: "Ciclo", isTotal: true, needsBottomSpacing: true },
+  { key: "cycleTotal", label: "Total 1º Ano", isTotal: true, needsBottomSpacing: true },
 
   { key: "postpaid", label: "Pós-Pago", isHeader: true, needsTopSpacing: true },
   { key: "postpaidUsers", label: "Usuários adic.", indent: true },
