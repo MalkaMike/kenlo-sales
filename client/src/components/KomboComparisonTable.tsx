@@ -672,6 +672,14 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   if ((row.key === "postpaidBoletos" || row.key === "postpaidSplits") && !props.addons.pay) {
                     return null;
                   }
+                  // Hide Contratos adic. when Locação is not selected
+                  if (row.key === "postpaidContracts" && props.product === "imob") {
+                    return null;
+                  }
+                  // Hide WhatsApp Leads when Leads add-on is off
+                  if (row.key === "postpaidWhatsApp" && !props.addons.leads) {
+                    return null;
+                  }
                   const needsSpacerAfter = (row as any).needsBottomSpacing;
                   return (
                     <React.Fragment key={`row-fragment-${row.key}`}>

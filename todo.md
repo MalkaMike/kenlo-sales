@@ -5796,3 +5796,7 @@
 
 ## Ocultar Boletos/Splits quando Pay está off
 - [x] Esconder linhas "Boletos" e "Splits" da seção Pós-Pago quando o add-on Kenlo Pay estiver desligado
+
+## Ocultar linhas condicionais na tabela Pós-Pago
+- [x] Ocultar "Contratos adic." quando Locação não está selecionada
+- [x] Ocultar "WhatsApp Leads" quando o add-on Leads está desligado
