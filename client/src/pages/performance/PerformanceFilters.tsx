@@ -101,9 +101,7 @@ export function PerformanceFilters({
               <SelectValue placeholder="Selecione um vendedor" />
             </SelectTrigger>
             <SelectContent>
-              {currentUser.isAdmin && (
-                <SelectItem value="all">Todos os vendedores</SelectItem>
-              )}
+              <SelectItem value="all">Todos os vendedores</SelectItem>
               {vendorNames.map((name) => (
                 <SelectItem key={name} value={name}>
                   {name}

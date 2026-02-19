@@ -5748,3 +5748,9 @@
 ## Performance Page - Acesso Público (CONCLUÍDO)
 - [x] Garantir que o link de Performance aparece na navegação principal
 - [x] Garantir que a página de Performance é acessível sem autenticação (público)
+
+## Filtro Individual na Performance (CONCLUÍDO)
+- [x] Todos os usuários podem ver time inteiro e alternar para individual
+- [x] Ao clicar "Individual", pré-seleciona o nome do usuário logado por conveniência
+- [x] Qualquer usuário pode selecionar qualquer vendedor no dropdown individual
+- [x] 1093 testes passando

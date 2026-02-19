@@ -108,6 +108,7 @@ export default function PerformancePage() {
   const [viewMode, setViewMode] = useState<"team" | "individual">("team");
   const [quickPeriod, setQuickPeriod] = useState<"today" | "week" | "month" | "all">("all");
 
+
   // ── Delete dialogs ──────────────────────────────────────────────────────
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<number | null>(null);
@@ -180,16 +181,15 @@ export default function PerformancePage() {
   };
 
   // ── View mode side-effects ──────────────────────────────────────────────
-  useEffect(() => {
-    if (currentUser && !currentUser.isAdmin && viewMode === "individual") {
-      setFilterVendor(currentUser.name);
-    }
-  }, [currentUser, viewMode]);
-
+  // When switching to individual mode, pre-select the current user's name
   const handleViewModeChange = (mode: "team" | "individual") => {
     setViewMode(mode);
-    if (mode === "team") setFilterVendor("all");
-    else if (currentUser && !currentUser.isAdmin) setFilterVendor(currentUser.name);
+    if (mode === "team") {
+      setFilterVendor("all");
+    } else if (currentUser) {
+      // Pre-select current user's name for convenience
+      setFilterVendor(currentUser.name);
+    }
   };
 
   const handleLogout = async () => {
