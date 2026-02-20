@@ -6030,3 +6030,31 @@
   - User to test manually after checkpoint
 
 - [ ] Save checkpoint with redesigned PDF feature matrix
+
+
+## Sticky Banner Improvements - Conditional Visibility and Value Breakdown
+
+- [ ] Implement conditional visibility logic
+  - Show banner ONLY when minimum data is filled (enough to calculate "Sua Seleção")
+  - Hide banner when form is empty or incomplete
+  - Determine minimum required fields: products selected, basic configuration filled
+
+- [ ] Redesign banner layout with value breakdown
+  - Show pre-paid value (small font, muted)
+  - Show "+ Pós-pago" value (small font, muted)
+  - Show "= Total Mensal" (large font, emphasized)
+  - Implementation fee on the right side (smaller font)
+  - Do NOT include implementation fee in monthly total
+
+- [ ] Update banner content logic
+  - Calculate pre-paid monthly value (license + add-ons)
+  - Calculate post-paid monthly value (users, contracts, WhatsApp, boletos, split)
+  - Sum both for total monthly display
+  - Show implementation fee separately on the right
+
+- [ ] Test banner visibility and calculations
+  - Test with empty form (banner hidden)
+  - Test with minimum data (banner appears)
+  - Test with different product combinations (IMOB only, LOC only, both)
+  - Test with different add-ons and post-paid items
+  - Verify value breakdown accuracy
