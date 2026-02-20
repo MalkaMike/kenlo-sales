@@ -5863,3 +5863,11 @@
 - [x] Corrigir BenefitsSection para mostrar CS Dedicado como opcional em K (não só Prime)
 - [x] Corrigir SupportServicesRow para cobrar CS Dedicado em K (não só Prime)
 - [x] Verificar pricing-values.json já correto: csDedicado.defaultByPlan = {prime: false, k: false, k2: true}
+
+## Corrigir Documentação da Regra de CS Dedicado
+- [x] Corrigir nota "_inheritanceNote" em pricing-values.json: "quando ambos são K2" → "quando pelo menos um é K2"
+- [x] Verificar se a regra de benefício cruzado está corretamente aplicada em todas as páginas do site
+- [x] Verificar se a regra está corretamente documentada em comentários do código
+- [x] ImobPage e LocacaoPage mostram regras corretas para 1 produto (K2 = incluído)
+- [x] Calculadora aplica benefício cruzado corretamente via shouldIncludePremiumService()
+- [x] Todos os 1.124 testes passando
