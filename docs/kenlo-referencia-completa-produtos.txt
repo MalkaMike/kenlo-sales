@@ -1,0 +1,1481 @@
+KENLO — REFERÊNCIA COMPLETA DE PRODUTOS, ADD-ONS E KOMBOS
+Versão 2.2.0 | Fonte: pricing-values.json (v2.0.0) + pricing-config.ts + Definições do Ecossistema | Última Atualização: Fevereiro 2026
+
+Este documento é a referência única e autoritativa para construção de todas as páginas de produtos, add-ons e Kombos no Portal de Vendas Kenlo. Cada preço, regra, nível, funcionalidade e composição está documentado abaixo com definições precisas alinhadas em todo o ecossistema. Todas as informações de precificação são extraídas diretamente do pricing-values.json, garantindo consistência absoluta entre calculadora, páginas públicas e PDFs gerados.
+
+
+1. Visão Geral do Ecossistema
+O ecossistema Kenlo consiste em 3 plataformas core, 6 add-ons, 1 IA multi-agente (LYA), serviços premium, 5 Kombos (pacotes combinados) e o Marketplace.
+
+Camada
+Componentes
+Descrição
+IA Multi-agente
+LYA
+IA de todo o ecossistema (não é um add-on, posicionada acima de todas as plataformas). Sistema multi-agente com agentes especializados em tarefas específicas. Atua como um "novo funcionário" ou "secretária de vendas" para a imobiliária, servindo como assistente do corretor. Precificação: Pequena taxa pré-paga por mês + cobranças por uso. Implementação inicial no IMOB, implementação subsequente no LOC.
+Plataformas Core
+Kenlo IMOB (CRM), Kenlo Site (CMS), Kenlo Locação (ERP)
+Três produtos core separados. IMOB e Site são vendidos juntos como um único pacote. Locação é vendida separadamente.
+Add-ons Pré-Pagos
+Leads, Inteligência, Assinaturas
+Add-ons de assinatura recorrente com precificação mensal/anual fixa.
+Add-ons/Funcionalidades Pós-Pagos
+Pay (somente LOC), Leads (WhatsApp on), Assinaturas (excedente), Usuários Adicionais, Contratos Adicionais
+Cobranças por uso aplicadas após consumo.
+Rent+
+Seguros, Cash
+Serviços que ajudam as imobiliárias a operar E ganhar dinheiro. Seguros: Integração com 1 clique para seguro residencial. Cash: Antecipe 24 meses de aluguel para proprietários.
+Serviços Premium
+Suporte VIP, CS Dedicado, Treinamento Online, Treinamento Presencial
+Ofertas aprimoradas de suporte e treinamento.
+Kombos
+Imob Start, Imob Pro, Locação Pro, Core Gestão, Elite
+Pacotes combinados com descontos e implementações gratuitas.
+Marketplace
+Kenlo Open + Comunidade Kenlo
+Kenlo Open: Plataforma integrando nativamente parceiros homologados Kenlo a uma ou mais plataformas core (IMOB, Site e/ou LOC). Comunidade Kenlo: Todas as imobiliárias locais clientes da Kenlo fazendo parceria/negócios juntas via algoritmo único combinando imobiliárias com compradores ↔ imobiliárias com vendedores (pioneira há 12 anos).
+
+
+Restrição do modelo de negócio: Sem freemium. Pontos de entrada são "Ver Demo / Falar com Sales" ou "Login" apenas.
+
+Definição do ecossistema: O Ecossistema Kenlo inclui todos os produtos Kenlo, add-ons E os parceiros aprovados do Marketplace (Kenlo Open + Comunidade Kenlo).
+
+
+2. Pacote de Plataforma Core — Kenlo IMOB + Site
+O que é: Kenlo IMOB (CRM) e Kenlo Site (CMS) são vendidos juntos como um único pacote. Este é o produto principal e pré-requisito para compra de outros add-ons Kenlo.
+
+IMOB inclui: CRM completo para vendas de imóveis, App Corretor, Acesso Mobile, Gestão de Imóveis, Portal de Imóveis, Integração com Portais.
+
+Site inclui: Website personalizável para a imobiliária (CMS).
+
+Nota estratégica: Omnichannel/WhatsApp é um add-on opcional (não faz parte do pacote base), mas deve ser priorizado no conteúdo como a "grande nova força" e principal novidade que o mercado espera.
+2.1 Níveis de Plano (Pacote IMOB + Site)
+Atributo
+Prime
+K
+K²
+Preço Base Anual
+R$ 247
+R$ 497
+R$ 1.197
+Usuários Incluídos
+2
+7
+15
+Público-Alvo
+Até 4 usuários
+5 até 14 usuários
+Acima de 15 usuários
+Implementação
+R$ 1.497
+R$ 1.497
+R$ 1.497
+
+2.2 Preços Calculados (após frequência + arredondamento)
+Plano
+Mensal
+Semestral
+Anual
+Bienal
+Prime
+R$ 317
+R$ 287
+R$ 247
+R$ 217
+K
+R$ 627
+R$ 567
+R$ 497
+R$ 437
+K²
+R$ 1.497
+R$ 1.347
+R$ 1.197
+R$ 1.057
+
+
+Regras de Cálculo:
+
+Mensal: Preço Anual × 1.25 (acréscimo de 25% vs anual, ou seja, 0% de desconto)
+Semestral: Preço Anual × 1.125 (10% OFF vs mensal)
+Anual: Preço base (20% OFF vs mensal)
+Bienal: Preço Anual × 0.875 (30% OFF vs mensal)
+Arredondamento: Valores arredondados para o próximo número terminando em 7 (para valores ≥ R$100) ou Math.ceil (para valores < R$100)
+2.3 Usuários Adicionais (Pós-Pago, Por Faixa)
+Prime: Taxa fixa
+
+Faixa
+Preço/Usuário (Mensal)
+1+
+R$ 57
+
+
+K: Duas faixas
+
+Faixa
+Preço/Usuário (Mensal)
+1–5
+R$ 47
+6+
+R$ 37
+
+
+K²: Três faixas
+
+Faixa
+Preço/Usuário (Mensal)
+1–10
+R$ 37
+11–100
+R$ 27
+101+
+R$ 17
+
+
+Opção Pré-Paga (Anual/Bienal apenas):
+
+Preço fixo: R$ 34/usuário/mês (independente de plano ou volume)
+Disponível apenas para: Ciclos Anual e Bienal
+Cálculo: Anual = R$ 34 × 12 meses = R$ 408/usuário/ano; Bienal = R$ 34 × 24 meses = R$ 816/usuário/2 anos
+2.4 Matriz de Funcionalidades — Pacote IMOB + Site
+Funcionalidades organizadas por categoria, com hierarquia de disponibilidade dentro de cada grupo (todos os planos → K+K² → somente K²).
+
+Funcionalidade
+Categoria
+Prime
+K
+K²
+Notas
+🎯 CRM Core & Pipeline de Vendas
+
+
+
+
+
+
+
+
+
+
+Gestão completa de leads
+core
+✅
+✅
+✅
+Capture, distribua e rastreie cada lead
+Funil de vendas visual
+core
+✅
+✅
+✅
+Gestão de pipeline arrastar-e-soltar
+Gestão de propostas e negociações
+core
+✅
+✅
+✅
+Rastreie ofertas, contrapropostas e status do negócio
+Gestão de contratos
+core
+✅
+✅
+✅
+Gestão do ciclo de vida do contrato
+Cadastro ilimitado de imóveis
+core
+✅
+✅
+✅
+Sem limites em anúncios de imóveis
+Cadastro de proprietários e clientes
+core
+✅
+✅
+✅
+Banco de dados centralizado de contatos
+Agenda de atendimentos e visitas
+core
+✅
+✅
+✅
+Agende visitas e compromissos
+🌐 Site & Captação Digital
+
+
+
+
+
+
+
+
+
+
+Site personalizável (CMS)
+core
+✅
+✅
+✅
+Site da imobiliária totalmente personalizável
+SEO otimizado
+core
+✅
+✅
+✅
+Otimização para mecanismos de busca integrada
+Responsivo (mobile-first)
+core
+✅
+✅
+✅
+Experiência perfeita em qualquer dispositivo
+Formulários de captação
+core
+✅
+✅
+✅
+Formulários de captura de leads
+Landing pages de conversão
+advanced
+❌
+✅
+✅
+Páginas de imóveis de alta conversão
+Blog integrado
+advanced
+❌
+✅
+✅
+Plataforma de marketing de conteúdo
+🔗 Integrações & Automação
+
+
+
+
+
+
+
+
+
+
+Integração com 100+ portais
+core
+✅
+✅
+✅
+VivaReal, ZAP, OLX e mais de 100 outros
+Sincronização automática de anúncios
+core
+✅
+✅
+✅
+Publique em todos os portais com um clique
+Integração com redes sociais
+core
+✅
+✅
+✅
+Publicação automática Facebook, Instagram
+Disparo automático de e-mails
+core
+✅
+✅
+✅
+Alertas automáticos de imóveis para clientes
+Acesso ao Kenlo Open (Parceiros Homologados)
+marketplace
+✅
+✅
+✅
+Integrações com parceiros homologados
+Acesso à Comunidade Kenlo
+marketplace
+✅
+✅
+✅
+Rede de compartilhamento de negócios entre imobiliárias
+API aberta para integrações customizadas
+advanced
+❌
+❌
+✅
+Construa integrações com parceiros não-homologados
+📱 Mobile & Trabalho em Campo
+
+
+
+
+
+
+
+
+
+
+App Corretor (iOS + Android)
+core
+✅
+✅
+✅
+Acesso completo ao CRM no celular
+Pré-cadastro de imóveis via app
+core
+✅
+✅
+✅
+Capture imóveis em movimento
+Busca e filtros avançados no app
+core
+✅
+✅
+✅
+Encontre imóveis instantaneamente
+Roteiro de visitas otimizado
+core
+✅
+✅
+✅
+Rotas de visitas otimizadas por GPS
+Notificações push em tempo real
+core
+✅
+✅
+✅
+Nunca perca um lead quente
+📊 Relatórios & Inteligência
+
+
+
+
+
+
+
+
+
+
+Dashboard executivo
+core
+✅
+✅
+✅
+Visão geral de desempenho em tempo real
+Relatórios de vendas e pipeline
+core
+✅
+✅
+✅
+Rastreie taxas de conversão e velocidade
+Relatórios de performance por corretor
+core
+✅
+✅
+✅
+Análises individuais de corretores
+Extração e configuração de relatórios
+core
+✅
+✅
+✅
+Construtor de relatórios personalizados
+💬 Comunicação & Atendimento
+
+
+
+
+
+
+
+
+
+
+Caixa de e-mail por usuário
+core
+✅
+✅
+✅
+Cada usuário recebe sua própria caixa de entrada de e-mail
+E-mail integrado ao CRM
+core
+✅
+✅
+✅
+Envie/receba de dentro do CRM
+Histórico completo de interações
+core
+✅
+✅
+✅
+Cada chamada, e-mail, mensagem registrada
+Templates de mensagens
+core
+✅
+✅
+✅
+Templates de comunicação pré-construídos
+🎓 Suporte & Treinamento
+
+
+
+
+
+
+
+
+
+
+Suporte padrão
+support
+✅
+✅
+✅
+Help desk e base de conhecimento
+Suporte VIP (resposta 15min)
+premium
+❌
+✅
+✅
+Suporte prioritário com SLA
+Customer Success dedicado
+premium
+❌
+❌
+✅
+Gerente de sucesso dedicado
+Treinamento Online
+training
+❌
+❌
+1 sessão
+Treinamento online incluído (K² apenas)
+Treinamento Presencial
+training
+❌
+❌
+1 sessão
+Treinamento presencial incluído, cliente paga apenas viagem (K² apenas)
+👥 Usuários & Escalabilidade
+
+
+
+
+
+
+
+
+
+
+Usuários incluídos (cada um com caixa de e-mail)
+capacity
+2
+7
+15
+Cada usuário incluído recebe sua própria caixa de entrada de e-mail
+Usuários adicionais (pós-pago)
+post-paid
+R$ 57/cada
+R$ 47–37 (por faixa)
+R$ 37–17 (por faixa)
+Pague apenas pelo que precisa
+Usuários adicionais (pré-pago anual/bienal)
+pre-paid
+R$ 34/mês
+R$ 34/mês
+R$ 34/mês
+Preço fixo para ciclos anual/bienal
+Armazenamento
+capacity
+Ilimitado
+Ilimitado
+Ilimitado
+Sem limites de armazenamento
+🚀 Add-ons Disponíveis
+
+
+
+
+
+
+
+
+
+
+Kenlo Leads
+add-on
+➕
+➕
+➕
+Distribuição automática de leads + 100 leads WhatsApp/mês
+Kenlo Inteligência
+add-on
+➕
+➕
+➕
+Google Looker BI + análises avançadas
+Kenlo Assinaturas
+add-on
+➕
+➕
+➕
+Assinaturas digitais (15/mês incluídas)
+Kenlo Omnichannel
+add-on
+➕
+➕
+➕
+WhatsApp nativo + caixa de entrada unificada
+
+
+Legenda:
+
+✅ Incluído no plano
+❌ Não disponível neste plano
+➕ Disponível como add-on (todos os planos)
+
+Notas Importantes:
+
+Add-ons com implementação R$ 0: Assinaturas (cobrado por uso após 15/mês incluídas)
+Add-ons com custo de implementação: Leads (R$ 497), Inteligência (R$ 497), Omnichannel (a definir) - alguns gratuitos em Kombos específicos
+Landing Pages: Disponíveis em K e K² apenas (não Prime)
+Blog: Disponível em K e K² (não Prime)
+API Aberta: Exclusiva do K² para integrações customizadas com parceiros não-homologados
+Kenlo Open: Todos os planos têm acesso a integrações com parceiros homologados
+Comunidade Kenlo: Disponível em todos os planos (Prime, K e K²) - rede de compartilhamento de negócios entre imobiliárias
+Caixa de E-mail: Todo usuário (incluído ou adicional) recebe sua própria caixa de entrada de e-mail
+Treinamento K²: Inclui 1 treinamento online OU 1 treinamento presencial (cliente paga apenas viagem)
+
+
+3. Plataforma Core — Kenlo Locação (ERP)
+O que é: ERP para gestão completa de contratos de locação. Vendido separadamente do pacote IMOB + Site.
+
+Nota estratégica: Kenlo Pay deve ser priorizado como "game changer" — split automático e conciliação financeira onde o inquilino paga e os fundos são automaticamente divididos para proprietário e taxas da imobiliária, com todos os dados conciliados em relatórios. Benefício-chave: a imobiliária "não precisa fazer nada".
+3.1 Níveis de Plano
+Atributo
+Prime
+K
+K²
+Preço Base Anual
+R$ 247
+R$ 497
+R$ 1.197
+Contratos Incluídos
+100
+175
+400
+Público-Alvo
+Até 175 contratos
+176 até 399 contratos
+Acima de 400 contratos
+Implementação
+R$ 1.497
+R$ 1.497
+R$ 1.497
+
+3.2 Preços Calculados (após frequência + arredondamento)
+Plano
+Mensal
+Semestral
+Anual
+Bienal
+Prime
+R$ 317
+R$ 287
+R$ 247
+R$ 217
+K
+R$ 627
+R$ 567
+R$ 497
+R$ 437
+K²
+R$ 1.497
+R$ 1.347
+R$ 1.197
+R$ 1.057
+
+
+Regras de Cálculo: Idênticas ao IMOB (ver seção 2.2)
+3.3 Contratos Adicionais (Pós-Pago, Por Faixa)
+Prime: Taxa fixa
+
+Faixa
+Preço/Contrato (Mensal)
+1+
+R$ 3,00
+
+
+K: Duas faixas
+
+Faixa
+Preço/Contrato (Mensal)
+1–250
+R$ 3,00
+251+
+R$ 2,50
+
+
+K²: Três faixas
+
+Faixa
+Preço/Contrato (Mensal)
+1–250
+R$ 3,00
+251–500
+R$ 2,50
+501+
+R$ 2,00
+
+
+Opção Pré-Paga (Anual/Bienal apenas):
+
+Preço fixo: R$ 2,20/contrato/mês (independente de plano ou volume)
+Disponível apenas para: Ciclos Anual e Bienal
+Cálculo: Anual = R$ 2,20 × 12 meses = R$ 26,40/contrato/ano; Bienal = R$ 2,20 × 24 meses = R$ 52,80/contrato/2 anos
+3.4 Matriz de Funcionalidades — Kenlo Locação
+Funcionalidade
+Categoria
+Prime
+K
+K²
+Notas
+📋 Gestão de Contratos
+
+
+
+
+
+
+
+
+
+
+Controle completo de contratos
+core
+✅
+✅
+✅
+Criação, assinatura, renovação
+Gestão de proprietários e inquilinos
+core
+✅
+✅
+✅
+Banco de dados centralizado
+Cobrança automática
+core
+✅
+✅
+✅
+Boletos e cobranças automatizadas
+Repasse automático
+core
+✅
+✅
+✅
+Split de pagamentos para proprietários
+DIMOB automático
+core
+✅
+✅
+✅
+Declaração gerada em 1 clique
+💰 Financeiro & Cobrança
+
+
+
+
+
+
+
+
+
+
+Gestão de receitas e despesas
+core
+✅
+✅
+✅
+Controle financeiro completo
+Conciliação bancária
+core
+✅
+✅
+✅
+Reconciliação automática
+Emissão de boletos
+core
+✅
+✅
+✅
+Geração de boletos integrada
+Controle de inadimplência
+core
+✅
+✅
+✅
+Alertas e ações automáticas
+📊 Relatórios & Inteligência
+
+
+
+
+
+
+
+
+
+
+Dashboard executivo
+core
+✅
+✅
+✅
+Visão geral em tempo real
+Relatórios financeiros
+core
+✅
+✅
+✅
+Receitas, despesas, inadimplência
+Relatórios de contratos
+core
+✅
+✅
+✅
+Vencimentos, renovações, rescisões
+Extração e configuração de relatórios
+core
+✅
+✅
+✅
+Construtor de relatórios personalizados
+🎓 Suporte & Treinamento
+
+
+
+
+
+
+
+
+
+
+Suporte padrão
+support
+✅
+✅
+✅
+Help desk e base de conhecimento
+Suporte VIP (resposta 15min)
+premium
+❌
+✅
+✅
+Suporte prioritário com SLA
+Customer Success dedicado
+premium
+❌
+❌
+✅
+Gerente de sucesso dedicado
+Treinamento Online
+training
+❌
+❌
+1 sessão
+Treinamento online incluído (K² apenas)
+Treinamento Presencial
+training
+❌
+❌
+1 sessão
+Treinamento presencial incluído, cliente paga apenas viagem (K² apenas)
+📦 Capacidade & Escalabilidade
+
+
+
+
+
+
+
+
+
+
+Contratos incluídos
+capacity
+100
+175
+400
+Quantidade incluída no plano
+Contratos adicionais (pós-pago)
+post-paid
+R$ 3,00/cada
+R$ 3,00–2,50 (por faixa)
+R$ 3,00–2,00 (por faixa)
+Pague apenas pelo que precisa
+Contratos adicionais (pré-pago anual/bienal)
+pre-paid
+R$ 2,20/mês
+R$ 2,20/mês
+R$ 2,20/mês
+Preço fixo para ciclos anual/bienal
+Armazenamento
+capacity
+Ilimitado
+Ilimitado
+Ilimitado
+Sem limites de armazenamento
+🚀 Add-ons Disponíveis
+
+
+
+
+
+
+
+
+
+
+Kenlo Inteligência
+add-on
+➕
+➕
+➕
+Google Looker BI + análises avançadas
+Kenlo Assinaturas
+add-on
+➕
+➕
+➕
+Assinaturas digitais (15/mês incluídas)
+Kenlo Pay
+add-on
+➕
+➕
+➕
+Split digital e boleto embutido (pós-pago)
+Kenlo Seguros
+add-on
+➕
+➕
+➕
+Seguros embutidos no boleto (comissão)
+Kenlo Cash
+add-on
+➕
+➕
+➕
+Antecipação de até 24 meses de aluguel
+
+
+Legenda:
+
+✅ Incluído no plano
+❌ Não disponível neste plano
+➕ Disponível como add-on (todos os planos)
+
+
+4. Add-ons — Detalhamento Completo
+4.1 Kenlo Leads
+Disponibilidade: Somente IMOB
+
+Preço Base Anual: R$ 497/mês
+
+Implementação: R$ 497 (zerada em Kombos Imob Start, Imob Pro e Elite)
+
+Leads WhatsApp Incluídos: 100 leads/mês
+
+Preços Calculados (após frequência + arredondamento):
+
+Ciclo
+Preço/Mês
+Mensal
+R$ 627
+Semestral
+R$ 567
+Anual
+R$ 497
+Bienal
+R$ 437
+
+
+Leads Adicionais (Pós-Pago, Faixas Universais):
+
+Faixa
+Preço/Lead
+1–200
+R$ 1,50
+201–350
+R$ 1,30
+351–1.000
+R$ 1,10
+1.001+
+R$ 0,90
+
+
+O que inclui:
+
+Distribuição automática de leads com regras personalizáveis
+100 conversas WhatsApp/mês incluídas
+Integração com portais e formulários
+Rastreamento de origem e conversão
+Leads adicionais cobrados por faixa de uso
+
+
+4.2 Kenlo Inteligência
+Disponibilidade: IMOB e Locação (compartilhável entre produtos)
+
+Preço Base Anual: R$ 297/mês
+
+Implementação: R$ 497 (zerada em Kombos Imob Pro, Locação Pro e Elite)
+
+Preços Calculados (após frequência + arredondamento):
+
+Ciclo
+Preço/Mês
+Mensal
+R$ 377
+Semestral
+R$ 337
+Anual
+R$ 297
+Bienal
+R$ 267
+
+
+O que inclui:
+
+Google Looker BI completo
+Dashboards pré-configurados
+Criação de relatórios personalizados
+Análises avançadas de performance
+Acesso para todos os usuários
+
+Nota: Este add-on é compartilhável — se o cliente tem IMOB + Locação, paga apenas uma vez e usa em ambos os produtos.
+
+
+4.3 Kenlo Assinaturas
+Disponibilidade: IMOB e Locação (compartilhável entre produtos)
+
+Preço Base Anual: R$ 37/mês
+
+Implementação: R$ 0 (sempre gratuita)
+
+Assinaturas Incluídas: 15 assinaturas/mês
+
+Preços Calculados (após frequência + arredondamento):
+
+Ciclo
+Preço/Mês
+Mensal
+R$ 47
+Semestral
+R$ 42
+Anual
+R$ 37
+Bienal
+R$ 33
+
+
+Assinaturas Adicionais (Pós-Pago, Faixas Universais):
+
+Faixa
+Preço/Assinatura
+1–20
+R$ 1,80
+21–40
+R$ 1,70
+41+
+R$ 1,50
+
+
+O que inclui:
+
+Assinatura digital embutida na plataforma
+15 assinaturas/mês incluídas
+Validade jurídica (ICP-Brasil)
+Assinaturas adicionais cobradas por faixa de uso
+
+Nota: Este add-on é compartilhável — se o cliente tem IMOB + Locação, paga apenas uma vez e usa em ambos os produtos.
+
+
+4.4 Kenlo Pay
+Disponibilidade: Somente Locação
+
+Preço Base: R$ 0 (pós-pago por uso)
+
+Implementação: R$ 0 (sempre gratuita, zerada em Kombo Elite)
+
+O que inclui:
+
+Boleto digital embutido na plataforma
+Split automático de pagamentos
+Conciliação financeira automática
+Repasse automático para proprietários
+Cobrança pós-paga por boleto e split gerados
+
+Boletos (Pós-Pago, Por Faixa):
+
+Prime:
+
+Faixa
+Preço/Boleto
+1+
+R$ 4,00
+
+
+K:
+
+Faixa
+Preço/Boleto
+1–250
+R$ 4,00
+251+
+R$ 3,50
+
+
+K²:
+
+Faixa
+Preço/Boleto
+1–250
+R$ 4,00
+251–500
+R$ 3,50
+501+
+R$ 3,00
+
+
+Splits (Pós-Pago, Por Faixa):
+
+Prime:
+
+Faixa
+Preço/Split
+1+
+R$ 4,00
+
+
+K:
+
+Faixa
+Preço/Split
+1–250
+R$ 4,00
+251+
+R$ 3,50
+
+
+K²:
+
+Faixa
+Preço/Split
+1–250
+R$ 4,00
+251–500
+R$ 3,50
+501+
+R$ 3,00
+
+
+Modelo de Negócio:
+
+A imobiliária define o preço que cobra do inquilino/proprietário (ex: R$ 5,00)
+A imobiliária paga a taxa Kenlo (R$ 3,00–R$ 4,00 conforme plano/volume)
+A imobiliária lucra a diferença (ex: R$ 1,00–R$ 2,00 por transação)
+
+
+4.5 Kenlo Seguros
+Disponibilidade: Somente Locação
+
+Preço Base: R$ 0 (baseado em comissão sobre seguros vendidos)
+
+Implementação: R$ 0 (sempre gratuita)
+
+O que inclui:
+
+Integração com 1 clique para seguro residencial (Tokyo Marine)
+Seguros embutidos no boleto
+Comissão passiva de 35-45% sobre prêmio do seguro
+Receita estimada de R$ 10/contrato/mês
+
+Comissão sobre Seguros Vendidos:
+
+Plano
+Comissão
+Prime
+35%
+K
+40%
+K²
+45%
+
+
+Modelo de Negócio:
+
+A imobiliária não paga nada à Kenlo
+A imobiliária recebe comissão passiva sobre cada seguro vendido
+Receita estimada: ~R$ 10/contrato/mês (35-45% de um prêmio médio de ~R$ 28)
+
+
+4.6 Kenlo Cash
+Disponibilidade: Somente Locação
+
+Preço Base: R$ 0 (serviço de antecipação, sem custo recorrente)
+
+Implementação: R$ 0 (sempre gratuita)
+
+O que inclui:
+
+Antecipação de até 24 meses de aluguel para proprietários
+Comissão da imobiliária antecipada
+Sem custo recorrente para a imobiliária
+Proprietário decide se quer antecipar
+
+Modelo de Negócio:
+
+A imobiliária não paga nada à Kenlo
+A imobiliária oferece antecipação como serviço aos proprietários
+Proprietário paga taxa de antecipação (não a imobiliária)
+
+
+5. Serviços Premium
+5.1 Suporte VIP
+Preço: R$ 97/mês (por produto)
+
+Disponibilidade: IMOB e Locação (independentes)
+
+Incluído por padrão em:
+
+K e K² (ambos produtos)
+Kombos: Imob Pro, Locação Pro, Core Gestão, Elite
+
+O que inclui:
+
+Resposta em até 15 minutos
+Suporte prioritário via chat, e-mail e telefone
+Acesso a especialistas técnicos
+
+Regra de Herança: Independente — cada produto (IMOB/LOC) tem seu próprio Suporte VIP
+
+
+5.2 Customer Success Dedicado
+Preço: R$ 297/mês (compartilhado entre IMOB e LOC)
+
+Disponibilidade: IMOB e Locação (compartilhável)
+
+Incluído por padrão em:
+
+K² (ambos produtos)
+Kombos: Imob Pro, Locação Pro, Core Gestão, Elite
+
+O que inclui:
+
+Gerente de sucesso dedicado
+Reuniões mensais de estratégia
+Análise de performance e recomendações
+Suporte proativo
+
+Regra de Herança: Compartilhado — se o cliente tem IMOB K² + LOC K², paga apenas uma vez (R$ 297/mês) e o CS cobre ambos os produtos
+
+
+5.3 Treinamento Online
+Preço: R$ 2.000/sessão
+
+Incluído por padrão em:
+
+K² (1 sessão por produto)
+
+O que inclui:
+
+Sessão online de treinamento personalizado
+Duração: 2-4 horas
+Gravação disponível
+
+Regra de Duplicação: Cliente com K² em IMOB + K² em LOC recebe 2 treinamentos online (1 por produto)
+
+
+5.4 Treinamento Presencial
+Preço: R$ 3.000/sessão
+
+Incluído por padrão em:
+
+K² (1 sessão por produto, cliente paga apenas viagem)
+
+O que inclui:
+
+Sessão presencial de treinamento personalizado
+Duração: 1 dia completo
+Cliente paga apenas despesas de viagem
+
+Regra de Duplicação: Cliente com K² em IMOB + K² em LOC recebe 2 treinamentos presenciais (1 por produto)
+
+
+6. Kombos — Pacotes Combinados
+Regra Global: Desconto de Kombo é aplicado sobre o valor já ajustado pelo ciclo de pagamento. Ordem de aplicação: (1) Ajuste de ciclo → (2) Desconto de Kombo.
+6.1 Kombo Imob Start
+Produtos Incluídos: IMOB
+
+Add-ons Incluídos: Leads
+
+Desconto: 10% sobre o total (após ajuste de ciclo)
+
+Implementações Gratuitas: Leads (economiza R$ 497)
+
+Serviços Premium Incluídos: Nenhum
+
+Exemplo de Cálculo (IMOB Prime Anual + Leads):
+
+IMOB Prime Anual: R$ 247
+Leads Anual: R$ 497
+Total antes do desconto: R$ 744
+Desconto de 10%: R$ 74,40
+Total com Kombo: R$ 669,60 (vs R$ 744 sem Kombo)
+Economia: R$ 74,40/mês + R$ 497 de implementação = R$ 571,40 no primeiro ano
+
+
+6.2 Kombo Imob Pro
+Produtos Incluídos: IMOB
+
+Add-ons Incluídos: Leads, Inteligência
+
+Desconto: 15% sobre o total (após ajuste de ciclo)
+
+Implementações Gratuitas: Leads (R$ 497), Inteligência (R$ 497) — economiza R$ 994
+
+Serviços Premium Incluídos: Suporte VIP, CS Dedicado
+
+Exemplo de Cálculo (IMOB K Anual + Leads + Inteligência):
+
+IMOB K Anual: R$ 497
+Leads Anual: R$ 497
+Inteligência Anual: R$ 297
+Suporte VIP: R$ 97
+CS Dedicado: R$ 297
+Total antes do desconto: R$ 1.685
+Desconto de 15%: R$ 252,75
+Total com Kombo: R$ 1.432,25 (vs R$ 1.685 sem Kombo)
+Economia: R$ 252,75/mês + R$ 994 de implementações = R$ 1.246,75 no primeiro ano
+
+
+6.3 Kombo Locação Pro
+Produtos Incluídos: Locação
+
+Add-ons Incluídos: Inteligência, Assinaturas
+
+Desconto: 10% sobre o total (após ajuste de ciclo)
+
+Implementações Gratuitas: Inteligência (R$ 497) — economiza R$ 497
+
+Serviços Premium Incluídos: Suporte VIP, CS Dedicado
+
+Exemplo de Cálculo (LOC K Anual + Inteligência + Assinaturas):
+
+LOC K Anual: R$ 497
+Inteligência Anual: R$ 297
+Assinaturas Anual: R$ 37
+Suporte VIP: R$ 97
+CS Dedicado: R$ 297
+Total antes do desconto: R$ 1.225
+Desconto de 10%: R$ 122,50
+Total com Kombo: R$ 1.102,50 (vs R$ 1.225 sem Kombo)
+Economia: R$ 122,50/mês + R$ 497 de implementação = R$ 619,50 no primeiro ano
+
+
+6.4 Kombo Core Gestão
+Produtos Incluídos: IMOB, Locação
+
+Add-ons Incluídos: Nenhum
+
+Desconto: 0% (sem desconto adicional, mas inclui serviços premium)
+
+Implementações Gratuitas: Nenhuma
+
+Serviços Premium Incluídos: Suporte VIP, CS Dedicado
+
+Exemplo de Cálculo (IMOB Prime Anual + LOC Prime Anual):
+
+IMOB Prime Anual: R$ 247
+LOC Prime Anual: R$ 247
+Suporte VIP (2× R$ 97): R$ 194
+CS Dedicado (compartilhado): R$ 297
+Total com Kombo: R$ 985 (vs R$ 985 sem Kombo, mas com serviços premium incluídos)
+Economia: R$ 491/mês em serviços premium (R$ 194 Suporte VIP + R$ 297 CS Dedicado)
+
+
+6.5 Kombo Elite
+Produtos Incluídos: IMOB, Locação
+
+Add-ons Incluídos: Leads, Inteligência, Pay, Assinaturas
+
+Desconto: 20% sobre o total (após ajuste de ciclo)
+
+Implementações Gratuitas: Leads (R$ 497), Inteligência (R$ 497), Pay (R$ 0) — economiza R$ 994
+
+Serviços Premium Incluídos: Suporte VIP, CS Dedicado
+
+Exemplo de Cálculo (IMOB K² Anual + LOC K² Anual + Todos Add-ons):
+
+IMOB K² Anual: R$ 1.197
+LOC K² Anual: R$ 1.197
+Leads Anual: R$ 497
+Inteligência Anual (compartilhado): R$ 297
+Pay Anual: R$ 0
+Assinaturas Anual (compartilhado): R$ 37
+Suporte VIP (2× R$ 97): R$ 194
+CS Dedicado (compartilhado): R$ 297
+Total antes do desconto: R$ 3.716
+Desconto de 20%: R$ 743,20
+Total com Kombo: R$ 2.972,80 (vs R$ 3.716 sem Kombo)
+Economia: R$ 743,20/mês + R$ 994 de implementações = R$ 1.737,20 no primeiro ano
+
+
+7. Regras de Arredondamento e Cálculo
+7.1 Ordem de Aplicação
+Preço Base Anual (fonte: pricing-values.json → basePlans)
+Multiplicador de Ciclo (fonte: pricing-values.json → paymentCycles)
+Arredondamento (regra: próximo número terminando em 7 para valores ≥ R$100, Math.ceil para valores < R$100)
+Desconto de Kombo (fonte: pricing-values.json → kombos)
+7.2 Regra de Arredondamento
+Para valores ≥ R$100:
+
+Arredondar para o próximo número terminando em 7
+Exemplo: R$ 277,875 → R$ 287
+
+Para valores < R$100:
+
+Usar Math.ceil (arredondar para cima)
+Exemplo: R$ 41,625 → R$ 42
+7.3 Multiplicadores de Ciclo
+Ciclo
+Multiplicador
+Desconto vs Mensal
+Mensal
+1.25
+0% (referência)
+Semestral
+1.125
+10% OFF
+Anual
+1.0
+20% OFF
+Bienal
+0.875
+30% OFF
+
+
+
+8. Matriz de Disponibilidade de Add-ons
+Add-on
+IMOB
+Locação
+Compartilhável
+Implementação
+Pós-Pago
+Leads
+✅
+❌
+❌
+R$ 497
+Sim (leads adicionais)
+Inteligência
+✅
+✅
+✅
+R$ 497
+Não
+Assinaturas
+✅
+✅
+✅
+R$ 0
+Sim (assinaturas adicionais)
+Pay
+❌
+✅
+❌
+R$ 0
+Sim (boletos e splits)
+Seguros
+❌
+✅
+❌
+R$ 0
+Não (comissão)
+Cash
+❌
+✅
+❌
+R$ 0
+Não (serviço)
+
+
+Legenda:
+
+✅ Disponível
+❌ Não disponível
+Compartilhável: Se o cliente tem IMOB + Locação, paga apenas uma vez e usa em ambos
+
+
+9. Perguntas Frequentes (FAQ) — Precificação
+9.1 Como funciona o arredondamento de preços?
+Para valores acima de R$ 100, arredondamos para o próximo número terminando em 7 (ex: R$ 277,875 → R$ 287). Para valores abaixo de R$ 100, arredondamos para cima (ex: R$ 41,625 → R$ 42). Esta regra cria tiers de preço consistentes e facilita a comunicação com clientes.
+9.2 Qual a diferença entre pré-pago e pós-pago para usuários/contratos adicionais?
+Pré-pago (Anual/Bienal apenas): Preço fixo de R$ 34/usuário/mês ou R$ 2,20/contrato/mês, independente de plano ou volume. Você paga antecipadamente pelo período completo.
+
+Pós-pago (Todos os ciclos): Preço por faixa de uso (ex: R$ 57, R$ 47-37, R$ 37-17 para usuários). Você paga mensalmente apenas pelo que usar, com preços decrescentes conforme o volume aumenta.
+9.3 Como funcionam os add-ons compartilháveis?
+Inteligência e Assinaturas são compartilháveis entre IMOB e Locação. Se você tem ambos os produtos, paga apenas uma vez pelo add-on e usa em ambas as plataformas. Exemplo: Cliente com IMOB K + LOC K paga R$ 297/mês por Inteligência e usa o Google Looker BI tanto no IMOB quanto no LOC.
+9.4 Qual a diferença entre Suporte VIP e CS Dedicado?
+Suporte VIP (R$ 97/mês por produto): Resposta em até 15 minutos, suporte prioritário, acesso a especialistas técnicos. Focado em resolver problemas técnicos rapidamente.
+
+CS Dedicado (R$ 297/mês compartilhado): Gerente de sucesso dedicado, reuniões mensais de estratégia, análise de performance, suporte proativo. Focado em maximizar o valor que você extrai da plataforma.
+9.5 Como funciona a economia nos Kombos?
+Kombos oferecem três tipos de economia:
+
+Desconto percentual sobre o total (10-20% dependendo do Kombo)
+Implementações gratuitas (economiza R$ 497-994)
+Serviços premium incluídos (economiza R$ 194-491/mês)
+
+Exemplo: Kombo Elite oferece 20% de desconto + R$ 994 de implementações gratuitas + R$ 491/mês em serviços premium = economia total de R$ 1.737,20 no primeiro ano (para IMOB K² + LOC K² Anual).
+9.6 Kenlo Pay: Como a imobiliária ganha dinheiro?
+A imobiliária define o preço que cobra do inquilino/proprietário (ex: R$ 5,00 por boleto). A imobiliária paga a taxa Kenlo (R$ 3,00-4,00 conforme plano/volume). A imobiliária lucra a diferença (ex: R$ 1,00-2,00 por transação). Quanto maior o volume, menor a taxa Kenlo, maior o lucro da imobiliária.
+9.7 Kenlo Seguros: A imobiliária paga algo?
+Não. Kenlo Seguros é um serviço de comissão passiva. A imobiliária não paga nada à Kenlo, apenas recebe 35-45% de comissão sobre cada seguro vendido. Receita estimada: ~R$ 10/contrato/mês.
+
+
+10. Glossário de Termos
+Termo
+Definição
+Preço Base Anual
+Preço de referência (sem multiplicador de ciclo) usado como fundação para todos os cálculos. Fonte: pricing-values.json → basePlans.
+Multiplicador de Ciclo
+Fator aplicado ao preço base para calcular o preço de outros ciclos (mensal, semestral, bienal). Fonte: pricing-values.json → paymentCycles.
+Arredondamento
+Regra de ajuste final do preço: próximo número terminando em 7 (≥ R$100) ou Math.ceil (< R$100).
+Desconto de Kombo
+Desconto percentual aplicado sobre o total já ajustado pelo ciclo. Ordem: ciclo → Kombo.
+Pós-Pago
+Cobrança por uso aplicada após consumo (ex: usuários adicionais, leads adicionais, boletos).
+Pré-Pago
+Pagamento antecipado por período completo (anual/bienal) com preço fixo (ex: R$ 34/usuário/mês).
+Compartilhável
+Add-on que pode ser usado em múltiplos produtos (IMOB + LOC) pagando apenas uma vez.
+Implementação
+Taxa única cobrada na ativação de um add-on (ex: R$ 497 para Leads). Pode ser zerada em Kombos.
+Tier/Faixa
+Intervalo de volume com preço específico (ex: 1-5 usuários = R$ 47, 6+ = R$ 37).
+Kenlo Open
+Rede de parceiros homologados integrados via API às plataformas Kenlo.
+Comunidade Kenlo
+Rede de compartilhamento de negócios entre imobiliárias clientes Kenlo (pioneira há 12 anos).
+Marketplace
+Kenlo Open + Comunidade Kenlo.
+Ecossistema Kenlo
+Todos os produtos Kenlo + add-ons + Marketplace (parceiros homologados).
+
+
+
+
+Documento gerado por: Manus AI
+Fonte de Dados: pricing-values.json v2.0.0 + pricing-config.ts
+Última Atualização: Fevereiro 2026
+
+

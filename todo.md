@@ -5986,3 +5986,47 @@
   - ✅ Menu items: hover:scale-[1.02] + active:scale-[0.98] with duration-150
   - ✅ Tested in browser: all animations working smoothly
   - Files: `client/src/components/kombo/ColumnCycleSelector.tsx`
+
+
+## PDF Feature Matrix Redesign - Apple-Style Layout
+
+- [x] Analyze current PDF generation code and feature matrix implementation
+  - ✅ Reviewed `server/pdfGenerator.ts` and `server/pdf/pdfFeaturesPageV2.ts`
+  - ✅ Understood current structure: shows all 3 plans (Prime, K, K²) in every PDF
+  - ✅ Identified that filtering needs to be added based on selected plan
+
+- [x] Read reference documents for feature matrices
+  - ✅ Saved `docs/kenlo-referencia-completa-produtos.txt` as permanent source of truth
+  - ✅ Section 2.4: IMOB has 55 features in 9 categories
+  - ✅ Section 3.4: Locação has 25 features in 4 categories
+  - ✅ Extracted complete feature lists with Prime/K/K² availability
+
+- [x] Redesign PDF feature matrix section with Apple-style layout
+  - ✅ Created `server/pdf/pdfFeaturesPageV3.ts` with complete redesign
+  - ✅ Shows ONLY selected plan (Prime/K/K²), not all 3 plans
+  - ✅ Two-column table: | Funcionalidade | Plano Selecionado |
+  - ✅ Header: Product name + selected plan name (e.g., "KENLO IMOB - Plano PRIME")
+  - ✅ Visual indicators: ✅ green (#10B981), ❌ gray (#D1D5DB), ➕ blue (#3B82F6)
+  - ✅ Category sections with tinted background (#F9FAFB)
+  - ✅ Apple-style: soft shadows, rounded corners, generous spacing
+
+- [x] Implement side-by-side tables for 2 products
+  - ✅ 1 product → single table full width
+  - ✅ 2 products → side-by-side layout with 20px gap
+  - ✅ Tables NEVER stacked vertically
+  - ✅ Equal width, same Y position, identical styling
+  - ✅ IMOB and Locação have different feature sets (55 vs 25 features)
+
+- [x] Add footer legend to each table
+  - ✅ Legend implemented with 3 items
+  - ✅ Icons match table: ✅ green, ❌ gray, ➕ blue
+  - ✅ Small font (8pt), muted gray color
+  - ✅ Positioned below each table
+
+- [ ] Test PDF generation with different scenarios (PENDING USER TESTING)
+  - Code implemented and ready for testing
+  - Test scenarios: IMOB only, Locação only, IMOB+Locação
+  - Verify: side-by-side alignment, feature accuracy, visual quality
+  - User to test manually after checkpoint
+
+- [ ] Save checkpoint with redesigned PDF feature matrix
