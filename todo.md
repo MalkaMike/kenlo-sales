@@ -5852,3 +5852,14 @@
 - [x] Remover link Playbook de Vendas do footer
 - [x] Atualizar GlobalSearch removendo sub-páginas de Conteúdo
 - [x] Deletar arquivos: PlaybookPage.tsx, PlaybooksPage.tsx, ScriptsPage.tsx, TreinamentosPage.tsx
+
+## Bug Fix: CS Dedicado disponível apenas para K2
+- [x] CS Dedicado deve estar disponível APENAS para plano K2 (não para Prime nem K)
+- [x] Suporte VIP deve estar disponível para K e K2 (não para Prime)
+- [x] Verificar e corrigir lógica na calculadora/tabela Kombo
+- [x] Atualizar testes para refletir regras corretas
+- [x] Separar isPremiumIncludedInPlan em isVipSupportIncludedInPlan (K/K2) e isDedicatedCSIncludedInPlan (K2 only)
+- [x] Corrigir 3 calculadores em komboColumnCalculators.ts (noKombo, kombo, custom)
+- [x] Corrigir BenefitsSection para mostrar CS Dedicado como opcional em K (não só Prime)
+- [x] Corrigir SupportServicesRow para cobrar CS Dedicado em K (não só Prime)
+- [x] Verificar pricing-values.json já correto: csDedicado.defaultByPlan = {prime: false, k: false, k2: true}

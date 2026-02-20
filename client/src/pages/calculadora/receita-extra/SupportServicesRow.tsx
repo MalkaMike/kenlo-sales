@@ -12,19 +12,21 @@ export function SupportServicesRow() {
   let totalSupportCost = 0;
   const services: string[] = [];
 
+  // VIP Support: only charged for Prime (included in K and K2)
   if ((product === "imob" || product === "both") && metrics.imobVipSupport && imobPlan === "prime") {
     totalSupportCost += Pricing.getVipSupportPrice();
     services.push("VIP Imob");
-  }
-  if ((product === "imob" || product === "both") && metrics.imobDedicatedCS && imobPlan === "prime") {
-    totalSupportCost += Pricing.getCSDedicadoPrice();
-    services.push("CS Imob");
   }
   if ((product === "loc" || product === "both") && metrics.locVipSupport && locPlan === "prime") {
     totalSupportCost += Pricing.getVipSupportPrice();
     services.push("VIP Loc");
   }
-  if ((product === "loc" || product === "both") && metrics.locDedicatedCS && locPlan === "prime") {
+  // CS Dedicado: charged for Prime AND K (only included in K2)
+  if ((product === "imob" || product === "both") && metrics.imobDedicatedCS && imobPlan !== "k2") {
+    totalSupportCost += Pricing.getCSDedicadoPrice();
+    services.push("CS Imob");
+  }
+  if ((product === "loc" || product === "both") && metrics.locDedicatedCS && locPlan !== "k2") {
     totalSupportCost += Pricing.getCSDedicadoPrice();
     services.push("CS Loc");
   }

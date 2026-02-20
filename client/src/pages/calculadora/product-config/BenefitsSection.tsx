@@ -26,6 +26,7 @@ export function BenefitsSection() {
   const vipIncluded = highestPlan === "k" || highestPlan === "k2";
   const csIncluded = highestPlan === "k2";
   const isPrimeOnly = highestPlan === "prime";
+  const csIsOptional = highestPlan === "prime" || highestPlan === "k"; // CS Dedicado only included in K2
 
   const imobK2 = (product === "imob" || product === "both") && imobPlan === "k2";
   const locK2 = (product === "loc" || product === "both") && locPlan === "k2";
@@ -84,7 +85,7 @@ export function BenefitsSection() {
             <Card className={`transition-all ${
               csIncluded
                 ? "border-green-200 bg-green-50/50"
-                : isPrimeOnly
+                : csIsOptional
                 ? "border-yellow-200 bg-yellow-50/30"
                 : "border-gray-200 bg-gray-50/30 opacity-60"
             }`}>
@@ -96,7 +97,7 @@ export function BenefitsSection() {
                       <CheckCircle2 className="w-3 h-3 mr-1" />
                       Incluído
                     </Badge>
-                  ) : isPrimeOnly ? (
+                  ) : csIsOptional ? (
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
                         Opcional (R${Pricing.getCSDedicadoPrice()}/mês)

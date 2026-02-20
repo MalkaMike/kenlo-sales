@@ -77,6 +77,17 @@ export const applyDiscount = (price: number, discount: number): number => {
 import { formatCurrencyCompact } from "@shared/formatters";
 export const formatCurrency = formatCurrencyCompact;
 
+/** Suporte VIP is included in K and K2 plans */
+export const isVipSupportIncludedInPlan = (plan: PlanTier): boolean => {
+  return plan === "k" || plan === "k2";
+};
+
+/** CS Dedicado is included ONLY in K2 plan */
+export const isDedicatedCSIncludedInPlan = (plan: PlanTier): boolean => {
+  return plan === "k2";
+};
+
+/** @deprecated Use isVipSupportIncludedInPlan and isDedicatedCSIncludedInPlan separately */
 export const isPremiumIncludedInPlan = (plan: PlanTier): boolean => {
   return plan === "k" || plan === "k2";
 };
@@ -238,21 +249,25 @@ export const calculateNoKomboColumn = (
   let vipSupportPrice: number | string | null = null;
   let dedicatedCSPrice: number | string | null = null;
 
-  const imobIncludesPremium = (product === "imob" || product === "both") && isPremiumIncludedInPlan(imobPlan);
-  const locIncludesPremium = (product === "loc" || product === "both") && isPremiumIncludedInPlan(locPlan);
+  // VIP Support: included in K and K2 plans
+  const imobIncludesVip = (product === "imob" || product === "both") && isVipSupportIncludedInPlan(imobPlan);
+  const locIncludesVip = (product === "loc" || product === "both") && isVipSupportIncludedInPlan(locPlan);
+  // CS Dedicado: included ONLY in K2 plan
+  const imobIncludesCS = (product === "imob" || product === "both") && isDedicatedCSIncludedInPlan(imobPlan);
+  const locIncludesCS = (product === "loc" || product === "both") && isDedicatedCSIncludedInPlan(locPlan);
 
-  if (imobIncludesPremium || locIncludesPremium) {
+  if (imobIncludesVip || locIncludesVip) {
     vipSupportPrice = "Incluído";
+  } else if (vipSupport) {
+    vipSupportPrice = PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+    totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+  }
+
+  if (imobIncludesCS || locIncludesCS) {
     dedicatedCSPrice = "Incluído";
-  } else {
-    if (vipSupport) {
-      vipSupportPrice = PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
-      totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
-    }
-    if (dedicatedCS) {
-      dedicatedCSPrice = PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
-      totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
-    }
+  } else if (dedicatedCS) {
+    dedicatedCSPrice = PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+    totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
   }
 
   let trainingPrice: string | null = null;
@@ -408,22 +423,28 @@ export const calculateKomboColumn = (
   let dedicatedCSPrice: number | string | null = null;
 
   if (kombo.includesPremiumServices) {
+    // All Kombos that include premium services get both VIP and CS Dedicado
     vipSupportPrice = "Incluído";
     dedicatedCSPrice = "Incluído";
   } else {
-    const relevantPlan = komboIncludesLoc && !komboIncludesImob ? locPlan : imobPlan;
-    if (isPremiumIncludedInPlan(relevantPlan)) {
+    // Check plan-level inclusion separately for VIP (K/K2) and CS (K2 only)
+    const imobVip = komboIncludesImob && isVipSupportIncludedInPlan(imobPlan);
+    const locVip = komboIncludesLoc && isVipSupportIncludedInPlan(locPlan);
+    const imobCS = komboIncludesImob && isDedicatedCSIncludedInPlan(imobPlan);
+    const locCS = komboIncludesLoc && isDedicatedCSIncludedInPlan(locPlan);
+
+    if (imobVip || locVip) {
       vipSupportPrice = "Incluído";
+    } else if (vipSupport) {
+      vipSupportPrice = PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+      totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
+    }
+
+    if (imobCS || locCS) {
       dedicatedCSPrice = "Incluído";
-    } else {
-      if (vipSupport) {
-        vipSupportPrice = PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
-        totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport;
-      }
-      if (dedicatedCS) {
-        dedicatedCSPrice = PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
-        totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
-      }
+    } else if (dedicatedCS) {
+      dedicatedCSPrice = PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
+      totalMonthly += PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS;
     }
   }
 
@@ -564,23 +585,27 @@ export const calculateCustomColumn = (
   let vipSupportPrice: number | string | null = null;
   let dedicatedCSPrice: number | string | null = null;
 
-  const imobIncludesPremium = (product === "imob" || product === "both") && isPremiumIncludedInPlan(imobPlan);
-  const locIncludesPremium = (product === "loc" || product === "both") && isPremiumIncludedInPlan(locPlan);
+  // VIP Support: included in K and K2 plans
+  const imobIncludesVip = (product === "imob" || product === "both") && isVipSupportIncludedInPlan(imobPlan);
+  const locIncludesVip = (product === "loc" || product === "both") && isVipSupportIncludedInPlan(locPlan);
+  // CS Dedicado: included ONLY in K2 plan
+  const imobIncludesCS = (product === "imob" || product === "both") && isDedicatedCSIncludedInPlan(imobPlan);
+  const locIncludesCS = (product === "loc" || product === "both") && isDedicatedCSIncludedInPlan(locPlan);
 
-  if (imobIncludesPremium || locIncludesPremium) {
+  if (imobIncludesVip || locIncludesVip) {
     vipSupportPrice = "Incluído";
+  } else if (overrides.vipSupport) {
+    const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport, frequency);
+    vipSupportPrice = price;
+    totalMonthly += price;
+  }
+
+  if (imobIncludesCS || locIncludesCS) {
     dedicatedCSPrice = "Incluído";
-  } else {
-    if (overrides.vipSupport) {
-      const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.vipSupport, frequency);
-      vipSupportPrice = price;
-      totalMonthly += price;
-    }
-    if (overrides.dedicatedCS) {
-      const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS, frequency);
-      dedicatedCSPrice = price;
-      totalMonthly += price;
-    }
+  } else if (overrides.dedicatedCS) {
+    const price = calculatePremiumPrice(PREMIUM_SERVICES_ANNUAL_PRICES.dedicatedCS, frequency);
+    dedicatedCSPrice = price;
+    totalMonthly += price;
   }
 
   let trainingPrice: number | string | null = null;
