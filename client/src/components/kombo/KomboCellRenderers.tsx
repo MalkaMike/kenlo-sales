@@ -41,6 +41,7 @@ export interface CellRenderContext {
   setPrePaidUsers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   setPrePaidContracts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   setPrePaidWhatsApp: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  addNotification: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
 // ─── Plan Cell ───────────────────────────────────────────────────────────────
@@ -263,7 +264,12 @@ export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode
         onClick={(e) => {
           e.stopPropagation();
           const ck = ctx.getColumnKey(ctx.colIndex);
-          ctx.setPrePaidUsers(prev => ({ ...prev, [ck]: !prev[ck] }));
+          const newState = !isPrepaid;
+          ctx.setPrePaidUsers(prev => ({ ...prev, [ck]: newState }));
+          ctx.addNotification(
+            newState ? 'Usuários adicionais configurados para pré-pago' : 'Usuários adicionais voltaram para pós-pago',
+            'success'
+          );
         }}
       >
         {isPrepaid ? "Voltar pós-pago" : "Pré-pagar"}
@@ -302,7 +308,12 @@ export function renderPostPaidContractsCell(ctx: CellRenderContext): React.React
         onClick={(e) => {
           e.stopPropagation();
           const ck = ctx.getColumnKey(ctx.colIndex);
-          ctx.setPrePaidContracts(prev => ({ ...prev, [ck]: !prev[ck] }));
+          const newState = !isPrepaidC;
+          ctx.setPrePaidContracts(prev => ({ ...prev, [ck]: newState }));
+          ctx.addNotification(
+            newState ? 'Contratos configurados para pré-pago' : 'Contratos voltaram para pós-pago',
+            'success'
+          );
         }}
       >
         {isPrepaidC ? "Voltar pós-pago" : "Pré-pagar"}
@@ -341,7 +352,12 @@ export function renderPostPaidWhatsAppCell(ctx: CellRenderContext): React.ReactN
         onClick={(e) => {
           e.stopPropagation();
           const ck = ctx.getColumnKey(ctx.colIndex);
-          ctx.setPrePaidWhatsApp(prev => ({ ...prev, [ck]: !prev[ck] }));
+          const newState = !isPrepaid;
+          ctx.setPrePaidWhatsApp(prev => ({ ...prev, [ck]: newState }));
+          ctx.addNotification(
+            newState ? 'WhatsApp Leads configurados para pré-pago' : 'WhatsApp Leads voltaram para pós-pago',
+            'success'
+          );
         }}
       >
         {isPrepaid ? "Voltar pós-pago" : "Pré-pagar"}

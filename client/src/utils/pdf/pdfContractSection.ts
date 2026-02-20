@@ -28,7 +28,7 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
 
   // Calculate REAL charged value based on cycle
   let chargedValue = 0;
-  const monthlyBase = data.totalAnnual / 12;
+  const monthlyBase = data.totalMonthly;
   if (data.paymentPlan === "monthly") chargedValue = monthlyBase;
   else if (data.paymentPlan === "semestral") chargedValue = monthlyBase * 6;
   else if (data.paymentPlan === "annual") chargedValue = monthlyBase * 12;

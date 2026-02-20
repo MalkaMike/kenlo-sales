@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PrePagoPosPagoModal } from "@/components/PrePagoPosPagoModal";
+import { NotificationContext } from "@/contexts/NotificationContext";
 
 // Sub-module imports
 import type {
@@ -91,6 +92,10 @@ const rows = [
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function KomboComparisonTable(props: KomboComparisonProps) {
+  // ── Notification Context ──
+  const notificationCtx = React.useContext(NotificationContext);
+  const addNotification = notificationCtx?.addNotification || (() => {});
+
   // ── Selection State ──
   const [selectedPlans, setSelectedPlans] = useState<ColumnId[]>([]);
   const [hoveredColumn, setHoveredColumn] = useState<ColumnId | null>(null);
@@ -506,6 +511,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       columnOverrides, getDefaultOverrides, getCustomDefaultOverrides, getColumnKey,
       updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick,
       setPrePaidUsers, setPrePaidContracts, setPrePaidWhatsApp,
+      addNotification: (message: string, type: 'success' | 'error' | 'info') => {
+        addNotification({ title: message, type, duration: 3000 });
+      },
     };
   }, [getColumnKey, columnOverrides, getCustomDefaultOverrides, getDefaultOverrides, columns, props, updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick, setPrePaidWhatsApp]);
 

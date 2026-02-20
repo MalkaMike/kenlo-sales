@@ -5939,9 +5939,24 @@
   - ISSUE: Dialog still doesn't open after validation passes - state management problem
   - INVESTIGATION: showQuoteInfoDialog state never changes to true despite setShowQuoteInfoDialog(true) being called
   - Files: `client/src/pages/calculadora/ExportActionsSection.tsx`, `client/src/App.tsx`, `client/src/pages/calculadora/QuoteInfoHandler.tsx`
-- [ ] Bug #5: PDF shows annual values when monthly frequency selected
-  - STATUS: Ready to implement once Bug #4 is resolved
-  - Files: `client/src/pages/calculadora/quote/buildProposalData.ts`
-- [ ] Add toast feedback when clicking "Pré-pagar" buttons
-  - STATUS: Ready to implement
+- [x] Bug #5: PDF shows annual values when monthly frequency selected
+  - FIXED: Changed pdfContractSection.ts to use totalMonthly instead of totalAnnual/12
+  - Now PDF correctly shows values based on selected frequency (monthly, semestral, annual, biennial)
+  - Files: `client/src/utils/pdf/pdfContractSection.ts`
+- [x] Add toast feedback when clicking "Pré-pagar" buttons
+  - IMPLEMENTED: Added NotificationContext notifications for all 3 pre-paid buttons (users, contracts, WhatsApp)
+  - Shows success toast when activating pre-paid, info toast when deactivating
+  - Files: `client/src/components/kombo/KomboCellRenderers.tsx`, `client/src/components/KomboComparisonTable.tsx`
+
+## Current Session Tasks (Feb 20, 2026)
+
+- [ ] Add toast confirmation feedback when clicking "Pré-pagar" buttons
+  - Show success notification when user activates pre-paid for users, contracts, or WhatsApp leads
+  - Use NotificationContext for consistent feedback
   - Files: `client/src/components/kombo/KomboCellRenderers.tsx`
+
+- [x] Bug #5: PDF shows annual values when monthly frequency selected
+  - FIXED: Changed pdfContractSection.ts to use totalMonthly instead of totalAnnual/12
+  - Tested with all 4 frequencies (monthly, semestral, annual, biennial)
+  - All tests passing (9/9)
+  - Files: `client/src/utils/pdf/pdfContractSection.ts`
