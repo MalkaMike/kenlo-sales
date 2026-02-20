@@ -61,7 +61,7 @@ export function ExportActionsSection() {
       addNotification({
         type: "error",
         title: "Nenhum plano selecionado",
-        message: "Selecione um plano na tabela de comparação antes de exportar.",
+        message: "Selecione um plano na tabela de comparacao antes de exportar.",
       });
       const komboSection = document.getElementById("kombo-comparison-section");
       if (komboSection) {

@@ -5960,3 +5960,29 @@
   - Tested with all 4 frequencies (monthly, semestral, annual, biennial)
   - All tests passing (9/9)
   - Files: `client/src/utils/pdf/pdfContractSection.ts`
+
+
+## Session Feb 20, 2026 - Continuation (Tasks 1.2.3)
+
+- [x] Bug #4: Complete fix - PDF export dialog not opening after validation passes
+  - FIXED: Missing React imports (useState, useEffect) in QuoteInfoDialog.tsx
+  - Root cause: Component was using hooks without importing them from React
+  - Solution: Added `import { useState, useEffect } from "react"` to QuoteInfoDialog.tsx
+  - Verified: Dialog now opens correctly, PDF generation works, proposal saves to database
+
+- [x] Test PDF generation manually with different scenarios
+  - ✅ Tested with Imob Pro + annual frequency
+  - ✅ Verified PDF generation works (3-page PDF created)
+  - ✅ Verified dialog opens with user info, payment options (1x, 2x, 3x), validity days (1-7)
+  - ✅ Verified PDF downloaded successfully: Proposta_Kenlo_Imobiliária_Teste_PDF_2026-02-20.pdf
+  - ✅ Verified PDF content: cover page, operational profile, investment breakdown, next steps
+  - ✅ Verified proposal saved to database with success notification
+
+- [x] Add smooth animations to pre-paid toggle buttons
+  - ✅ Added smooth animations to ColumnCycleSelector (payment frequency toggle)
+  - ✅ Button hover: scale-105 + active:scale-95 with duration-200 ease-out
+  - ✅ Chevron icon: smooth 180° rotation with duration-300 ease-out
+  - ✅ Dropdown: fade-in + zoom-in animation with duration-200
+  - ✅ Menu items: hover:scale-[1.02] + active:scale-[0.98] with duration-150
+  - ✅ Tested in browser: all animations working smoothly
+  - Files: `client/src/components/kombo/ColumnCycleSelector.tsx`
