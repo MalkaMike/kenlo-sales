@@ -5919,3 +5919,28 @@
   - Fixed row visibility condition to check `!props.addons.leads || !props.wantsWhatsApp`
   - BUT: WhatsApp Leads row still not appearing because `addons.leads` is FALSE in calculators even when toggle is ON
   - Next: Need to fix state synchronization between LeadsAddonCard toggle and KomboComparisonTable props
+
+## New Tasks from Ivan (2026-02-20)
+- [ ] Bug #4: Botão "Exportar Cotação (PDF)" não está gerando PDF
+  - Investigar handler do botão de exportação
+  - Verificar se há validação falhando silenciosamente
+  - Testar fluxo completo de exportação
+- [ ] Bug #5: PDF mostra valores anuais quando mensal é selecionado
+  - Validar se o PDF está usando a frequência correta
+  - Verificar se os valores no PDF correspondem à frequência selecionada
+  - Testar com todas as frequências (Mensal, Semestral, Anual, Bienal)
+- [ ] Adicionar feedback visual (toast) ao clicar "Pré-pagar"
+  - Implementar toast de confirmação quando usuário clica em botão "Pré-pagar"
+  - Melhorar UX mostrando feedback claro da ação
+
+## Bug Fixes - Session 2 (Feb 20, 2026)
+- [ ] Bug #4: "Exportar Cotação (PDF)" button validation feedback
+  - PARTIAL FIX: Replaced Sonner toast with NotificationContext for error messages
+  - ISSUE: Dialog not opening after validation passes - needs investigation
+  - Files: `client/src/pages/calculadora/ExportActionsSection.tsx`, `client/src/App.tsx`
+- [ ] Bug #5: PDF shows annual values when monthly frequency selected
+  - BLOCKED: Cannot test until Bug #4 is resolved
+  - Files: `client/src/pages/calculadora/quote/buildProposalData.ts`
+- [ ] Add toast feedback when clicking "Pré-pagar" buttons
+  - NOT STARTED: Deferred due to Bug #4 investigation
+  - Files: `client/src/components/kombo/KomboCellRenderers.tsx`

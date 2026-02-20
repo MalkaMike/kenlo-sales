@@ -5,10 +5,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { useContext } from "react";
+import { NotificationContext } from "@/contexts/NotificationContext";
 import { useCalc } from "./CalculadoraContext";
 
 export function ExportActionsSection() {
+  const notificationContext = useContext(NotificationContext);
   const {
     canExportPDF,
     selectedPlans,
@@ -18,11 +20,18 @@ export function ExportActionsSection() {
     setShowQuoteInfoDialog,
   } = useCalc();
 
+  if (!notificationContext) {
+    throw new Error("ExportActionsSection must be used within NotificationProvider");
+  }
+  const { addNotification } = notificationContext;
+
   const handleExportClick = () => {
-    console.log('[ExportActionsSection] canExportPDF:', canExportPDF);
-    console.log('[ExportActionsSection] selectedPlans:', selectedPlans);
     if (!canExportPDF) {
-      toast.error("Faça login como vendedor autorizado para exportar cotações.");
+      addNotification({
+        type: "error",
+        title: "Acesso negado",
+        message: "Faça login como vendedor autorizado para exportar cotações.",
+      });
       return;
     }
     const hasCompanyErrors =
@@ -32,9 +41,11 @@ export function ExportActionsSection() {
       !businessNature.cellphone.trim();
     if (!isBusinessNatureComplete() || hasCompanyErrors) {
       setShowValidationErrors(true);
-      toast.error(
-        "Preencha todos os campos obrigatórios marcados com * antes de exportar."
-      );
+      addNotification({
+        type: "error",
+        title: "Campos obrigatórios",
+        message: "Preencha todos os campos marcados com * antes de exportar.",
+      });
       const businessNatureSection = document.getElementById(
         "business-nature-section"
       );
@@ -47,9 +58,11 @@ export function ExportActionsSection() {
       return;
     }
     if (selectedPlans.length === 0) {
-      toast.error(
-        "Selecione um plano na tabela de comparação antes de exportar."
-      );
+      addNotification({
+        type: "error",
+        title: "Nenhum plano selecionado",
+        message: "Selecione um plano na tabela de comparação antes de exportar.",
+      });
       const komboSection = document.getElementById("kombo-comparison-section");
       if (komboSection) {
         komboSection.scrollIntoView({ behavior: "smooth", block: "start" });
