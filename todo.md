@@ -6086,3 +6086,13 @@
   - Created docs/current-pricing-snapshot.md for quick reference
 - [x] Run comprehensive pricing tests to ensure accuracy
   - All 1,139 tests passing including 133 PDF accuracy tests
+
+
+## Test Complete Pricing Change Flow (End-to-End)
+- [x] Read current pricing-values.json baseline values
+- [x] Verify /admin/pricing page shows correct values (FIXED roundToSeven bug in admin preview)
+- [x] Verify calculator page reflects same pricing (all values match pricing-values.json)
+- [x] Test PDF generation with current pricing (all values match pricing-values.json)
+- [x] Verify public product pages (IMOB, Locação, Kombos) show correct pricing - ALL MATCH
+- [x] Report complete test results
+- [x] BUG FIX: Admin preview roundToSeven was using wrong algorithm (Math.ceil(price/10)*10-3 instead of canonical version from shared/pricing-config.ts)

@@ -14,8 +14,12 @@ export const parseFormattedNumber = (str: string): number =>
   parseFloat(str.replace(/\./g, "").replace(",", ".")) || 0;
 
 export const roundToSeven = (price: number): number => {
-  const tens = Math.ceil(price / 10) * 10;
-  return tens - 3;
+  const rounded = Math.ceil(price);
+  if (rounded < 100) return rounded;
+  const lastDigit = rounded % 10;
+  if (lastDigit === 7) return rounded;
+  if (lastDigit < 7) return rounded + (7 - lastDigit);
+  return rounded + (10 - lastDigit) + 7;
 };
 
 // ── NumberInput ─────────────────────────────────────────────────
