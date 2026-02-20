@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, email, role FROM users WHERE email = 'mickael@laik.com.br';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute SELECT id, name, email, role FROM users WHERE email = 'mickael@laik.com.br';",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Mickael MALKA",
+      "email": "mickael@laik.com.br",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\trole\n1\tMickael MALKA\tmickael@laik.com.br\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 367
+}

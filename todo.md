@@ -6058,3 +6058,11 @@
   - Test with different product combinations (IMOB only, LOC only, both)
   - Test with different add-ons and post-paid items
   - Verify value breakdown accuracy
+
+
+## Grant Admin Permissions to mickael@laik.com.br
+- [x] Check current user role in database
+- [x] Update user role to 'admin' in users table
+- [x] Add mickael@laik.com.br to ADMIN_EMAILS whitelist in shared/const.ts
+- [x] Restart server to load updated whitelist
+- [ ] Test pricing management functionality with updated permissions (USER TO TEST)

@@ -9,4 +9,5 @@ export const ADMIN_EMAILS = [
   'bruno.silva@i-value.com.br',
   'ariana.meireles@i-value.com.br',
   'ana.rissato@i-value.com.br',
+  'mickael@laik.com.br',
 ];
