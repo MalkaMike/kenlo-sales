@@ -6112,3 +6112,18 @@
 - [x] Update kenlo-referencia-completa-produtos document with precise rule (v3.1.0)
 - [x] Verify code implements the rule correctly (roundToSeven only used for licenses, not post-paid/pre-paid)
 - [x] Save checkpoint and deliver updated document
+
+## Automated Pricing Validation & PDF Reference Export
+- [x] Create automated pricing validation test (licenses >= R$100 end in 7, post-paid does NOT end in 7) - 24 tests passing
+- [x] Build comprehensive PDF reference document generator on server (all pricing logic, business rules, features)
+- [x] Add Export PDF button to admin pricing page (header + sidebar)
+- [x] Test PDF export and validate content completeness
+- [x] Save checkpoint and deliver
+
+## Pricing Bible PDF
+- [x] Rename reference document to "Pricing Bible" throughout (PDF title, filename, admin button)
+- [x] Fix blank pages in PDF - REWROTE entire generator from PDFKit to jsPDF+autotable to fix save/restore state corruption
+- [x] Fix page numbering (proper footer on all 12 pages)
+- [x] Fix version display (v3.1.0 with generation timestamp)
+- [x] Fix checkmarks/boolean display in feature matrix (Sim/Nao instead of Unicode chars)
+- [x] Test PDF generation - all 12 pages render correctly with full content

@@ -3,6 +3,7 @@ import { router, protectedProcedure, adminProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as fs from "fs/promises";
 import * as path from "path";
+import { generateReferenceDocumentPDF } from "./pdf/pdfReferenceDocument";
 
 // DETERMINISTIC PRICING CONFIG SCHEMA - VERSION 2.0.0
 // Follows 7-block structure (A-G) with zero interpretation
@@ -228,6 +229,23 @@ export const pricingAdminRouter = router({
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to read pricing config",
+      });
+    }
+  }),
+
+  // Generate reference document PDF
+  generateReferencePDF: protectedProcedure.mutation(async () => {
+    try {
+      const pdfBuffer = await generateReferenceDocumentPDF();
+      return {
+        pdf: pdfBuffer.toString("base64"),
+        filename: `Kenlo_Referencia_Completa_${new Date().toISOString().split("T")[0]}.pdf`,
+      };
+    } catch (error: any) {
+      console.error("[PricingAdmin] Error generating reference PDF:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Erro ao gerar PDF de referência: ${error.message || "Erro desconhecido"}`,
       });
     }
   }),

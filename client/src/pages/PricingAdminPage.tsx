@@ -6,7 +6,7 @@
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Loader2, Save, Info, AlertTriangle } from "lucide-react";
+import { Loader2, Save, Info, AlertTriangle, FileText, Download } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
@@ -29,6 +29,7 @@ import {
 export default function PricingAdminPageV2() {
   const { data: config, isLoading, refetch } = trpc.pricingAdmin.getConfig.useQuery();
   const saveConfigMutation = trpc.pricingAdmin.saveConfig.useMutation();
+  const generateReferencePDFMutation = trpc.pricingAdmin.generateReferencePDF.useMutation();
 
   const [formData, setFormData] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -80,6 +81,30 @@ export default function PricingAdminPageV2() {
       refetch();
     } catch (error: any) {
       alert(`\u274C Erro: ${error.message || "Erro ao salvar configuração"}`);
+    }
+  };
+
+  const handleExportReferencePDF = async () => {
+    try {
+      const result = await generateReferencePDFMutation.mutateAsync();
+      // Convert base64 to blob and download
+      const byteCharacters = atob(result.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error: any) {
+      alert(`\u274C Erro ao gerar PDF: ${error.message || "Erro desconhecido"}`);
     }
   };
 
@@ -143,10 +168,24 @@ export default function PricingAdminPageV2() {
               <span className="truncate">{title}</span>
             </button>
           ))}
-          <div className="pt-4 border-t mt-4">
+          <div className="pt-4 border-t mt-4 space-y-2">
             <Button onClick={handleSaveClick} disabled={!hasChanges || saveConfigMutation.isPending} size="sm" className="w-full gap-2">
               {saveConfigMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Salvar
+            </Button>
+            <Button
+              onClick={handleExportReferencePDF}
+              disabled={generateReferencePDFMutation.isPending}
+              size="sm"
+              variant="outline"
+              className="w-full gap-2"
+            >
+              {generateReferencePDFMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <FileText className="w-4 h-4" />
+              )}
+              Pricing Bible
             </Button>
             {hasChanges && <p className="text-[10px] text-amber-600 text-center mt-1">Alterações não salvas</p>}
           </div>
@@ -162,13 +201,28 @@ export default function PricingAdminPageV2() {
               <h1 className="text-4xl font-bold mb-2">Configuração de Preços</h1>
               <p className="text-muted-foreground">Fonte Única de Verdade — Estrutura Determinística v2.0.0</p>
             </div>
-            <Button onClick={handleSaveClick} disabled={!hasChanges || saveConfigMutation.isPending} size="lg" className="gap-2 lg:hidden">
-              {saveConfigMutation.isPending ? (
-                <><Loader2 className="w-5 h-5 animate-spin" /> Salvando...</>
-              ) : (
-                <><Save className="w-5 h-5" /> Salvar Alterações</>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleExportReferencePDF}
+                disabled={generateReferencePDFMutation.isPending}
+                variant="outline"
+                size="lg"
+                className="gap-2"
+              >
+                {generateReferencePDFMutation.isPending ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Gerando...</>
+                ) : (
+                  <><Download className="w-5 h-5" /> Pricing Bible (PDF)</>
+                )}
+              </Button>
+              <Button onClick={handleSaveClick} disabled={!hasChanges || saveConfigMutation.isPending} size="lg" className="gap-2 lg:hidden">
+                {saveConfigMutation.isPending ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Salvando...</>
+                ) : (
+                  <><Save className="w-5 h-5" /> Salvar Alterações</>
+                )}
+              </Button>
+            </div>
           </div>
           <Alert className="bg-primary/5 border-primary/20">
             <Info className="w-4 h-4 text-primary" />
