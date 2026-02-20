@@ -7,7 +7,7 @@
  *   - useAutoEffects: auto-recommendation and sync effects
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import type { KomboColumnData } from "@/components/KomboComparisonTable";
