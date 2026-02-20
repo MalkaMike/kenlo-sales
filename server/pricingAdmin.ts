@@ -225,9 +225,21 @@ export const pricingAdminRouter = router({
         const configPath = path.join(process.cwd(), "shared", "pricing-values.json");
         
         // Write to JSON file with pretty formatting
-        await fs.writeFile(configPath, JSON.stringify(input, null, 2), "utf-8");
+        const updatedConfig = {
+          ...input,
+          _lastModified: new Date().toISOString(),
+          _version: `${Date.now()}`, // Timestamp-based version for cache busting
+        };
         
-        return { success: true, message: "Configuração salva com sucesso!" };
+        await fs.writeFile(configPath, JSON.stringify(updatedConfig, null, 2), "utf-8");
+        
+        console.log("[PricingAdmin] Pricing config saved with version:", updatedConfig._version);
+        
+        return { 
+          success: true, 
+          message: "Configuração salva com sucesso! Recarregue a página da calculadora para ver as alterações.",
+          version: updatedConfig._version,
+        };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

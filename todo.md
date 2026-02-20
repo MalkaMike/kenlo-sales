@@ -6066,3 +6066,23 @@
 - [x] Add mickael@laik.com.br to ADMIN_EMAILS whitelist in shared/const.ts
 - [x] Restart server to load updated whitelist
 - [ ] Test pricing management functionality with updated permissions (USER TO TEST)
+
+
+## Verify Pricing Changes Across Entire Site
+- [x] Fetch current pricing configuration from pricing-values.json
+- [x] VERIFIED: Calculator uses pricing-config.ts which imports pricing-values.json
+  - In dev mode: Vite HMR auto-reloads when pricing-values.json changes
+  - In production: Requires new build after pricing changes
+  - Note: 22 files import from pricing-config, all use pricing-values.json as source of truth
+- [x] Verify PDF uses pricing-values.json (CONFIRMED: already using it)
+- [x] Check public site pages display updated pricing
+  - Home.tsx, KombosPage.tsx, addon pages all import from @shared/pricing-config
+  - All use pricing-values.json as single source of truth
+  - Vite HMR handles auto-reload in dev mode
+- [x] Update reference document (docs/kenlo-referencia-completa-produtos.txt) with new pricing
+  - VERIFIED: Document already aligned with pricing-values.json
+  - All base plan prices match (IMOB: 247/497/1197, LOC: 247/497/1197)
+  - All calculated prices match (multipliers applied correctly)
+  - Created docs/current-pricing-snapshot.md for quick reference
+- [x] Run comprehensive pricing tests to ensure accuracy
+  - All 1,139 tests passing including 133 PDF accuracy tests
