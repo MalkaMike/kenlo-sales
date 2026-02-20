@@ -5871,3 +5871,13 @@
 - [x] ImobPage e LocacaoPage mostram regras corretas para 1 produto (K2 = incluído)
 - [x] Calculadora aplica benefício cruzado corretamente via shouldIncludePremiumService()
 - [x] Todos os 1.124 testes passando
+
+## Documentar Regras de Herança de Serviços Premium
+- [x] Criar ou atualizar README da calculadora com seção sobre Serviços Premium
+- [x] Documentar regra de VIP Support (independente por produto)
+- [x] Documentar regra de CS Dedicado (benefício cruzado entre IMOB e LOC)
+- [x] Incluir exemplos práticos de cenários
+- [x] Documentar estrutura de produtos, add-ons e Kombos
+- [x] Documentar frequências de pagamento e regra de arredondamento
+- [x] Documentar custos pós-pago (usuários e contratos adicionais)
+- [x] Incluir referências aos arquivos de implementação e testes
