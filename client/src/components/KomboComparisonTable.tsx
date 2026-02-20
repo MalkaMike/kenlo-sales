@@ -131,6 +131,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   const [columnOverrides, setColumnOverrides] = useState<Record<string, ColumnOverrides>>({});
   const [prePaidUsers, setPrePaidUsers] = useState<Record<string, boolean>>({});
   const [prePaidContracts, setPrePaidContracts] = useState<Record<string, boolean>>({});
+  const [prePaidWhatsApp, setPrePaidWhatsApp] = useState<Record<string, boolean>>({});
 
   // ── Modal ──
   const [showPrePagoPosPagoModal, setShowPrePagoPosPagoModal] = useState(false);
@@ -140,8 +141,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     frequency: props.frequency,
     imobPlan: props.imobPlan,
     locPlan: props.locPlan,
-    addons: { ...props.addons },
-  }), [props.frequency, props.imobPlan, props.locPlan, props.addons]);
+    // DO NOT include addons here - non-custom columns should always use props.addons directly
+    // Only custom columns need their own addons state
+  }), [props.frequency, props.imobPlan, props.locPlan]);
 
   const getCustomDefaultOverrides = useCallback((): ColumnOverrides => ({
     frequency: "annual" as PaymentFrequency,
@@ -319,8 +321,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
     if (col.isCustom && col.sourceKombo && col.sourceKombo !== "none") return;
     const isCustom = colKey.startsWith("custom_");
     const overrides = columnOverrides[colKey] || (isCustom ? getCustomDefaultOverrides() : getDefaultOverrides());
-    const currentValue = overrides.addons[addonKey as keyof typeof overrides.addons];
-    updateColumnOverride(colKey, { addons: { ...overrides.addons, [addonKey]: !currentValue } });
+    const currentAddons = overrides.addons ?? props.addons;
+    const currentValue = currentAddons[addonKey as keyof typeof currentAddons];
+    updateColumnOverride(colKey, { addons: { ...currentAddons, [addonKey]: !currentValue } });
   };
 
   const handlePremiumCellClick = (colIndex: number, serviceKey: "vipSupport" | "dedicatedCS" | "training", e: React.MouseEvent) => {
@@ -419,9 +422,10 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       const colKey = idx === 0 ? "sua_selecao" : idx <= visibleKomboIds.length ? `kombo_${idx - 1}` : (customColumns[idx - visibleKomboIds.length - 1]?.id || "");
       const isPrepaidUsers = prePaidUsers[colKey] ?? false;
       const isPrepaidContracts = prePaidContracts[colKey] ?? false;
+      const isPrepaidWhatsApp = prePaidWhatsApp[colKey] ?? false;
 
-      if (!isPrepaidUsers && !isPrepaidContracts) {
-        return { ...col, prePaidUsersActive: false, prePaidContractsActive: false };
+      if (!isPrepaidUsers && !isPrepaidContracts && !isPrepaidWhatsApp) {
+        return { ...col, prePaidUsersActive: false, prePaidContractsActive: false, prePaidWhatsAppActive: false };
       }
 
       let extraMonthly = 0;
@@ -435,19 +439,25 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
         extraMonthly += col.postPaidContracts.cost;
         newPostPaidTotal -= col.postPaidContracts.cost;
       }
+      if (isPrepaidWhatsApp && col.postPaidWhatsApp && col.postPaidWhatsApp.cost > 0) {
+        extraMonthly += col.postPaidWhatsApp.cost;
+        newPostPaidTotal -= col.postPaidWhatsApp.cost;
+      }
 
       const newTotalMonthly = col.totalMonthly + extraMonthly;
       return {
         ...col,
         prePaidUsersActive: isPrepaidUsers,
         prePaidContractsActive: isPrepaidContracts,
+        prePaidWhatsAppActive: isPrepaidWhatsApp,
         totalMonthly: newTotalMonthly,
+        totalMonthlyFinal: newTotalMonthly,
         annualEquivalent: newTotalMonthly * 12 + col.implementation,
         cycleTotalValue: newTotalMonthly * col.cycleMonths + col.implementation,
         postPaidTotal: Math.max(0, newPostPaidTotal),
       };
     });
-  }, [props, props.wantsWhatsApp, props.leadsPerMonth, recommendedKombo, visibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts]);
+  }, [props, props.wantsWhatsApp, props.leadsPerMonth, recommendedKombo, visibleKomboIds, columnOverrides, customColumns, getCustomDefaultOverrides, getDefaultOverrides, prePaidUsers, prePaidContracts, prePaidWhatsApp]);
 
   // ── Column Key Mapper ──
   const getColumnKey = useCallback((colIndex: number): string => {
@@ -495,9 +505,9 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       isSuaSelecao, isCustom, isPersoKombo, isKomboCol,
       columnOverrides, getDefaultOverrides, getCustomDefaultOverrides, getColumnKey,
       updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick,
-      setPrePaidUsers, setPrePaidContracts,
+      setPrePaidUsers, setPrePaidContracts, setPrePaidWhatsApp,
     };
-  }, [getColumnKey, columnOverrides, getCustomDefaultOverrides, getDefaultOverrides, columns, props, updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick]);
+  }, [getColumnKey, columnOverrides, getCustomDefaultOverrides, getDefaultOverrides, columns, props, updateColumnOverride, handlePlanCellClick, handleAddonCellClick, handlePremiumCellClick, setPrePaidWhatsApp]);
 
   // ── Render ──
   const hasCustomizations = hiddenKombos.length > 0 || customColumns.length > 0 || Object.keys(columnOverrides).length > 0 || selectedPlans.length > 0;
@@ -650,8 +660,8 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   if (row.key === "postpaidContracts" && props.product === "imob") {
                     return null;
                   }
-                  // Hide WhatsApp Leads when Leads add-on is off
-                  if (row.key === "postpaidWhatsApp" && !props.addons.leads) {
+                  // Hide WhatsApp Leads when Leads add-on is off OR WhatsApp is off
+                  if (row.key === "postpaidWhatsApp" && (!props.addons.leads || !props.wantsWhatsApp)) {
                     return null;
                   }
                   // Hide Assinaturas when Assinatura add-on is off

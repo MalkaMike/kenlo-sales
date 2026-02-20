@@ -40,7 +40,7 @@ export interface ColumnOverrides {
   frequency: PaymentFrequency;
   imobPlan: PlanTier;
   locPlan: PlanTier;
-  addons: {
+  addons?: {
     leads: boolean;
     inteligencia: boolean;
     assinatura: boolean;
@@ -83,9 +83,11 @@ export interface KomboColumnData {
   postPaidTotal: number;
   prePaidUsersActive: boolean;
   prePaidContractsActive: boolean;
+  prePaidWhatsAppActive: boolean;
   subscriptionCount: number;
   implBreakdown: { label: string; cost: number; free: boolean }[];
   totalMonthly: number;
+  totalMonthlyFinal: number;
   monthlyBeforeDiscounts: number;
   komboDiscountAmount: number;
   cycleDiscountAmount: number;

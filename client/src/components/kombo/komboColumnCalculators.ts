@@ -146,6 +146,7 @@ export const calculatePostPaidData = (
     } else {
       postPaidWhatsApp = { cost: 0, additional: 0, included, perUnit: 0 };
     }
+  } else {
   }
 
   let postPaidAssinaturas: KomboColumnData["postPaidAssinaturas"] = null;
@@ -322,8 +323,8 @@ export const calculateNoKomboColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
-    prePaidUsersActive: false, prePaidContractsActive: false,
-    implBreakdown, subscriptionCount, totalMonthly,
+    prePaidUsersActive: false, prePaidContractsActive: false, prePaidWhatsAppActive: false,
+    implBreakdown, subscriptionCount, totalMonthly, totalMonthlyFinal: totalMonthly,
     monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,
@@ -514,8 +515,8 @@ export const calculateKomboColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
-    prePaidUsersActive: false, prePaidContractsActive: false,
-    implBreakdown, subscriptionCount, totalMonthly,
+    prePaidUsersActive: false, prePaidContractsActive: false, prePaidWhatsAppActive: false,
+    implBreakdown, subscriptionCount, totalMonthly, totalMonthlyFinal: totalMonthly,
     monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
     theoreticalImplementation, implementation,
     annualEquivalent, cycleTotalValue, cycleMonths,
@@ -531,7 +532,8 @@ export const calculateCustomColumn = (
   props: KomboComparisonProps,
   overrides: ColumnOverrides
 ): KomboColumnData => {
-  const { frequency, imobPlan, locPlan, addons } = overrides;
+  const { frequency, imobPlan, locPlan } = overrides;
+  const addons = overrides.addons ?? props.addons;
   const { product } = props;
 
   let totalMonthly = 0;
@@ -676,8 +678,8 @@ export const calculateCustomColumn = (
     imobPrice, locPrice, leadsPrice, whatsAppPrice, inteligenciaPrice, assinaturaPrice,
     payPrice, segurosPrice, cashPrice, vipSupportPrice, dedicatedCSPrice, trainingPrice,
     ...postPaid,
-    prePaidUsersActive: false, prePaidContractsActive: false,
-    implBreakdown, subscriptionCount, totalMonthly,
+    prePaidUsersActive: false, prePaidContractsActive: false, prePaidWhatsAppActive: false,
+    implBreakdown, subscriptionCount, totalMonthly, totalMonthlyFinal: totalMonthly,
     monthlyBeforeDiscounts, komboDiscountAmount, cycleDiscountAmount,
     theoreticalImplementation: implementation, implementation, annualEquivalent,
     cycleTotalValue, cycleMonths,

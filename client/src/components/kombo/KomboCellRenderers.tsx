@@ -40,6 +40,7 @@ export interface CellRenderContext {
   handlePremiumCellClick: (colIndex: number, serviceKey: "vipSupport" | "dedicatedCS" | "training", e: React.MouseEvent) => void;
   setPrePaidUsers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   setPrePaidContracts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  setPrePaidWhatsApp: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
 
 // ─── Plan Cell ───────────────────────────────────────────────────────────────
@@ -107,7 +108,7 @@ export function renderAddonCell(
   // Custom columns: toggleable
   if (["pay", "seguros", "cash"].includes(addonKey)) {
     const label = addonKey === "cash" ? "Grátis" : "Pós-pago";
-    const isActive = ctx.overrides?.addons[addonKey as keyof typeof ctx.overrides.addons] ?? false;
+    const isActive = ctx.overrides?.addons?.[addonKey as keyof typeof ctx.overrides.addons] ?? false;
     return (
       <div
         className="cursor-pointer group"
@@ -123,7 +124,7 @@ export function renderAddonCell(
   }
 
   // Paid add-ons in custom columns
-  const isActive = ctx.overrides?.addons[addonKey as keyof typeof ctx.overrides.addons] ?? false;
+  const isActive = ctx.overrides?.addons?.[addonKey as keyof typeof ctx.overrides.addons] ?? false;
   if (isActive && price !== null) {
     return (
       <div
@@ -319,17 +320,32 @@ export function renderPostPaidWhatsAppCell(ctx: CellRenderContext): React.ReactN
       <span className="text-[8px] text-gray-400 italic">{pp.included} incl./mês</span>
     </div>
   );
+  const isPrepaid = ctx.column.prePaidWhatsAppActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <div className="flex items-center gap-1">
-        <TrendingUp className="w-3 h-3 text-amber-600" />
-        <span className="text-[8px] text-gray-400 italic">
-          R$ {pp.perUnit.toFixed(2)}/lead × {pp.additional} add.
-        </span>
-      </div>
-      <span className="text-[11px] text-amber-700 font-bold">
-        R$ {pp.cost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês
+      <span className="text-[8px] text-gray-400 italic">
+        {isPrepaid ? `R$ ${PREPAID_PRICING.additionalLeads.pricePerMonth.toFixed(2).replace(".", ",")}/lead/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/lead`}
       </span>
+      {isPrepaid ? (
+        <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+      ) : (
+        <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+      )}
+      <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
+      <button
+        className={`text-[8px] mt-0.5 px-1.5 py-0.5 rounded border transition-colors ${
+          isPrepaid
+            ? "border-green-400 bg-green-50 text-green-700 hover:bg-green-100"
+            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          const ck = ctx.getColumnKey(ctx.colIndex);
+          ctx.setPrePaidWhatsApp(prev => ({ ...prev, [ck]: !prev[ck] }));
+        }}
+      >
+        {isPrepaid ? "Voltar pós-pago" : "Pré-pagar"}
+      </button>
     </div>
   );
 }
@@ -418,7 +434,7 @@ export function renderCycleDiscountCell(ctx: CellRenderContext): React.ReactNode
 export function renderTotalMonthlyCell(ctx: CellRenderContext): React.ReactNode {
   return (
     <div className="flex flex-col items-center gap-0">
-      <span className="font-bold">R$ {formatCurrency(ctx.column.totalMonthly)}</span>
+      <span className="font-bold">R$ {formatCurrency(ctx.column.totalMonthlyFinal)}</span>
       <span className="text-[9px] text-gray-400 font-normal">
         {ctx.column.subscriptionCount} {ctx.column.subscriptionCount === 1 ? "assinatura" : "assinaturas"}
       </span>

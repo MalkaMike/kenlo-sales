@@ -5881,3 +5881,41 @@
 - [x] Documentar frequências de pagamento e regra de arredondamento
 - [x] Documentar custos pós-pago (usuários e contratos adicionais)
 - [x] Incluir referências aos arquivos de implementação e testes
+
+## Bugs Reportados pelo Ivan (Calculadora)
+- [ ] Bug 1: Label "Pré-pago" não aparece na seção de Usuários adicionais
+- [ ] Bug 2: Valor total mensal R$ 1.722 aparece destacado embaixo mas não está claro o que representa
+- [ ] Bug 3: Quando exporta PDF mensal, está puxando o ciclo anual
+- [ ] Bug 4: Discrepância de valores - Tela mostra R$ 6.108/mês mas PDF mostra R$ 18.684
+- [ ] Testar cenário do Ivan: 130 usuários + 1000 leads no Kombo Imob Pro
+
+## Bugs Confirmados do Ivan (Calculadora)
+- [x] Bug #2: Botão "Pré-pagar" para Usuários não atualiza o total corretamente
+  - Quando clica "Pré-pagar" na coluna "Sua Seleção", a Mensalidade (est.) muda para "Sem custos"
+  - Mas o Total Mensalidade (est.) permanece o mesmo (deveria redistribuir entre pré e pós)
+  - FIXED: Added `totalMonthlyFinal` property to KomboColumnData interface, initialized in all 3 calculators, updated in useMemo when pre-paid active, and rendered correctly in renderTotalMonthlyCell
+- [x] Bug #3: Não existe botão "Pré-pagar" para WhatsApp Leads
+  - Usuários adicionais TÊM botão "Pré-pagar"
+  - WhatsApp Leads NÃO TEM botão "Pré-pagar"
+  - Ivan quer poder pré-pagar os leads WhatsApp também
+  - FIXED: Added prePaidWhatsAppActive to KomboColumnData, added prePaidWhatsApp state, updated renderPostPaidWhatsAppCell to show pre-paid button, fixed state synchronization by making addons optional in ColumnOverrides
+- [ ] Bug #4: Botão "Exportar Cotação (PDF)" não está gerando PDF
+  - Cliquei no botão mas nenhum PDF foi baixado
+  - Não há erro visível para o usuário
+  - Pode ser validação falhando silenciosamente
+  - Arquivo: Verificar handler do botão de exportação
+- [ ] Bug #5 (não testado): PDF mostra valores anuais quando mensal é selecionado
+  - Ivan reportou: mensalidade na tela é R$ 6.108, mas PDF mostra R$ 18.684 (3x)
+  - Não consegui testar porque Bug #4 bloqueia a exportação
+  - Arquivo: `client/src/pages/calculadora/quote/buildProposalData.ts` ou PDF generator
+- [ ] Bug #1 (não testado): Valor R$ 1.722 destacado embaixo não está claro o que significa
+  - Ivan não entendeu o que é esse valor
+  - Pode ser "Mensalidade (depois) Pré-Pago" mas precisa melhor label/explicação
+  - INVESTIGATION: Root cause identified - `addons.leads` state is not being passed correctly to KomboComparisonTable
+  - Added `prePaidWhatsAppActive` to KomboColumnData interface and all 3 calculators
+  - Added `prePaidWhatsApp` state to KomboComparisonTable component
+  - Added WhatsApp pre-paid logic to useMemo transformation
+  - Updated renderPostPaidWhatsAppCell to add "Pré-pagar" button
+  - Fixed row visibility condition to check `!props.addons.leads || !props.wantsWhatsApp`
+  - BUT: WhatsApp Leads row still not appearing because `addons.leads` is FALSE in calculators even when toggle is ON
+  - Next: Need to fix state synchronization between LeadsAddonCard toggle and KomboComparisonTable props

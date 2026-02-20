@@ -19,6 +19,8 @@ export function ExportActionsSection() {
   } = useCalc();
 
   const handleExportClick = () => {
+    console.log('[ExportActionsSection] canExportPDF:', canExportPDF);
+    console.log('[ExportActionsSection] selectedPlans:', selectedPlans);
     if (!canExportPDF) {
       toast.error("Faça login como vendedor autorizado para exportar cotações.");
       return;
