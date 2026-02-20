@@ -9,11 +9,12 @@
  * ✅ No mixing of product contexts
  */
 
-import { PREMIUM_SERVICES, IMOB_IMPLEMENTATION, LOC_IMPLEMENTATION } from "@shared/pricing-config";
+import { PREMIUM_SERVICES, IMOB_IMPLEMENTATION, LOC_IMPLEMENTATION, PREPAID_DISCOUNT_PERCENTAGE } from "@shared/pricing-config";
 import {
   type ProposalData, type DerivedData,
   C, M, CW, GAP, fmt, fmtNum,
   h1, h2, label, value, labelValue, divider, newPage, getAddonDescription,
+  FREQ_MAP,
 } from "./pdfTypes";
 
 export function renderStrategicPageV2(
@@ -87,11 +88,20 @@ function renderImobSection(
   lY = labelValue(doc, "Fechamentos / mês", fmtNum(data.closings || 0), col1X, lY, colW);
 
   // RIGHT COLUMN: Investimento
-  let rY = h2(doc, "Investimento Mensal", col2X, Y);
+  const normPlan = data.paymentPlan?.toLowerCase() || "annual";
+  const freqLabel = FREQ_MAP[normPlan]?.label || "Anual";
+  const freqDiscount = FREQ_MAP[normPlan]?.discount || "";
+  let rY = h2(doc, `Investimento (${freqLabel}${freqDiscount ? " " + freqDiscount : ""})`, col2X, Y);
   const imobMonthly = data.imobPrice || 0;
   const imobSetup = IMOB_IMPLEMENTATION;
-  rY = labelValue(doc, "Licença", fmt(imobMonthly), col2X, rY, colW);
+  rY = labelValue(doc, `Licença ${freqLabel}`, fmt(imobMonthly) + "/mês", col2X, rY, colW);
   rY = labelValue(doc, "Implantação (única)", fmt(imobSetup), col2X, rY, colW);
+
+  // Show prepaid info if applicable
+  if (data.prepayAdditionalUsers && data.prepaymentUsersAmount && data.prepaymentUsersAmount > 0) {
+    const months = data.prepaymentMonths || 12;
+    rY = labelValue(doc, `Pré-pago Usuários (${months}m, ${PREPAID_DISCOUNT_PERCENTAGE}% OFF)`, fmt(data.prepaymentUsersAmount), col2X, rY, colW);
+  }
 
   Y = Math.max(lY, rY) + 8;
 
@@ -149,11 +159,20 @@ function renderLocacaoSection(
   lY = labelValue(doc, "Cobra split?", splitText, col1X, lY, colW);
 
   // RIGHT COLUMN: Investimento
-  let rY = h2(doc, "Investimento Mensal", col2X, Y);
+  const normPlan = data.paymentPlan?.toLowerCase() || "annual";
+  const freqLabel = FREQ_MAP[normPlan]?.label || "Anual";
+  const freqDiscount = FREQ_MAP[normPlan]?.discount || "";
+  let rY = h2(doc, `Investimento (${freqLabel}${freqDiscount ? " " + freqDiscount : ""})`, col2X, Y);
   const locMonthly = data.locPrice || 0;
   const locSetup = LOC_IMPLEMENTATION;
-  rY = labelValue(doc, "Licença", fmt(locMonthly), col2X, rY, colW);
+  rY = labelValue(doc, `Licença ${freqLabel}`, fmt(locMonthly) + "/mês", col2X, rY, colW);
   rY = labelValue(doc, "Implantação (única)", fmt(locSetup), col2X, rY, colW);
+
+  // Show prepaid info if applicable
+  if (data.prepayAdditionalContracts && data.prepaymentContractsAmount && data.prepaymentContractsAmount > 0) {
+    const months = data.prepaymentMonths || 12;
+    rY = labelValue(doc, `Pré-pago Contratos (${months}m, ${PREPAID_DISCOUNT_PERCENTAGE}% OFF)`, fmt(data.prepaymentContractsAmount), col2X, rY, colW);
+  }
 
   Y = Math.max(lY, rY) + 8;
 

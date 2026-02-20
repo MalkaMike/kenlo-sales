@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PrePagoPosPagoModal } from "@/components/PrePagoPosPagoModal";
 import { NotificationContext } from "@/contexts/NotificationContext";
+import { PREPAID_DISCOUNT_MULTIPLIER } from "@shared/pricing-config";
 
 // Sub-module imports
 import type {
@@ -437,15 +438,18 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
       let newPostPaidTotal = col.postPaidTotal;
 
       if (isPrepaidUsers && col.postPaidUsers && col.postPaidUsers.cost > 0) {
-        extraMonthly += col.postPaidUsers.cost;
+        // Prepaid = post-paid cost * 0.90 (10% discount)
+        extraMonthly += col.postPaidUsers.cost * PREPAID_DISCOUNT_MULTIPLIER;
         newPostPaidTotal -= col.postPaidUsers.cost;
       }
       if (isPrepaidContracts && col.postPaidContracts && col.postPaidContracts.cost > 0) {
-        extraMonthly += col.postPaidContracts.cost;
+        // Prepaid = post-paid cost * 0.90 (10% discount)
+        extraMonthly += col.postPaidContracts.cost * PREPAID_DISCOUNT_MULTIPLIER;
         newPostPaidTotal -= col.postPaidContracts.cost;
       }
       if (isPrepaidWhatsApp && col.postPaidWhatsApp && col.postPaidWhatsApp.cost > 0) {
-        extraMonthly += col.postPaidWhatsApp.cost;
+        // Prepaid = post-paid cost * 0.90 (10% discount)
+        extraMonthly += col.postPaidWhatsApp.cost * PREPAID_DISCOUNT_MULTIPLIER;
         newPostPaidTotal -= col.postPaidWhatsApp.cost;
       }
 

@@ -6096,3 +6096,13 @@
 - [x] Verify public product pages (IMOB, Locação, Kombos) show correct pricing - ALL MATCH
 - [x] Report complete test results
 - [x] BUG FIX: Admin preview roundToSeven was using wrong algorithm (Math.ceil(price/10)*10-3 instead of canonical version from shared/pricing-config.ts)
+
+## Pre-Payment System & Calculator Improvements
+- [x] Implement pre-payment 10% discount on pos-pago price for Users, Contracts, and Leads
+- [x] Show pos-pago price vs pre-pago price when user clicks pre-payment
+- [x] Auto-calculate and update totals for pre-pago, pos-pago, and pre+pos combinations
+- [x] Implement auto-refresh banner in calculator when admin changes prices (PricingUpdateBanner + getVersion endpoint)
+- [x] Ensure admin pricing page is source of truth for all metrics and tranche rules (added Section H - Pré-Pagamento)
+- [x] Fix PDF to show actual price based on chosen ciclo (updated pdfStrategicPageV2 with cycle labels and prepaid info)
+- [x] Update kenlo-referencia-completa-produtos document with all business rules (v3.0.0 with dynamic prepaid pricing)
+- [x] Run comprehensive tests on calculator and PDF (all 1138 tests passing, visual tests confirmed on calculator, PDF, and admin)

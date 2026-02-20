@@ -266,27 +266,29 @@ export const SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT: number =
 // ============================================================================
 
 /**
- * Prepaid pricing for additional users and contracts
+ * Prepaid pricing discount percentage (from pricing-values.json)
+ * Pre-paid price = Post-paid price × (1 - discount/100)
  * Available only for annual and biennial frequencies
- * Flat rate regardless of plan tier or volume
  */
+export const PREPAID_DISCOUNT_PERCENTAGE: number = pricingValues.prepaidPricing.discountPercentage;
+export const PREPAID_DISCOUNT_MULTIPLIER: number = 1 - (PREPAID_DISCOUNT_PERCENTAGE / 100);
+
 export const PREPAID_PRICING = {
+  discountPercentage: PREPAID_DISCOUNT_PERCENTAGE,
+  discountMultiplier: PREPAID_DISCOUNT_MULTIPLIER,
   additionalUsers: {
     product: pricingValues.prepaidPricing.additionalUsers.product as "imob",
-    pricePerMonth: pricingValues.prepaidPricing.additionalUsers.pricePerMonth,
     availableFrequencies: pricingValues.prepaidPricing.additionalUsers.availableFrequencies as PaymentFrequency[],
   },
   additionalContracts: {
     product: pricingValues.prepaidPricing.additionalContracts.product as "locacao",
-    pricePerMonth: pricingValues.prepaidPricing.additionalContracts.pricePerMonth,
     availableFrequencies: pricingValues.prepaidPricing.additionalContracts.availableFrequencies as PaymentFrequency[],
   },
   additionalLeads: {
     product: pricingValues.prepaidPricing.additionalLeads.product as "imob",
-    pricePerMonth: pricingValues.prepaidPricing.additionalLeads.pricePerMonth,
     availableFrequencies: pricingValues.prepaidPricing.additionalLeads.availableFrequencies as PaymentFrequency[],
   },
-} as const;
+};
 
 /**
  * Get the prepaid period in months based on frequency
@@ -307,30 +309,77 @@ export function isPrepaidAvailable(frequency: PaymentFrequency): boolean {
 }
 
 /**
- * Calculate prepaid total for additional users
+ * Calculate the prepaid price per unit for additional users.
+ * Returns the per-unit monthly cost with 10% discount applied to the post-paid tiered price.
  */
-export function calculatePrepaidUsers(quantity: number, frequency: PaymentFrequency): number {
-  if (!isPrepaidAvailable(frequency)) return 0;
-  const months = getPrepaidMonths(frequency);
-  return quantity * PREPAID_PRICING.additionalUsers.pricePerMonth * months;
+export function calculatePrepaidUserPricePerUnit(plan: PlanTier, totalAdditional: number): number {
+  if (totalAdditional <= 0) return 0;
+  const postPaidTotal = calculateTieredPrice(totalAdditional, IMOB_ADDITIONAL_USERS[plan]);
+  const postPaidPerUnit = postPaidTotal / totalAdditional;
+  return postPaidPerUnit * PREPAID_DISCOUNT_MULTIPLIER;
 }
 
 /**
- * Calculate prepaid total for additional contracts
+ * Calculate the prepaid price per unit for additional contracts.
+ * Returns the per-unit monthly cost with 10% discount applied to the post-paid tiered price.
  */
-export function calculatePrepaidContracts(quantity: number, frequency: PaymentFrequency): number {
-  if (!isPrepaidAvailable(frequency)) return 0;
-  const months = getPrepaidMonths(frequency);
-  return quantity * PREPAID_PRICING.additionalContracts.pricePerMonth * months;
+export function calculatePrepaidContractPricePerUnit(plan: PlanTier, totalAdditional: number): number {
+  if (totalAdditional <= 0) return 0;
+  const postPaidTotal = calculateTieredPrice(totalAdditional, LOC_ADDITIONAL_CONTRACTS[plan]);
+  const postPaidPerUnit = postPaidTotal / totalAdditional;
+  return postPaidPerUnit * PREPAID_DISCOUNT_MULTIPLIER;
 }
 
 /**
- * Calculate prepaid total for additional leads
+ * Calculate the prepaid price per unit for additional leads.
+ * Returns the per-unit monthly cost with 10% discount applied to the post-paid tiered price.
+ */
+export function calculatePrepaidLeadPricePerUnit(totalAdditional: number): number {
+  if (totalAdditional <= 0) return 0;
+  // Leads use all_plans tier (same for all plans)
+  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  }));
+  const postPaidTotal = calculateTieredPrice(totalAdditional, tiers);
+  const postPaidPerUnit = postPaidTotal / totalAdditional;
+  return postPaidPerUnit * PREPAID_DISCOUNT_MULTIPLIER;
+}
+
+/**
+ * Calculate prepaid total for additional users (10% discount on post-paid cost)
+ */
+export function calculatePrepaidUsers(plan: PlanTier, quantity: number, frequency: PaymentFrequency): number {
+  if (!isPrepaidAvailable(frequency) || quantity <= 0) return 0;
+  const months = getPrepaidMonths(frequency);
+  const postPaidMonthly = calculateTieredPrice(quantity, IMOB_ADDITIONAL_USERS[plan]);
+  return postPaidMonthly * PREPAID_DISCOUNT_MULTIPLIER * months;
+}
+
+/**
+ * Calculate prepaid total for additional contracts (10% discount on post-paid cost)
+ */
+export function calculatePrepaidContracts(plan: PlanTier, quantity: number, frequency: PaymentFrequency): number {
+  if (!isPrepaidAvailable(frequency) || quantity <= 0) return 0;
+  const months = getPrepaidMonths(frequency);
+  const postPaidMonthly = calculateTieredPrice(quantity, LOC_ADDITIONAL_CONTRACTS[plan]);
+  return postPaidMonthly * PREPAID_DISCOUNT_MULTIPLIER * months;
+}
+
+/**
+ * Calculate prepaid total for additional leads (10% discount on post-paid cost)
  */
 export function calculatePrepaidLeads(quantity: number, frequency: PaymentFrequency): number {
-  if (!isPrepaidAvailable(frequency)) return 0;
+  if (!isPrepaidAvailable(frequency) || quantity <= 0) return 0;
   const months = getPrepaidMonths(frequency);
-  return quantity * PREPAID_PRICING.additionalLeads.pricePerMonth * months;
+  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+    from: tier.from,
+    to: tier.to === 999999 ? Infinity : tier.to,
+    price: tier.price,
+  }));
+  const postPaidMonthly = calculateTieredPrice(quantity, tiers);
+  return postPaidMonthly * PREPAID_DISCOUNT_MULTIPLIER * months;
 }
 
 // ============================================================================

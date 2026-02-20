@@ -203,6 +203,21 @@ const PricingValuesSchema = z.object({
 });
 
 export const pricingAdminRouter = router({
+  // Get pricing version for cache-busting / auto-refresh
+  getVersion: protectedProcedure.query(async () => {
+    try {
+      const configPath = path.join(process.cwd(), "shared", "pricing-values.json");
+      const content = await fs.readFile(configPath, "utf-8");
+      const data = JSON.parse(content);
+      return {
+        version: data._version || "unknown",
+        lastModified: data._lastModified || null,
+      };
+    } catch {
+      return { version: "unknown", lastModified: null };
+    }
+  }),
+
   // Get current pricing config
   getConfig: protectedProcedure.query(async () => {
     try {

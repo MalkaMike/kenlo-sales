@@ -5,10 +5,10 @@
  */
 
 import PDFDocument from "pdfkit";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS, PREPAID_PRICING } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, IMOB_IMPLEMENTATION, ELITE_FIRST_YEAR_SAVINGS, PREPAID_PRICING, PREPAID_DISCOUNT_PERCENTAGE } from "@shared/pricing-config";
 
-const PP_USERS = `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth}`;
-const PP_CONTRACTS = `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}`;
+const PP_USERS = `pós-pago com ${PREPAID_DISCOUNT_PERCENTAGE}% OFF`;
+const PP_CONTRACTS = `pós-pago com ${PREPAID_DISCOUNT_PERCENTAGE}% OFF`;
 import { PW, PH, M, CW, C } from "./pdfTypes";
 
 // ── Types ──────────────────────────────────────────────────────

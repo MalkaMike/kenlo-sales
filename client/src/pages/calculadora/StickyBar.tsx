@@ -133,10 +133,16 @@ export function StickyBar() {
             {/* Center: Value breakdown */}
             {breakdown && (
               <div className="flex flex-col items-center flex-grow">
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-0.5">
-                  <span>{formatCurrency(breakdown.prePaid)}</span>
-                  <span className="text-gray-400">+</span>
-                  <span>{formatCurrency(breakdown.postPaid)}</span>
+                <div className="flex items-center gap-3 text-xs text-gray-500 mb-0.5">
+                  <span className="flex items-center gap-1">
+                    <span className="text-[9px] text-primary/70 font-medium">Pré</span>
+                    <span>{formatCurrency(breakdown.prePaid)}</span>
+                  </span>
+                  <span className="text-gray-300">+</span>
+                  <span className="flex items-center gap-1">
+                    <span className="text-[9px] text-emerald-600/70 font-medium">Pós</span>
+                    <span>{formatCurrency(breakdown.postPaid)}</span>
+                  </span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">

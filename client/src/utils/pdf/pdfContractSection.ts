@@ -209,10 +209,15 @@ export function renderContractLayout(doc: jsPDF, data: ProposalPrintData, startY
     rY += 6;
   }
 
+  // Dynamic label based on cycle
+  const investLabel = data.paymentPlan === "monthly" ? "Investimento Mensal:" 
+    : data.paymentPlan === "semestral" ? "Investimento Semestral:"
+    : data.paymentPlan === "biennial" ? "Investimento Bienal:"
+    : "Investimento Anual:";
   doc.setFontSize(7);
   doc.setTextColor(...rgb(C.textMuted));
   doc.setFont("helvetica", "normal");
-  doc.text("Investimento Mensal:", rightX, rY);
+  doc.text(investLabel, rightX, rY);
   rY += 4;
 
   // Big price

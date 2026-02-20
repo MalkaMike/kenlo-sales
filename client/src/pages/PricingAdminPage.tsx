@@ -23,6 +23,7 @@ import {
   SectionKombos,
   SectionVariableCosts,
   SectionFeatureMatrix,
+  SectionPrepaidPricing,
 } from "./pricing-admin";
 
 export default function PricingAdminPageV2() {
@@ -226,6 +227,7 @@ export default function PricingAdminPageV2() {
         <SectionKombos formData={formData} updateValue={updateValue} collapsed={!!collapsedSections["section-e"]} onToggle={() => toggleSection("section-e")} />
         <SectionVariableCosts formData={formData} updateValue={updateValue} collapsed={!!collapsedSections["section-f"]} onToggle={() => toggleSection("section-f")} />
         <SectionFeatureMatrix formData={formData} updateValue={updateValue} collapsed={!!collapsedSections["section-g"]} onToggle={() => toggleSection("section-g")} />
+        <SectionPrepaidPricing formData={formData} updateValue={updateValue} collapsed={!!collapsedSections["section-h"]} onToggle={() => toggleSection("section-h")} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 KENLO — REFERÊNCIA COMPLETA DE PRODUTOS, ADD-ONS E KOMBOS
-Versão 2.2.0 | Fonte: pricing-values.json (v2.0.0) + pricing-config.ts + Definições do Ecossistema | Última Atualização: Fevereiro 2026
+Versão 3.0.0 | Fonte: pricing-values.json (v2.0.0) + pricing-config.ts + Definições do Ecossistema | Última Atualização: 20 de Fevereiro de 2026
 
-Este documento é a referência única e autoritativa para construção de todas as páginas de produtos, add-ons e Kombos no Portal de Vendas Kenlo. Cada preço, regra, nível, funcionalidade e composição está documentado abaixo com definições precisas alinhadas em todo o ecossistema. Todas as informações de precificação são extraídas diretamente do pricing-values.json, garantindo consistência absoluta entre calculadora, páginas públicas e PDFs gerados.
+Este documento é a referência única e autoritativa para construção de todas as páginas de produtos, add-ons e Kombos no Portal de Vendas Kenlo. Cada preço, regra, nível, funcionalidade e composição está documentado abaixo com definições precisas alinhadas em todo o ecossistema. Todas as informações de precificação são extraídas diretamente do pricing-values.json, garantindo consistência absoluta entre calculadora, páginas públicas, admin pricing e PDFs gerados.
 
 
 1. Visão Geral do Ecossistema
@@ -132,12 +132,55 @@ R$ 27
 R$ 17
 
 
-Opção Pré-Paga (Anual/Bienal apenas):
+2.4 Opção Pré-Paga para Usuários Adicionais (NOVA REGRA v3.0)
 
-Preço fixo: R$ 34/usuário/mês (independente de plano ou volume)
+REGRA ATUALIZADA: O preço pré-pago é calculado como o preço pós-pago com 10% de desconto.
+
 Disponível apenas para: Ciclos Anual e Bienal
-Cálculo: Anual = R$ 34 × 12 meses = R$ 408/usuário/ano; Bienal = R$ 34 × 24 meses = R$ 816/usuário/2 anos
-2.4 Matriz de Funcionalidades — Pacote IMOB + Site
+Desconto: 10% sobre o preço pós-pago do tier correspondente
+Método: Preço Pré-Pago = Preço Pós-Pago × 0.90
+
+Exemplos de Preço Pré-Pago por Plano:
+
+Prime:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1+
+R$ 57
+R$ 51,30/mês
+
+K:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1–5
+R$ 47
+R$ 42,30/mês
+6+
+R$ 37
+R$ 33,30/mês
+
+K²:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1–10
+R$ 37
+R$ 33,30/mês
+11–100
+R$ 27
+R$ 24,30/mês
+101+
+R$ 17
+R$ 15,30/mês
+
+Cálculo Anual: Preço Pré-Pago × 12 meses
+Cálculo Bienal: Preço Pré-Pago × 24 meses
+
+NOTA: O preço pré-pago NÃO é mais um valor fixo (anteriormente R$ 34/usuário/mês). Agora é dinâmico, baseado no tier pós-pago do plano escolhido.
+
+2.5 Matriz de Funcionalidades — Pacote IMOB + Site
 Funcionalidades organizadas por categoria, com hierarquia de disponibilidade dentro de cada grupo (todos os planos → K+K² → somente K²).
 
 Funcionalidade
@@ -147,16 +190,6 @@ K
 K²
 Notas
 🎯 CRM Core & Pipeline de Vendas
-
-
-
-
-
-
-
-
-
-
 Gestão completa de leads
 core
 ✅
@@ -200,16 +233,6 @@ core
 ✅
 Agende visitas e compromissos
 🌐 Site & Captação Digital
-
-
-
-
-
-
-
-
-
-
 Site personalizável (CMS)
 core
 ✅
@@ -247,16 +270,6 @@ advanced
 ✅
 Plataforma de marketing de conteúdo
 🔗 Integrações & Automação
-
-
-
-
-
-
-
-
-
-
 Integração com 100+ portais
 core
 ✅
@@ -300,16 +313,6 @@ advanced
 ✅
 Construa integrações com parceiros não-homologados
 📱 Mobile & Trabalho em Campo
-
-
-
-
-
-
-
-
-
-
 App Corretor (iOS + Android)
 core
 ✅
@@ -341,16 +344,6 @@ core
 ✅
 Nunca perca um lead quente
 📊 Relatórios & Inteligência
-
-
-
-
-
-
-
-
-
-
 Dashboard executivo
 core
 ✅
@@ -376,16 +369,6 @@ core
 ✅
 Construtor de relatórios personalizados
 💬 Comunicação & Atendimento
-
-
-
-
-
-
-
-
-
-
 Caixa de e-mail por usuário
 core
 ✅
@@ -411,16 +394,6 @@ core
 ✅
 Templates de comunicação pré-construídos
 🎓 Suporte & Treinamento
-
-
-
-
-
-
-
-
-
-
 Suporte padrão
 support
 ✅
@@ -452,16 +425,6 @@ training
 1 sessão
 Treinamento presencial incluído, cliente paga apenas viagem (K² apenas)
 👥 Usuários & Escalabilidade
-
-
-
-
-
-
-
-
-
-
 Usuários incluídos (cada um com caixa de e-mail)
 capacity
 2
@@ -476,10 +439,10 @@ R$ 37–17 (por faixa)
 Pague apenas pelo que precisa
 Usuários adicionais (pré-pago anual/bienal)
 pre-paid
-R$ 34/mês
-R$ 34/mês
-R$ 34/mês
-Preço fixo para ciclos anual/bienal
+R$ 51,30/mês
+R$ 42,30–33,30 (por faixa)
+R$ 33,30–15,30 (por faixa)
+10% OFF sobre o pós-pago (dinâmico por faixa)
 Armazenamento
 capacity
 Ilimitado
@@ -487,16 +450,6 @@ Ilimitado
 Ilimitado
 Sem limites de armazenamento
 🚀 Add-ons Disponíveis
-
-
-
-
-
-
-
-
-
-
 Kenlo Leads
 add-on
 ➕
@@ -623,12 +576,55 @@ R$ 2,50
 R$ 2,00
 
 
-Opção Pré-Paga (Anual/Bienal apenas):
+3.4 Opção Pré-Paga para Contratos Adicionais (NOVA REGRA v3.0)
 
-Preço fixo: R$ 2,20/contrato/mês (independente de plano ou volume)
+REGRA ATUALIZADA: O preço pré-pago é calculado como o preço pós-pago com 10% de desconto.
+
 Disponível apenas para: Ciclos Anual e Bienal
-Cálculo: Anual = R$ 2,20 × 12 meses = R$ 26,40/contrato/ano; Bienal = R$ 2,20 × 24 meses = R$ 52,80/contrato/2 anos
-3.4 Matriz de Funcionalidades — Kenlo Locação
+Desconto: 10% sobre o preço pós-pago do tier correspondente
+Método: Preço Pré-Pago = Preço Pós-Pago × 0.90
+
+Exemplos de Preço Pré-Pago por Plano:
+
+Prime:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1+
+R$ 3,00
+R$ 2,70/mês
+
+K:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1–250
+R$ 3,00
+R$ 2,70/mês
+251+
+R$ 2,50
+R$ 2,25/mês
+
+K²:
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1–250
+R$ 3,00
+R$ 2,70/mês
+251–500
+R$ 2,50
+R$ 2,25/mês
+501+
+R$ 2,00
+R$ 1,80/mês
+
+Cálculo Anual: Preço Pré-Pago × 12 meses
+Cálculo Bienal: Preço Pré-Pago × 24 meses
+
+NOTA: O preço pré-pago NÃO é mais um valor fixo (anteriormente R$ 2,20/contrato/mês). Agora é dinâmico, baseado no tier pós-pago do plano escolhido.
+
+3.5 Matriz de Funcionalidades — Kenlo Locação
 Funcionalidade
 Categoria
 Prime
@@ -636,16 +632,6 @@ K
 K²
 Notas
 📋 Gestão de Contratos
-
-
-
-
-
-
-
-
-
-
 Controle completo de contratos
 core
 ✅
@@ -677,16 +663,6 @@ core
 ✅
 Declaração gerada em 1 clique
 💰 Financeiro & Cobrança
-
-
-
-
-
-
-
-
-
-
 Gestão de receitas e despesas
 core
 ✅
@@ -712,16 +688,6 @@ core
 ✅
 Alertas e ações automáticas
 📊 Relatórios & Inteligência
-
-
-
-
-
-
-
-
-
-
 Dashboard executivo
 core
 ✅
@@ -747,16 +713,6 @@ core
 ✅
 Construtor de relatórios personalizados
 🎓 Suporte & Treinamento
-
-
-
-
-
-
-
-
-
-
 Suporte padrão
 support
 ✅
@@ -788,16 +744,6 @@ training
 1 sessão
 Treinamento presencial incluído, cliente paga apenas viagem (K² apenas)
 📦 Capacidade & Escalabilidade
-
-
-
-
-
-
-
-
-
-
 Contratos incluídos
 capacity
 100
@@ -812,10 +758,10 @@ R$ 3,00–2,00 (por faixa)
 Pague apenas pelo que precisa
 Contratos adicionais (pré-pago anual/bienal)
 pre-paid
-R$ 2,20/mês
-R$ 2,20/mês
-R$ 2,20/mês
-Preço fixo para ciclos anual/bienal
+R$ 2,70/mês
+R$ 2,70–2,25 (por faixa)
+R$ 2,70–1,80 (por faixa)
+10% OFF sobre o pós-pago (dinâmico por faixa)
 Armazenamento
 capacity
 Ilimitado
@@ -823,16 +769,6 @@ Ilimitado
 Ilimitado
 Sem limites de armazenamento
 🚀 Add-ons Disponíveis
-
-
-
-
-
-
-
-
-
-
 Kenlo Inteligência
 add-on
 ➕
@@ -908,6 +844,27 @@ R$ 1,30
 R$ 1,10
 1.001+
 R$ 0,90
+
+Leads Adicionais — Opção Pré-Paga (NOVA REGRA v3.0):
+
+Disponível apenas para: Ciclos Anual e Bienal
+Desconto: 10% sobre o preço pós-pago do tier correspondente
+
+Faixa
+Pós-Pago
+Pré-Pago (10% OFF)
+1–200
+R$ 1,50
+R$ 1,35
+201–350
+R$ 1,30
+R$ 1,17
+351–1.000
+R$ 1,10
+R$ 0,99
+1.001+
+R$ 0,90
+R$ 0,81
 
 
 O que inclui:
@@ -1147,6 +1104,8 @@ Incluído por padrão em:
 K e K² (ambos produtos)
 Kombos: Imob Pro, Locação Pro, Core Gestão, Elite
 
+NÃO incluído em: Kombo Imob Start (cliente paga à parte)
+
 O que inclui:
 
 Resposta em até 15 minutos
@@ -1165,6 +1124,8 @@ Incluído por padrão em:
 
 K² (ambos produtos)
 Kombos: Imob Pro, Locação Pro, Core Gestão, Elite
+
+NÃO incluído em: Kombo Imob Start (cliente paga à parte)
 
 O que inclui:
 
@@ -1219,7 +1180,7 @@ Desconto: 10% sobre o total (após ajuste de ciclo)
 
 Implementações Gratuitas: Leads (economiza R$ 497)
 
-Serviços Premium Incluídos: Nenhum
+Serviços Premium Incluídos: NENHUM (cliente paga VIP e CS à parte)
 
 Exemplo de Cálculo (IMOB Prime Anual + Leads):
 
@@ -1336,8 +1297,9 @@ Desconto de Kombo (fonte: pricing-values.json → kombos)
 7.2 Regra de Arredondamento
 Para valores ≥ R$100:
 
-Arredondar para o próximo número terminando em 7
+Arredondar para CIMA para o próximo número terminando em 7
 Exemplo: R$ 277,875 → R$ 287
+Exemplo: R$ 307 → R$ 307 (já termina em 7, mantém)
 
 Para valores < R$100:
 
@@ -1361,8 +1323,53 @@ Bienal
 30% OFF
 
 
+8. Pré-Pagamento — Regras Completas (NOVA SEÇÃO v3.0)
 
-8. Matriz de Disponibilidade de Add-ons
+8.1 Regra Geral
+O pré-pagamento permite ao cliente pagar antecipadamente por Usuários Adicionais, Contratos Adicionais e/ou Leads Adicionais com um desconto de 10% sobre o preço pós-pago.
+
+Disponibilidade: Apenas para ciclos Anual e Bienal
+Desconto: 10% sobre o preço pós-pago do tier correspondente
+Cálculo: Preço Pré-Pago = Preço Pós-Pago × 0.90
+Período: Anual = 12 meses, Bienal = 24 meses
+
+8.2 Itens Elegíveis para Pré-Pagamento
+Item
+Produto
+Unidade
+Método
+Usuários Adicionais
+IMOB
+usuário
+Pós-pago × 0.90
+Contratos Adicionais
+Locação
+contrato
+Pós-pago × 0.90
+Leads Adicionais
+IMOB (Leads)
+lead
+Pós-pago × 0.90
+
+8.3 Exibição ao Cliente
+Quando o cliente ativa pré-pagamento, o sistema deve mostrar:
+
+Preço Pós-Pago (riscado): O preço original por unidade
+Preço Pré-Pago (destacado): O preço com 10% de desconto
+Economia: A diferença entre pós-pago e pré-pago
+Total do período: Preço Pré-Pago × quantidade × meses (12 ou 24)
+
+8.4 Impacto nos Totais
+Quando pré-pagamento está ativo, os totais da proposta devem refletir:
+
+Total Pré-Pago: Soma dos itens pré-pagos (pago antecipadamente)
+Total Pós-Pago: Soma dos itens que continuam pós-pago (ex: excedentes)
+Total Geral: Licença + Pré-Pago + Pós-Pago estimado
+
+NOTA IMPORTANTE: O preço pré-pago é dinâmico e depende do plano e volume escolhido. Não é mais um preço fixo.
+
+
+9. Matriz de Disponibilidade de Add-ons
 Add-on
 IMOB
 Locação
@@ -1414,20 +1421,22 @@ Legenda:
 Compartilhável: Se o cliente tem IMOB + Locação, paga apenas uma vez e usa em ambos
 
 
-9. Perguntas Frequentes (FAQ) — Precificação
-9.1 Como funciona o arredondamento de preços?
-Para valores acima de R$ 100, arredondamos para o próximo número terminando em 7 (ex: R$ 277,875 → R$ 287). Para valores abaixo de R$ 100, arredondamos para cima (ex: R$ 41,625 → R$ 42). Esta regra cria tiers de preço consistentes e facilita a comunicação com clientes.
-9.2 Qual a diferença entre pré-pago e pós-pago para usuários/contratos adicionais?
-Pré-pago (Anual/Bienal apenas): Preço fixo de R$ 34/usuário/mês ou R$ 2,20/contrato/mês, independente de plano ou volume. Você paga antecipadamente pelo período completo.
+10. Perguntas Frequentes (FAQ) — Precificação
+10.1 Como funciona o arredondamento de preços?
+Para valores acima de R$ 100, arredondamos para CIMA para o próximo número terminando em 7 (ex: R$ 277,875 → R$ 287). Para valores abaixo de R$ 100, arredondamos para cima (ex: R$ 41,625 → R$ 42). Esta regra cria tiers de preço consistentes e facilita a comunicação com clientes.
+10.2 Qual a diferença entre pré-pago e pós-pago para usuários/contratos adicionais?
+Pré-pago (Anual/Bienal apenas): 10% de desconto sobre o preço pós-pago do tier correspondente. Você paga antecipadamente pelo período completo (12 ou 24 meses). O preço é dinâmico e depende do plano e volume.
 
 Pós-pago (Todos os ciclos): Preço por faixa de uso (ex: R$ 57, R$ 47-37, R$ 37-17 para usuários). Você paga mensalmente apenas pelo que usar, com preços decrescentes conforme o volume aumenta.
-9.3 Como funcionam os add-ons compartilháveis?
+
+IMPORTANTE: O preço pré-pago não é mais fixo. É calculado como pós-pago × 0.90 (10% de desconto).
+10.3 Como funcionam os add-ons compartilháveis?
 Inteligência e Assinaturas são compartilháveis entre IMOB e Locação. Se você tem ambos os produtos, paga apenas uma vez pelo add-on e usa em ambas as plataformas. Exemplo: Cliente com IMOB K + LOC K paga R$ 297/mês por Inteligência e usa o Google Looker BI tanto no IMOB quanto no LOC.
-9.4 Qual a diferença entre Suporte VIP e CS Dedicado?
+10.4 Qual a diferença entre Suporte VIP e CS Dedicado?
 Suporte VIP (R$ 97/mês por produto): Resposta em até 15 minutos, suporte prioritário, acesso a especialistas técnicos. Focado em resolver problemas técnicos rapidamente.
 
 CS Dedicado (R$ 297/mês compartilhado): Gerente de sucesso dedicado, reuniões mensais de estratégia, análise de performance, suporte proativo. Focado em maximizar o valor que você extrai da plataforma.
-9.5 Como funciona a economia nos Kombos?
+10.5 Como funciona a economia nos Kombos?
 Kombos oferecem três tipos de economia:
 
 Desconto percentual sobre o total (10-20% dependendo do Kombo)
@@ -1435,13 +1444,15 @@ Implementações gratuitas (economiza R$ 497-994)
 Serviços premium incluídos (economiza R$ 194-491/mês)
 
 Exemplo: Kombo Elite oferece 20% de desconto + R$ 994 de implementações gratuitas + R$ 491/mês em serviços premium = economia total de R$ 1.737,20 no primeiro ano (para IMOB K² + LOC K² Anual).
-9.6 Kenlo Pay: Como a imobiliária ganha dinheiro?
+10.6 Kenlo Pay: Como a imobiliária ganha dinheiro?
 A imobiliária define o preço que cobra do inquilino/proprietário (ex: R$ 5,00 por boleto). A imobiliária paga a taxa Kenlo (R$ 3,00-4,00 conforme plano/volume). A imobiliária lucra a diferença (ex: R$ 1,00-2,00 por transação). Quanto maior o volume, menor a taxa Kenlo, maior o lucro da imobiliária.
-9.7 Kenlo Seguros: A imobiliária paga algo?
+10.7 Kenlo Seguros: A imobiliária paga algo?
 Não. Kenlo Seguros é um serviço de comissão passiva. A imobiliária não paga nada à Kenlo, apenas recebe 35-45% de comissão sobre cada seguro vendido. Receita estimada: ~R$ 10/contrato/mês.
+10.8 Como funciona o pré-pagamento com desconto? (NOVO v3.0)
+O pré-pagamento oferece 10% de desconto sobre o preço pós-pago para Usuários Adicionais, Contratos Adicionais e Leads Adicionais. Disponível apenas para ciclos Anual e Bienal. O preço é calculado dinamicamente com base no tier pós-pago do plano escolhido, não é um valor fixo. Exemplo: Se o pós-pago de um usuário adicional no plano K é R$ 47/mês, o pré-pago será R$ 42,30/mês (10% OFF).
 
 
-10. Glossário de Termos
+11. Glossário de Termos
 Termo
 Definição
 Preço Base Anual
@@ -1449,13 +1460,13 @@ Preço de referência (sem multiplicador de ciclo) usado como fundação para to
 Multiplicador de Ciclo
 Fator aplicado ao preço base para calcular o preço de outros ciclos (mensal, semestral, bienal). Fonte: pricing-values.json → paymentCycles.
 Arredondamento
-Regra de ajuste final do preço: próximo número terminando em 7 (≥ R$100) ou Math.ceil (< R$100).
+Regra de ajuste final do preço: próximo número terminando em 7 (≥ R$100) ou Math.ceil (< R$100). Sempre arredonda para CIMA.
 Desconto de Kombo
 Desconto percentual aplicado sobre o total já ajustado pelo ciclo. Ordem: ciclo → Kombo.
 Pós-Pago
 Cobrança por uso aplicada após consumo (ex: usuários adicionais, leads adicionais, boletos).
 Pré-Pago
-Pagamento antecipado por período completo (anual/bienal) com preço fixo (ex: R$ 34/usuário/mês).
+Pagamento antecipado por período completo (anual/bienal) com 10% de desconto sobre o preço pós-pago (dinâmico por faixa).
 Compartilhável
 Add-on que pode ser usado em múltiplos produtos (IMOB + LOC) pagando apenas uma vez.
 Implementação
@@ -1470,12 +1481,15 @@ Marketplace
 Kenlo Open + Comunidade Kenlo.
 Ecossistema Kenlo
 Todos os produtos Kenlo + add-ons + Marketplace (parceiros homologados).
+Desconto Pré-Pago
+10% de desconto aplicado sobre o preço pós-pago para pagamento antecipado (Anual/Bienal).
 
 
 
 
 Documento gerado por: Manus AI
 Fonte de Dados: pricing-values.json v2.0.0 + pricing-config.ts
-Última Atualização: Fevereiro 2026
+Última Atualização: 20 de Fevereiro de 2026
+Versão: 3.0.0 (inclui nova regra de pré-pagamento dinâmico com 10% OFF)
 
 

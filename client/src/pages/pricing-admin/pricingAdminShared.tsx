@@ -125,6 +125,7 @@ export const SECTIONS = [
   { id: "section-e", letter: "E", title: "Kombos" },
   { id: "section-f", letter: "F", title: "Custos Variáveis" },
   { id: "section-g", letter: "G", title: "Funcionalidades" },
+  { id: "section-h", letter: "H", title: "Pré-Pagamento" },
 ];
 
 // ── Shared prop types ───────────────────────────────────────────

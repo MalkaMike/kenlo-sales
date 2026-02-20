@@ -657,19 +657,21 @@ describe("Business Rule: Seguros Estimated Revenue", () => {
 
 import {
   PREPAID_PRICING,
+  PREPAID_DISCOUNT_PERCENTAGE,
+  PREPAID_DISCOUNT_MULTIPLIER,
   getPrepaidMonths,
   isPrepaidAvailable,
   calculatePrepaidUsers,
   calculatePrepaidContracts,
+  IMOB_ADDITIONAL_USERS,
+  LOC_ADDITIONAL_CONTRACTS,
+  calculateTieredPrice,
 } from "@shared/pricing-config";
 
-describe("Business Rule: Prepaid Pricing", () => {
-  it("additional users flat rate is R$ 37/user/month", () => {
-    expect(PREPAID_PRICING.additionalUsers.pricePerMonth).toBe(37);
-  });
-
-  it("additional contracts flat rate is R$ 2.50/contract/month", () => {
-    expect(PREPAID_PRICING.additionalContracts.pricePerMonth).toBe(2.50);
+describe("Business Rule: Prepaid Pricing (Dynamic 10% Discount on Post-Paid)", () => {
+  it("discount percentage is 10%", () => {
+    expect(PREPAID_DISCOUNT_PERCENTAGE).toBe(10);
+    expect(PREPAID_DISCOUNT_MULTIPLIER).toBe(0.9);
   });
 
   it("prepaid users is for IMOB product", () => {
@@ -700,31 +702,35 @@ describe("Business Rule: Prepaid Pricing", () => {
     expect(getPrepaidMonths("semiannual")).toBe(0);
   });
 
-  it("calculate prepaid users: 5 users × annual = 5 × 37 × 12 = R$ 2.220", () => {
-    expect(calculatePrepaidUsers(5, "annual")).toBe(5 * 37 * 12);
-    expect(calculatePrepaidUsers(5, "annual")).toBe(2220);
+  it("calculate prepaid users: Prime 5 users × annual = tiered × 0.90 × 12", () => {
+    const postPaidMonthly = calculateTieredPrice(5, IMOB_ADDITIONAL_USERS.prime);
+    const expected = postPaidMonthly * 0.9 * 12;
+    expect(calculatePrepaidUsers("prime", 5, "annual")).toBeCloseTo(expected, 2);
   });
 
-  it("calculate prepaid users: 10 users × biennial = 10 × 37 × 24 = R$ 8.880", () => {
-    expect(calculatePrepaidUsers(10, "biennial")).toBe(10 * 37 * 24);
-    expect(calculatePrepaidUsers(10, "biennial")).toBe(8880);
+  it("calculate prepaid users: K 10 users × biennial = tiered × 0.90 × 24", () => {
+    const postPaidMonthly = calculateTieredPrice(10, IMOB_ADDITIONAL_USERS.k);
+    const expected = postPaidMonthly * 0.9 * 24;
+    expect(calculatePrepaidUsers("k", 10, "biennial")).toBeCloseTo(expected, 2);
   });
 
-  it("calculate prepaid contracts: 100 contracts × annual = 100 × 2.50 × 12 = R$ 3.000", () => {
-    expect(calculatePrepaidContracts(100, "annual")).toBe(100 * 2.50 * 12);
-    expect(calculatePrepaidContracts(100, "annual")).toBeCloseTo(3000, 2);
+  it("calculate prepaid contracts: Prime 100 contracts × annual = tiered × 0.90 × 12", () => {
+    const postPaidMonthly = calculateTieredPrice(100, LOC_ADDITIONAL_CONTRACTS.prime);
+    const expected = postPaidMonthly * 0.9 * 12;
+    expect(calculatePrepaidContracts("prime", 100, "annual")).toBeCloseTo(expected, 2);
   });
 
-  it("calculate prepaid contracts: 500 contracts × biennial = 500 × 2.50 × 24 = R$ 30.000", () => {
-    expect(calculatePrepaidContracts(500, "biennial")).toBe(500 * 2.50 * 24);
-    expect(calculatePrepaidContracts(500, "biennial")).toBeCloseTo(30000, 2);
+  it("calculate prepaid contracts: K2 500 contracts × biennial = tiered × 0.90 × 24", () => {
+    const postPaidMonthly = calculateTieredPrice(500, LOC_ADDITIONAL_CONTRACTS.k2);
+    const expected = postPaidMonthly * 0.9 * 24;
+    expect(calculatePrepaidContracts("k2", 500, "biennial")).toBeCloseTo(expected, 2);
   });
 
   it("prepaid returns 0 for monthly and semiannual frequencies", () => {
-    expect(calculatePrepaidUsers(10, "monthly")).toBe(0);
-    expect(calculatePrepaidUsers(10, "semiannual")).toBe(0);
-    expect(calculatePrepaidContracts(100, "monthly")).toBe(0);
-    expect(calculatePrepaidContracts(100, "semiannual")).toBe(0);
+    expect(calculatePrepaidUsers("prime", 10, "monthly")).toBe(0);
+    expect(calculatePrepaidUsers("prime", 10, "semiannual")).toBe(0);
+    expect(calculatePrepaidContracts("prime", 100, "monthly")).toBe(0);
+    expect(calculatePrepaidContracts("prime", 100, "semiannual")).toBe(0);
   });
 
   it("available frequencies match annual and biennial", () => {

@@ -197,11 +197,15 @@ describe("Source of Truth: pricing-config alignment with calculator", () => {
   });
 
   describe("Prepaid pricing matches pricing-config", () => {
-    it("prepaid user price per month matches", () => {
-      expect(PREPAID_PRICING.additionalUsers.pricePerMonth).toBeGreaterThan(0);
+    it("prepaid discount percentage is 10%", () => {
+      expect(PREPAID_PRICING.discountPercentage).toBe(10);
+      expect(PREPAID_PRICING.discountMultiplier).toBe(0.9);
     });
-    it("prepaid contract price per month matches", () => {
-      expect(PREPAID_PRICING.additionalContracts.pricePerMonth).toBeGreaterThan(0);
+    it("prepaid users product is imob", () => {
+      expect(PREPAID_PRICING.additionalUsers.product).toBe("imob");
+    });
+    it("prepaid contracts product is locacao", () => {
+      expect(PREPAID_PRICING.additionalContracts.product).toBe("locacao");
     });
   });
 });

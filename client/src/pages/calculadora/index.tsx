@@ -23,6 +23,7 @@ import { Calculator, RotateCcw } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 import { CalculadoraProvider, useCalc } from "./CalculadoraContext";
+import { PricingUpdateBanner } from "@/components/PricingUpdateBanner";
 import { BusinessNatureSection } from "./BusinessNatureSection";
 import { ProductConfigSection } from "./ProductConfigSection";
 import { KomboComparisonSection } from "./KomboComparisonSection";
@@ -105,6 +106,7 @@ function CalculadoraContent() {
 export default function CalculadoraPage() {
   return (
     <CalculadoraProvider>
+      <PricingUpdateBanner />
       <CalculadoraContent />
     </CalculadoraProvider>
   );

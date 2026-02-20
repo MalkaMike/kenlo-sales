@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ArrowRight,
   X,
+  Percent,
 } from "lucide-react";
 import {
   Dialog,
@@ -126,12 +127,40 @@ export function PrePagoPosPagoModal({ open, onOpenChange }: PrePagoPosPagoModalP
             </div>
           </div>
 
+          {/* Pre-payment discount highlight */}
+          <div className="rounded-xl border-2 border-amber-300/50 bg-amber-50/50 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Percent className="w-4 h-4 text-amber-600" />
+              </div>
+              <span className="font-bold text-amber-700 text-sm">PRÉ-PAGAMENTO COM DESCONTO</span>
+            </div>
+            <p className="text-xs text-gray-700 leading-relaxed">
+              Ao optar pelo pré-pagamento de usuários, contratos ou leads adicionais (disponível nos ciclos Anual e Bienal), 
+              você recebe <strong className="text-amber-700">10% de desconto</strong> sobre o preço pós-pago correspondente.
+            </p>
+            <div className="space-y-1.5">
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <span className="text-xs text-gray-600">Preço pré-pago = preço pós-pago × 0,90</span>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <span className="text-xs text-gray-600">Disponível para Usuários, Contratos e Leads</span>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <span className="text-xs text-gray-600">Pagamento antecipado no início do ciclo (12 ou 24 meses)</span>
+              </div>
+            </div>
+          </div>
+
           {/* Key takeaway */}
           <div className="flex items-center gap-3 rounded-lg bg-primary/5 border border-primary/20 px-4 py-3">
             <span className="text-xl">💡</span>
             <p className="text-xs text-gray-700">
               <strong className="text-primary">Quanto mais você cresce, menor o custo unitário.</strong>{" "}
-              Seu crescimento gera escala, não penalidade.
+              Seu crescimento gera escala, não penalidade. Com pré-pagamento, economize ainda mais 10%.
             </p>
           </div>
         </div>

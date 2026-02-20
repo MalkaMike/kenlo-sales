@@ -14,6 +14,7 @@ import {
   calculateCustomColumn,
 } from "@/components/kombo/komboColumnCalculators";
 import { getRecommendedKombo } from "@/components/kombo/komboDefinitions";
+import { PREPAID_DISCOUNT_MULTIPLIER } from "@shared/pricing-config";
 import type { KomboComparisonProps, KomboColumnData, PaymentFrequency, PlanTier, ProductSelection, ColumnOverrides } from "@/components/kombo/komboComparisonTypes";
 
 interface RecalculateInput {
@@ -120,11 +121,13 @@ export function recalculateSelectedColumns(input: RecalculateInput): KomboColumn
         let newPostPaidTotal = freshCol.postPaidTotal;
 
         if (isPrepaidUsers && freshCol.postPaidUsers && freshCol.postPaidUsers.cost > 0) {
-          extraMonthly += freshCol.postPaidUsers.cost;
+          // Prepaid cost = post-paid cost * 0.90 (10% discount)
+          extraMonthly += freshCol.postPaidUsers.cost * PREPAID_DISCOUNT_MULTIPLIER;
           newPostPaidTotal -= freshCol.postPaidUsers.cost;
         }
         if (isPrepaidContracts && freshCol.postPaidContracts && freshCol.postPaidContracts.cost > 0) {
-          extraMonthly += freshCol.postPaidContracts.cost;
+          // Prepaid cost = post-paid cost * 0.90 (10% discount)
+          extraMonthly += freshCol.postPaidContracts.cost * PREPAID_DISCOUNT_MULTIPLIER;
           newPostPaidTotal -= freshCol.postPaidContracts.cost;
         }
 

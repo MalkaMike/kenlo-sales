@@ -8,7 +8,7 @@ import { TrendingUp } from "lucide-react";
 import { KOMBO_DEFINITIONS } from "./komboDefinitions";
 import { formatCurrency, CYCLE_LABELS, PAYMENT_FREQUENCY_MULTIPLIERS } from "./komboColumnCalculators";
 import { ColumnCycleSelector } from "./ColumnCycleSelector";
-import { PREPAID_PRICING } from "@shared/pricing-config";
+import { PREPAID_PRICING, PREPAID_DISCOUNT_PERCENTAGE, PREPAID_DISCOUNT_MULTIPLIER } from "@shared/pricing-config";
 
 import type {
   PaymentFrequency,
@@ -246,13 +246,18 @@ export function renderPostPaidUsersCell(ctx: CellRenderContext): React.ReactNode
   const isPrepaid = ctx.column.prePaidUsersActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] text-gray-400 italic">
-        {isPrepaid ? `R$ ${PREPAID_PRICING.additionalUsers.pricePerMonth.toFixed(2).replace(".", ",")}/usuário/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/usuário`}
-      </span>
       {isPrepaid ? (
-        <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic line-through">Pós-pago: R$ {pp.perUnit.toFixed(2).replace(".", ",")}/usuário</span>
+          <span className="text-[8px] text-green-600 font-medium">Pré-pago: R$ {(pp.perUnit * PREPAID_DISCOUNT_MULTIPLIER).toFixed(2).replace(".", ",")}/usuário</span>
+          <span className="text-[8px] text-green-600 font-bold">{PREPAID_DISCOUNT_PERCENTAGE}% OFF ✓</span>
+          <span className="text-[10px] text-green-600 font-semibold">R$ {formatCurrency(pp.cost * PREPAID_DISCOUNT_MULTIPLIER)}/mês</span>
+        </>
       ) : (
-        <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2).replace(".", ",")}/usuário</span>
+          <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        </>
       )}
       <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
       <button
@@ -290,13 +295,18 @@ export function renderPostPaidContractsCell(ctx: CellRenderContext): React.React
   const isPrepaidC = ctx.column.prePaidContractsActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] text-gray-400 italic">
-        {isPrepaidC ? `R$ ${PREPAID_PRICING.additionalContracts.pricePerMonth.toFixed(2).replace(".", ",")}/contrato/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/contrato`}
-      </span>
       {isPrepaidC ? (
-        <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic line-through">Pós-pago: R$ {pp.perUnit.toFixed(2).replace(".", ",")}/contrato</span>
+          <span className="text-[8px] text-green-600 font-medium">Pré-pago: R$ {(pp.perUnit * PREPAID_DISCOUNT_MULTIPLIER).toFixed(2).replace(".", ",")}/contrato</span>
+          <span className="text-[8px] text-green-600 font-bold">{PREPAID_DISCOUNT_PERCENTAGE}% OFF ✓</span>
+          <span className="text-[10px] text-green-600 font-semibold">R$ {formatCurrency(pp.cost * PREPAID_DISCOUNT_MULTIPLIER)}/mês</span>
+        </>
       ) : (
-        <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2).replace(".", ",")}/contrato</span>
+          <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        </>
       )}
       <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
       <button
@@ -334,13 +344,18 @@ export function renderPostPaidWhatsAppCell(ctx: CellRenderContext): React.ReactN
   const isPrepaid = ctx.column.prePaidWhatsAppActive;
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] text-gray-400 italic">
-        {isPrepaid ? `R$ ${PREPAID_PRICING.additionalLeads.pricePerMonth.toFixed(2).replace(".", ",")}/lead/mês (fixo)` : `R$ ${pp.perUnit.toFixed(2)}/lead`}
-      </span>
       {isPrepaid ? (
-        <span className="text-[10px] text-green-600 font-semibold">Pré-pago ✓</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic line-through">Pós-pago: R$ {pp.perUnit.toFixed(2).replace(".", ",")}/lead</span>
+          <span className="text-[8px] text-green-600 font-medium">Pré-pago: R$ {(pp.perUnit * PREPAID_DISCOUNT_MULTIPLIER).toFixed(2).replace(".", ",")}/lead</span>
+          <span className="text-[8px] text-green-600 font-bold">{PREPAID_DISCOUNT_PERCENTAGE}% OFF ✓</span>
+          <span className="text-[10px] text-green-600 font-semibold">R$ {formatCurrency(pp.cost * PREPAID_DISCOUNT_MULTIPLIER)}/mês</span>
+        </>
       ) : (
-        <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        <>
+          <span className="text-[8px] text-gray-400 italic">R$ {pp.perUnit.toFixed(2).replace(".", ",")}/lead</span>
+          <span className="text-[10px] text-amber-700 font-semibold">R$ {formatCurrency(pp.cost)}</span>
+        </>
       )}
       <span className="text-[8px] text-gray-400 italic">{pp.additional} adic. ({pp.included} incl.)</span>
       <button
