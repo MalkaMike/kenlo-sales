@@ -6106,3 +6106,9 @@
 - [x] Fix PDF to show actual price based on chosen ciclo (updated pdfStrategicPageV2 with cycle labels and prepaid info)
 - [x] Update kenlo-referencia-completa-produtos document with all business rules (v3.0.0 with dynamic prepaid pricing)
 - [x] Run comprehensive tests on calculator and PDF (all 1138 tests passing, visual tests confirmed on calculator, PDF, and admin)
+
+## Rounding Rule Clarification
+- [x] Clarify rounding-to-7 rule: ONLY for product licenses and add-on licenses >= R$100, NOT for post-paid or pre-paid prices
+- [x] Update kenlo-referencia-completa-produtos document with precise rule (v3.1.0)
+- [x] Verify code implements the rule correctly (roundToSeven only used for licenses, not post-paid/pre-paid)
+- [x] Save checkpoint and deliver updated document

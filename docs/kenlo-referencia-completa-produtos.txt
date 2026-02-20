@@ -1,5 +1,7 @@
 KENLO — REFERÊNCIA COMPLETA DE PRODUTOS, ADD-ONS E KOMBOS
-Versão 3.0.0 | Fonte: pricing-values.json (v2.0.0) + pricing-config.ts + Definições do Ecossistema | Última Atualização: 20 de Fevereiro de 2026
+Versão 3.1.0 | Fonte: pricing-values.json (v2.0.0) + pricing-config.ts + Definições do Ecossistema | Última Atualização: 20 de Fevereiro de 2026
+
+Alteração v3.1.0: Clarificação da regra de arredondamento — aplica-se APENAS a licenças de produtos e add-ons (≥ R$100), NÃO a preços pós-pago nem pré-pago.
 
 Este documento é a referência única e autoritativa para construção de todas as páginas de produtos, add-ons e Kombos no Portal de Vendas Kenlo. Cada preço, regra, nível, funcionalidade e composição está documentado abaixo com definições precisas alinhadas em todo o ecossistema. Todas as informações de precificação são extraídas diretamente do pricing-values.json, garantindo consistência absoluta entre calculadora, páginas públicas, admin pricing e PDFs gerados.
 
@@ -71,7 +73,7 @@ R$ 1.497
 R$ 1.497
 R$ 1.497
 
-2.2 Preços Calculados (após frequência + arredondamento)
+2.2 Preços Calculados (após frequência + arredondamento de licenças)
 Plano
 Mensal
 Semestral
@@ -100,7 +102,7 @@ Mensal: Preço Anual × 1.25 (acréscimo de 25% vs anual, ou seja, 0% de descont
 Semestral: Preço Anual × 1.125 (10% OFF vs mensal)
 Anual: Preço base (20% OFF vs mensal)
 Bienal: Preço Anual × 0.875 (30% OFF vs mensal)
-Arredondamento: Valores arredondados para o próximo número terminando em 7 (para valores ≥ R$100) ou Math.ceil (para valores < R$100)
+Arredondamento: Aplica-se APENAS a licenças de produtos e add-ons (mensalidades). Valores ≥ R$100 são arredondados para CIMA até o próximo número terminando em 7. Valores < R$100 usam Math.ceil. NÃO se aplica a preços pós-pago (usuários adicionais, contratos adicionais, leads, boletos, split, etc.) nem a preços pré-pago.
 2.3 Usuários Adicionais (Pós-Pago, Por Faixa)
 Prime: Taxa fixa
 
@@ -521,7 +523,7 @@ R$ 1.497
 R$ 1.497
 R$ 1.497
 
-3.2 Preços Calculados (após frequência + arredondamento)
+3.2 Preços Calculados (após frequência + arredondamento de licenças)
 Plano
 Mensal
 Semestral
@@ -818,7 +820,7 @@ Implementação: R$ 497 (zerada em Kombos Imob Start, Imob Pro e Elite)
 
 Leads WhatsApp Incluídos: 100 leads/mês
 
-Preços Calculados (após frequência + arredondamento):
+Preços Calculados (após frequência + arredondamento de licenças):
 
 Ciclo
 Preço/Mês
@@ -883,7 +885,7 @@ Preço Base Anual: R$ 297/mês
 
 Implementação: R$ 497 (zerada em Kombos Imob Pro, Locação Pro e Elite)
 
-Preços Calculados (após frequência + arredondamento):
+Preços Calculados (após frequência + arredondamento de licenças):
 
 Ciclo
 Preço/Mês
@@ -917,7 +919,7 @@ Implementação: R$ 0 (sempre gratuita)
 
 Assinaturas Incluídas: 15 assinaturas/mês
 
-Preços Calculados (após frequência + arredondamento):
+Preços Calculados (após frequência + arredondamento de licenças):
 
 Ciclo
 Preço/Mês
@@ -1292,19 +1294,36 @@ Economia: R$ 743,20/mês + R$ 994 de implementações = R$ 1.737,20 no primeiro 
 7.1 Ordem de Aplicação
 Preço Base Anual (fonte: pricing-values.json → basePlans)
 Multiplicador de Ciclo (fonte: pricing-values.json → paymentCycles)
-Arredondamento (regra: próximo número terminando em 7 para valores ≥ R$100, Math.ceil para valores < R$100)
+Arredondamento (ver regra detalhada abaixo)
 Desconto de Kombo (fonte: pricing-values.json → kombos)
 7.2 Regra de Arredondamento
-Para valores ≥ R$100:
+
+⚠️ ESCOPO DA REGRA: O arredondamento para "terminar em 7" aplica-se EXCLUSIVAMENTE a:
+• Licenças de produtos (IMOB, Locação) — mensalidades calculadas após multiplicador de ciclo
+• Licenças de add-ons (Inteligência, Leads, Assinaturas, etc.) — mensalidades com valor ≥ R$ 100
+
+❌ NÃO SE APLICA a:
+• Preços pós-pago (usuários adicionais, contratos adicionais, leads adicionais, boletos, split, WhatsApp, etc.)
+• Preços pré-pago (que são simplesmente pós-pago × 0.90, sem arredondamento adicional)
+• Taxas de implementação (valores fixos)
+• Comissões (Seguros, Cash)
+
+Para valores ≥ R$100 (licenças de produtos e add-ons):
 
 Arredondar para CIMA para o próximo número terminando em 7
 Exemplo: R$ 277,875 → R$ 287
 Exemplo: R$ 307 → R$ 307 (já termina em 7, mantém)
 
-Para valores < R$100:
+Para valores < R$100 (licenças de produtos e add-ons):
 
 Usar Math.ceil (arredondar para cima)
 Exemplo: R$ 41,625 → R$ 42
+
+Para preços pós-pago e pré-pago:
+
+NÃO arredondar para terminar em 7
+Usar o valor exato calculado (ex: R$ 57, R$ 47, R$ 37, R$ 42,30, etc.)
+Estes são preços por unidade definidos diretamente no pricing-values.json
 7.3 Multiplicadores de Ciclo
 Ciclo
 Multiplicador
@@ -1423,7 +1442,7 @@ Compartilhável: Se o cliente tem IMOB + Locação, paga apenas uma vez e usa em
 
 10. Perguntas Frequentes (FAQ) — Precificação
 10.1 Como funciona o arredondamento de preços?
-Para valores acima de R$ 100, arredondamos para CIMA para o próximo número terminando em 7 (ex: R$ 277,875 → R$ 287). Para valores abaixo de R$ 100, arredondamos para cima (ex: R$ 41,625 → R$ 42). Esta regra cria tiers de preço consistentes e facilita a comunicação com clientes.
+A regra de arredondamento para "terminar em 7" aplica-se APENAS a licenças de produtos (IMOB, Locação) e licenças de add-ons (Inteligência, Leads, Assinaturas). Para valores ≥ R$ 100, arredondamos para CIMA para o próximo número terminando em 7 (ex: R$ 277,875 → R$ 287). Para valores < R$ 100, usamos Math.ceil (ex: R$ 41,625 → R$ 42). IMPORTANTE: Esta regra NÃO se aplica a preços pós-pago (usuários adicionais, contratos, leads, boletos, etc.) nem a preços pré-pago. Os preços pós-pago são valores exatos por unidade (ex: R$ 57, R$ 47, R$ 3,00) e os pré-pago são calculados como pós-pago × 0.90 sem arredondamento adicional.
 10.2 Qual a diferença entre pré-pago e pós-pago para usuários/contratos adicionais?
 Pré-pago (Anual/Bienal apenas): 10% de desconto sobre o preço pós-pago do tier correspondente. Você paga antecipadamente pelo período completo (12 ou 24 meses). O preço é dinâmico e depende do plano e volume.
 
@@ -1460,7 +1479,7 @@ Preço de referência (sem multiplicador de ciclo) usado como fundação para to
 Multiplicador de Ciclo
 Fator aplicado ao preço base para calcular o preço de outros ciclos (mensal, semestral, bienal). Fonte: pricing-values.json → paymentCycles.
 Arredondamento
-Regra de ajuste final do preço: próximo número terminando em 7 (≥ R$100) ou Math.ceil (< R$100). Sempre arredonda para CIMA.
+Regra de ajuste final aplicada APENAS a licenças de produtos e add-ons (mensalidades): próximo número terminando em 7 (≥ R$100) ou Math.ceil (< R$100). Sempre arredonda para CIMA. NÃO se aplica a preços pós-pago nem pré-pago.
 Desconto de Kombo
 Desconto percentual aplicado sobre o total já ajustado pelo ciclo. Ordem: ciclo → Kombo.
 Pós-Pago

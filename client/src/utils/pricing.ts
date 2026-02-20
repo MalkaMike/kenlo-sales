@@ -449,7 +449,9 @@ export function applyFrequency(annualPrice: number, frequency: PaymentFrequency)
 // ============================================================================
 
 /**
- * Round price to end in 7 (for pre-paid prices only)
+ * Round price to end in 7.
+ * SCOPE: ONLY for product licenses and add-on licenses (monthly fees).
+ * Does NOT apply to post-paid or pre-paid variable costs.
  */
 export function roundPrice(price: number): number {
   return roundToSeven(price);

@@ -84,7 +84,12 @@ export const FREQUENCY_INSTALLMENTS: Record<PaymentFrequency, number> = {
 /**
  * Round UP to next integer ending in 7 for prices >= 100.
  * For prices < 100, just round UP to the next integer (Math.ceil).
- * Does NOT apply to: Post-paid charges
+ * 
+ * SCOPE: Applies ONLY to product licenses and add-on licenses (monthly fees).
+ * Does NOT apply to: Post-paid prices (users, contracts, leads, boletos, split, etc.)
+ * Does NOT apply to: Pre-paid prices (which are simply post-paid × 0.90)
+ * Does NOT apply to: Implementation fees (fixed values)
+ * Does NOT apply to: Commissions (Seguros, Cash)
  */
 export function roundToSeven(price: number): number {
   const rounded = Math.ceil(price);
