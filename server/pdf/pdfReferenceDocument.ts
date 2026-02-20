@@ -10,6 +10,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import pricingValues from "../../shared/pricing-values.json";
+import { KENLO_LOGO_WHITE_BASE64 } from "../../shared/kenloLogos";
 import {
   roundToSeven,
   FREQUENCY_MULTIPLIERS,
@@ -202,12 +203,20 @@ function renderCover(doc: jsPDF) {
   doc.setFillColor(...KENLO_PINK);
   doc.rect(0, 0, 210, 80, "F");
 
-  doc.setFontSize(30);
-  doc.setTextColor(...WHITE);
-  doc.setFont("helvetica", "bold");
-  doc.text("KENLO", PAGE_MARGIN, 28);
+  // Kenlo logo (white on pink background)
+  try {
+    doc.addImage(KENLO_LOGO_WHITE_BASE64, "PNG", PAGE_MARGIN, 14, 50, 14.4);
+  } catch {
+    // Fallback to text if image fails
+    doc.setFontSize(30);
+    doc.setTextColor(...WHITE);
+    doc.setFont("helvetica", "bold");
+    doc.text("KENLO", PAGE_MARGIN, 28);
+  }
 
   doc.setFontSize(18);
+  doc.setTextColor(...WHITE);
+  doc.setFont("helvetica", "bold");
   doc.text("Pricing Bible", PAGE_MARGIN, 40);
 
   doc.setFontSize(9);
@@ -288,6 +297,21 @@ function renderSectionA(doc: jsPDF) {
   );
 
   bodyText(doc, `Regra: ${cycles._rule || "Anual é a referência (0%). Mensal = +25%, Semestral = +12.5%, Bienal = -12.5%"}`);
+
+  // Calculation example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo Prático");
+  const exAnnual = pricingValues.basePlans.imob.k.annualPrice;
+  bodyText(doc, `Produto: IMOB K (Preço Anual Base: ${fmt(exAnnual)})`);
+  simpleTable(doc,
+    ["Ciclo", "Cálculo", "Resultado Bruto", "Arredondado (p/ 7)"],
+    [
+      ["Mensal", `${fmt(exAnnual)} x ${FREQUENCY_MULTIPLIERS.monthly}`, fmt(exAnnual * FREQUENCY_MULTIPLIERS.monthly), fmt(roundToSeven(exAnnual * FREQUENCY_MULTIPLIERS.monthly))],
+      ["Semestral", `${fmt(exAnnual)} x ${FREQUENCY_MULTIPLIERS.semiannual}`, fmt(exAnnual * FREQUENCY_MULTIPLIERS.semiannual), fmt(roundToSeven(exAnnual * FREQUENCY_MULTIPLIERS.semiannual))],
+      ["Anual", `${fmt(exAnnual)} x 1.0`, fmt(exAnnual), fmt(roundToSeven(exAnnual))],
+      ["Bienal", `${fmt(exAnnual)} x ${FREQUENCY_MULTIPLIERS.biennial}`, fmt(exAnnual * FREQUENCY_MULTIPLIERS.biennial), fmt(roundToSeven(exAnnual * FREQUENCY_MULTIPLIERS.biennial))],
+    ]
+  );
 }
 
 // ============================================================================
@@ -337,6 +361,14 @@ function renderSectionB(doc: jsPDF) {
   );
 
   bodyText(doc, `Implantação base: ${fmt(pricingValues._legacyFields?.implantacaoBase || 1497)}`);
+
+  // Calculation example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo: Proposta IMOB K2 Semestral");
+  const k2Annual = pricingValues.basePlans.imob.k2.annualPrice;
+  const k2Semestral = roundToSeven(k2Annual * FREQUENCY_MULTIPLIERS.semiannual);
+  bodyText(doc, `Preço anual: ${fmt(k2Annual)} --> Semestral: ${fmt(k2Annual)} x ${FREQUENCY_MULTIPLIERS.semiannual} = ${fmt(k2Annual * FREQUENCY_MULTIPLIERS.semiannual)} --> Arredondado: ${fmt(k2Semestral)}`);
+  bodyText(doc, `Usuários inclusos: ${pricingValues.basePlans.imob.k2.includedUnits.quantity} ${pricingValues.basePlans.imob.k2.includedUnits.type}`);
 }
 
 // ============================================================================
@@ -381,6 +413,14 @@ function renderSectionC(doc: jsPDF) {
   bulletPoint(doc, "Pay: Boleto e Split digital embutido. APENAS LOC.");
   bulletPoint(doc, "Seguros: Seguros embutido no boleto. APENAS LOC.");
   bulletPoint(doc, "Cash: Antecipação de até 24 meses de aluguel. APENAS LOC.");
+
+  // Calculation example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo: Add-on Inteligência (Mensal)");
+  const intelAnnual = pricingValues.addons.inteligencia.annualPrice;
+  const intelMonthly = roundToSeven(intelAnnual * FREQUENCY_MULTIPLIERS.monthly);
+  bodyText(doc, `Preço anual: ${fmt(intelAnnual)} --> Mensal: ${fmt(intelAnnual)} x ${FREQUENCY_MULTIPLIERS.monthly} = ${fmt(intelAnnual * FREQUENCY_MULTIPLIERS.monthly)} --> Arredondado: ${fmt(intelMonthly)}`);
+  bodyText(doc, `Implantação: ${pricingValues.addons.inteligencia.implementation > 0 ? fmt(pricingValues.addons.inteligencia.implementation) : "Grátis"}`);
 }
 
 // ============================================================================
@@ -486,6 +526,39 @@ function renderSectionE(doc: jsPDF) {
     }
     moveDown(doc, 0.5);
   });
+
+  // Full Kombo calculation example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo Completo: Kombo Elite (Anual)");
+  const eliteDiscount = pricingValues.kombos.elite.discount;
+  const discountMult = 1 - eliteDiscount / 100;
+  const imobKAnnual = pricingValues.basePlans.imob.k.annualPrice;
+  const locKAnnual = pricingValues.basePlans.locacao.k.annualPrice;
+  const intelAnnualK = pricingValues.addons.inteligencia.annualPrice;
+  const leadsAnnual = pricingValues.addons.leads.annualPrice;
+  const assAnnual = pricingValues.addons.assinaturas.annualPrice;
+  const payAnnual = pricingValues.addons.pay.annualPrice;
+  const segurosAnnual = pricingValues.addons.seguros.annualPrice;
+  const cashAnnual = pricingValues.addons.cash.annualPrice;
+
+  const totalBeforeDiscount = imobKAnnual + locKAnnual + intelAnnualK + leadsAnnual + assAnnual + payAnnual + segurosAnnual + cashAnnual;
+  const totalAfterDiscount = Math.round(totalBeforeDiscount * discountMult);
+
+  simpleTable(doc,
+    ["Item", "Preço Anual", "Com Desconto"],
+    [
+      ["IMOB K", fmt(imobKAnnual), fmt(Math.round(imobKAnnual * discountMult))],
+      ["Locação K", fmt(locKAnnual), fmt(Math.round(locKAnnual * discountMult))],
+      ["Inteligência", fmt(intelAnnualK), fmt(Math.round(intelAnnualK * discountMult))],
+      ["Leads", fmt(leadsAnnual), fmt(Math.round(leadsAnnual * discountMult))],
+      ["Assinatura", fmt(assAnnual), fmt(Math.round(assAnnual * discountMult))],
+      ["Pay", fmt(payAnnual), fmt(Math.round(payAnnual * discountMult))],
+      ["Seguros", fmt(segurosAnnual), fmt(Math.round(segurosAnnual * discountMult))],
+      ["Cash", fmt(cashAnnual), fmt(Math.round(cashAnnual * discountMult))],
+      ["TOTAL", fmt(totalBeforeDiscount), fmt(totalAfterDiscount)],
+    ]
+  );
+  bodyText(doc, `Desconto: ${eliteDiscount}% OFF --> Economia: ${fmt(totalBeforeDiscount - totalAfterDiscount)}/mês`);
 }
 
 // ============================================================================
@@ -597,6 +670,18 @@ function renderSectionF(doc: jsPDF) {
       ])
     );
   });
+
+  // Variable costs calculation example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo: 15 Usuários no Plano K (10 inclusos)");
+  const kUserTiers = pricingValues.variableCosts.additionalUsers.tiers.k;
+  const includedUsers = pricingValues.basePlans.imob.k.includedUnits.quantity;
+  const extraUsers = 15 - includedUsers;
+  const tier1Price = kUserTiers[0]?.price || 47;
+  const totalPosPago = extraUsers * tier1Price;
+  bodyText(doc, `Inclusos no plano: ${includedUsers} | Total desejado: 15 | Adicionais: ${extraUsers}`);
+  bodyText(doc, `Custo pós-pago: ${extraUsers} x ${fmt(tier1Price)} = ${fmt(totalPosPago)}/mês`);
+  bodyText(doc, `Custo pré-pago (${PREPAID_DISCOUNT_PERCENTAGE}% OFF): ${extraUsers} x ${fmt(tier1Price * PREPAID_DISCOUNT_MULTIPLIER)} = ${fmt(extraUsers * tier1Price * PREPAID_DISCOUNT_MULTIPLIER)}/mês`);
 
   // Seguros Commission
   ensureSpace(doc, 20);
@@ -738,7 +823,22 @@ function renderSectionI(doc: jsPDF) {
   subTitle(doc, "Algoritmo roundToSeven(x)");
   bodyText(doc, "1. Se x < 100: retorna Math.ceil(x)");
   bodyText(doc, "2. Se x >= 100: calcula ceil(x), depois encontra o próximo inteiro que termina em 7 (>= ceil(x))");
-  bodyText(doc, "3. Exemplos: 247 = 247, 248 = 257, 277.875 = 287, 100 = 107");
+
+  // Practical rounding examples table
+  moveDown(doc, 0.5);
+  subTitle(doc, "Exemplos de Arredondamento");
+  const roundingExamples = [
+    ["85.50", "86", "< 100, apenas Math.ceil"],
+    ["100.00", "107", ">= 100, próximo terminando em 7"],
+    ["247.00", "247", "Já termina em 7"],
+    ["248.00", "257", "Próximo inteiro com final 7"],
+    ["277.88", "287", "ceil(277.88)=278, próximo 7 = 287"],
+    ["500.00", "507", "ceil(500)=500, próximo 7 = 507"],
+  ];
+  simpleTable(doc,
+    ["Valor Calculado", "Resultado roundToSeven", "Explicação"],
+    roundingExamples
+  );
 }
 
 // ============================================================================
@@ -785,6 +885,26 @@ function renderSectionJ(doc: jsPDF) {
   moveDown(doc, 0.5);
   subTitle(doc, "Fonte Única de Verdade");
   bodyText(doc, "Todos os preços, regras e features são definidos em shared/pricing-values.json. A página /admin/pricing é a interface para editar esses valores. Qualquer alteração impacta imediatamente a calculadora, PDFs e páginas públicas.");
+
+  // Full end-to-end example
+  moveDown(doc, 1);
+  subTitle(doc, "Exemplo Completo: Proposta IMOB K + LOC K + Kombo Elite (Mensal)");
+  const imobK = pricingValues.basePlans.imob.k.annualPrice;
+  const locK = pricingValues.basePlans.locacao.k.annualPrice;
+  const imobKMonthly = roundToSeven(imobK * FREQUENCY_MULTIPLIERS.monthly);
+  const locKMonthly = roundToSeven(locK * FREQUENCY_MULTIPLIERS.monthly);
+  const eliteDiscountJ = pricingValues.kombos.elite.discount;
+  const discountMultJ = 1 - eliteDiscountJ / 100;
+
+  bodyText(doc, "Passo 1: Preço base anual");
+  bodyText(doc, `  IMOB K: ${fmt(imobK)} | LOC K: ${fmt(locK)}`);
+  bodyText(doc, "Passo 2: Aplicar multiplicador mensal (x" + FREQUENCY_MULTIPLIERS.monthly + ")");
+  bodyText(doc, `  IMOB K: ${fmt(imobKMonthly)} | LOC K: ${fmt(locKMonthly)}`);
+  bodyText(doc, `Passo 3: Aplicar desconto Kombo Elite (${eliteDiscountJ}% OFF)`);
+  bodyText(doc, `  IMOB K: ${fmt(Math.round(imobKMonthly * discountMultJ))} | LOC K: ${fmt(Math.round(locKMonthly * discountMultJ))}`);
+  bodyText(doc, `  Total mensal pré-pago (só produtos): ${fmt(Math.round((imobKMonthly + locKMonthly) * discountMultJ))}`);
+  bodyText(doc, "Passo 4: Somar custos variáveis pós-pago (sem arredondamento para 7)");
+  bodyText(doc, "Passo 5: Aplicar desconto pré-pagamento se aplicável (10% OFF sobre pós-pago)");
 }
 
 // ============================================================================

@@ -6127,3 +6127,11 @@
 - [x] Fix version display (v3.1.0 with generation timestamp)
 - [x] Fix checkmarks/boolean display in feature matrix (Sim/Nao instead of Unicode chars)
 - [x] Test PDF generation - all 12 pages render correctly with full content
+
+## Pricing Bible Public Download & Enhancements
+- [x] Add Kenlo logo to Pricing Bible PDF cover page
+- [x] Add calculation examples to each section of the PDF (A, B, C, E, F, H, I, J)
+- [x] Make Pricing Bible downloadable publicly (changed from protectedProcedure to publicProcedure)
+- [x] Replace "Configurar Preço" link in calculator sticky bar with Pricing Bible download button
+- [x] Create public API endpoint for Pricing Bible PDF generation/download
+- [x] Test all 1,162 vitest tests pass

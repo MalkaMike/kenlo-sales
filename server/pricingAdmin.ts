@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "./_core/trpc";
+import { router, publicProcedure, protectedProcedure, adminProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as fs from "fs/promises";
 import * as path from "path";
@@ -233,8 +233,8 @@ export const pricingAdminRouter = router({
     }
   }),
 
-  // Generate reference document PDF
-  generateReferencePDF: protectedProcedure.mutation(async () => {
+  // Generate reference document PDF (public - anyone can download the Pricing Bible)
+  generateReferencePDF: publicProcedure.mutation(async () => {
     try {
       const pdfBuffer = await generateReferenceDocumentPDF();
       return {

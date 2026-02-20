@@ -3,11 +3,62 @@
  * Shows only when minimum data is filled, displays value breakdown (pre-paid + post-paid = total)
  */
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Calculator, ChevronUp, Settings } from "lucide-react";
+import { Calculator, ChevronUp, Download, Loader2 } from "lucide-react";
 import { useCalc } from "./CalculadoraContext";
 import { formatCurrency, frequencyLabels, frequencyBadges, frequencyInstallments } from "./types";
 import { calculatePostPaidData } from "@/components/kombo/komboColumnCalculators";
+import { trpc } from "@/lib/trpc";
+
+function PricingBibleButton() {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const generatePDF = trpc.pricingAdmin.generateReferencePDF.useMutation();
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const result = await generatePDF.mutateAsync();
+      // Convert base64 to blob and trigger download
+      const byteCharacters = atob(result.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading Pricing Bible:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <Button
+      size="sm"
+      variant="ghost"
+      className="text-xs gap-1.5 hidden lg:flex text-muted-foreground hover:text-primary"
+      onClick={handleDownload}
+      disabled={isDownloading}
+    >
+      {isDownloading ? (
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+      ) : (
+        <Download className="w-3.5 h-3.5" />
+      )}
+      Pricing Bible
+    </Button>
+  );
+}
 
 export function StickyBar() {
   const {
@@ -175,17 +226,7 @@ export function StickyBar() {
               )}
               
               <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-xs gap-1.5 hidden lg:flex text-muted-foreground hover:text-primary"
-                  onClick={() => {
-                    window.location.href = "/admin/pricing";
-                  }}
-                >
-                  <Settings className="w-3.5 h-3.5" />
-                  Configurar Preços
-                </Button>
+                <PricingBibleButton />
                 <Button
                   size="sm"
                   variant="outline"
