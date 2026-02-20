@@ -5935,12 +5935,13 @@
 
 ## Bug Fixes - Session 2 (Feb 20, 2026)
 - [ ] Bug #4: "Exportar Cotação (PDF)" button validation feedback
-  - PARTIAL FIX: Replaced Sonner toast with NotificationContext for error messages
-  - ISSUE: Dialog not opening after validation passes - needs investigation
-  - Files: `client/src/pages/calculadora/ExportActionsSection.tsx`, `client/src/App.tsx`
+  - PARTIAL FIX: Replaced Sonner toast with NotificationContext - validation errors now visible
+  - ISSUE: Dialog still doesn't open after validation passes - state management problem
+  - INVESTIGATION: showQuoteInfoDialog state never changes to true despite setShowQuoteInfoDialog(true) being called
+  - Files: `client/src/pages/calculadora/ExportActionsSection.tsx`, `client/src/App.tsx`, `client/src/pages/calculadora/QuoteInfoHandler.tsx`
 - [ ] Bug #5: PDF shows annual values when monthly frequency selected
-  - BLOCKED: Cannot test until Bug #4 is resolved
+  - STATUS: Ready to implement once Bug #4 is resolved
   - Files: `client/src/pages/calculadora/quote/buildProposalData.ts`
 - [ ] Add toast feedback when clicking "Pré-pagar" buttons
-  - NOT STARTED: Deferred due to Bug #4 investigation
+  - STATUS: Ready to implement
   - Files: `client/src/components/kombo/KomboCellRenderers.tsx`
