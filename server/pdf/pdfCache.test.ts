@@ -12,6 +12,12 @@ vi.mock("./pdfReferenceDocument", () => ({
   generateReferenceDocumentPDF: vi.fn().mockResolvedValue(Buffer.from("fake-pdf-content")),
 }));
 
+// Mock S3 storage to avoid actual uploads in tests
+vi.mock("../storage", () => ({
+  storagePut: vi.fn().mockResolvedValue({ key: "test-key", url: "https://test.url/file" }),
+  storageGet: vi.fn().mockResolvedValue({ key: "test-key", url: "https://test.url/file" }),
+}));
+
 // Import after mocking
 import {
   computePricingHash,
@@ -20,8 +26,11 @@ import {
   getCacheStatus,
 } from "./pdfCache";
 import { generateReferenceDocumentPDF } from "./pdfReferenceDocument";
+import { storagePut, storageGet } from "../storage";
 
 const mockedGenerate = vi.mocked(generateReferenceDocumentPDF);
+const mockedStoragePut = vi.mocked(storagePut);
+const mockedStorageGet = vi.mocked(storageGet);
 
 describe("Pricing Bible PDF Cache", () => {
   beforeEach(() => {
@@ -29,6 +38,15 @@ describe("Pricing Bible PDF Cache", () => {
     invalidatePricingBibleCache();
     mockedGenerate.mockClear();
     mockedGenerate.mockResolvedValue(Buffer.from("fake-pdf-content"));
+    mockedStoragePut.mockClear();
+    mockedStorageGet.mockClear();
+    
+    // Mock S3 storage to return 404 (no cached file) by default
+    mockedStorageGet.mockResolvedValue({ key: "test-key", url: "https://test.url/file" });
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+    } as Response);
   });
 
   describe("computePricingHash", () => {

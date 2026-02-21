@@ -6142,3 +6142,11 @@
 - [x] Invalidate cache automatically when admin saves pricing config
 - [x] Write vitest tests for caching logic (11 tests: cache hit, cache miss, invalidation, status)
 - [x] Run all tests — 32 files, 1,173 tests pass
+
+## Pricing Bible Cache Improvements
+- [x] Test complete flow: verified cache miss (first call), cache hit (second call), invalidation, and regeneration
+- [x] Add visual indicator "Atualizado em DD/MM" to download button showing last generation date
+- [x] Persist PDF cache to S3 so it survives server restarts
+- [x] Update cache logic to check S3 first, then regenerate if needed (3-tier: memory → S3 → regenerate)
+- [x] Write tests for S3 persistence (mocked S3 storage in tests)
+- [x] Run all tests — 32 files, 1,173 tests pass

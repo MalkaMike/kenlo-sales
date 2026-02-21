@@ -242,6 +242,8 @@ export const pricingAdminRouter = router({
       return {
         pdf: buffer.toString("base64"),
         filename: `Kenlo_Pricing_Bible_${new Date().toISOString().split("T")[0]}.pdf`,
+        generatedAt: generatedAt.toISOString(),
+        fromCache,
       };
     } catch (error: any) {
       console.error("[PricingAdmin] Error generating reference PDF:", error);

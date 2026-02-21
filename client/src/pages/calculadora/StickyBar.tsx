@@ -13,12 +13,20 @@ import { trpc } from "@/lib/trpc";
 
 function PricingBibleButton() {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const generatePDF = trpc.pricingAdmin.generateReferencePDF.useMutation();
 
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
       const result = await generatePDF.mutateAsync();
+      
+      // Store the generation date
+      if (result.generatedAt) {
+        const date = new Date(result.generatedAt);
+        setLastUpdated(date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+      }
+      
       // Convert base64 to blob and trigger download
       const byteCharacters = atob(result.pdf);
       const byteNumbers = new Array(byteCharacters.length);
@@ -46,16 +54,23 @@ function PricingBibleButton() {
     <Button
       size="sm"
       variant="ghost"
-      className="text-xs gap-1.5 hidden lg:flex text-muted-foreground hover:text-primary"
+      className="text-xs gap-1.5 hidden lg:flex text-muted-foreground hover:text-primary flex-col items-start py-1.5 h-auto"
       onClick={handleDownload}
       disabled={isDownloading}
     >
-      {isDownloading ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-      ) : (
-        <Download className="w-3.5 h-3.5" />
+      <span className="flex items-center gap-1.5">
+        {isDownloading ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <Download className="w-3.5 h-3.5" />
+        )}
+        Pricing Bible
+      </span>
+      {lastUpdated && (
+        <span className="text-[10px] text-muted-foreground/70">
+          Atualizado em {lastUpdated}
+        </span>
       )}
-      Pricing Bible
     </Button>
   );
 }
