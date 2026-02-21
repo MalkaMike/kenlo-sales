@@ -5,6 +5,7 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { parseJSON, productNames } from "./historicoConstants";
+import type { Quote } from "@shared/types";
 
 export interface VendorChartItem {
   name: string;
@@ -28,7 +29,7 @@ export interface HistoricoChartData {
   byTime: TimeChartItem[];
 }
 
-export function buildChartData(quotes: any[]): HistoricoChartData {
+export function buildChartData(quotes: Quote[]): HistoricoChartData {
   if (!quotes || quotes.length === 0) {
     return { byVendor: [], byProduct: [], byTime: [] };
   }

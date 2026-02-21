@@ -6162,3 +6162,14 @@
 - [x] Fix 'any' types in pdfReferenceDocument.ts (8 replacements with proper inline types)
 - [x] Fix duplicate className JSX attributes in KomboComparisonTable and KomboCellRenderers
 - [x] Run all tests — 32 files, 1,173 tests pass
+
+## Type Safety, E2E Tests, and Lazy Loading
+- [x] Audit and list all remaining 'any' types in UI components (60 found, 21 eliminated)
+- [x] Create typed interfaces: Quote, ComparisonRow, FeatureEntry, VariableCostItem, PricingFormData
+- [x] Replace 'any' types in HistoricoTable, PricingAdminPage, KomboComparisonTable, SectionVariableCosts, SectionFeatureMatrix
+- [x] Set up Playwright for E2E testing (chromium, playwright.config.ts)
+- [x] Write 11 E2E tests: login page (4), public API (3), static assets (2), performance (2)
+- [x] All E2E tests cover: login branding, auth redirect, PDF API, cache consistency, health check, meta tags, load time
+- [x] Implement React.lazy() for 16 pages (all product, addon, admin, and heavy pages)
+- [x] Add Suspense boundary with Kenlo-branded loading spinner (PageLoader component)
+- [x] All tests pass: 1,173 vitest + 11 Playwright E2E

@@ -31,7 +31,8 @@ export default function PricingAdminPageV2() {
   const saveConfigMutation = trpc.pricingAdmin.saveConfig.useMutation();
   const generateReferencePDFMutation = trpc.pricingAdmin.generateReferencePDF.useMutation();
 
-  const [formData, setFormData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pricing config is deeply nested JSON
+  const [formData, setFormData] = useState<Record<string, any> | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [changeReason, setChangeReason] = useState("");
@@ -72,15 +73,16 @@ export default function PricingAdminPageV2() {
     if (!formData) return;
     try {
       const updatedData = { ...formData, _lastModified: new Date().toISOString(), _version: "2.0.0" };
-      await saveConfigMutation.mutateAsync(updatedData);
+      await saveConfigMutation.mutateAsync(updatedData as Parameters<typeof saveConfigMutation.mutateAsync>[0]);
       alert(`\u2705 Configuração salva com sucesso!\n\nMotivo: ${changeReason || "Não informado"}`);
       setHasChanges(false);
       setShowConfirmDialog(false);
       setChangeReason("");
       setLastModified(updatedData._lastModified);
       refetch();
-    } catch (error: any) {
-      alert(`\u274C Erro: ${error.message || "Erro ao salvar configuração"}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao salvar configuração";
+      alert(`\u274C Erro: ${message}`);
     }
   };
 
@@ -103,13 +105,14 @@ export default function PricingAdminPageV2() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (error: any) {
-      alert(`\u274C Erro ao gerar PDF: ${error.message || "Erro desconhecido"}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro desconhecido";
+      alert(`\u274C Erro ao gerar PDF: ${message}`);
     }
   };
 
-  const updateValue = (path: string[], value: any) => {
-    setFormData((prev: any) => {
+  const updateValue = (path: string[], value: unknown) => {
+    setFormData((prev: Record<string, any> | null) => {
       const newData = JSON.parse(JSON.stringify(prev));
       let current = newData;
       for (let i = 0; i < path.length - 1; i++) current = current[path[i]];

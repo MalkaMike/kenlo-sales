@@ -16,12 +16,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency, parseJSON, productNames, planNames, frequencyNames } from "./historicoConstants";
+import type { Quote } from "@shared/types";
 
 interface Props {
-  quotes: any[] | undefined;
-  filteredQuotes: any[] | undefined;
+  quotes: Quote[] | undefined;
+  filteredQuotes: Quote[] | undefined;
   isLoading: boolean;
-  error: any;
+  error: unknown;
   hasActiveFilters: boolean;
   onDeleteClick: (id: number) => void;
   isAdmin?: boolean;
@@ -171,7 +172,7 @@ function ProductIcon({ product }: { product: string }) {
 }
 
 function QuoteRow({ quote, onDeleteClick, isAdmin, isSelected, onToggleSelect }: {
-  quote: any;
+  quote: Quote;
   onDeleteClick: (id: number) => void;
   isAdmin?: boolean;
   isSelected?: boolean;
@@ -253,7 +254,7 @@ function QuoteRow({ quote, onDeleteClick, isAdmin, isSelected, onToggleSelect }:
   );
 }
 
-function QuoteMobileCard({ quote, onDeleteClick }: { quote: any; onDeleteClick: (id: number) => void }) {
+function QuoteMobileCard({ quote, onDeleteClick }: { quote: Quote; onDeleteClick: (id: number) => void }) {
   const totals = parseJSON(quote.totals);
 
   return (

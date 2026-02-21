@@ -49,7 +49,23 @@ export type { KomboComparisonProps, KomboColumnData, ColumnId, KomboId } from ".
 
 // ─── Row Definitions ────────────────────────────────────────────────────────
 
-const rows = [
+interface ComparisonRow {
+  key: string;
+  label: string;
+  isHeader?: boolean;
+  indent?: boolean;
+  isTotal?: boolean;
+  isDiscountRow?: boolean;
+  isBreakdownRow?: boolean;
+  isFinalPrice?: boolean;
+  isMensalidadeRow?: boolean;
+  isGrandTotal?: boolean;
+  needsTopSpacing?: boolean;
+  needsBottomSpacing?: boolean;
+  sublabel?: string;
+}
+
+const rows: ComparisonRow[] = [
   { key: "products", label: "Produtos", isHeader: true },
   { key: "imob", label: "Imob", indent: true },
   { key: "loc", label: "Loc", indent: true },
@@ -680,17 +696,17 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                   if (row.key === "postpaidAssinaturas" && !props.addons.assinatura) {
                     return null;
                   }
-                  const needsSpacerAfter = (row as any).needsBottomSpacing;
+                  const needsSpacerAfter = row.needsBottomSpacing;
                   return (
                     <React.Fragment key={`row-fragment-${row.key}`}>
                       <tr
                         className={`
-                          ${(row as any).needsTopSpacing ? "mt-2" : ""}
-                          ${(row as any).isFinalPrice
+                          ${row.needsTopSpacing ? "mt-2" : ""}
+                          ${row.isFinalPrice
                             ? "bg-blue-100 rounded-lg border-2 border-blue-300 shadow-sm"
-                            : (row as any).isMensalidadeRow
+                            : row.isMensalidadeRow
                             ? "bg-blue-50/50 rounded-lg border-2 border-blue-200/60"
-                            : (row as any).isGrandTotal ? ""
+                            : row.isGrandTotal ? ""
                             : row.isHeader ? "bg-blue-50/70 border-t-2 border-b-2 border-gray-200"
                             : row.isTotal ? "bg-gray-100/70 border-b border-gray-200"
                             : "border-b border-gray-100 hover:bg-gray-50/30"
@@ -703,15 +719,15 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                           className={`
                             ${row.isHeader ? "py-0.5 px-4" : row.isTotal ? "py-0.5 px-4" : "py-px px-4"}
                             ${row.indent ? "pl-8" : ""}
-                            ${(row as any).isFinalPrice || (row as any).isMensalidadeRow ? "rounded-l-lg" : ""}
+                            ${row.isFinalPrice || row.isMensalidadeRow ? "rounded-l-lg" : ""}
                             ${row.isHeader ? "font-semibold text-gray-700 text-xs"
-                              : (row as any).isGrandTotal ? "font-extrabold text-gray-800 text-xs"
+                              : row.isGrandTotal ? "font-extrabold text-gray-800 text-xs"
                               : row.isTotal ? "font-bold text-gray-700 text-xs"
                               : "text-gray-600 text-xs"
                             }
                           `}
                         >
-                          {(row as any).sublabel ? (
+                          {row.sublabel ? (
                             <div className="flex flex-col items-start">
                               <span style={{fontSize: '12px'}}>{row.label}</span>
                               <span
@@ -719,7 +735,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                 onClick={() => setShowPrePagoPosPagoModal(true)}
                                 title="Clique para saber mais sobre Pré-Pago e Pós-Pago"
                               >
-                                {(row as any).sublabel}
+                                {row.sublabel}
                               </span>
                             </div>
                           ) : (
@@ -738,7 +754,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                               onMouseEnter={() => setHoveredColumn(col.id)}
                               onMouseLeave={() => setHoveredColumn(null)}
                               className={`py-0.5 px-2 text-center text-xs transition-colors duration-150
-                                ${((row as any).isFinalPrice || (row as any).isMensalidadeRow) && colIndex === columns.length - 1 ? "rounded-r-lg" : ""}
+                                ${(row.isFinalPrice || row.isMensalidadeRow) && colIndex === columns.length - 1 ? "rounded-r-lg" : ""}
                                 ${isFirstCustom ? "border-l-2 border-dashed border-gray-300" : ""}
                                 ${selectedPlans.includes(col.id)
                                   ? col.isCustom
@@ -747,7 +763,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                                   ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                                   : colIndex % 2 === 1 ? "bg-gray-50/50" : ""
-                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-900 text-xs" : row.isTotal ? "font-bold text-gray-700 text-xs" : "text-gray-700 text-xs"}`}
+                                } ${row.isGrandTotal ? "font-extrabold text-gray-900 text-xs" : row.isTotal ? "font-bold text-gray-700 text-xs" : "text-gray-700 text-xs"}`}
                             >
                               {row.isHeader ? null : getCellValue(row.key, buildCellCtx(colIndex, col))}
                             </td>

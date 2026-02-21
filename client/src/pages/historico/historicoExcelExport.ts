@@ -6,8 +6,9 @@ import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency, parseJSON, productNames, planNames, frequencyNames } from "./historicoConstants";
+import type { Quote } from "@shared/types";
 
-export function exportQuotesToExcel(filteredQuotes: any[]) {
+export function exportQuotesToExcel(filteredQuotes: Quote[]) {
   if (!filteredQuotes || filteredQuotes.length === 0) {
     alert("Nenhum cotação para exportar");
     return;

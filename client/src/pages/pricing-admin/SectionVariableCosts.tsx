@@ -6,6 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { SectionHeader, NumberInput, HelperText, type SectionProps } from "./pricingAdminShared";
 
+interface VariableCostTier {
+  from: number;
+  to: number;
+  price?: number;
+  rate?: number;
+}
+
+interface VariableCostData {
+  product: string;
+  unit: string;
+  tiers: Record<string, VariableCostTier[]>;
+  _note?: string;
+}
+
 export function SectionVariableCosts({ formData, updateValue, collapsed, onToggle }: SectionProps) {
   return (
     <div id="section-f" className="scroll-mt-24">
@@ -21,7 +35,7 @@ export function SectionVariableCosts({ formData, updateValue, collapsed, onToggl
         </CardHeader>
         {!collapsed && (
           <CardContent className="space-y-6">
-            {Object.entries(formData.variableCosts || {}).map(([costKey, costData]: [string, any]) => {
+            {(Object.entries(formData.variableCosts || {}) as [string, VariableCostData][]).map(([costKey, costData]) => {
               if (costKey.startsWith("_")) return null;
               return (
                 <Card key={costKey} className="border-l-4 border-l-orange-300">
@@ -35,11 +49,11 @@ export function SectionVariableCosts({ formData, updateValue, collapsed, onToggl
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {Object.entries(costData.tiers || {}).map(([planKey, tiers]: [string, any]) => (
+                    {(Object.entries(costData.tiers || {}) as [string, VariableCostTier[]][]).map(([planKey, tiers]) => (
                       <div key={planKey} className="mb-4">
                         <Label className="text-xs uppercase font-semibold mb-2 block">{planKey}</Label>
                         <div className="space-y-2">
-                          {tiers.map((tier: any, idx: number) => (
+                          {tiers.map((tier: VariableCostTier, idx: number) => (
                             <div key={idx} className="grid grid-cols-4 gap-2 items-center">
                               <div>
                                 <Label className="text-[10px]">De</Label>

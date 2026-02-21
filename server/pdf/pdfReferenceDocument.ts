@@ -57,7 +57,7 @@ function setY(_doc: jsPDF, y: number): void { currentY = y; }
 function moveDown(_doc: jsPDF, lines: number = 1): void { currentY += lines * 5; }
 
 function addFooter(doc: jsPDF) {
-  const pageNum = (doc as any).internal.getNumberOfPages();
+  const pageNum = doc.getNumberOfPages();
   doc.setFontSize(7);
   doc.setTextColor(...LIGHT_TEXT);
   doc.setFont("helvetica", "normal");
@@ -191,7 +191,7 @@ function simpleTable(
   });
 
   // Update Y position after table
-  const finalY = (doc as any).lastAutoTable?.finalY || startY + 20;
+  const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY || startY + 20;
   setY(doc, finalY + 3);
 }
 
@@ -328,7 +328,7 @@ function renderSectionB(doc: jsPDF) {
   simpleTable(doc,
     ["Plano", "Preço Anual", "Mensal", "Semestral", "Bienal", "Usuários Inclusos"],
     ["prime", "k", "k2"].map(plan => {
-      const p = (imob as any)[plan];
+      const p = imob[plan as keyof typeof imob];
       const annual = p.annualPrice;
       return [
         plan.toUpperCase(),
@@ -347,7 +347,7 @@ function renderSectionB(doc: jsPDF) {
   simpleTable(doc,
     ["Plano", "Preço Anual", "Mensal", "Semestral", "Bienal", "Contratos Inclusos"],
     ["prime", "k", "k2"].map(plan => {
-      const p = (loc as any)[plan];
+      const p = loc[plan as keyof typeof loc];
       const annual = p.annualPrice;
       return [
         plan.toUpperCase(),
@@ -392,7 +392,7 @@ function renderSectionC(doc: jsPDF) {
   simpleTable(doc,
     ["Add-on", "Disponível", "Preço Anual", "Mensal", "Implantação", "Compartilhável"],
     addonList.map(({ key, name }) => {
-      const a = (addons as any)[key];
+      const a = addons[key as keyof typeof addons] as { annualPrice: number; availability: string[]; implementation: number; shareable: boolean };
       const annual = a.annualPrice;
       const monthly = annual > 0 ? fmt(roundToSeven(annual * FREQUENCY_MULTIPLIERS.monthly)) : "N/A";
       return [
@@ -575,7 +575,7 @@ function renderSectionF(doc: jsPDF) {
   // Additional Users
   subTitle(doc, "Usuários Adicionais (IMOB)");
   plans.forEach(plan => {
-    const tiers = (vc.additionalUsers.tiers as any)[plan];
+    const tiers = (vc.additionalUsers.tiers as Record<string, { from: number; to: number; price: number }[]>)[plan];
     if (!tiers) return;
     ensureSpace(doc, 10 + tiers.length * 7);
     doc.setFontSize(8);
@@ -596,7 +596,7 @@ function renderSectionF(doc: jsPDF) {
   // Additional Contracts
   subTitle(doc, "Contratos Adicionais (LOC)");
   plans.forEach(plan => {
-    const tiers = (vc.additionalContracts.tiers as any)[plan];
+    const tiers = (vc.additionalContracts.tiers as Record<string, { from: number; to: number; price: number }[]>)[plan];
     if (!tiers) return;
     ensureSpace(doc, 10 + tiers.length * 7);
     doc.setFontSize(8);
@@ -631,7 +631,7 @@ function renderSectionF(doc: jsPDF) {
   ensureSpace(doc, 20);
   subTitle(doc, "Boletos (LOC — Kenlo Pay)");
   plans.forEach(plan => {
-    const tiers = (vc.boletos.tiers as any)[plan];
+    const tiers = (vc.boletos.tiers as Record<string, { from: number; to: number; price: number }[]>)[plan];
     if (!tiers) return;
     ensureSpace(doc, 10 + tiers.length * 7);
     doc.setFontSize(8);
@@ -653,7 +653,7 @@ function renderSectionF(doc: jsPDF) {
   ensureSpace(doc, 20);
   subTitle(doc, "Splits (LOC — Kenlo Pay)");
   plans.forEach(plan => {
-    const tiers = (vc.splits.tiers as any)[plan];
+    const tiers = (vc.splits.tiers as Record<string, { from: number; to: number; price: number }[]>)[plan];
     if (!tiers) return;
     ensureSpace(doc, 10 + tiers.length * 7);
     doc.setFontSize(8);
@@ -687,7 +687,7 @@ function renderSectionF(doc: jsPDF) {
   ensureSpace(doc, 20);
   subTitle(doc, "Comissão de Seguros (LOC)");
   plans.forEach(plan => {
-    const tiers = (vc.segurosCommission.tiers as any)[plan];
+    const tiers = (vc.segurosCommission.tiers as Record<string, { from: number; to: number; price?: number; rate?: number }[]>)[plan];
     if (!tiers) return;
     ensureSpace(doc, 10 + tiers.length * 7);
     doc.setFontSize(8);
@@ -697,7 +697,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Taxa"],
-      tiers.map((t: { from: number; to: number; price: number; rate?: number }) => [
+      tiers.map((t: { from: number; to: number; price?: number; rate?: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         t.rate ? `${(t.rate * 100).toFixed(0)}%` : (t.price ? fmt(t.price) : "N/A"),

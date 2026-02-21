@@ -7,6 +7,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Check, X } from "lucide-react";
 import { SectionHeader, type SectionProps } from "./pricingAdminShared";
 
+interface FeatureEntry {
+  name: string;
+  description?: string;
+  included: boolean;
+  linkedToAddon?: string;
+  linkedToPremiumService?: string;
+}
+
 export function SectionFeatureMatrix({ formData, updateValue, collapsed, onToggle }: SectionProps) {
   return (
     <div id="section-g" className="scroll-mt-24">
@@ -51,14 +59,14 @@ export function SectionFeatureMatrix({ formData, updateValue, collapsed, onToggl
                       {(() => {
                         const allFeatures = new Map();
                         ["prime", "k", "k2"].forEach((plan) => {
-                          formData.featureMatrix?.[product]?.[plan]?.forEach((feature: any) => {
+                          formData.featureMatrix?.[product]?.[plan]?.forEach((feature: FeatureEntry) => {
                             if (!allFeatures.has(feature.name)) {
                               allFeatures.set(feature.name, feature);
                             }
                           });
                         });
 
-                        return Array.from(allFeatures.values()).map((feature: any, idx: number) => (
+                        return Array.from(allFeatures.values()).map((feature: FeatureEntry, idx: number) => (
                           <tr key={idx} className="border-b hover:bg-muted/50">
                             <td className="py-2 px-2">
                               <div>
@@ -76,7 +84,7 @@ export function SectionFeatureMatrix({ formData, updateValue, collapsed, onToggl
                             </td>
                             {["prime", "k", "k2"].map((plan) => {
                               const planFeatures = formData.featureMatrix?.[product]?.[plan] || [];
-                              const planFeature = planFeatures.find((f: any) => f.name === feature.name);
+                              const planFeature = planFeatures.find((f: FeatureEntry) => f.name === feature.name);
                               const isIncluded = planFeature?.included || false;
 
                               return (
@@ -84,7 +92,7 @@ export function SectionFeatureMatrix({ formData, updateValue, collapsed, onToggl
                                   <button
                                     onClick={() => {
                                       const featureIdx = planFeatures.findIndex(
-                                        (f: any) => f.name === feature.name
+                                        (f: FeatureEntry) => f.name === feature.name
                                       );
                                       if (featureIdx >= 0) {
                                         updateValue(

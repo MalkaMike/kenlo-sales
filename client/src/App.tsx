@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -11,29 +12,42 @@ import { Toast } from "./components/Toast";
 import { ErrorInterceptorSetup } from "./components/ErrorInterceptorSetup";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 
-// Pages
+// Eagerly loaded pages (critical path)
 import Home from "./pages/Home";
-import ImobPage from "./pages/products/ImobPage";
-import LocacaoPage from "./pages/products/LocacaoPage";
-import SitePage from "./pages/products/SitePage";
-import LeadsPage from "./pages/addons/LeadsPage";
-import InteligenciaPage from "./pages/addons/InteligenciaPage";
-import AssinaturaPage from "./pages/addons/AssinaturaPage";
-import PayPage from "./pages/addons/PayPage";
-import SegurosPage from "./pages/addons/SegurosPage";
-import CashPage from "./pages/addons/CashPage";
-import KombosPage from "./pages/KombosPage";
-import CalculadoraPage from "./pages/calculadora";
-import HistoricoPage from "./pages/HistoricoPage";
-import PerformancePage from "./pages/PerformancePage";
 import LoginPage from "./pages/LoginPage";
 import AcessoNegado from "./pages/AcessoNegado";
-import ProfilePage from "./pages/ProfilePage";
-import PricingAdminPage from "./pages/PricingAdminPage";
-import AdminUsersPage from "./pages/AdminUsersPage";
-import ConteudoPage from "./pages/ConteudoPage";
-import ConversionDashboardPage from "./pages/ConversionDashboardPage";
-import ClientRegistryPage from "./pages/ClientRegistryPage";
+
+// Lazy loaded pages (code-split for faster initial load)
+const ImobPage = lazy(() => import("./pages/products/ImobPage"));
+const LocacaoPage = lazy(() => import("./pages/products/LocacaoPage"));
+const SitePage = lazy(() => import("./pages/products/SitePage"));
+const LeadsPage = lazy(() => import("./pages/addons/LeadsPage"));
+const InteligenciaPage = lazy(() => import("./pages/addons/InteligenciaPage"));
+const AssinaturaPage = lazy(() => import("./pages/addons/AssinaturaPage"));
+const PayPage = lazy(() => import("./pages/addons/PayPage"));
+const SegurosPage = lazy(() => import("./pages/addons/SegurosPage"));
+const CashPage = lazy(() => import("./pages/addons/CashPage"));
+const KombosPage = lazy(() => import("./pages/KombosPage"));
+const CalculadoraPage = lazy(() => import("./pages/calculadora"));
+const HistoricoPage = lazy(() => import("./pages/HistoricoPage"));
+const PerformancePage = lazy(() => import("./pages/PerformancePage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const PricingAdminPage = lazy(() => import("./pages/PricingAdminPage"));
+const AdminUsersPage = lazy(() => import("./pages/AdminUsersPage"));
+const ConteudoPage = lazy(() => import("./pages/ConteudoPage"));
+const ConversionDashboardPage = lazy(() => import("./pages/ConversionDashboardPage"));
+const ClientRegistryPage = lazy(() => import("./pages/ClientRegistryPage"));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-3 border-kenlo-pink border-t-transparent rounded-full animate-spin" />
+        <span className="text-sm text-muted-foreground">Carregando...</span>
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
@@ -48,42 +62,44 @@ function Router() {
       <Route>
         <AuthGuard>
           <Layout>
-            <Switch>
-              <Route path="/" component={Home} />
-              {/* Products */}
-              <Route path="/produtos/imob" component={ImobPage} />
-              <Route path="/produtos/locacao" component={LocacaoPage} />
-              <Route path="/produtos/site" component={SitePage} />
-              {/* Add-ons */}
-              <Route path="/addons/leads" component={LeadsPage} />
-              <Route path="/addons/inteligencia" component={InteligenciaPage} />
-              <Route path="/addons/assinatura" component={AssinaturaPage} />
-              <Route path="/addons/pay" component={PayPage} />
-              <Route path="/addons/seguros" component={SegurosPage} />
-              <Route path="/addons/cash" component={CashPage} />
-              {/* Kombos */}
-              <Route path="/kombos" component={KombosPage} />
-              {/* Conteúdo */}
-              <Route path="/conteudo" component={ConteudoPage} />
-              {/* Calculator / Cotação */}
-              <Route path="/calculadora" component={CalculadoraPage} />
-              <Route path="/cotacao" component={CalculadoraPage} />
-              {/* Histórico */}
-              <Route path="/historico" component={HistoricoPage} />
-              {/* Performance */}
-              <Route path="/performance" component={PerformancePage} />
-              {/* Conversion Dashboard */}
-              <Route path="/conversao" component={ConversionDashboardPage} />
-              {/* Profile */}
-              <Route path="/perfil" component={ProfilePage} />
-              {/* Pricing Admin */}
-              <Route path="/admin/pricing" component={PricingAdminPage} />
-              <Route path="/admin/users" component={AdminUsersPage} />
-              <Route path="/admin/clientes" component={ClientRegistryPage} />
-              {/* Fallback */}
-              <Route path="/404" component={NotFound} />
-              <Route component={NotFound} />
-            </Switch>
+            <Suspense fallback={<PageLoader />}>
+              <Switch>
+                <Route path="/" component={Home} />
+                {/* Products */}
+                <Route path="/produtos/imob" component={ImobPage} />
+                <Route path="/produtos/locacao" component={LocacaoPage} />
+                <Route path="/produtos/site" component={SitePage} />
+                {/* Add-ons */}
+                <Route path="/addons/leads" component={LeadsPage} />
+                <Route path="/addons/inteligencia" component={InteligenciaPage} />
+                <Route path="/addons/assinatura" component={AssinaturaPage} />
+                <Route path="/addons/pay" component={PayPage} />
+                <Route path="/addons/seguros" component={SegurosPage} />
+                <Route path="/addons/cash" component={CashPage} />
+                {/* Kombos */}
+                <Route path="/kombos" component={KombosPage} />
+                {/* Conteúdo */}
+                <Route path="/conteudo" component={ConteudoPage} />
+                {/* Calculator / Cotação */}
+                <Route path="/calculadora" component={CalculadoraPage} />
+                <Route path="/cotacao" component={CalculadoraPage} />
+                {/* Histórico */}
+                <Route path="/historico" component={HistoricoPage} />
+                {/* Performance */}
+                <Route path="/performance" component={PerformancePage} />
+                {/* Conversion Dashboard */}
+                <Route path="/conversao" component={ConversionDashboardPage} />
+                {/* Profile */}
+                <Route path="/perfil" component={ProfilePage} />
+                {/* Pricing Admin */}
+                <Route path="/admin/pricing" component={PricingAdminPage} />
+                <Route path="/admin/users" component={AdminUsersPage} />
+                <Route path="/admin/clientes" component={ClientRegistryPage} />
+                {/* Fallback */}
+                <Route path="/404" component={NotFound} />
+                <Route component={NotFound} />
+              </Switch>
+            </Suspense>
           </Layout>
         </AuthGuard>
       </Route>

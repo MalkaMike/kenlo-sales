@@ -130,8 +130,9 @@ export const SECTIONS = [
 
 // ── Shared prop types ───────────────────────────────────────────
 export interface SectionProps {
-  formData: any;
-  updateValue: (path: string[], value: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pricing config is deeply nested JSON
+  formData: Record<string, any>;
+  updateValue: (path: string[], value: unknown) => void;
   collapsed: boolean;
   onToggle: () => void;
 }
