@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
+import { ADDONS, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT, KOMBO_MAX_DISCOUNT_PERCENT, KOMBO_IMPLEMENTATION_COST } from "@shared/pricing-config";
+import { formatCurrency } from "@shared/formatters";
 import { Button } from "@/components/ui/button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -384,16 +385,16 @@ export default function Home() {
       </section>
 
       {/* Kombos Section - Packages with Savings */}
-      <section className="py-24 bg-[#1A202C] text-white">
+      <section className="py-24 bg-kenlo-dark text-white">
         <div className="container">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F82E52]/20 text-[#F82E52] text-sm font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-kenlo-pink/20 text-kenlo-pink text-sm font-semibold mb-4">
               <TrendingUp className="w-4 h-4" />
-              Economize até 25%
+              Economize até {KOMBO_MAX_DISCOUNT_PERCENT}%
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Kombos: Produtos + Add-ons com{" "}
-              <span className="text-[#F82E52]">desconto</span>
+              <span className="text-kenlo-pink">desconto</span>
             </h2>
             <p className="text-xl text-white/80 max-w-3xl mx-auto">
               Combine Imob + Locação com add-ons e ganhe descontos progressivos. 
@@ -407,7 +408,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <CardTitle className="text-white">Imob Start</CardTitle>
-                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-kenlo-pink/20 text-kenlo-pink">{KOMBO_MAX_DISCOUNT_PERCENT}% OFF</span>
                 </div>
                 <CardDescription className="text-white/70 text-xs">
                   Kenlo Imob + Leads + Inteligência
@@ -416,19 +417,19 @@ export default function Home() {
               <CardContent>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>CRM Completo</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Site + App</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Captação de Leads</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>BI Ilimitado</span>
                   </div>
                 </div>
@@ -443,7 +444,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <CardTitle className="text-white">Imob Pro</CardTitle>
-                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-kenlo-pink/20 text-kenlo-pink">{KOMBO_MAX_DISCOUNT_PERCENT}% OFF</span>
                 </div>
                 <CardDescription className="text-white/70 text-xs">
                   Imob Start + Assinatura + Pay
@@ -452,15 +453,15 @@ export default function Home() {
               <CardContent>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Tudo do Imob Start</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Assinatura Digital</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Boleto + Split</span>
                   </div>
                 </div>
@@ -475,7 +476,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <CardTitle className="text-white">Locação Pro</CardTitle>
-                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52]/20 text-[#F82E52]">25% OFF</span>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-kenlo-pink/20 text-kenlo-pink">{KOMBO_MAX_DISCOUNT_PERCENT}% OFF</span>
                 </div>
                 <CardDescription className="text-white/70 text-xs">
                   Locação + Assinatura + Pay + Seguros
@@ -484,19 +485,19 @@ export default function Home() {
               <CardContent>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>ERP Completo</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Assinatura Digital</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Boleto + Split</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Seguros Embutidos</span>
                   </div>
                 </div>
@@ -507,14 +508,14 @@ export default function Home() {
             </Card>
 
             {/* Elite */}
-            <Card className="bg-gradient-to-br from-[#F82E52]/20 to-[#F82E52]/10 border-[#F82E52]/30 hover:border-[#F82E52]/50 transition-all">
+            <Card className="bg-gradient-to-br from-kenlo-pink/20 to-kenlo-pink/10 border-kenlo-pink/30 hover:border-kenlo-pink/50 transition-all">
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <CardTitle className="text-white flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-[#F82E52]" />
+                    <Trophy className="w-5 h-5 text-kenlo-pink" />
                     Elite
                   </CardTitle>
-                  <span className="text-xs font-bold px-2 py-1 rounded bg-[#F82E52] text-white">25% OFF</span>
+                  <span className="text-xs font-bold px-2 py-1 rounded bg-kenlo-pink text-white">{KOMBO_MAX_DISCOUNT_PERCENT}% OFF</span>
                 </div>
                 <CardDescription className="text-white/70 text-xs">
                   Tudo incluído: Imob + Locação + Todos os Add-ons
@@ -523,19 +524,19 @@ export default function Home() {
               <CardContent>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Imob + Locação</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Todos os 6 Add-ons</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-[#4ABD8D]" />
+                    <Check className="w-4 h-4 text-kenlo-green" />
                     <span>Máxima economia</span>
                   </div>
                 </div>
-                <Button variant="default" size="sm" className="w-full bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+                <Button variant="default" size="sm" className="w-full bg-kenlo-pink hover:bg-kenlo-pink/90" asChild>
                   <Link href="/calculadora">Simular</Link>
                 </Button>
               </CardContent>
@@ -544,7 +545,7 @@ export default function Home() {
 
           <div className="text-center mt-12">
             <p className="text-white/70 text-sm mb-4">
-              Implantação: R$ 1.497 (única vez) • 25% de desconto em todas as mensalidades
+              Implantação: {formatCurrency(KOMBO_IMPLEMENTATION_COST, 0)} (única vez) • {KOMBO_MAX_DISCOUNT_PERCENT}% de desconto em todas as mensalidades
             </p>
             <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
               <Link href="/kombos">
@@ -825,7 +826,7 @@ export default function Home() {
             <div className="relative px-8 py-20 md:px-16 md:py-24 text-center">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-bold mb-8">
                 <TrendingUp className="w-5 h-5" />
-                Economize até 25% com Kombos
+                Economize até {KOMBO_MAX_DISCOUNT_PERCENT}% com Kombos
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">

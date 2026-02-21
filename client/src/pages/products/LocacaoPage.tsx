@@ -30,14 +30,14 @@ export default function LocacaoPage() {
       <section className="relative py-20 lg:py-28 bg-gradient-to-br from-pink-50 via-white to-purple-50/30">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F82E52]/10 text-[#F82E52] text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-kenlo-pink/10 text-kenlo-pink text-sm font-medium mb-6">
               <Home className="w-4 h-4" />
               Kenlo Locação
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               ERP Completo para{" "}
-              <span className="text-[#F82E52]">Gestão de Locação</span>
+              <span className="text-kenlo-pink">Gestão de Locação</span>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -45,7 +45,7 @@ export default function LocacaoPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-[#F82E52] hover:bg-[#F82E52]/90 gap-2" asChild>
+              <Button size="lg" className="bg-kenlo-pink hover:bg-kenlo-pink/90 gap-2" asChild>
                 <Link href="/calculadora">
                   <Calculator className="w-5 h-5" />
                   Simular Proposta
@@ -88,7 +88,7 @@ export default function LocacaoPage() {
               { icon: Headphones, title: "Suporte genérico", text: "Suporte que não entende as especificidades da gestão de locação?" },
             ].map((item, idx) => (
               <div key={idx} className="p-6 rounded-lg bg-[#F2F2F2] border border-gray-200">
-                <item.icon className="w-8 h-8 text-[#F82E52] mb-3" />
+                <item.icon className="w-8 h-8 text-kenlo-pink mb-3" />
                 <h3 className="font-bold text-[#242424] mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-600">{item.text}</p>
               </div>
@@ -104,7 +104,7 @@ export default function LocacaoPage() {
       </section>
 
       {/* Bloco 2: A SOLUÇÃO */}
-      <section className="py-16 bg-[#1A202C] text-white">
+      <section className="py-16 bg-kenlo-dark text-white">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -123,8 +123,8 @@ export default function LocacaoPage() {
               { icon: RefreshCw, title: "Reajustes em Lote", desc: "Reajuste centenas de contratos de uma vez" },
             ].map((item, idx) => (
               <div key={idx} className="p-6 rounded-lg bg-white/5 border border-white/10">
-                <div className="w-12 h-12 rounded-lg bg-[#F82E52]/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-[#F82E52]" />
+                <div className="w-12 h-12 rounded-lg bg-kenlo-pink/20 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-kenlo-pink" />
                 </div>
                 <h3 className="font-bold mb-2">{item.title}</h3>
                 <p className="text-sm text-white/70">{item.desc}</p>
@@ -133,8 +133,8 @@ export default function LocacaoPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div className="p-6 rounded-lg bg-[#4ABD8D]/10 border border-[#4ABD8D]/30">
-              <GraduationCap className="w-8 h-8 text-[#4ABD8D] mb-3" />
+            <div className="p-6 rounded-lg bg-kenlo-green/10 border border-kenlo-green/30">
+              <GraduationCap className="w-8 h-8 text-kenlo-green mb-3" />
               <h3 className="font-bold text-white mb-2">K e K² ganham</h3>
               <ul className="text-sm text-white/80 space-y-1">
                 <li>• Portal do Proprietário personalizado</li>
@@ -142,8 +142,8 @@ export default function LocacaoPage() {
               </ul>
             </div>
 
-            <div className="p-6 rounded-lg bg-[#4ABD8D]/10 border border-[#4ABD8D]/30">
-              <Headphones className="w-8 h-8 text-[#4ABD8D] mb-3" />
+            <div className="p-6 rounded-lg bg-kenlo-green/10 border border-kenlo-green/30">
+              <Headphones className="w-8 h-8 text-kenlo-green mb-3" />
               <h3 className="font-bold text-white mb-2">K² exclusivo</h3>
               <ul className="text-sm text-white/80 space-y-1">
                 <li>• API para integrações customizadas</li>
@@ -174,7 +174,7 @@ export default function LocacaoPage() {
               { num: "4", title: "Add-ons nativos", desc: "Assinaturas digitais, BI, Seguros, Cash. Tudo integrado nativamente. Sem gambiarras." },
             ].map((item, idx) => (
               <div key={idx} className="p-6 rounded-lg bg-[#F2F2F2] border border-gray-200">
-                <div className="w-10 h-10 rounded-full bg-[#F82E52] text-white flex items-center justify-center font-bold mb-4">
+                <div className="w-10 h-10 rounded-full bg-kenlo-pink text-white flex items-center justify-center font-bold mb-4">
                   {item.num}
                 </div>
                 <h3 className="font-bold text-[#242424] mb-2">{item.title}</h3>
@@ -203,7 +203,7 @@ export default function LocacaoPage() {
               { value: "+100", label: "Portais integrados" },
             ].map((stat, idx) => (
               <div key={idx} className="p-6 rounded-lg bg-white border border-gray-200 text-center">
-                <div className="text-3xl md:text-4xl font-bold text-[#F82E52] mb-2">
+                <div className="text-3xl md:text-4xl font-bold text-kenlo-pink mb-2">
                   {stat.value}
                 </div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
@@ -257,7 +257,7 @@ export default function LocacaoPage() {
                       Preço Anual
                     </td>
                     {PLAN_KEYS.map((key) => (
-                      <td key={key} className="p-4 text-center text-sm font-bold text-[#F82E52] border border-gray-200">
+                      <td key={key} className="p-4 text-center text-sm font-bold text-kenlo-pink border border-gray-200">
                         {formatCurrency(LOC_PLANS[key].annualPrice / 12)}/mês
                       </td>
                     ))}
@@ -278,7 +278,7 @@ export default function LocacaoPage() {
                     </td>
                     {PLAN_KEYS.map((key) => (
                       <td key={key} className="p-4 text-center border border-gray-200">
-                        <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                        <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                       </td>
                     ))}
                   </tr>
@@ -288,7 +288,7 @@ export default function LocacaoPage() {
                     </td>
                     {PLAN_KEYS.map((key) => (
                       <td key={key} className="p-4 text-center border border-gray-200">
-                        <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                        <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                       </td>
                     ))}
                   </tr>
@@ -301,7 +301,7 @@ export default function LocacaoPage() {
                         {key === "prime" ? (
                           <X className="w-5 h-5 text-gray-300 mx-auto" />
                         ) : (
-                          <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                          <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                         )}
                       </td>
                     ))}
@@ -313,7 +313,7 @@ export default function LocacaoPage() {
                     {PLAN_KEYS.map((key) => (
                       <td key={key} className="p-4 text-center border border-gray-200">
                         {key === "k2" ? (
-                          <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                          <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-gray-300 mx-auto" />
                         )}
@@ -327,7 +327,7 @@ export default function LocacaoPage() {
                     {PLAN_KEYS.map((key) => (
                       <td key={key} className="p-4 text-center border border-gray-200">
                         {key === "k2" ? (
-                          <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                          <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-gray-300 mx-auto" />
                         )}
@@ -341,7 +341,7 @@ export default function LocacaoPage() {
                     {PLAN_KEYS.map((key) => (
                       <td key={key} className="p-4 text-center border border-gray-200">
                         {key === "k2" ? (
-                          <Check className="w-5 h-5 text-[#4ABD8D] mx-auto" />
+                          <Check className="w-5 h-5 text-kenlo-green mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-gray-300 mx-auto" />
                         )}
@@ -378,7 +378,7 @@ export default function LocacaoPage() {
                 <div className="p-4 rounded-lg bg-white border border-gray-200">
                   <div className="font-bold text-[#242424] mb-2">Kenlo Inteligência</div>
                   <div className="text-sm text-gray-600 mb-2">BI powered by Google Looker Pro</div>
-                  <div className="text-lg font-bold text-[#F82E52]">
+                  <div className="text-lg font-bold text-kenlo-pink">
                     {formatCurrency(ADDONS.inteligencia.annualPrice / 12)}/mês
                   </div>
                 </div>
@@ -386,7 +386,7 @@ export default function LocacaoPage() {
                 <div className="p-4 rounded-lg bg-white border border-gray-200">
                   <div className="font-bold text-[#242424] mb-2">Kenlo Assinaturas</div>
                   <div className="text-sm text-gray-600 mb-2">15 assinaturas digitais incluídas</div>
-                  <div className="text-lg font-bold text-[#F82E52]">
+                  <div className="text-lg font-bold text-kenlo-pink">
                     {formatCurrency(ADDONS.assinaturas.annualPrice / 12)}/mês
                   </div>
                 </div>
@@ -394,7 +394,7 @@ export default function LocacaoPage() {
                 <div className="p-4 rounded-lg bg-white border border-gray-200">
                   <div className="font-bold text-[#242424] mb-2">Kenlo Pay</div>
                   <div className="text-sm text-gray-600 mb-2">Boleto + Split digital (pós-pago)</div>
-                  <div className="text-lg font-bold text-[#F82E52]">
+                  <div className="text-lg font-bold text-kenlo-pink">
                     Sob demanda
                   </div>
                 </div>
@@ -402,7 +402,7 @@ export default function LocacaoPage() {
                 <div className="p-4 rounded-lg bg-white border border-gray-200">
                   <div className="font-bold text-[#242424] mb-2">Kenlo Seguros</div>
                   <div className="text-sm text-gray-600 mb-2">Ganhe R$ {SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT}/contrato/mês</div>
-                  <div className="text-lg font-bold text-[#F82E52]">
+                  <div className="text-lg font-bold text-kenlo-pink">
                     Sem custo
                   </div>
                 </div>
@@ -410,7 +410,7 @@ export default function LocacaoPage() {
                 <div className="p-4 rounded-lg bg-white border border-gray-200">
                   <div className="font-bold text-[#242424] mb-2">Kenlo Cash</div>
                   <div className="text-sm text-gray-600 mb-2">Antecipe até 24 meses de aluguel</div>
-                  <div className="text-lg font-bold text-[#F82E52]">
+                  <div className="text-lg font-bold text-kenlo-pink">
                     Sob consulta
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export default function LocacaoPage() {
               Pronto para automatizar sua gestão de locação?
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-[#F82E52] hover:bg-[#F82E52]/90 gap-2" asChild>
+              <Button size="lg" className="bg-kenlo-pink hover:bg-kenlo-pink/90 gap-2" asChild>
                 <Link href="/calculadora">
                   <Calculator className="w-5 h-5" />
                   Simular Proposta

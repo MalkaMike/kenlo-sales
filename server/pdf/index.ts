@@ -1,5 +1,5 @@
 export * from "./pdfTypes";
 export { renderCoverPage } from "./pdfCoverPage";
-export { renderStrategicPage } from "./pdfStrategicPage";
-export { renderFeaturesPage } from "./pdfFeaturesPage";
+export { renderStrategicPageV2 } from "./pdfStrategicPageV2";
+export { renderFeaturesPageV3 } from "./pdfFeaturesPageV3";
 export { renderRevenuePage } from "./pdfRevenuePage";

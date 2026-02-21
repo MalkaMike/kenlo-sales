@@ -6150,3 +6150,15 @@
 - [x] Update cache logic to check S3 first, then regenerate if needed (3-tier: memory → S3 → regenerate)
 - [x] Write tests for S3 persistence (mocked S3 storage in tests)
 - [x] Run all tests — 32 files, 1,173 tests pass
+
+## Comprehensive Code Cleanup
+- [x] Audit all server files for hardcoded values (262 found across 33 files)
+- [x] Audit all client files for hardcoded values
+- [x] Move hardcoded pricing values to pricing-config (KOMBO_MAX_DISCOUNT_PERCENT, KOMBO_IMPLEMENTATION_COST, SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT)
+- [x] Replace 135 hardcoded hex colors (#F82E52, #4ABD8D, #1A202C) with Tailwind tokens (kenlo-pink, kenlo-green, kenlo-dark)
+- [x] Fix inline style={{color}} to use Tailwind classes
+- [x] Remove dead code: V1 PDF files (pdfFeaturesPage.ts, pdfStrategicPage.ts), unused ComponentShowcase.tsx, ManusDialog.tsx
+- [x] Fix all 'any' types in pricing-config.ts (20 replacements with PricingTier, FeatureEntry types)
+- [x] Fix 'any' types in pdfReferenceDocument.ts (8 replacements with proper inline types)
+- [x] Fix duplicate className JSX attributes in KomboComparisonTable and KomboCellRenderers
+- [x] Run all tests — 32 files, 1,173 tests pass

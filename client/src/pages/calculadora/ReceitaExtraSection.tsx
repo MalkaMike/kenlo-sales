@@ -13,6 +13,7 @@ import { TrendingUp, DollarSign, Receipt, Shield } from "lucide-react";
 import { useCalc } from "./CalculadoraContext";
 import { toNum, formatCurrency, fmtNum, fmtPrice } from "./types";
 import { calculatePostPaidBreakdown, calculateRevenueBreakdown } from "./receita-extra/postPaidCalc";
+import { SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT } from "@shared/pricing-config";
 
 export function ReceitaExtraSection() {
   const {
@@ -114,7 +115,7 @@ export function ReceitaExtraSection() {
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-900">Seguros</span>
                   <span className="text-xs text-gray-500 italic">
-                    {fmtNum(metrics.contractsUnderManagement)} contratos × R$ 10,00
+                    {fmtNum(metrics.contractsUnderManagement)} contratos × {formatCurrency(SEGUROS_ESTIMATED_REVENUE_PER_CONTRACT)}
                   </span>
                 </div>
               </div>

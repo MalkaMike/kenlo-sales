@@ -83,7 +83,7 @@ export default function ConversionDashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#4ABD8D]">
+            <div className="text-2xl font-bold text-kenlo-green">
               {overview.conversionRate.toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -98,7 +98,7 @@ export default function ConversionDashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#F82E52]">
+            <div className="text-2xl font-bold text-kenlo-pink">
               {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL",
@@ -157,13 +157,13 @@ export default function ConversionDashboardPage() {
                   <div className="flex items-center gap-6">
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Taxa de Conversão</p>
-                      <p className="text-lg font-bold text-[#4ABD8D]">
+                      <p className="text-lg font-bold text-kenlo-green">
                         {person.conversionRate.toFixed(1)}%
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Ticket Médio</p>
-                      <p className="text-lg font-bold text-[#F82E52]">
+                      <p className="text-lg font-bold text-kenlo-pink">
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",

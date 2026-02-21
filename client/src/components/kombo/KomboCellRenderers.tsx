@@ -554,7 +554,7 @@ export function renderPostPaidTotalCell(ctx: CellRenderContext): React.ReactNode
 export function renderGrandTotalCell(ctx: CellRenderContext): React.ReactNode {
   const totalEstimate = ctx.column.totalMonthly + ctx.column.postPaidTotal;
   return (
-    <span className="font-extrabold" style={{color: '#151414'}}>R$ {totalEstimate.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
+    <span className="font-extrabold text-gray-900">R$ {totalEstimate.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês</span>
   );
 }
 

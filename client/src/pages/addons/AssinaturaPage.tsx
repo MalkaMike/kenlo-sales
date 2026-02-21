@@ -19,7 +19,7 @@ export default function AssinaturasPage() {
       <section className="py-16 bg-gradient-to-br from-[#F2F2F2] via-white to-[#F2F2F2]">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F82E52]/10 text-[#F82E52] text-sm font-semibold mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-kenlo-pink/10 text-kenlo-pink text-sm font-semibold mb-6">
               <FileSignature className="w-4 h-4" />
               ADD-ON IMOB + LOC
             </div>
@@ -34,7 +34,7 @@ export default function AssinaturasPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+              <Button size="lg" className="bg-kenlo-pink hover:bg-kenlo-pink/90" asChild>
                 <Link href="/calculadora">
                   <DollarSign className="w-5 h-5 mr-2" />
                   Simular Cotação
@@ -70,8 +70,8 @@ export default function AssinaturasPage() {
               "Você usa alguma plataforma externa de assinatura?",
             ].map((question, idx) => (
               <div key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
-                <div className="w-10 h-10 rounded-full bg-[#F82E52]/10 flex items-center justify-center mb-4">
-                  <span className="text-[#F82E52] font-bold text-lg">{idx + 1}</span>
+                <div className="w-10 h-10 rounded-full bg-kenlo-pink/10 flex items-center justify-center mb-4">
+                  <span className="text-kenlo-pink font-bold text-lg">{idx + 1}</span>
                 </div>
                 <p className="text-[#242424] font-medium">{question}</p>
               </div>
@@ -91,7 +91,7 @@ export default function AssinaturasPage() {
               { value: "100%", label: "Validade jurídica" },
             ].map((stat, idx) => (
               <div key={idx} className="text-center p-6 bg-white rounded-lg border border-gray-200">
-                <div className="text-3xl font-bold text-[#F82E52] mb-2">{stat.value}</div>
+                <div className="text-3xl font-bold text-kenlo-pink mb-2">{stat.value}</div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
               </div>
             ))}
@@ -100,7 +100,7 @@ export default function AssinaturasPage() {
       </section>
 
       {/* Features */}
-      <section className="py-16 bg-[#1A202C]">
+      <section className="py-16 bg-kenlo-dark">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -134,8 +134,8 @@ export default function AssinaturasPage() {
                 description: "Sem custo de setup. Ative e comece a usar imediatamente. Excedentes com preço acessível por assinatura.",
               },
             ].map((feature, idx) => (
-              <div key={idx} className="bg-[#4ABD8D]/10 p-6 rounded-lg border border-[#4ABD8D]/20">
-                <div className="w-12 h-12 rounded-lg bg-[#F82E52] flex items-center justify-center mb-4">
+              <div key={idx} className="bg-kenlo-green/10 p-6 rounded-lg border border-kenlo-green/20">
+                <div className="w-12 h-12 rounded-lg bg-kenlo-pink flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
@@ -159,9 +159,9 @@ export default function AssinaturasPage() {
           </div>
           
           <div className="max-w-2xl mx-auto">
-            <div className="bg-white p-8 rounded-lg border-2 border-[#F82E52]">
+            <div className="bg-white p-8 rounded-lg border-2 border-kenlo-pink">
               <div className="text-center mb-6">
-                <div className="text-5xl font-bold text-[#F82E52] mb-2">
+                <div className="text-5xl font-bold text-kenlo-pink mb-2">
                   R$ {monthlyPrice}
                   <span className="text-xl text-gray-600">/mês</span>
                 </div>
@@ -178,22 +178,22 @@ export default function AssinaturasPage() {
                   "Excedentes: R$ 6/assinatura",
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[#4ABD8D] flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-kenlo-green flex-shrink-0 mt-0.5" />
                     <span className="text-[#242424]">{item}</span>
                   </div>
                 ))}
               </div>
               
-              <Button size="lg" className="w-full bg-[#F82E52] hover:bg-[#F82E52]/90" asChild>
+              <Button size="lg" className="w-full bg-kenlo-pink hover:bg-kenlo-pink/90" asChild>
                 <Link href="/calculadora">
                   Simular Cotação Completa
                 </Link>
               </Button>
             </div>
             
-            <div className="mt-6 p-4 bg-[#4ABD8D]/10 rounded-lg border border-[#4ABD8D]/20">
+            <div className="mt-6 p-4 bg-kenlo-green/10 rounded-lg border border-kenlo-green/20">
               <p className="text-sm text-[#242424] text-center">
-                <strong className="text-[#4ABD8D]">Dica:</strong> Contrate via Kombo Imob Start, Imob Pro, Locação Pro ou Elite 
+                <strong className="text-kenlo-green">Dica:</strong> Contrate via Kombo Imob Start, Imob Pro, Locação Pro ou Elite 
                 para ganhar até 20% de desconto + implementação grátis de outros add-ons.
               </p>
             </div>
@@ -230,8 +230,8 @@ export default function AssinaturasPage() {
             ].map((item, idx) => (
               <div key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-[#F82E52]/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[#F82E52] font-bold">{idx + 1}</span>
+                  <div className="w-8 h-8 rounded-full bg-kenlo-pink/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-kenlo-pink font-bold">{idx + 1}</span>
                   </div>
                   <div>
                     <p className="font-bold text-[#242424] mb-2">"{item.objection}"</p>
@@ -245,7 +245,7 @@ export default function AssinaturasPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-16 bg-gradient-to-br from-[#F82E52] to-[#F82E52]/80">
+      <section className="py-16 bg-gradient-to-br from-kenlo-pink to-kenlo-pink/80">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center text-white">
             <Building2 className="w-16 h-16 mx-auto mb-6 opacity-90" />

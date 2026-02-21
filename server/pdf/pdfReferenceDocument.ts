@@ -360,7 +360,7 @@ function renderSectionB(doc: jsPDF) {
     })
   );
 
-  bodyText(doc, `Implantação base: ${fmt(pricingValues._legacyFields?.implantacaoBase || 1497)}`);
+  bodyText(doc, `Implantação base: ${fmt(pricingValues._legacyFields.implantacaoBase)}`);
 
   // Calculation example
   moveDown(doc, 1);
@@ -507,7 +507,7 @@ function renderSectionE(doc: jsPDF) {
     ])
   );
 
-  importantNote(doc, `Implantação fixa para todos os Kombos: ${fmt(pricingValues._legacyFields?.implantacaoBase || 1497)}`);
+  importantNote(doc, `Implantação fixa para todos os Kombos: ${fmt(pricingValues._legacyFields.implantacaoBase)}`);
 
   // Kombo details
   moveDown(doc, 1);
@@ -585,7 +585,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Preço/unidade"],
-      tiers.map((t: any) => [
+      tiers.map((t: { from: number; to: number; price: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         fmt(t.price),
@@ -606,7 +606,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Preço/contrato"],
-      tiers.map((t: any) => [
+      tiers.map((t: { from: number; to: number; price: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         fmt(t.price),
@@ -620,7 +620,7 @@ function renderSectionF(doc: jsPDF) {
   const leadTiers = vc.additionalLeads.tiers.all_plans;
   simpleTable(doc,
     ["Faixa (de)", "Faixa (até)", "Preço/lead"],
-    leadTiers.map((t: any) => [
+    leadTiers.map((t: { from: number; to: number; price: number }) => [
       t.from.toString(),
       t.to === 999999 ? "∞" : t.to.toString(),
       fmt(t.price),
@@ -641,7 +641,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Preço/boleto"],
-      tiers.map((t: any) => [
+      tiers.map((t: { from: number; to: number; price: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         fmt(t.price),
@@ -663,7 +663,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Preço/split"],
-      tiers.map((t: any) => [
+      tiers.map((t: { from: number; to: number; price: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         fmt(t.price),
@@ -697,7 +697,7 @@ function renderSectionF(doc: jsPDF) {
     moveDown(doc, 1);
     simpleTable(doc,
       ["Faixa (de)", "Faixa (até)", "Taxa"],
-      tiers.map((t: any) => [
+      tiers.map((t: { from: number; to: number; price: number; rate?: number }) => [
         t.from.toString(),
         t.to === 999999 ? "∞" : t.to.toString(),
         t.rate ? `${(t.rate * 100).toFixed(0)}%` : (t.price ? fmt(t.price) : "N/A"),
@@ -722,7 +722,7 @@ function renderSectionG(doc: jsPDF) {
   if (imobFeatures.length > 0) {
     simpleTable(doc,
       ["Feature", "Prime", "K", "K2", "Add-on Vinculado"],
-      imobFeatures.map((f: any, idx: number) => {
+      imobFeatures.map((f: { name: string; included: boolean; linkedToAddon?: string | null }, idx: number) => {
         const kFeature = fm.imob.k?.[idx];
         const k2Feature = fm.imob.k2?.[idx];
         return [
@@ -742,7 +742,7 @@ function renderSectionG(doc: jsPDF) {
   if (locFeatures.length > 0) {
     simpleTable(doc,
       ["Feature", "Prime", "K", "K2", "Add-on Vinculado"],
-      locFeatures.map((f: any, idx: number) => {
+      locFeatures.map((f: { name: string; included: boolean; linkedToAddon?: string | null }, idx: number) => {
         const kFeature = fm.locacao.k?.[idx];
         const k2Feature = fm.locacao.k2?.[idx];
         return [
@@ -873,7 +873,7 @@ function renderSectionJ(doc: jsPDF) {
 
   moveDown(doc, 0.5);
   subTitle(doc, "Regras de Implantação");
-  bulletPoint(doc, `Implantação base: ${fmt(pricingValues._legacyFields?.implantacaoBase || 1497)}`);
+  bulletPoint(doc, `Implantação base: ${fmt(pricingValues._legacyFields.implantacaoBase)}`);
   bulletPoint(doc, "Cada Kombo tem implantações específicas zeradas (ver Seção E)");
   bulletPoint(doc, "A implantação é cobrada uma única vez no início do contrato");
 

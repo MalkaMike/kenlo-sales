@@ -19,6 +19,23 @@ export type PaymentFrequency = "monthly" | "semiannual" | "annual" | "biennial";
 export type KomboType = "imob-start" | "imob-pro" | "loc-pro" | "core-gestao" | "elite" | "none";
 export type PlanTier = "prime" | "k" | "k2";
 
+/** Tier structure from pricing-values.json */
+interface PricingTier {
+  from: number;
+  to: number;
+  price: number;
+}
+
+/** Feature structure from feature matrix */
+interface FeatureEntry {
+  name: string;
+  description: string;
+  included: boolean;
+  linkedToAddon: string | null;
+  linkedToPremiumService: string | null;
+  category?: string;
+}
+
 // Map JSON cycle names to calculator frequency names
 const CYCLE_TO_FREQUENCY: Record<string, PaymentFrequency> = {
   "monthly": "monthly",
@@ -135,17 +152,17 @@ export const IMOB_IMPLEMENTATION = pricingValues._legacyFields.implantacaoBase;
  * Additional users pricing (from BLOCO F)
  */
 export const IMOB_ADDITIONAL_USERS = {
-  prime: pricingValues.variableCosts.additionalUsers.tiers.prime.map((tier: any) => ({
+  prime: pricingValues.variableCosts.additionalUsers.tiers.prime.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k: pricingValues.variableCosts.additionalUsers.tiers.k.map((tier: any) => ({
+  k: pricingValues.variableCosts.additionalUsers.tiers.k.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k2: pricingValues.variableCosts.additionalUsers.tiers.k2.map((tier: any) => ({
+  k2: pricingValues.variableCosts.additionalUsers.tiers.k2.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -192,17 +209,17 @@ export const LOC_IMPLEMENTATION = pricingValues._legacyFields.implantacaoBase;
  * Additional contracts pricing (from BLOCO F)
  */
 export const LOC_ADDITIONAL_CONTRACTS = {
-  prime: pricingValues.variableCosts.additionalContracts.tiers.prime.map((tier: any) => ({
+  prime: pricingValues.variableCosts.additionalContracts.tiers.prime.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k: pricingValues.variableCosts.additionalContracts.tiers.k.map((tier: any) => ({
+  k: pricingValues.variableCosts.additionalContracts.tiers.k.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k2: pricingValues.variableCosts.additionalContracts.tiers.k2.map((tier: any) => ({
+  k2: pricingValues.variableCosts.additionalContracts.tiers.k2.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -213,17 +230,17 @@ export const LOC_ADDITIONAL_CONTRACTS = {
  * Kenlo Pay - Boletos pricing (from BLOCO F)
  */
 export const PAY_BOLETOS = {
-  prime: pricingValues.variableCosts.boletos.tiers.prime.map((tier: any) => ({
+  prime: pricingValues.variableCosts.boletos.tiers.prime.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k: pricingValues.variableCosts.boletos.tiers.k.map((tier: any) => ({
+  k: pricingValues.variableCosts.boletos.tiers.k.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k2: pricingValues.variableCosts.boletos.tiers.k2.map((tier: any) => ({
+  k2: pricingValues.variableCosts.boletos.tiers.k2.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -234,17 +251,17 @@ export const PAY_BOLETOS = {
  * Kenlo Pay - Split pricing (from BLOCO F)
  */
 export const PAY_SPLITS = {
-  prime: pricingValues.variableCosts.splits.tiers.prime.map((tier: any) => ({
+  prime: pricingValues.variableCosts.splits.tiers.prime.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k: pricingValues.variableCosts.splits.tiers.k.map((tier: any) => ({
+  k: pricingValues.variableCosts.splits.tiers.k.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
   })),
-  k2: pricingValues.variableCosts.splits.tiers.k2.map((tier: any) => ({
+  k2: pricingValues.variableCosts.splits.tiers.k2.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -342,7 +359,7 @@ export function calculatePrepaidContractPricePerUnit(plan: PlanTier, totalAdditi
 export function calculatePrepaidLeadPricePerUnit(totalAdditional: number): number {
   if (totalAdditional <= 0) return 0;
   // Leads use all_plans tier (same for all plans)
-  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -378,7 +395,7 @@ export function calculatePrepaidContracts(plan: PlanTier, quantity: number, freq
 export function calculatePrepaidLeads(quantity: number, frequency: PaymentFrequency): number {
   if (!isPrepaidAvailable(frequency) || quantity <= 0) return 0;
   const months = getPrepaidMonths(frequency);
-  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+  const tiers = pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: PricingTier) => ({
     from: tier.from,
     to: tier.to === 999999 ? Infinity : tier.to,
     price: tier.price,
@@ -411,7 +428,7 @@ export const ADDONS = {
     implementation: pricingValues.addons.leads.implementation,
     availableFor: pricingValues.addons.leads.availability as readonly ("imob" | "loc")[],
     includedWhatsAppLeads: pricingValues.addons.leads.includedUnits?.quantity || 100,
-    additionalLeadsTiers: pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: any) => ({
+    additionalLeadsTiers: pricingValues.variableCosts.additionalLeads.tiers.all_plans.map((tier: PricingTier) => ({
       from: tier.from,
       to: tier.to === 999999 ? Infinity : tier.to,
       price: tier.price,
@@ -428,7 +445,7 @@ export const ADDONS = {
     implementation: pricingValues.addons.assinaturas.implementation,
     availableFor: pricingValues.addons.assinaturas.availability as readonly ("imob" | "loc")[],
     includedSignatures: pricingValues.addons.assinaturas.includedUnits?.quantity || 15,
-    additionalSignaturesTiers: pricingValues.variableCosts.additionalSignatures.tiers.all_plans.map((tier: any) => ({
+    additionalSignaturesTiers: pricingValues.variableCosts.additionalSignatures.tiers.all_plans.map((tier: PricingTier) => ({
       from: tier.from,
       to: tier.to === 999999 ? Infinity : tier.to,
       price: tier.price,
@@ -530,6 +547,19 @@ export const KOMBOS = {
     premiumServicesIncluded: pricingValues.kombos.elite.premiumServicesIncluded.length > 0,
   },
 } as const;
+
+/**
+ * Maximum Kombo discount percentage (for marketing display)
+ * Computed dynamically from all Kombo definitions
+ */
+export const KOMBO_MAX_DISCOUNT_PERCENT: number = Math.max(
+  ...Object.values(KOMBOS).map(k => Math.round(k.monthlyDiscount * 100))
+);
+
+/**
+ * Kombo implementation cost (same for all Kombos)
+ */
+export const KOMBO_IMPLEMENTATION_COST: number = pricingValues._legacyFields.implantacaoBase;
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -648,7 +678,7 @@ function buildFeatures(product: "imob" | "locacao", plan: PlanTier): Record<stri
   // featureMatrix is structured as product.plan[array of features]
   const planFeatures = productMatrix[plan];
   if (Array.isArray(planFeatures)) {
-    planFeatures.forEach((feature: any) => {
+    planFeatures.forEach((feature: FeatureEntry) => {
       // Use feature name as key (sanitized for use as object key)
       const key = feature.name.toLowerCase().replace(/\s+/g, '_');
       features[key] = feature.included;
@@ -668,13 +698,13 @@ export function getFeatures(product: "imob" | "locacao", plan: PlanTier): Record
 /**
  * Get feature by name (case-insensitive)
  */
-function findFeatureByName(product: "imob" | "locacao", plan: PlanTier, featureName: string): any {
+function findFeatureByName(product: "imob" | "locacao", plan: PlanTier, featureName: string): FeatureEntry | null {
   const productMatrix = pricingValues.featureMatrix[product];
   const planFeatures = productMatrix[plan];
   if (Array.isArray(planFeatures)) {
-    return planFeatures.find((f: any) => 
+    return planFeatures.find((f: FeatureEntry) => 
       f.name.toLowerCase() === featureName.toLowerCase()
-    );
+    ) ?? null;
   }
   return null;
 }
@@ -717,7 +747,7 @@ export function getAllFeatures(product: "imob" | "locacao") {
   const k2Features = productMatrix.k2 || [];
 
   // Merge features from all plans (assuming same features across plans)
-  const allFeatures = primeFeatures.map((primeFeature: any, idx: number) => {
+  const allFeatures = primeFeatures.map((primeFeature: FeatureEntry, idx: number) => {
     const kFeature = kFeatures[idx];
     const k2Feature = k2Features[idx];
 

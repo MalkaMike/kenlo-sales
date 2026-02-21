@@ -527,7 +527,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-semibold text-gray-700">Sua Seleção vs <span className="text-[#F82E52]">Kombos</span> — <span className="text-[#F82E52]">até 40% de desconto</span> na contratação (ciclo + combo cumulativos)</h3>
+        <h3 className="text-base font-semibold text-gray-700">Sua Seleção vs <span className="text-kenlo-pink">Kombos</span> — <span className="text-kenlo-pink">até 40% de desconto</span> na contratação (ciclo + combo cumulativos)</h3>
         {hasCustomizations && (
           <button
             onClick={resetAll}
@@ -747,7 +747,7 @@ export function KomboComparisonTable(props: KomboComparisonProps) {
                                   : hoveredColumn === col.id && !selectedPlans.includes(col.id)
                                   ? col.isCustom ? "bg-amber-50/50" : "bg-blue-50/70"
                                   : colIndex % 2 === 1 ? "bg-gray-50/50" : ""
-                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-800 text-xs" : row.isTotal ? "font-bold text-gray-700 text-xs" : "text-gray-700 text-xs"}`} style={{color: '#141313'}}
+                                } ${(row as any).isGrandTotal ? "font-extrabold text-gray-900 text-xs" : row.isTotal ? "font-bold text-gray-700 text-xs" : "text-gray-700 text-xs"}`}
                             >
                               {row.isHeader ? null : getCellValue(row.key, buildCellCtx(colIndex, col))}
                             </td>
