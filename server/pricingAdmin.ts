@@ -3,7 +3,7 @@ import { router, publicProcedure, protectedProcedure, adminProcedure } from "./_
 import { TRPCError } from "@trpc/server";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { generateReferenceDocumentPDF } from "./pdf/pdfReferenceDocument";
+import { getCachedPricingBiblePDF, invalidatePricingBibleCache } from "./pdf/pdfCache";
 
 // DETERMINISTIC PRICING CONFIG SCHEMA - VERSION 2.0.0
 // Follows 7-block structure (A-G) with zero interpretation
@@ -234,12 +234,14 @@ export const pricingAdminRouter = router({
   }),
 
   // Generate reference document PDF (public - anyone can download the Pricing Bible)
+  // Uses hash-based cache: only regenerates when pricing-values.json changes
   generateReferencePDF: publicProcedure.mutation(async () => {
     try {
-      const pdfBuffer = await generateReferenceDocumentPDF();
+      const { buffer, fromCache, generatedAt } = await getCachedPricingBiblePDF();
+      console.log(`[PricingAdmin] PDF served ${fromCache ? "from cache" : "freshly generated"} (${generatedAt.toISOString()})`);
       return {
-        pdf: pdfBuffer.toString("base64"),
-        filename: `Kenlo_Referencia_Completa_${new Date().toISOString().split("T")[0]}.pdf`,
+        pdf: buffer.toString("base64"),
+        filename: `Kenlo_Pricing_Bible_${new Date().toISOString().split("T")[0]}.pdf`,
       };
     } catch (error: any) {
       console.error("[PricingAdmin] Error generating reference PDF:", error);
@@ -267,6 +269,9 @@ export const pricingAdminRouter = router({
         await fs.writeFile(configPath, JSON.stringify(updatedConfig, null, 2), "utf-8");
         
         console.log("[PricingAdmin] Pricing config saved with version:", updatedConfig._version);
+        
+        // Invalidate Pricing Bible PDF cache since pricing data changed
+        invalidatePricingBibleCache();
         
         return { 
           success: true, 

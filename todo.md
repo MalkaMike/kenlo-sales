@@ -6135,3 +6135,10 @@
 - [x] Replace "Configurar Preço" link in calculator sticky bar with Pricing Bible download button
 - [x] Create public API endpoint for Pricing Bible PDF generation/download
 - [x] Test all 1,162 vitest tests pass
+
+## Pricing Bible PDF Caching
+- [x] Implement hash-based cache: compute SHA-256 hash of pricing-values.json, only regenerate PDF when hash changes
+- [x] Store cached PDF in memory with the hash as cache key
+- [x] Invalidate cache automatically when admin saves pricing config
+- [x] Write vitest tests for caching logic (11 tests: cache hit, cache miss, invalidation, status)
+- [x] Run all tests — 32 files, 1,173 tests pass
