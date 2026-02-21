@@ -1,0 +1,9 @@
+{
+  "query": "INSERT IGNORE INTO users (openId, name, email, role, loginMethod) VALUES ('e2e-test-user-001', 'E2E Test User', 'e2e-test@kenlo.com.br', 'user', 'google');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PiDt3Qykwz3MoH.566c541f933a --database jKnnyfPJQz9VB7NVJcWSmb --execute INSERT IGNORE INTO users (openId, name, email, role, loginMethod) VALUES ('e2e-test-user-001', 'E2E Test User', 'e2e-test@kenlo.com.br', 'user', 'google');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 390
+}

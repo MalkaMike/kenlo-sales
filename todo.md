@@ -6173,3 +6173,16 @@
 - [x] Implement React.lazy() for 16 pages (all product, addon, admin, and heavy pages)
 - [x] Add Suspense boundary with Kenlo-branded loading spinner (PageLoader component)
 - [x] All tests pass: 1,173 vitest + 11 Playwright E2E
+
+## Authenticated E2E Tests
+- [x] Set up Playwright auth state persistence with JWT cookie injection (auth-setup.ts)
+- [x] Create test user in database for E2E tests (e2e-test-user-001)
+- [x] Write 24 authenticated E2E tests covering:
+  - [x] Navigation: homepage, calculator, kombos, product pages (4 tests)
+  - [x] Calculator flow: product selection, sticky bar, pricing table (3 tests)
+  - [x] PDF download: API auth, base64 validation, sticky bar button (3 tests)
+  - [x] Kombo comparison: 5 kombos, discounts, CTA, table render (4 tests)
+  - [x] Quote history: historico page access (1 test)
+  - [x] Add-on pages: all 6 add-on pages (6 tests)
+  - [x] Performance: calculator load, kombos load, console errors (3 tests)
+- [x] All tests pass: 1,173 vitest + 11 critical E2E + 24 authenticated E2E = 1,208 total
